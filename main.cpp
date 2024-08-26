@@ -23,8 +23,10 @@
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
-#pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
+
+// ----------ここからGEでのクラス化に変更----------
+#include "Input.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -502,10 +504,6 @@ const int32_t kClientHeight = 720;
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	D3DResourceLeakChecker leakCheck;
-
-	CoInitializeEx(0, COINIT_MULTITHREADED);
-
 	WNDCLASS wc{};
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
@@ -522,9 +520,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0,0,kClientWidth,kClientHeight };
 
-	// クライアント領域を元に実際のサイズにwrcを変更してもらう
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
 	// ウィンドウの生成
 	HWND hwnd = CreateWindow(
 		wc.lpszClassName,	  // 利用するクラス名
@@ -539,6 +534,99 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		wc.hInstance,		  // インスタンスハンドル
 		nullptr				  // オプション
 	);
+
+	// ----------変更後(GE3)----------
+
+	// ----------完成形----------
+
+	///
+	/// 初期化処理開始
+	///
+
+	/// ----------ポインタ置き場----------
+
+	Input* input = nullptr;
+
+	/// ----------ゲームウィンドウ作成----------
+
+	/// ----------DirectX初期化----------
+
+	/// ----------汎用機能初期化----------
+
+	// 入力の初期化
+	input = new Input();
+	input->Initialize(wc.hInstance,hwnd);
+
+	/// ----------シーンの初期化----------
+
+	///
+	/// 初期化処終了
+	///
+	
+	///
+	/// メインループ開始
+	///
+
+	/// ----------Windowsメッセージ処理----------
+
+	///
+	/// 更新処理開始
+	///
+
+	/// ----------入力の更新----------
+
+	/// ----------シーンの更新----------
+
+	///
+	/// 更新処理終了
+	///
+	
+	///
+	/// 描画処理開始
+	///
+
+	/// ----------DirectX描画開始----------
+
+	/// ----------シーンの描画----------
+
+	/// ----------DirectX描画処理----------
+
+	///
+	/// 描画処理終了
+	///
+
+	///
+	/// メインループ終了
+	///
+
+	///
+	/// 解放処理開始
+	///
+
+	/// ----------最初のシーンの解放----------
+
+	/// ----------汎用機能の解放----------
+
+	// 入力の解放
+	delete input;
+
+	/// ----------DirectXの解放----------
+
+	/// ----------ゲームウィンドウ解放｀----------
+
+	///
+	/// 解放処理終了
+	///
+
+	// ----------変更前(CG2)----------
+
+	D3DResourceLeakChecker leakCheck;
+
+	CoInitializeEx(0, COINIT_MULTITHREADED);
+
+	// クライアント領域を元に実際のサイズにwrcを変更してもらう
+	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
+
 
 #ifdef _DEBUG
 	Microsoft::WRL::ComPtr <ID3D12Debug1> debugController = nullptr;
