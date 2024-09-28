@@ -574,6 +574,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 
 	/// ----------入力の更新----------
+	input->Update();
 
 	/// ----------シーンの更新----------
 
