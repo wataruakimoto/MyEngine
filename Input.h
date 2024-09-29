@@ -25,8 +25,16 @@ public: // メンバ関数
 	/// 更新
 	/// </summary>
 	void Update();
+	/// <summary>
+	/// キーの押下をチェック
+	/// </summary>
+	/// <param name="keyNumber">キー番号</param>
+	/// <returns>押されているか</returns>
+	bool PushKey(BYTE keyNumber);
 
 private: // メンバ変数
 	// キーボードのデバイス
 	ComPtr<IDirectInputDevice8> keyboard;
+	// 全キーの状態
+	BYTE key[256] = {};
 };

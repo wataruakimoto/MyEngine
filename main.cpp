@@ -25,7 +25,6 @@
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
-// ----------ここからGEでのクラス化に変更----------
 #include "Input.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -534,10 +533,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		wc.hInstance,		  // インスタンスハンドル
 		nullptr				  // オプション
 	);
-
-	// ----------変更後(GE3)----------
-
-	// ----------完成形----------
 
 	///
 	/// 初期化処理開始
