@@ -31,10 +31,20 @@ public: // メンバ関数
 	/// <param name="keyNumber">キー番号</param>
 	/// <returns>押されているか</returns>
 	bool PushKey(BYTE keyNumber);
+	/// <summary>
+	/// キーのトリガーをチェック
+	/// </summary>
+	/// <param name="keyNumber">キー番号</param>
+	/// <returns>トリガーしているか</returns>
+	bool TriggerKey(BYTE keyNumber);
 
 private: // メンバ変数
+	// DirectInputのインスタンス
+	ComPtr<IDirectInput8> directInput;
 	// キーボードのデバイス
 	ComPtr<IDirectInputDevice8> keyboard;
 	// 全キーの状態
 	BYTE key[256] = {};
+	// 前のフレームの全キーの状態
+	BYTE keyPre[256] = {};
 };

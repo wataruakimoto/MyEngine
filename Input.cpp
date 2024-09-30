@@ -15,8 +15,6 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd) {
 	// hInstance : Windowsのウィンドウを作成するのに必要な「インスタンスハンドル」(実態はポインタ)
 	// hwnd : Windowsのウィンドウをコントロールするのに必要な「ウィンドウハンドル」(実態はポインタ)
 	
-	// DirectInputのインスタンス生成
-	ComPtr<IDirectInput8> directInput = nullptr;
 	// 元データを参照して使う
 	result = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
 	assert(SUCCEEDED(result));
@@ -33,6 +31,9 @@ void Input::Initialize(HINSTANCE hInstance, HWND hwnd) {
 
 void Input::Update(){
 
+	// 前回キーの入力を保存
+	memcpy(keyPre, key, sizeof(key));
+
 	// キーボード情報の取得開始
 	keyboard->Acquire();
 	// 全キーの入力情報を取得する
@@ -45,6 +46,16 @@ bool Input::PushKey(BYTE keyNumber) {
 	if (key[keyNumber]) {
 		return true;
 	}
-	// そうでなければ
+	// そうでなければfalse
+	return false;
+}
+
+bool Input::TriggerKey(BYTE keyNumber)
+{
+	// 指定したキーが前フレームは押していなくて今フレームが押していればtrue
+	if (!keyPre[keyNumber] && key[keyNumber]) {
+		return true;
+	}
+	// そうでなければfalse
 	return false;
 }
