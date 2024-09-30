@@ -25,7 +25,6 @@
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
-// ----------ここからGEでのクラス化に変更----------
 #include "Input.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -535,10 +534,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		nullptr				  // オプション
 	);
 
-	// ----------変更後(GE3)----------
-
-	// ----------完成形----------
-
 	///
 	/// 初期化処理開始
 	///
@@ -562,63 +557,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 	/// 初期化処終了
 	///
-	
-	///
-	/// メインループ開始
-	///
-
-	/// ----------Windowsメッセージ処理----------
-
-	///
-	/// 更新処理開始
-	///
-
-	/// ----------入力の更新----------
-
-	/// ----------シーンの更新----------
-
-	///
-	/// 更新処理終了
-	///
-	
-	///
-	/// 描画処理開始
-	///
-
-	/// ----------DirectX描画開始----------
-
-	/// ----------シーンの描画----------
-
-	/// ----------DirectX描画処理----------
-
-	///
-	/// 描画処理終了
-	///
-
-	///
-	/// メインループ終了
-	///
-
-	///
-	/// 解放処理開始
-	///
-
-	/// ----------最初のシーンの解放----------
-
-	/// ----------汎用機能の解放----------
-
-	// 入力の解放
-	delete input;
-
-	/// ----------DirectXの解放----------
-
-	/// ----------ゲームウィンドウ解放｀----------
-
-	///
-	/// 解放処理終了
-	///
-
-	// ----------変更前(CG2)----------
 
 	D3DResourceLeakChecker leakCheck;
 
@@ -1208,6 +1146,49 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
+
+		///
+		/// メインループ開始
+		///
+
+		/// ----------Windowsメッセージ処理----------
+
+		///
+		/// 更新処理開始
+		///
+
+		/// ----------入力の更新----------
+		
+		// キーボード情報の取得開始
+		keyboard->acquire();
+		// 全キーの入力情報を取得する
+		BYTE key[256] = {};
+		keyboard->GetDeviceState(sizeof(key), key);
+
+		/// ----------シーンの更新----------
+
+		///
+		/// 更新処理終了
+		///
+
+		///
+		/// 描画処理開始
+		///
+
+		/// ----------DirectX描画開始----------
+
+		/// ----------シーンの描画----------
+
+		/// ----------DirectX描画処理----------
+
+		///
+		/// 描画処理終了
+		///
+
+		///
+		/// メインループ終了
+		///
+
 		// Windowにメッセージが来てたら最優先で処理させる
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
@@ -1397,6 +1378,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			assert(SUCCEEDED(hr));
 		}
 	}
+
+	///
+	/// 解放処理開始
+	///
+
+	/// ----------最初のシーンの解放----------
+
+	/// ----------汎用機能の解放----------
+
+	// 入力の解放
+	delete input;
+
+	/// ----------DirectXの解放----------
+
+	/// ----------ゲームウィンドウ解放｀----------
+
+	///
+	/// 解放処理終了
+	///
 
 	// ImGuiの終了処理。初期化と逆順に行う
 	ImGui_ImplDX12_Shutdown();
