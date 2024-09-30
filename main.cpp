@@ -180,7 +180,7 @@ Microsoft::WRL::ComPtr <IDxcBlob> CompileShader(
 	);
 	// コンパイルエラーではなくdxcが起動できないなど致命的な状況
 	assert(SUCCEEDED(hr));
-			
+
 	// 3.警告・エラーが出てたらログに出して止める
 	Microsoft::WRL::ComPtr <IDxcBlobUtf8> shaderError = nullptr;
 	shaderResult->GetOutput(DXC_OUT_ERRORS, IID_PPV_ARGS(&shaderError), nullptr);
@@ -202,10 +202,10 @@ Microsoft::WRL::ComPtr <IDxcBlob> CompileShader(
 }
 
 // Resourceを作る関数
- Microsoft::WRL::ComPtr <ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr <ID3D12Device> device, size_t sizeInBytes) {
+Microsoft::WRL::ComPtr <ID3D12Resource> CreateBufferResource(Microsoft::WRL::ComPtr <ID3D12Device> device, size_t sizeInBytes) {
 
 	// DXGIファクトリーの生成
-	 Microsoft::WRL::ComPtr <IDXGIFactory7> dxgiFactory = nullptr;
+	Microsoft::WRL::ComPtr <IDXGIFactory7> dxgiFactory = nullptr;
 	// HRESULTはWindows系のエラーコードであり、
 	// 関数が成功したかどうかをSUCCEEDEDマクロで判定できる
 	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
@@ -496,13 +496,18 @@ ModelData LoadObjFile(const std::string& directoryPath, const std::string& filen
 	return modelData;
 }
 
-// クライアントの領域のサイズ
-const int32_t kClientWidth = 1280;
-const int32_t kClientHeight = 720;
-
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
+	///
+	/// 初期化処理開始
+	///
+
+	/// ----------ポインタ置き場----------
+
+	Input* input = nullptr;
+
+	/// ----------ゲームウィンドウ作成----------
 	WNDCLASS wc{};
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
@@ -516,8 +521,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ウィンドウクラスを登録する
 	RegisterClass(&wc);
 
+	// クライアントの領域のサイズ
+	const int32_t kClientWidth = 1280;
+	const int32_t kClientHeight = 720;
+
 	// ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0,0,kClientWidth,kClientHeight };
+
+	// クライアント領域を元に実際のサイズにwrcを変更してもらう
+	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 	// ウィンドウの生成
 	HWND hwnd = CreateWindow(
@@ -534,23 +546,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		nullptr				  // オプション
 	);
 
-	///
-	/// 初期化処理開始
-	///
-
-	/// ----------ポインタ置き場----------
-
-	Input* input = nullptr;
-
-	/// ----------ゲームウィンドウ作成----------
-
 	/// ----------DirectX初期化----------
 
 	/// ----------汎用機能初期化----------
 
 	// 入力の初期化
 	input = new Input();
-	input->Initialize(wc.hInstance,hwnd);
+	input->Initialize(wc.hInstance, hwnd);
 
 	/// ----------シーンの初期化----------
 
@@ -561,9 +563,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3DResourceLeakChecker leakCheck;
 
 	CoInitializeEx(0, COINIT_MULTITHREADED);
-
-	// クライアント領域を元に実際のサイズにwrcを変更してもらう
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
 
 #ifdef _DEBUG
@@ -989,7 +988,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 書き込むためのアドレスを取得
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 	// 頂点データにリソースをコピー
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData)* modelData.vertices.size());
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 
 	// Sprite用の頂点リソースを作る
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResourceSprite = CreateBufferResource(device, sizeof(VertexData) * 6);
@@ -1142,6 +1141,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
 		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
 	);
+
 	MSG msg{};
 	// ウィンドウの×ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
@@ -1152,60 +1152,61 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		/// ----------Windowsメッセージ処理----------
 
-		///
-		/// 更新処理開始
-		///
-
-		/// ----------入力の更新----------
-		input->Update();
-
-		if (input->PushKey(DIK_UP)) {
-			transform.translate.y += 0.1f;
-		}
-
-		if (input->TriggerKey(DIK_DOWN)) {
-			transform.translate.y += -0.1f;
-		}
-
-		if (input->PushKey(DIK_RIGHT)) {
-			transform.translate.x += 0.1f;
-		}
-
-		if (input->TriggerKey(DIK_LEFT)) {
-			transform.translate.x += -0.1f;
-		}
-
-		/// ----------シーンの更新----------
-
-		///
-		/// 更新処理終了
-		///
-
-		///
-		/// 描画処理開始
-		///
-
-		/// ----------DirectX描画開始----------
-
-		/// ----------シーンの描画----------
-
-		/// ----------DirectX描画処理----------
-
-		///
-		/// 描画処理終了
-		///
-
-		///
-		/// メインループ終了
-		///
-		
 		// Windowにメッセージが来てたら最優先で処理させる
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
 		}
 		else {
-			// ImGuiにフレーム開始を告げる
+
+			///
+			/// 更新処理開始
+			///
+
+			/// ----------入力の更新----------
+			input->Update();
+
+			if (input->PushKey(DIK_UP)) {
+				transform.translate.y += 0.1f;
+			}
+
+			if (input->TriggerKey(DIK_DOWN)) {
+				transform.translate.y += -0.1f;
+			}
+
+			if (input->PushKey(DIK_RIGHT)) {
+				transform.translate.x += 0.1f;
+			}
+
+			if (input->TriggerKey(DIK_LEFT)) {
+				transform.translate.x += -0.1f;
+			}
+
+			/// ----------シーンの更新----------
+
+			///
+			/// 更新処理終了
+			///
+
+			///
+			/// 描画処理開始
+			///
+
+			/// ----------DirectX描画開始----------
+
+			/// ----------シーンの描画----------
+
+			/// ----------DirectX描画処理----------
+
+			///
+			/// 描画処理終了
+			///
+
+			///
+			/// メインループ終了
+			///
+				// ImGuiにフレーム開始を告げる
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
