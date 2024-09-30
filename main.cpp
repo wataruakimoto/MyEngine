@@ -1159,12 +1159,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		/// ----------入力の更新----------
 		input->Update();
 
-		if (input->PushKey(DIK_0)) {
-			OutputDebugStringA("0\n");
+		if (input->PushKey(DIK_UP)) {
+			transform.translate.y += 0.1f;
 		}
 
-		if (input->TriggerKey(DIK_1)) {
-			OutputDebugStringA("1\n");
+		if (input->TriggerKey(DIK_DOWN)) {
+			transform.translate.y += -0.1f;
+		}
+
+		if (input->PushKey(DIK_RIGHT)) {
+			transform.translate.x += 0.1f;
+		}
+
+		if (input->TriggerKey(DIK_LEFT)) {
+			transform.translate.x += -0.1f;
 		}
 
 		/// ----------シーンの更新----------
