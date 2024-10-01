@@ -1357,7 +1357,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	/// ----------DirectXの解放----------
 
-	/// ----------ゲームウィンドウ解放｀----------
+	/// ----------ゲームウィンドウ解放----------
 
 	// WindowsAPIの終了処理
 	winApp->Finalize();
