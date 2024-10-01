@@ -1,14 +1,16 @@
 #pragma once
 
-// WindowsAPI‚ğg‚¤‚½‚ß
+// WindowsAPIã‚’ä½¿ã†ãŸã‚
 #include <Windows.h>
+// int32_tã‚’ä½¿ã†ãŸã‚
+#include <cstdint>
 
 // WindowsAPI
 class WinApp {
 
-public: // Ã“Iƒƒ“ƒoŠÖ”
+public: // é™çš„ãƒ¡ãƒ³ãƒé–¢æ•°
 	/// <summary>
-	/// ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+	/// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 	/// </summary>
 	/// <param name="hwnd"></param>
 	/// <param name="msg"></param>
@@ -17,13 +19,34 @@ public: // Ã“Iƒƒ“ƒoŠÖ”
 	/// <returns></returns>
 	static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-public: // ƒƒ“ƒoŠÖ”
+public: // ãƒ¡ãƒ³ãƒé–¢æ•°
 	/// <summary>
-	/// ‰Šú‰»
+	/// åˆæœŸåŒ–
 	/// </summary>
 	void Initialize();
 	/// <summary>
-	/// XV
+	/// æ›´æ–°
 	/// </summary>
 	void Update();
+	/// <summary>
+	/// HWNDã®Getter
+	/// </summary>
+	/// <returns>hwnd</returns>
+	HWND GetHwnd() const { return hwnd; }
+	/// <summary>
+	/// HINSTANCEã®Getter
+	/// </summary>
+	/// <returns></returns>
+	HINSTANCE GetHInstance() const { return wc.hInstance; }
+
+public: // å®šæ•°
+	// ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã®é ˜åŸŸã®ã‚µã‚¤ã‚º
+	static const int32_t kClientWidth = 1280;
+	static const int32_t kClientHeight = 720;
+
+private: // ãƒ¡ãƒ³ãƒå¤‰æ•°
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
+	HWND hwnd = nullptr;
+	// ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚¯ãƒ©ã‚¹ã®è¨­å®š
+	WNDCLASS wc{};
 };
