@@ -36,6 +36,12 @@ public: // メンバ関数
 	void Finalize();
 
 	/// <summary>
+	/// メッセージの処理
+	/// </summary>
+	/// <returns>アプリ終了メッセージの有無</returns>
+	bool ProcessMessage();
+
+	/// <summary>
 	/// HWNDのGetter
 	/// </summary>
 	/// <returns>hwnd</returns>
