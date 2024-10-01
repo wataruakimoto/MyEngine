@@ -24,15 +24,23 @@ public: // メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize();
+
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
+
 	/// <summary>
 	/// HWNDのGetter
 	/// </summary>
 	/// <returns>hwnd</returns>
 	HWND GetHwnd() const { return hwnd; }
+
 	/// <summary>
 	/// HINSTANCEのGetter
 	/// </summary>

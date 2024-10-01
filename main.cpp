@@ -501,7 +501,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 入力の初期化
 	input = new Input();
-	input->Initialize(winApp->GetHInstance(), winApp->GetHwnd());
+	input->Initialize(winApp);
 
 	/// ----------シーンの初期化----------
 
@@ -1343,9 +1343,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 各オブジェクトの解放
 	CloseHandle(fenceEvent);
-	CloseWindow(winApp->GetHwnd());
-
-	CoUninitialize();
 
 	///
 	/// 解放処理開始
@@ -1362,7 +1359,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	/// ----------ゲームウィンドウ解放｀----------
 
-	// WindowsAPIの初期化
+	// WindowsAPIの終了処理
+	winApp->Finalize();
+	// WindowsAPIの解放
 	delete winApp;
 
 	///

@@ -7,6 +7,8 @@
 // DirectInputの定義
 #define DIRECTINPUT_VERSION 0x0800 // DirectInputのバージョン指定
 #include <dinput.h>
+// WindowsAPIを使うため
+#include "WinApp.h"
 
 // 入力
 class Input {
@@ -20,7 +22,7 @@ public: // メンバ関数
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(HINSTANCE hInstance,HWND hwnd);
+	void Initialize(WinApp* winApp);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -47,4 +49,6 @@ private: // メンバ変数
 	BYTE key[256] = {};
 	// 前のフレームの全キーの状態
 	BYTE keyPre[256] = {};
+	// WindowsAPI
+	WinApp* winApp_ = nullptr;
 };
