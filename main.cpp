@@ -492,6 +492,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	winApp = new WinApp();
 	winApp->Initialize();
 
+	// メインスレッドではMTAでCOM利用
+	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+
 	/// ----------DirectX初期化----------
 
 	/// ----------汎用機能初期化----------
@@ -522,7 +525,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Microsoft::WRL::ComPtr <IDXGIFactory7> dxgiFactory = nullptr;
 	// HRESULTはWindows系のエラーコードであり、
 	// 関数が成功したかどうかをSUCCEEDEDマクロで判定できる
-	HRESULT hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
+	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
 	// 初期化の根本的な部分でエラーが出た場合はプログラムが間違っているかどうか、
 	// どうにもできない場合が多いのでassertにしておく
 	assert(SUCCEEDED(hr));
