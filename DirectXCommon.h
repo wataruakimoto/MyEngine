@@ -5,6 +5,7 @@
 #include <wrl.h>
 #include "WinApp.h"
 #include "array"
+#include <dxcapi.h>
 
 // DirectX基盤
 class DirectXCommon {
@@ -127,9 +128,29 @@ private: // クラス内処理の関数
 	void DepthStencilViewInitialize();
 
 	/// <summary>
-	/// 
+	/// フェンスの初期化
 	/// </summary>
 	void FenceInitialize();
+
+	/// <summary>
+	/// ビューポート矩形の初期化
+	/// </summary>
+	void ViewportRectInitialize();
+
+	/// <summary>
+	/// シザリング矩形の初期化
+	/// </summary>
+	void ScissoringRectInitialize();
+
+	/// <summary>
+	/// DXCコンパイラの生成
+	/// </summary>
+	void DXCCompilerGenerate();
+
+	/// <summary>
+	/// ImGuiの初期化
+	/// </summary>
+	void ImGuiInitialize();
 
 private: // メンバ変数
 
@@ -137,22 +158,27 @@ private: // メンバ変数
 	WinApp* winApp_ = nullptr;
 
 	// DirectX12デバイス
-	ComPtr<ID3D12Device> device;
+	ComPtr<ID3D12Device> device = nullptr;
 
 	// DXGIファクトリー
-	ComPtr<IDXGIFactory7> dxgiFactory;
+	ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
 
 	// コマンドアロケータ
-	ComPtr <ID3D12CommandAllocator> commandAllocator;
+	ComPtr <ID3D12CommandAllocator> commandAllocator = nullptr;
 	
 	// コマンドリスト
-	ComPtr <ID3D12GraphicsCommandList> commandList;
+	ComPtr <ID3D12GraphicsCommandList> commandList = nullptr;
 	
 	// コマンドキュー
-	ComPtr <ID3D12CommandQueue> commandQueue;
+	ComPtr <ID3D12CommandQueue> commandQueue = nullptr;
 
 	// スワップチェーン
-	ComPtr <IDXGISwapChain4> swapChain;
+	ComPtr <IDXGISwapChain4> swapChain = nullptr;
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+
+	// リソース
+	ComPtr <ID3D12Resource> resource = nullptr;
 
 	// RTV用デスクリプタサイズ
 	uint32_t descriptorSizeRTV;
@@ -173,11 +199,31 @@ private: // メンバ変数
 	ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
 
 	// スワップチェーンから引っ張ってきたリソース
-	ComPtr <ID3D12Resource> swapChainResources[2];
+	ComPtr <ID3D12Resource> swapChainResources[2] = { nullptr };
+
+	// スワップチェーンリソース
+	//std::array<ComPtr<ID3D12Resource>, 2> swapChainResource;
+
+	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
 	// RTVハンドル
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 
-	// スワップチェーンリソース
-	std::array<ComPtr<ID3D12Resource>, 2> swapChainResource;
+	// フェンス
+	ComPtr <ID3D12Fence> fence = nullptr;
+
+	// ビューポート矩形
+	D3D12_VIEWPORT viewport{};
+
+	// シザー矩形
+	D3D12_RECT scissorRect{};
+
+	// DXCユーティリティ
+	ComPtr <IDxcUtils> dxcUtils = nullptr;
+
+	// DXCコンパイラ
+	ComPtr <IDxcCompiler3> dxcCompiler = nullptr;
+
+	// デフォルトインクルードハンドラ
+	ComPtr <IDxcIncludeHandler> includeHandler = nullptr;
 };
