@@ -4,6 +4,7 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 #include "WinApp.h"
+#include "array"
 
 // DirectX基盤
 class DirectXCommon {
@@ -19,7 +20,58 @@ public:	// メンバ関数
 	/// </summary>
 	void Initialize(WinApp* winApp);
 
-private: // クラス内のみの関数
+	/// <summary>
+	/// デスクリプタヒープを作成する
+	/// </summary>
+	/// <param name="heapType"></param>
+	/// <param name="numDescriptors"></param>
+	/// <param name="shaderVisible"></param>
+	/// <returns></returns>
+	ComPtr <ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+
+	/// <summary>
+	/// RTVのCPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// RTVのGPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// SRVのCPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// SRVのGPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// DSVのCPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// DSVのGPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+
+private: // クラス内処理の関数
 
 	/// <summary>
 	/// デバイスの初期化
@@ -40,6 +92,44 @@ private: // クラス内のみの関数
 	/// 深度バッファの生成
 	/// </summary>
 	void DepthBufferGenerate();
+
+	/// <summary>
+	/// 各種デスクリプターヒープの生成
+	/// </summary>
+	void VariousDescriptorHeapGenerate();
+
+	/// <summary>
+	/// レンダーターゲットビューの初期化
+	/// </summary>
+	void RenderTargetViewInitialize();
+	
+	/// <summary>
+	/// CPUのデスクリプタハンドルを取得する
+	/// </summary>
+	/// <param name="descriptorHeap"></param>
+	/// <param name="descriptorSize"></param>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(ComPtr <ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+	/// <summary>
+	/// GPUのデスクリプタハンドルを取得する
+	/// </summary>
+	/// <param name="descriptorHeap"></param>
+	/// <param name="descriptorSize"></param>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr <ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+
+	/// <summary>
+	/// 深度ステンシルビューの初期化
+	/// </summary>
+	void DepthStencilViewInitialize();
+
+	/// <summary>
+	/// 
+	/// </summary>
+	void FenceInitialize();
 
 private: // メンバ変数
 
@@ -63,4 +153,31 @@ private: // メンバ変数
 
 	// スワップチェーン
 	ComPtr <IDXGISwapChain4> swapChain;
+
+	// RTV用デスクリプタサイズ
+	uint32_t descriptorSizeRTV;
+
+	// SRV用デスクリプタサイズ
+	uint32_t descriptorSizeSRV;
+
+	// DSV用デスクリプタサイズ
+	uint32_t descriptorSizeDSV;
+
+	// RTV用デスクリプタヒープ
+	ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
+
+	// SRV用デスクリプタヒープ
+	ComPtr <ID3D12DescriptorHeap> srvDescriptorHeap;
+
+	// DSV用デスクリプタヒープ
+	ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
+
+	// スワップチェーンから引っ張ってきたリソース
+	ComPtr <ID3D12Resource> swapChainResources[2];
+
+	// RTVハンドル
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+
+	// スワップチェーンリソース
+	std::array<ComPtr<ID3D12Resource>, 2> swapChainResource;
 };
