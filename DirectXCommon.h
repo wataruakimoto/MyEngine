@@ -6,6 +6,7 @@
 #include "WinApp.h"
 #include "array"
 #include <dxcapi.h>
+#include <string>
 
 // DirectX基盤
 class DirectXCommon {
@@ -82,6 +83,21 @@ public:	// メンバ関数
 	/// <returns></returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
+	/// <summary>
+	/// シェーダーコンパイル
+	/// </summary>
+	/// <param name="filePath">Shaderファイルへのパス</param>
+	/// <param name="profile">プロファイル</param>
+	/// <returns></returns>
+	ComPtr <IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
+
+	/// <summary>
+	/// バッファリソース生成
+	/// </summary>
+	/// <param name="sizeInBytes"></param>
+	/// <returns></returns>
+	ComPtr <ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+
 private: // クラス内処理の関数
 
 	/// <summary>
@@ -113,7 +129,7 @@ private: // クラス内処理の関数
 	/// レンダーターゲットビューの初期化
 	/// </summary>
 	void RenderTargetViewInitialize();
-	
+
 	/// <summary>
 	/// CPUのデスクリプタハンドルを取得する
 	/// </summary>
@@ -175,10 +191,10 @@ private: // メンバ変数
 
 	// コマンドアロケータ
 	ComPtr <ID3D12CommandAllocator> commandAllocator = nullptr;
-	
+
 	// コマンドリスト
 	ComPtr <ID3D12GraphicsCommandList> commandList = nullptr;
-	
+
 	// コマンドキュー
 	ComPtr <ID3D12CommandQueue> commandQueue = nullptr;
 
