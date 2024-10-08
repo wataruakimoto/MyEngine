@@ -52,9 +52,7 @@ void DirectXCommon::PreDraw(){
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
 	// ----------リソースバリアで書き込み可能に変更----------
-	
-	// TrainsitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
+
 	// 今回のバリアはTransition
 	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
 	// Noneにしておく
@@ -94,6 +92,8 @@ void DirectXCommon::PreDraw(){
 
 void DirectXCommon::PostDraw() {
 
+	HRESULT hr;
+
 	// ----------バックバッファの番号取得----------
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
@@ -111,26 +111,36 @@ void DirectXCommon::PostDraw() {
 	assert(SUCCEEDED(hr));
 
 	// ----------GPUコマンドの実行----------
-
+	ID3D12CommandList* commandLists[] = { commandList.Get() };
+	commandQueue->ExecuteCommandLists(1, commandLists);
 
 	// ----------GPU画面の交換を通知----------
-
+	swapChain->Present(1, 0);
 
 	// ----------Fenceの値を更新----------
-
+	fenceValue++;
 
 	// ----------コマンドキューにシグナルを送る----------
-
+	commandQueue->Signal(fence.Get(), fenceValue);
 
 	// ----------コマンド完了待ち----------
+	// Fenceの値が指定したSignal値にたどり着いているか確認する
+	// GetCompletedValueの初期値はFence作成時に渡した初期値
+	if (fence->GetCompletedValue() < fenceValue) {
 
+		// 指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+		// イベント待つ
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
 
 	// ----------コマンドアロケータのリセット----------
-
+	hr = commandAllocator->Reset();
+	assert(SUCCEEDED(hr));
 
 	// ----------コマンドリストのリセット----------
-
-
+	hr = commandList->Reset(commandAllocator.Get(), nullptr);
+	assert(SUCCEEDED(hr));
 }
 
 Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
@@ -445,13 +455,11 @@ void DirectXCommon::FenceInitialize() {
 	HRESULT hr;
 
 	// ----------フェンス生成----------
-	// 初期値0でFenceを作る
-	uint64_t fenceValue = 0;
 	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 	assert(SUCCEEDED(hr));
 
 	// FenceのSignalを持つためのイベントを作成する
-	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
 }
 

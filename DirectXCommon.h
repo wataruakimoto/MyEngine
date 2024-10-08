@@ -222,6 +222,12 @@ private: // メンバ変数
 	// フェンス
 	ComPtr <ID3D12Fence> fence = nullptr;
 
+	// フェンスの値
+	uint64_t fenceValue = 0;
+
+	// フェンスイベント
+	HANDLE fenceEvent;
+
 	// ビューポート矩形
 	D3D12_VIEWPORT viewport{};
 
@@ -236,4 +242,7 @@ private: // メンバ変数
 
 	// デフォルトインクルードハンドラ
 	ComPtr <IDxcIncludeHandler> includeHandler = nullptr;
+
+	// TrainsitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
 };
