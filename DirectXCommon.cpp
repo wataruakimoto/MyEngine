@@ -46,6 +46,93 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	ImGuiInitialize();
 }
 
+void DirectXCommon::PreDraw(){
+
+	// ----------バックバッファの番号取得----------
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+
+	// ----------リソースバリアで書き込み可能に変更----------
+	
+	// TrainsitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+	// 今回のバリアはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = swapChainResources[backBufferIndex].Get();
+	// 遷移前(現在)のResouceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	// 遷移後のResouceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+
+	// ----------描画先のRTVとDSVを指定する----------
+
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
+	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
+
+	// ----------画面全体の色をクリア----------
+	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f }; // 青っぽい色。RGBAの順
+	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+
+	// ----------画面全体の深度をクリア----------
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	// ----------SRV用のデスクリプタヒープを指定する----------
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 1);
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, descriptorSizeSRV, 1);
+
+	// ----------ビューポート領域の設定----------
+	commandList->RSSetViewports(1, &viewport);
+
+	// ----------シザー矩形の設定----------
+	commandList->RSSetScissorRects(1, &scissorRect);
+}
+
+void DirectXCommon::PostDraw() {
+
+	// ----------バックバッファの番号取得----------
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+
+	// ----------リソースバリアで表示状態に変更----------
+	// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
+	// 今回はRenderTargetからPresentにする
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	// TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+
+	// ----------グラフィックスコマンドをクローズ----------
+	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseすること
+	hr = commandList->Close();
+	assert(SUCCEEDED(hr));
+
+	// ----------GPUコマンドの実行----------
+
+
+	// ----------GPU画面の交換を通知----------
+
+
+	// ----------Fenceの値を更新----------
+
+
+	// ----------コマンドキューにシグナルを送る----------
+
+
+	// ----------コマンド完了待ち----------
+
+
+	// ----------コマンドアロケータのリセット----------
+
+
+	// ----------コマンドリストのリセット----------
+
+
+}
+
 Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
 
 	ComPtr <ID3D12DescriptorHeap> descriptorHeap = nullptr;

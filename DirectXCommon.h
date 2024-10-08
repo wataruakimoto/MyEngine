@@ -22,6 +22,16 @@ public:	// メンバ関数
 	void Initialize(WinApp* winApp);
 
 	/// <summary>
+	/// 描画前処理
+	/// </summary>
+	void PreDraw();
+
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
+	void PostDraw();
+
+	/// <summary>
 	/// デスクリプタヒープを作成する
 	/// </summary>
 	/// <param name="heapType"></param>
