@@ -7,6 +7,7 @@
 #include "array"
 #include <dxcapi.h>
 #include <string>
+#include "externals/DirectXTex/DirectXTex.h"
 
 // DirectX基盤
 class DirectXCommon {
@@ -97,6 +98,27 @@ public:	// メンバ関数
 	/// <param name="sizeInBytes"></param>
 	/// <returns></returns>
 	ComPtr <ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+
+	/// <summary>
+	/// テクスチャリソース生成
+	/// </summary>
+	/// <param name="metadata"></param>
+	/// <returns></returns>
+	ComPtr <ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
+
+	/// <summary>
+	/// テクスチャリソースにデータを転送する
+	/// </summary>
+	/// <param name="texture"></param>
+	/// <param name="mipImages"></param>
+	void UploadTextureData(ComPtr <ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
+
+	/// <summary>
+	/// DirectXTexでテクスチャを読む
+	/// </summary>
+	/// <param name="filePath"></param>
+	/// <returns></returns>
+	DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
 private: // クラス内処理の関数
 
@@ -203,17 +225,17 @@ private: // メンバ変数
 
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
-	// リソース
-	ComPtr <ID3D12Resource> resource = nullptr;
+	// 深度バッファ
+	ComPtr<ID3D12Resource> depthStencilResource;
 
 	// RTV用デスクリプタサイズ
-	uint32_t descriptorSizeRTV;
+	uint32_t rtvDescriptorSize;
 
 	// SRV用デスクリプタサイズ
-	uint32_t descriptorSizeSRV;
+	uint32_t srvDescriptorSize;
 
 	// DSV用デスクリプタサイズ
-	uint32_t descriptorSizeDSV;
+	uint32_t dsvDescriptorSize;
 
 	// RTV用デスクリプタヒープ
 	ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
@@ -228,7 +250,7 @@ private: // メンバ変数
 	ComPtr <ID3D12Resource> swapChainResources[2] = { nullptr };
 
 	// スワップチェーンリソース
-	//std::array<ComPtr<ID3D12Resource>, 2> swapChainResource;
+	//std::array<ComPtr<ID3D12Resource>, 2> swapChainResources;
 
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
