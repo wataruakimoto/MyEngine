@@ -8,6 +8,9 @@
 #include <fstream>
 #include <sstream>
 
+#include "externals/imgui/imgui_impl_dx12.h"
+#include "externals/imgui/imgui_impl_win32.h"
+
 #pragma comment(lib,"dxcompiler.lib")
 
 #include "Input.h"
@@ -199,6 +202,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	winApp = new WinApp();
 	winApp->Initialize();
 
+	// ウィンドウを表示する
+	ShowWindow(winApp->GetHwnd(), SW_SHOW);
+
 	// メインスレッドではMTAでCOM利用
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 
@@ -223,9 +229,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 	/// 初期化処終了
 	///
-
-	// ウィンドウを表示する
-	ShowWindow(winApp->GetHwnd(), SW_SHOW);
 
 	// PipelineStateObject PSOの処理
 
@@ -593,6 +596,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			///
 			/// 更新処理開始
 			///
+			
+			// ImGuiにフレーム開始を告げる
+			ImGui_ImplDX12_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
 
 			/// ----------入力の更新----------
 			input->Update();
@@ -640,6 +648,45 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
 
+			if (ImGui::TreeNode("Camera")) {
+
+				ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.01f);
+				ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.01f);
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Object")) {
+
+				ImGui::ColorEdit4("color", &materialData->color.x);
+
+				ImGui::SliderAngle("RotateX", &transform.rotate.x);
+				ImGui::SliderAngle("RotateY", &transform.rotate.y);
+				ImGui::SliderAngle("RotateZ", &transform.rotate.z);
+				ImGui::Checkbox("enableLighting", &materialData->enableLighting);
+				ImGui::ColorEdit4("LightColor", &directionalLightData->color.x);
+				ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x, 0.01f);
+				ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
+
+				// チェックボックスによる切り替え
+				ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+
+				ImGui::TreePop();
+			}
+
+			if (ImGui::TreeNode("Sprite")) {
+
+				ImGui::ColorEdit4("colorSprite", &materialDataSprite->color.x);
+				ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+				ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+				ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+
+				ImGui::TreePop();
+			}
+
+			// ImGuiの内部コマンドを生成する
+			ImGui::Render();
+
 			///
 			/// 更新処理終了
 			///
@@ -686,7 +733,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// TransformationMatrixCBufferの場所を設定
 			commandList->SetGraphicsRootConstantBufferView(1, transformationMatrixResourceSprite->GetGPUVirtualAddress());
 			// 描画!(DrawCall/ドローコール) 6個のインデックスを使用し1つのインスタンスを描画。その他は0でいい
-			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+			commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
+
+			// 実際のcommandListのImGuiの描画コマンドを積む
+			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 
 			/// ----------DirectX描画処理----------
 			dxCommon->PostDraw();
@@ -698,63 +748,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			///
 			/// メインループ終了
 			///
-				
-			// ImGuiにフレーム開始を告げる
-			//ImGui_ImplDX12_NewFrame();
-			//ImGui_ImplWin32_NewFrame();
-			//ImGui::NewFrame();
-				
-			// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-			//ImGui::ShowDemoWindow();
-
-			//if (ImGui::TreeNode("Camera")) {
-			//
-			//	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.01f);
-			//	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.01f);
-			//
-			//	ImGui::TreePop();
-			//}
-			//
-			//if (ImGui::TreeNode("Object")) {
-			//
-			//	ImGui::ColorEdit4("color", &materialData->color.x);
-			//
-			//	ImGui::SliderAngle("RotateX", &transform.rotate.x);
-			//	ImGui::SliderAngle("RotateY", &transform.rotate.y);
-			//	ImGui::SliderAngle("RotateZ", &transform.rotate.z);
-			//	ImGui::Checkbox("enableLighting", &materialData->enableLighting);
-			//	ImGui::ColorEdit4("LightColor", &directionalLightData->color.x);
-			//	ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x, 0.01f);
-			//	ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
-			//
-			//	// チェックボックスによる切り替え
-			//	ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-			//
-			//	ImGui::TreePop();
-			//}
-			//
-			//if (ImGui::TreeNode("Sprite")) {
-			//
-			//	ImGui::ColorEdit4("colorSprite", &materialDataSprite->color.x);
-			//	ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-			//	ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-			//	ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
-			//
-			//	ImGui::TreePop();
-			//}
-
-			// ImGuiの内部コマンドを生成する
-			//ImGui::Render();
-
-			// 実際のcommandListのImGuiの描画コマンドを積む
-			//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 		}
 	}
-
-	// ImGuiの終了処理。初期化と逆順に行う
-	//ImGui_ImplDX12_Shutdown();
-	//ImGui_ImplWin32_Shutdown();
-	//ImGui::DestroyContext();
 
 	///
 	/// 解放処理開始
@@ -768,8 +763,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete input;
 
 	/// ----------DirectXの解放----------
-
-	// DirectXの初期化
 	delete dxCommon;
 
 	/// ----------ゲームウィンドウ解放----------
@@ -778,6 +771,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	winApp->Finalize();
 	// WindowsAPIの解放
 	delete winApp;
+
+	// ImGuiの終了処理。初期化と逆順に行う
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 
 	D3DResourceLeakChecker leakCheck;
 
