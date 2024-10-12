@@ -12,10 +12,16 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
+DirectXCommon::~DirectXCommon() {
+
+	// 各オブジェクトの解放
+	CloseHandle(fenceEvent);
+}
+
 void DirectXCommon::Initialize(WinApp* winApp) {
 
 	// NULL検出
-	assert(winApp_);
+	assert(winApp);
 
 	// メンバ変数に記録
 	this->winApp_ = winApp;

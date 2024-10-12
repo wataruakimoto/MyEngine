@@ -19,6 +19,11 @@ public:
 public:	// メンバ関数
 
 	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~DirectXCommon();
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize(WinApp* winApp);
@@ -32,6 +37,12 @@ public:	// メンバ関数
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
+
+	ComPtr <ID3D12Device> GetDevice() { return device; }
+
+	ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return commandList; }
+
+	ComPtr<ID3D12DescriptorHeap> GetSRVDescriptorHeap() { return srvDescriptorHeap; }
 
 	/// <summary>
 	/// デスクリプタヒープを作成する

@@ -14,6 +14,7 @@
 #include "WinApp.h"
 #include "DirectXCommon.h"
 #include "D3DResourceLeakChecker.h"
+#include "Logger.h"
 
 struct Transform {
 	Vector3 scale;
@@ -215,6 +216,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	/// ----------シーンの初期化----------
 
+	Microsoft::WRL::ComPtr<ID3D12Device>device = dxCommon->GetDevice();
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>commandList = dxCommon->GetCommandList();
+	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>srvDescriptorHeap = dxCommon->GetSRVDescriptorHeap();
+
 	///
 	/// 初期化処終了
 	///
@@ -277,7 +282,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	hr = D3D12SerializeRootSignature(&descriptionRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
-		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	// バイナリを元に生成
@@ -525,6 +530,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//textureSrvHandleCPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	//textureSrvHandleGPU.ptr += device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxCommon->GetSRVCPUDescriptorHandle(1);
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = dxCommon->GetSRVGPUDescriptorHandle(1);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = dxCommon->GetSRVCPUDescriptorHandle(1);
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = dxCommon->GetSRVGPUDescriptorHandle(1);
+
 	// SRVの生成
 	device->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
 
@@ -604,76 +615,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			/// ----------シーンの更新----------
 
-			///
-			/// 更新処理終了
-			///
-
-			///
-			/// 描画処理開始
-			///
-
-			/// ----------DirectX描画開始----------
-			dxCommon->PreDraw();
-
-			/// ----------シーンの描画----------
-
-			/// ----------DirectX描画処理----------
-			dxCommon->PostDraw();
-
-			///
-			/// 描画処理終了
-			///
-
-			///
-			/// メインループ終了
-			///
-				
-			// ImGuiにフレーム開始を告げる
-			ImGui_ImplDX12_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
-				
-			//ゲームの処理
-
-			// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
-			//ImGui::ShowDemoWindow();
-
-			if (ImGui::TreeNode("Camera")) {
-
-				ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.01f);
-				ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.01f);
-
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNode("Object")) {
-
-				ImGui::ColorEdit4("color", &materialData->color.x);
-
-				ImGui::SliderAngle("RotateX", &transform.rotate.x);
-				ImGui::SliderAngle("RotateY", &transform.rotate.y);
-				ImGui::SliderAngle("RotateZ", &transform.rotate.z);
-				ImGui::Checkbox("enableLighting", &materialData->enableLighting);
-				ImGui::ColorEdit4("LightColor", &directionalLightData->color.x);
-				ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x, 0.01f);
-				ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
-
-				// チェックボックスによる切り替え
-				ImGui::Checkbox("useMonsterBall", &useMonsterBall);
-
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNode("Sprite")) {
-
-				ImGui::ColorEdit4("colorSprite", &materialDataSprite->color.x);
-				ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
-				ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
-				ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
-
-				ImGui::TreePop();
-			}
-
 			// TransformからWorldMatrix作成
 			Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 			Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
@@ -699,8 +640,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			uvTransformMatrix = Multiply(uvTransformMatrix, MakeTranslateMatrix(uvTransformSprite.translate));
 			materialDataSprite->uvTransform = uvTransformMatrix;
 
-			// ImGuiの内部コマンドを生成する
-			ImGui::Render();
+			///
+			/// 更新処理終了
+			///
+
+			///
+			/// 描画処理開始
+			///
+
+			/// ----------DirectX描画開始----------
+			dxCommon->PreDraw();
+
+			/// ----------シーンの描画----------
 
 			// ここから描画
 			// RootSignatureを設定、PSOに設定しているけど別途設定が必要
@@ -737,18 +688,73 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// 描画!(DrawCall/ドローコール) 6個のインデックスを使用し1つのインスタンスを描画。その他は0でいい
 			//commandList->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
+			/// ----------DirectX描画処理----------
+			dxCommon->PostDraw();
+
+			///
+			/// 描画処理終了
+			///
+
+			///
+			/// メインループ終了
+			///
+				
+			// ImGuiにフレーム開始を告げる
+			//ImGui_ImplDX12_NewFrame();
+			//ImGui_ImplWin32_NewFrame();
+			//ImGui::NewFrame();
+				
+			// 開発用UIの処理。実際に開発用のUIを出す場合はここをゲーム固有の処理に置き換える
+			//ImGui::ShowDemoWindow();
+
+			//if (ImGui::TreeNode("Camera")) {
+			//
+			//	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.01f);
+			//	ImGui::DragFloat3("Translate", &cameraTransform.translate.x, 0.01f);
+			//
+			//	ImGui::TreePop();
+			//}
+			//
+			//if (ImGui::TreeNode("Object")) {
+			//
+			//	ImGui::ColorEdit4("color", &materialData->color.x);
+			//
+			//	ImGui::SliderAngle("RotateX", &transform.rotate.x);
+			//	ImGui::SliderAngle("RotateY", &transform.rotate.y);
+			//	ImGui::SliderAngle("RotateZ", &transform.rotate.z);
+			//	ImGui::Checkbox("enableLighting", &materialData->enableLighting);
+			//	ImGui::ColorEdit4("LightColor", &directionalLightData->color.x);
+			//	ImGui::DragFloat3("LightDirection", &directionalLightData->direction.x, 0.01f);
+			//	ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f);
+			//
+			//	// チェックボックスによる切り替え
+			//	ImGui::Checkbox("useMonsterBall", &useMonsterBall);
+			//
+			//	ImGui::TreePop();
+			//}
+			//
+			//if (ImGui::TreeNode("Sprite")) {
+			//
+			//	ImGui::ColorEdit4("colorSprite", &materialDataSprite->color.x);
+			//	ImGui::DragFloat2("UVTranslate", &uvTransformSprite.translate.x, 0.01f, -10.0f, 10.0f);
+			//	ImGui::DragFloat2("UVScale", &uvTransformSprite.scale.x, 0.01f, -10.0f, 10.0f);
+			//	ImGui::SliderAngle("UVRotate", &uvTransformSprite.rotate.z);
+			//
+			//	ImGui::TreePop();
+			//}
+
+			// ImGuiの内部コマンドを生成する
+			//ImGui::Render();
+
 			// 実際のcommandListのImGuiの描画コマンドを積む
-			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
+			//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 		}
 	}
 
 	// ImGuiの終了処理。初期化と逆順に行う
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-
-	// 各オブジェクトの解放
-	CloseHandle(fenceEvent);
+	//ImGui_ImplDX12_Shutdown();
+	//ImGui_ImplWin32_Shutdown();
+	//ImGui::DestroyContext();
 
 	///
 	/// 解放処理開始
