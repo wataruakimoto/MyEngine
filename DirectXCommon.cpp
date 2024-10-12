@@ -14,6 +14,11 @@
 
 DirectXCommon::~DirectXCommon() {
 
+	// ImGuiの終了処理。初期化と逆順に行う
+	ImGui_ImplDX12_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
 	// 各オブジェクトの解放
 	CloseHandle(fenceEvent);
 }

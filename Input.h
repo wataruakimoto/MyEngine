@@ -18,21 +18,23 @@ public:
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public: // メンバ関数
-
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize(WinApp* winApp);
+
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
+
 	/// <summary>
 	/// キーの押下をチェック
 	/// </summary>
 	/// <param name="keyNumber">キー番号</param>
 	/// <returns>押されているか</returns>
 	bool PushKey(BYTE keyNumber);
+
 	/// <summary>
 	/// キーのトリガーをチェック
 	/// </summary>

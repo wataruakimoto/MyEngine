@@ -42,7 +42,7 @@ public:	// メンバ関数
 	/// ゲッター
 	///-------------------------------------------///
 
-	ComPtr <ID3D12Device> GetDevice() { return device; }
+	ComPtr<ID3D12Device> GetDevice() { return device; }
 
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return commandList; }
 
