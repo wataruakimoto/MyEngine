@@ -18,6 +18,8 @@
 #include "DirectXCommon.h"
 #include "D3DResourceLeakChecker.h"
 #include "Logger.h"
+#include "SpriteCommon.h"
+#include "Sprite.h"
 
 struct Transform {
 	Vector3 scale;
@@ -196,6 +198,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// DirectX基盤のポインタ
 	DirectXCommon* dxCommon = nullptr;
 
+	// スプライト共通部のポインタ
+	SpriteCommon* spriteCommon = nullptr;
+
 	/// ----------ゲームウィンドウ作成----------
 
 	// WindowsAPIの初期化
@@ -217,7 +222,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input = new Input();
 	input->Initialize(winApp);
 
+	// スプライト共通部初期化
+	spriteCommon = new SpriteCommon;
+	spriteCommon->Initialize();
+
 	/// ----------シーンの初期化----------
+
+	// Spriteの生成・初期化
+	Sprite* sprite = new Sprite();
+	sprite->Initialize();
 
 	// PipelineStateObject PSOの処理
 
@@ -767,7 +780,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	errorBlob.Reset();
 	signatureBlob.Reset();
 
+	// スプライトの解放
+	delete sprite;
+
 	/// ----------汎用機能の解放----------
+
+	// スプライト共通部の解放
+	delete spriteCommon;
 
 	// 入力の解放
 	delete input;
