@@ -9,4 +9,14 @@ public: // メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize();
+
+	/// <summary>
+	/// ルートシグネチャの生成
+	/// </summary>
+	void CreateRootSignature();
+
+	/// <summary>
+	/// グラフィックスパイプラインの生成
+	/// </summary>
+	void CreateGraphicsPipeline();
 };
