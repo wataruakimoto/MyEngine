@@ -2,6 +2,8 @@
 // ImGuiを使うため
 #include "externals/imgui/imgui.h"
 
+#pragma comment(lib,"winmm.lib")
+
 // extern宣言
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -61,6 +63,9 @@ void WinApp::Initialize() {
 		wc.hInstance,		  // インスタンスハンドル
 		nullptr				  // オプション
 	);
+
+	// システムタイマーの分解能を上げる
+	timeBeginPeriod(1);
 }
 
 void WinApp::Update() {

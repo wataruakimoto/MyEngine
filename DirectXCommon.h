@@ -8,6 +8,7 @@
 #include <dxcapi.h>
 #include <string>
 #include "externals/DirectXTex/DirectXTex.h"
+#include <chrono>
 
 // DirectX基盤
 class DirectXCommon {
@@ -215,6 +216,16 @@ private: // クラス内処理の関数
 	/// </summary>
 	void ImGuiInitialize();
 
+	/// <summary>
+	/// FPS固定初期化
+	/// </summary>
+	void InitializeFixFPS();
+
+	/// <summary>
+	/// FPS固定更新
+	/// </summary>
+	void UpdateFixFPS();
+
 private: // メンバ変数
 
 	// WindowsAPI
@@ -298,4 +309,7 @@ private: // メンバ変数
 
 	// TrainsitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
+
+	// 記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference_;
 };
