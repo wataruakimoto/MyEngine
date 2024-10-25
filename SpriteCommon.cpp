@@ -92,22 +92,11 @@ void SpriteCommon::CreateRootSignature(){
 	assert(SUCCEEDED(hr));
 }
 
-void SpriteCommon::CreateGraphicsPipeline() {
+void SpriteCommon::CreateInputLayout() {
 
-	// ルートシグネチャの生成
-	CreateRootSignature();
-
-	// PSOを生成する
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-
-	/// === RootSignature === ///
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
-
-	/// === InputLayout === ///
-
-	// InputLayoutの設定を行う
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 
+	// InputLayoutの設定を行う
 	inputElementDescs[0].SemanticName = "POSITION";
 	inputElementDescs[0].SemanticIndex = 0;
 	inputElementDescs[0].Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -123,35 +112,77 @@ void SpriteCommon::CreateGraphicsPipeline() {
 	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
-	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
+}
 
+void SpriteCommon::CreateBlendState() {
+
+	// すべての色要素を書き込む
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+}
+
+void SpriteCommon::CreateRasterizerState() {
+
+	// 裏面(時計回り)を表示しない
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+	// 三角形の中を塗りつぶす
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+}
+
+void SpriteCommon::CreateVertexShader() {
+
+	vertexShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Object3D.VS.hlsl", L"vs_6_0");
+	assert(vertexShaderBlob != nullptr);
+}
+
+void SpriteCommon::CreatePixelShader() {
+
+	pixelShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Object3D.PS.hlsl", L"ps_6_0");
+	assert(pixelShaderBlob != nullptr);
+}
+
+void SpriteCommon::CreateDepthStencilState() {
+
+	// Depthの機能を有効化する
+	depthStencilDesc.DepthEnable = true;
+	// 書き込みします
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	// 比較関数はLessEqual。つまり、近ければ描画される
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+}
+
+void SpriteCommon::CreateGraphicsPipeline() {
+
+	// PSOを生成する
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+
+	/// === RootSignature === ///
+	CreateRootSignature();
+	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
+
+	/// === InputLayout === ///
+	CreateInputLayout();
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 
-	/// === VertexShader === ///
-
-	Microsoft::WRL::ComPtr <IDxcBlob> vertexShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Object3D.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
-
-	graphicsPipelineStateDesc.VS = {
-		vertexShaderBlob->GetBufferPointer(),
-		vertexShaderBlob->GetBufferSize()
-	};
-
-	/// === PixelShader === ///
-	graphicsPipelineStateDesc.PS = {
-		pixelShaderBlob->GetBufferPointer(),
-		pixelShaderBlob->GetBufferSize()
-	};
-
 	/// === BlendState === ///
+	CreateBlendState();
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	/// === RasterizerState === ///
+	CreateRasterizerState();
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 
+	/// === VertexShader === ///
+	CreateVertexShader();
+	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize() };
+
+	/// === PixelShader === ///
+	CreatePixelShader();
+	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() };
+
 	/// === DepthStencilState === ///
+	CreateDepthStencilState();
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
@@ -164,8 +195,7 @@ void SpriteCommon::CreateGraphicsPipeline() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
-	hr = dxCommon->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	HRESULT hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }

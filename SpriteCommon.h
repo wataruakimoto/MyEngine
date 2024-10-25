@@ -26,12 +26,42 @@ public:
 private:
 
 	/// <summary>
-	/// ルートシグネチャの生成
+	/// RootSignatureの生成
 	/// </summary>
 	void CreateRootSignature();
 
 	/// <summary>
-	/// グラフィックスパイプラインの生成
+	/// InputLayoutの生成
+	/// </summary>
+	void CreateInputLayout();
+
+	/// <summary>
+	/// BlendStateの生成
+	/// </summary>
+	void CreateBlendState();
+
+	/// <summary>
+	/// RasterizerStateの生成
+	/// </summary>
+	void CreateRasterizerState();
+
+	/// <summary>
+	/// VertexShaderの生成
+	/// </summary>
+	void CreateVertexShader();
+
+	/// <summary>
+	/// PixelShaderの生成
+	/// </summary>
+	void CreatePixelShader();
+
+	/// <summary>
+	/// DepthStencilStateの生成
+	/// </summary>
+	void CreateDepthStencilState();
+
+	/// <summary>
+	/// GraphicsPipelineの生成
 	/// </summary>
 	void CreateGraphicsPipeline();
 
@@ -54,8 +84,27 @@ private:
 	// DirectXCommonのポインタ
 	DirectXCommon* dxCommon_;
 
-	HRESULT hr;
-
-	// ルートシグネチャ
+	// RootSignature
 	Microsoft::WRL::ComPtr <ID3D12RootSignature> rootSignature = nullptr;
+
+	// InputLayout
+	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+
+	// BlendState
+	D3D12_BLEND_DESC blendDesc{};
+
+	// RasterizerState
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
+
+	// VertexShader
+	Microsoft::WRL::ComPtr <IDxcBlob> vertexShaderBlob = nullptr;
+
+	// PixelShader
+	Microsoft::WRL::ComPtr <IDxcBlob> pixelShaderBlob = nullptr;
+
+	// DepthStencilState
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+
+	// GraphicsPipeline
+	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
 };
