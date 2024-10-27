@@ -2,7 +2,7 @@
 #include "cassert"
 #include "cmath"
 
-Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2) {
+Matrix4x4 MathMatrix::Add(const Matrix4x4& m1, const Matrix4x4& m2) {
 
 	Matrix4x4 resultAdd = {};
 
@@ -16,7 +16,7 @@ Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2) {
 	return resultAdd;
 }
 
-Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2) {
+Matrix4x4 MathMatrix::Subtract(const Matrix4x4& m1, const Matrix4x4& m2) {
 
 	Matrix4x4 resultSubtract = {};
 
@@ -30,7 +30,7 @@ Matrix4x4 Subtract(const Matrix4x4& m1, const Matrix4x4& m2) {
 	return resultSubtract;
 }
 
-Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
+Matrix4x4 MathMatrix::Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 
 	Matrix4x4 resultMultiply = {};
 
@@ -43,7 +43,7 @@ Matrix4x4 Multiply(const Matrix4x4& m1, const Matrix4x4& m2) {
 	return resultMultiply;
 }
 
-Matrix4x4 Inverse(const Matrix4x4& m) {
+Matrix4x4 MathMatrix::Inverse(const Matrix4x4& m) {
 
 	float determinant =
 		m.m[0][0] * m.m[1][1] * m.m[2][2] * m.m[3][3] + m.m[0][0] * m.m[1][2] * m.m[2][3] * m.m[3][1] + m.m[0][0] * m.m[1][3] * m.m[2][1] * m.m[3][2]
@@ -111,7 +111,7 @@ Matrix4x4 Inverse(const Matrix4x4& m) {
 	return resultInverse;
 }
 
-Matrix4x4 Transpose(const Matrix4x4& m) {
+Matrix4x4 MathMatrix::Transpose(const Matrix4x4& m) {
 
 	Matrix4x4 resultTranspose = {};
 
@@ -138,7 +138,7 @@ Matrix4x4 Transpose(const Matrix4x4& m) {
 	return resultTranspose;
 }
 
-Matrix4x4 MakeIdentity4x4() {
+Matrix4x4 MathMatrix::MakeIdentity4x4() {
 
 	Matrix4x4 resultIdentity = {
 		1.0f,0.0f,0.0f,0.0f,
@@ -150,7 +150,7 @@ Matrix4x4 MakeIdentity4x4() {
 	return resultIdentity;
 }
 
-Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
+Matrix4x4 MathMatrix::MakeTranslateMatrix(const Vector3& translate) {
 
 	Matrix4x4 resultTranslate = {};
 
@@ -177,7 +177,7 @@ Matrix4x4 MakeTranslateMatrix(const Vector3& translate) {
 	return resultTranslate;
 }
 
-Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
+Matrix4x4 MathMatrix::MakeScaleMatrix(const Vector3& scale) {
 
 	Matrix4x4 resultScale = {};
 
@@ -204,7 +204,7 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	return resultScale;
 }
 
-/*Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
+/*Vector3 MathMatrix::Transform(const Vector3& vector, const Matrix4x4& matrix) {
 
 	// w = 1 がデカルト座標系であるので(x,y,z,1)のベクトルとしてmatrixとの積をとる
 	Vector3 resultTransform = {};
@@ -225,7 +225,7 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale) {
 	return resultTransform;
 }*/
 
-Matrix4x4 MakeRotateMatrix(Vector3 radian) {
+Matrix4x4 MathMatrix::MakeRotateMatrix(Vector3 radian) {
 
 	Matrix4x4 rotateX = { 0.0f };
 
@@ -261,7 +261,7 @@ Matrix4x4 MakeRotateMatrix(Vector3 radian) {
 	return resultRotate;
 }
 
-Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
+Matrix4x4 MathMatrix::MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate) {
 
 	Matrix4x4 rotateMatrix = { 0.0f };
 
@@ -287,7 +287,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	return resultAffine;
 }
 
-Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
+Matrix4x4 MathMatrix::MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 
 	Matrix4x4 resultPerspectiveFov = {};
 
@@ -301,7 +301,7 @@ Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip
 }
 
 // 正射影行列
-Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
+Matrix4x4 MathMatrix::MakeOrthographicMatrix(float left, float top, float right, float bottom, float nearClip, float farClip) {
 
 	Matrix4x4 resultOrthographic = {};
 
@@ -315,3 +315,64 @@ Matrix4x4 MakeOrthographicMatrix(float left, float top, float right, float botto
 
 	return resultOrthographic;
 }
+
+//Matrix4x4 MathMatrix::operator+(const Matrix4x4& m1, const Matrix4x4& m2) {
+//
+//	return Add(m1, m2);
+//}
+//
+//Matrix4x4 MathMatrix::operator+(const Matrix4x4& m) {
+//
+//	return m;
+//}
+//
+//Matrix4x4& MathMatrix::operator+=(Matrix4x4& m1, const Matrix4x4& m2) {
+//
+//	for (int x = 0; x < 4; x++) {
+//		for (int y = 0; y < 4; y++) {
+//
+//			m1.m[y][x] += m2.m[y][x];
+//		}
+//	}
+//
+//	return m1;
+//}
+//
+//Matrix4x4 MathMatrix::operator-(const Matrix4x4& m1, const Matrix4x4& m2) {
+//
+//	return Subtract(m1, m2);
+//}
+//
+//Matrix4x4 MathMatrix::operator-(const Matrix4x4& m) {
+//
+//	return m;
+//}
+//
+//Matrix4x4& MathMatrix::operator-=(Matrix4x4& m1, const Matrix4x4& m2) {
+//
+//	for (int x = 0; x < 4; x++) {
+//		for (int y = 0; y < 4; y++) {
+//
+//			m1.m[y][x] -= m2.m[y][x];
+//		}
+//	}
+//
+//	return m1;
+//}
+//
+//Matrix4x4 MathMatrix::operator*(const Matrix4x4& m1, const Matrix4x4& m2) {
+//
+//	return Multiply(m1, m2);
+//}
+//
+//Matrix4x4 MathMatrix::operator*(const Matrix4x4& m) {
+//
+//	return m;
+//}
+//
+//Matrix4x4& MathMatrix::operator*=(Matrix4x4& m1, const Matrix4x4& m2) {
+//
+//	m1 = Multiply(m1, m2);
+//
+//	return m1;
+//}
