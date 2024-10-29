@@ -14,7 +14,6 @@ struct VertexData {
 // 座標変換行列
 struct TransformationMatrix {
 	Matrix4x4 WVP;
-	Matrix4x4 world;
 };
 
 // マテリアルデータ
@@ -55,6 +54,26 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
+
+///=====================================================/// 
+/// クラス内関数
+///=====================================================///
+private:
+
+	/// <summary>
+	/// 頂点データ初期化
+	/// </summary>
+	void InitializeVertexData();
+
+	/// <summary>
+	/// 座標変換行列データ初期化
+	/// </summary>
+	void InitializeTransformationMatrixData();
+
+	/// <summary>
+	/// マテリアルデータ初期化
+	/// </summary>
+	void InitializeMaterialData();
 
 ///=====================================================/// 
 /// メンバ変数 

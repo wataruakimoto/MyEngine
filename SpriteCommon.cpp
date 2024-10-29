@@ -22,6 +22,9 @@ void SpriteCommon::SettingCommonDrawing() {
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	ID3D12DescriptorHeap* descriptorHeaps[] = { dxCommon_->GetSRVDescriptorHeap().Get() };
+	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void SpriteCommon::CreateRootSignature(){
