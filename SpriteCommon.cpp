@@ -6,7 +6,7 @@ using namespace Microsoft::WRL;
 void SpriteCommon::Initialize(DirectXCommon* dxCommon){
 
 	// 引数をメンバ変数に代入
-	dxCommon = dxCommon_;
+	dxCommon_ = dxCommon;
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
