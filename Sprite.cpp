@@ -21,34 +21,31 @@ void Sprite::Update() {
 
 	/// === VertexResourceにデータを書き込む(4頂点) === ///
 	
-	// 1枚目の三角形
-	vertexData[0].position = { 0.0f, 360.0f, 0.0f, 1.0f }; // 左下
+	// 左下
+	vertexData[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
 	vertexData[0].texcoord = { 0.0f, 1.0f };
-	vertexData[1].position = { 0.0f, 0.0f, 0.0f, 1.0f }; // 左上
+	// 左上
+	vertexData[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
 	vertexData[1].texcoord = { 0.0f, 0.0f };
-	vertexData[2].position = { 640.0f, 360.0f, 0.0f, 1.0f }; // 右下
+	// 右下
+	vertexData[2].position = { 1.0f, 1.0f, 0.0f, 1.0f };
 	vertexData[2].texcoord = { 1.0f, 1.0f };
-
-	// 2枚目の三角形
-	vertexData[3].position = { 0.0f, 0.0f, 0.0f, 1.0f }; // 左上
-	vertexData[3].texcoord = { 0.0f, 0.0f };
-	vertexData[4].position = { 640.0f, 0.0f, 0.0f, 1.0f }; // 右上
-	vertexData[4].texcoord = { 1.0f, 0.0f };
-	vertexData[5].position = { 640.0f, 360.0f, 0.0f, 1.0f }; // 右下
-	vertexData[5].texcoord = { 1.0f, 1.0f };
+	// 右上
+	vertexData[3].position = { 1.0f, 0.0f, 0.0f, 1.0f };
+	vertexData[3].texcoord = { 1.0f, 0.0f };
 
 	/// === IndexResourceにデータを書き込む(6個分)=== ///
 
-	indexData[0] = 0;
-	indexData[1] = 1;
-	indexData[2] = 2;
-	indexData[3] = 1;
-	indexData[4] = 4;
-	indexData[5] = 2;
+	indexData[0] = 0; // 左下
+	indexData[1] = 1; // 左上
+	indexData[2] = 2; // 右下
+	indexData[3] = 1; // 左上
+	indexData[4] = 3; // 右上
+	indexData[5] = 2; // 右下
 
 	/// === Transform情報を作る === ///
-	Transform transform{ {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f} };
-
+	Transform transform{ {size.x, size.y, 1.0f}, {0.0f, 0.0f, rotation}, {position.x, position.y, 0.0f} };
+	
 	/// === TransformからWorldMatrixを作る === ///
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 

@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "MathVector.h"
 #include "MathMatrix.h"
 #include <cmath>
 #include <fstream>
@@ -231,8 +232,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// ----------シーンの初期化----------
 
 	// Spriteの生成・初期化
-	Sprite* sprite = new Sprite();
-	sprite->Initialize(spriteCommon);
+	std::vector<Sprite*> sprites;
+
+	for (uint32_t i = 0; i < 3; ++i) {
+
+		Sprite* sprite = new Sprite();
+		sprite->Initialize(spriteCommon);
+
+		Vector2 position = sprite->GetPosition();
+		position.x += i * 512.0f;
+		sprite->SetPosition(position);
+
+		sprites.push_back(sprite);
+	}
 
 	//// PipelineStateObject PSOの処理
 	//
@@ -459,8 +471,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = dxCommon->GetSRVCPUDescriptorHandle(1);
 	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = dxCommon->GetSRVGPUDescriptorHandle(1);
 	
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = dxCommon->GetSRVCPUDescriptorHandle(1);
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = dxCommon->GetSRVGPUDescriptorHandle(1);
+	//D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU2 = dxCommon->GetSRVCPUDescriptorHandle(1);
+	//D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU2 = dxCommon->GetSRVGPUDescriptorHandle(1);
 	
 	// SRVの生成
 	dxCommon->GetDevice()->CreateShaderResourceView(textureResource.Get(), &srvDesc, textureSrvHandleCPU);
@@ -520,11 +532,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			///
 			/// 更新処理開始
 			///
-			
-			// ImGuiにフレーム開始を告げる
-			ImGui_ImplDX12_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
 
 			/// ----------入力の更新----------
 			input->Update();
@@ -546,7 +553,44 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//}
 
 			/// ----------シーンの更新----------
-			sprite->Update();
+
+			/// === ImGui開始 === ///
+
+			// ImGuiにフレーム開始を告げる
+			ImGui_ImplDX12_NewFrame();
+			ImGui_ImplWin32_NewFrame();
+			ImGui::NewFrame();
+			
+			ImGui::Begin("Sprite");
+			for (Sprite* sprite : sprites) {
+
+				if (ImGui::TreeNode("Single")) {
+					// サイズ変更の確認
+					Vector2 size = sprite->GetSize();
+					ImGui::DragFloat2("Size", &size.x, 0.1f);
+					sprite->SetSize(size);
+
+					// 回転変更の確認
+					float rotation = sprite->GetRotation();
+					ImGui::DragFloat("Rotation", &rotation, 0.01f);
+					sprite->SetRotation(rotation);
+
+					// 座標変更の確認
+					Vector2 position = sprite->GetPosition();
+					ImGui::DragFloat2("Position", &position.x, 0.1f);
+					sprite->SetPosition(position);
+
+					// 色変更の確認
+					Vector4 color = sprite->GetColor();
+					ImGui::DragFloat4("Color", &color.x, 0.01f);
+					sprite->SetColor(color);
+
+					ImGui::TreePop();
+				}
+
+				sprite->Update();
+			}
+			ImGui::End();
 
 			//// TransformからWorldMatrix作成
 			//Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -558,7 +602,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//// CBufferの中身を更新
 			//wvpData->WVP = worldViewProjectionMatrix;
 			//wvpData->world = worldMatrix;
-			//
+			
 			//if (ImGui::TreeNode("Camera")) {
 			//
 			//	ImGui::DragFloat3("Rotate", &cameraTransform.rotate.x, 0.01f);
@@ -588,6 +632,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// ImGuiの内部コマンドを生成する
 			ImGui::Render();
 
+			/// === ImGui終了 === ///
+
 			///
 			/// 更新処理終了
 			///
@@ -603,7 +649,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			spriteCommon->SettingCommonDrawing();
 
 			//TODO: 全てのSprite個々の描画
-			sprite->Draw();
+			for (Sprite* sprite : sprites) { sprite->Draw(); }
 
 			/// ----------シーンの描画----------
 
@@ -629,6 +675,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			//dxCommon->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 			//// 描画!(DrawCall/ドローコール)。3頂点で1つのインスタンス。インスタンスについては今後
 			//dxCommon->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+
+			// 実際のcommandListのImGuiの描画コマンドを積む
+			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList().Get());
 			
 			/// ----------DirectX描画処理----------
 			dxCommon->PostDraw();
@@ -663,7 +712,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//signatureBlob.Reset();
 
 	// スプライトの解放
-	delete sprite;
+	for (Sprite* sprite : sprites) { delete sprite; }
 
 	/// ----------汎用機能の解放----------
 
