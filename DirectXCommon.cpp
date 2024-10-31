@@ -346,23 +346,6 @@ void DirectXCommon::UploadTextureData(ComPtr<ID3D12Resource> texture, const Dire
 	}
 }
 
-DirectX::ScratchImage DirectXCommon::LoadTexture(const std::string& filePath) {
-
-	// テクスチャファイルを読んでプログラムで扱えるようにする
-	DirectX::ScratchImage image{};
-	std::wstring filePathW = StringUtility::ConvertString(filePath);
-	HRESULT hr = DirectX::LoadFromWICFile(filePathW.c_str(), DirectX::WIC_FLAGS_FORCE_SRGB, nullptr, image);
-	assert(SUCCEEDED(hr));
-
-	// ミップマップの作成
-	DirectX::ScratchImage mipImages{};
-	hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 0, mipImages);
-	assert(SUCCEEDED(hr));
-
-	// ミップマップ付きのデータを返す
-	return mipImages;
-}
-
 void DirectXCommon::DeviceInitialize() {
 
 	HRESULT hr;
@@ -536,6 +519,8 @@ void DirectXCommon::DepthBufferGenerate() {
 	assert(SUCCEEDED(hr));
 }
 
+const uint32_t DirectXCommon::kMaxSRVCount = 512;
+
 void DirectXCommon::VariousDescriptorHeapGenerate() {
 
 	// ----------RTV用のDescriptorSizeを取得----------
@@ -553,7 +538,7 @@ void DirectXCommon::VariousDescriptorHeapGenerate() {
 
 	// ----------SRV用のDescriptorHeap生成----------
 	// SRV用のヒープでディスクリプタの数は128。SRVはShader内で触るものなので、ShaderVisibleはtrue
-	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, 128, true);
+	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);
 
 	// ----------DSV用のDescriptorHeap生成----------
 	// DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので、ShaderVisibleはfalse

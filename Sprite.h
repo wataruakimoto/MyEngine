@@ -19,7 +19,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(SpriteCommon* spriteCommon);
+	void Initialize(SpriteCommon* spriteCommon, std::string textureFilePath);
 
 	/// <summary>
 	/// 更新
@@ -170,4 +170,7 @@ private:
 
 	// 座標
 	Vector2 position = { 0.0f,0.0f };
+	
+	// テクスチャ番号
+	uint32_t textureIndex = 0;
 };

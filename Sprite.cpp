@@ -2,10 +2,11 @@
 #include "SpriteCommon.h"
 #include "MathMatrix.h"
 #include "WinApp.h"
+#include "TextureManager.h"
 
 using namespace MathMatrix;
 
-void Sprite::Initialize(SpriteCommon* spriteCommon) {
+void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath) {
 
 	// 引数をメンバ変数に代入
 	this->spriteCommon_ = spriteCommon;
@@ -15,6 +16,8 @@ void Sprite::Initialize(SpriteCommon* spriteCommon) {
 	InitializeTransformationMatrixData();
 
 	InitializeMaterialData();
+
+	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 }
 
 void Sprite::Update() {
@@ -73,7 +76,7 @@ void Sprite::Draw() {
 	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	/// === SRVのDescriptorTableの先頭を設定 === ///
-	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, spriteCommon_->GetDxCommon()->GetSRVGPUDescriptorHandle(1));
+	spriteCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureIndex));
 
 	/// === 描画(DrawCall) === ///
 	spriteCommon_->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);

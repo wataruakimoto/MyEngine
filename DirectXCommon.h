@@ -129,13 +129,6 @@ public:	// メンバ関数
 	/// <param name="mipImages"></param>
 	void UploadTextureData(ComPtr <ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 
-	/// <summary>
-	/// DirectXTexでテクスチャを読む
-	/// </summary>
-	/// <param name="filePath"></param>
-	/// <returns></returns>
-	DirectX::ScratchImage LoadTexture(const std::string& filePath);
-
 private: // クラス内処理の関数
 
 	/// <summary>
@@ -312,4 +305,12 @@ private: // メンバ変数
 
 	// 記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
+
+///=====================================================/// 
+/// 定数
+///=====================================================///
+public:
+
+	// SRV用のヒープ生成
+	static const uint32_t kMaxSRVCount;
 };
