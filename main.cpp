@@ -21,6 +21,7 @@
 #include "Logger.h"
 #include "SpriteCommon.h"
 #include "Sprite.h"
+#include "Object3dCommon.h"
 #include "TextureManager.h"
 
 using namespace MathMatrix;
@@ -205,6 +206,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// スプライト共通部のポインタ
 	SpriteCommon* spriteCommon = nullptr;
 
+	// 3Dオブジェクト共通部のポインタ
+	Object3dCommon* object3dCommon = nullptr;
+
 	/// ----------ゲームウィンドウ作成----------
 
 	// WindowsAPIの初期化
@@ -227,8 +231,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input->Initialize(winApp);
 
 	// スプライト共通部初期化
-	spriteCommon = new SpriteCommon;
+	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(dxCommon);
+
+	// 3Dオブジェクト共通部初期化
+	object3dCommon = new Object3dCommon();
+	object3dCommon->Initialize();
 
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
@@ -732,6 +740,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
+
+	// 3Dオブジェクト共通部の解放
+	delete object3dCommon;
 
 	// スプライト共通部の解放
 	delete spriteCommon;
