@@ -239,31 +239,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	/// ----------シーンの初期化----------
 
 	// Spriteの生成・初期化
-	std::vector<Sprite*> sprites;
-
-	std::string uv = "resources/uvChecker.png";
-	std::string monster = "resources/monsterBall.png";
-
-	for (uint32_t i = 0; i < 3; ++i) {
-
-		Sprite* sprite = new Sprite();
-
-		if (i % 2 == 0) {
-
-			sprite->Initialize(spriteCommon, uv);
-
-		} else {
-
-			sprite->Initialize(spriteCommon, monster);
-		}
-
-		Vector2 position = sprite->GetPosition();
-		position.x += i * 512.0f;
-		sprite->SetPosition(position);
-
-		sprites.push_back(sprite);
-	}
-
+	Sprite* sprite = new Sprite();
+	sprite->Initialize(spriteCommon, "resources/uvChecker.png");
+	
 	//// PipelineStateObject PSOの処理
 	//
 	//// RootSignatureを生成する
@@ -580,34 +558,52 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::NewFrame();
 			
 			ImGui::Begin("Sprite");
-			for (Sprite* sprite : sprites) {
+			
+			// サイズ変更の確認
+			Vector2 size = sprite->GetSize();
+			ImGui::DragFloat2("Size", &size.x, 1.0f);
+			sprite->SetSize(size);
 
-				if (ImGui::TreeNode("Single")) {
-					// サイズ変更の確認
-					Vector2 size = sprite->GetSize();
-					ImGui::DragFloat2("Size", &size.x, 0.1f);
-					sprite->SetSize(size);
+			// 回転変更の確認
+			float rotation = sprite->GetRotation();
+			ImGui::DragFloat("Rotation", &rotation, 0.01f);
+			sprite->SetRotation(rotation);
 
-					// 回転変更の確認
-					float rotation = sprite->GetRotation();
-					ImGui::DragFloat("Rotation", &rotation, 0.01f);
-					sprite->SetRotation(rotation);
+			// 座標変更の確認
+			Vector2 position = sprite->GetPosition();
+			ImGui::DragFloat2("Position", &position.x, 1.0f);
+			sprite->SetPosition(position);
 
-					// 座標変更の確認
-					Vector2 position = sprite->GetPosition();
-					ImGui::DragFloat2("Position", &position.x, 0.1f);
-					sprite->SetPosition(position);
+			// 色変更の確認
+			Vector4 color = sprite->GetColor();
+			ImGui::DragFloat4("Color", &color.x, 0.01f);
+			sprite->SetColor(color);
 
-					// 色変更の確認
-					Vector4 color = sprite->GetColor();
-					ImGui::DragFloat4("Color", &color.x, 0.01f);
-					sprite->SetColor(color);
+			// アンカー変更の確認
+			Vector2 anchorPoint = sprite->GetAnchorPoint();
+			ImGui::SliderFloat2("Anchor", &anchorPoint.x, -1.0f, 1.0f);
+			sprite->SetAnchorPoint(anchorPoint);
 
-					ImGui::TreePop();
-				}
+			// フリップ変更の確認
+			bool isFlipX = sprite->GetIsFlipX();
+			bool isFlipY = sprite->GetIsFlipY();
+			ImGui::Checkbox("IsFlipX", &isFlipX);
+			ImGui::Checkbox("IsFlipY", &isFlipY);
+			sprite->SetIsFlipX(isFlipX);
+			sprite->SetIsFlipY(isFlipY);
 
-				sprite->Update();
-			}
+			// テクスチャ左上座標の確認
+			Vector2 textureLeftTop = sprite->GetTextureLeftTop();
+			ImGui::DragFloat2("TextureLeftTop", &textureLeftTop.x, 1.0f);
+			sprite->SetTextureLeftTop(textureLeftTop);
+
+			// テクスチャ切り出しサイズの確認
+			Vector2 textureSize = sprite->GetTextureSize();
+			ImGui::DragFloat2("TextureSize", &textureSize.x, 1.0f);
+			sprite->SetTextureSize(textureSize);
+
+			sprite->Update();
+			
 			ImGui::End();
 
 			//// TransformからWorldMatrix作成
@@ -667,7 +663,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			spriteCommon->SettingCommonDrawing();
 
 			//TODO: 全てのSprite個々の描画
-			for (Sprite* sprite : sprites) { sprite->Draw(); }
+			sprite->Draw();
 
 			/// ----------シーンの描画----------
 
@@ -730,7 +726,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//signatureBlob.Reset();
 
 	// スプライトの解放
-	for (Sprite* sprite : sprites) { delete sprite; }
+	delete sprite;
 
 	/// ----------汎用機能の解放----------
 

@@ -62,6 +62,13 @@ public:
 	/// <returns></returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(uint32_t textureIndex);
 
+	/// <summary>
+	/// メタデータを取得
+	/// </summary>
+	/// <param name="textureIndex">テクスチャ番号</param>
+	/// <returns></returns>
+	const DirectX::TexMetadata& GetMetadata(uint32_t textureIndex);
+
 ///=====================================================/// 
 /// 構造体
 ///=====================================================///

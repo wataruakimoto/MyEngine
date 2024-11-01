@@ -18,24 +18,56 @@ void Sprite::Initialize(SpriteCommon* spriteCommon, std::string textureFilePath)
 	InitializeMaterialData();
 
 	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
+
+	AdjustTextureSize();
 }
 
 void Sprite::Update() {
 
+	/// === アンカーポイント反映 === ///
+
+	float left = 0.0f - anchorPoint.x;
+	float right = 1.0f - anchorPoint.x;
+	float top = 0.0f - anchorPoint.y;
+	float bottom = 1.0f - anchorPoint.y;
+
+	/// === フリップ反映 === ///
+
+	// 左右反転
+	if (isFlipX) {
+		left = -left;
+		right = -right;
+	}
+
+	// 上下反転
+	if (isFlipY) {
+		top = -top;
+		bottom = -bottom;
+	}
+
+	/// === テクスチャ範囲反映 === ///
+
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureIndex);
+
+	float texLeft = textureLeftTop.x / metadata.width;
+	float texRight = (textureLeftTop.x + textureSize.x) / metadata.width;
+	float texTop = textureLeftTop.y / metadata.height;
+	float texBottom = (textureLeftTop.y + textureSize.y) / metadata.height;
+
 	/// === VertexResourceにデータを書き込む(4頂点) === ///
 	
 	// 左下
-	vertexData[0].position = { 0.0f, 1.0f, 0.0f, 1.0f };
-	vertexData[0].texcoord = { 0.0f, 1.0f };
+	vertexData[0].position = { left, bottom, 0.0f, 1.0f };
+	vertexData[0].texcoord = { texLeft, texBottom };
 	// 左上
-	vertexData[1].position = { 0.0f, 0.0f, 0.0f, 1.0f };
-	vertexData[1].texcoord = { 0.0f, 0.0f };
+	vertexData[1].position = { left, top, 0.0f, 1.0f };
+	vertexData[1].texcoord = { texLeft, texTop };
 	// 右下
-	vertexData[2].position = { 1.0f, 1.0f, 0.0f, 1.0f };
-	vertexData[2].texcoord = { 1.0f, 1.0f };
+	vertexData[2].position = { right, bottom, 0.0f, 1.0f };
+	vertexData[2].texcoord = { texRight, texBottom };
 	// 右上
-	vertexData[3].position = { 1.0f, 0.0f, 0.0f, 1.0f };
-	vertexData[3].texcoord = { 1.0f, 0.0f };
+	vertexData[3].position = { right, top, 0.0f, 1.0f };
+	vertexData[3].texcoord = { texRight, texTop };
 
 	/// === IndexResourceにデータを書き込む(6個分)=== ///
 
@@ -137,4 +169,15 @@ void Sprite::InitializeMaterialData() {
 
 	/// === MaterialDataの初期値を書き込む === ///
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白を書き込む
+}
+
+void Sprite::AdjustTextureSize() {
+
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureIndex);
+
+	textureSize.x = static_cast<float>(metadata.width);
+	textureSize.y = static_cast<float>(metadata.height);
+
+	// 画像サイズをテクスチャサイズにあわせる
+	size = textureSize;
 }
