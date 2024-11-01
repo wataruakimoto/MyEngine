@@ -71,10 +71,14 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	textureData.metaData = mipImages.GetMetadata();
 	textureData.resource = dxCommon_->CreateTextureResource(textureData.metaData);
 
+	/// === テクスチャデータ送信 === ///
+
+	dxCommon_->UploadTextureData(textureData.resource, mipImages);
+
 	/// === デスクリプタハンドルの計算 === ///
 
 	// テクスチャデータの要素数番号をSRVのインデックスとする
-	uint32_t srvIndex = static_cast<uint32_t>(textureDatas.size()) + kSRVIndexTop;
+	uint32_t srvIndex = static_cast<uint32_t>(textureDatas.size() - 1) + kSRVIndexTop;
 
 	textureData.srvHandleCPU = dxCommon_->GetSRVCPUDescriptorHandle(srvIndex);
 	textureData.srvHandleGPU = dxCommon_->GetSRVGPUDescriptorHandle(srvIndex);

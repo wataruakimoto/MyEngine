@@ -233,17 +233,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
 
+	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+
 	/// ----------シーンの初期化----------
 
 	// Spriteの生成・初期化
 	std::vector<Sprite*> sprites;
 
+	std::string uv = "resources/uvChecker.png";
+	std::string monster = "resources/monsterBall.png";
+
 	for (uint32_t i = 0; i < 3; ++i) {
 
-		TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-
 		Sprite* sprite = new Sprite();
-		sprite->Initialize(spriteCommon, "resources/uvChecker.png");
+
+		if (i % 2 == 0) {
+
+			sprite->Initialize(spriteCommon, uv);
+
+		} else {
+
+			sprite->Initialize(spriteCommon, monster);
+		}
 
 		Vector2 position = sprite->GetPosition();
 		position.x += i * 512.0f;
