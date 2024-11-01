@@ -2,13 +2,11 @@
 
 #include <string>
 
-class Logger {
-
-public: //静的メンバ関数
+namespace Logger {
 
 	/// <summary>
 	/// ログ出力
 	/// </summary>
 	/// <param name="message">ログ</param>
-	static void Log(const std::string& message);
+	void Log(const std::string& message);
 };
