@@ -22,6 +22,7 @@
 #include "SpriteCommon.h"
 #include "Sprite.h"
 #include "Object3dCommon.h"
+#include "Object3d.h"
 #include "TextureManager.h"
 
 using namespace MathMatrix;
@@ -246,9 +247,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	/// ----------シーンの初期化----------
 
-	// Spriteの生成・初期化
+	// スプライトの生成・初期化
 	Sprite* sprite = new Sprite();
 	sprite->Initialize(spriteCommon, "resources/uvChecker.png");
+
+	// 3Dオブジェクトの生成・初期化
+	Object3d* object3d = new Object3d();
+	object3d->Initialize();
 	
 	//// PipelineStateObject PSOの処理
 	//
@@ -564,6 +569,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
+
+			/// === スプライト更新 === ///
 			
 			ImGui::Begin("Sprite");
 			
@@ -613,6 +620,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			sprite->Update();
 			
 			ImGui::End();
+
+			/// === 3Dオブジェクト更新 === ///
+
+			object3d->Update();
 
 			//// TransformからWorldMatrix作成
 			//Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
@@ -667,11 +678,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			/// ----------DirectX描画開始----------
 			dxCommon->PreDraw();
 
-			/// === Spriteの描画準備 === ///
+			/// === スプライトの描画準備 === ///
 			spriteCommon->SettingCommonDrawing();
 
-			//TODO: 全てのSprite個々の描画
+			//TODO: 全てのスプライト個々の描画
 			sprite->Draw();
+
+			//TODO: 全ての3Dオブジェクト個々の描画
+			object3d->Draw();
 
 			/// ----------シーンの描画----------
 
@@ -732,6 +746,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//rootSignature.Reset();
 	//errorBlob.Reset();
 	//signatureBlob.Reset();
+
+	// 3Dオブジェクトの解放
+	delete object3d;
 
 	// スプライトの解放
 	delete sprite;
