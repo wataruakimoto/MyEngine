@@ -360,10 +360,10 @@ Matrix4x4 MathMatrix::MakeOrthographicMatrix(float left, float top, float right,
 //	return m1;
 //}
 //
-//Matrix4x4 MathMatrix::operator*(const Matrix4x4& m1, const Matrix4x4& m2) {
-//
-//	return Multiply(m1, m2);
-//}
+Matrix4x4 MathMatrix::operator*(const Matrix4x4& m1, const Matrix4x4& m2) {
+
+	return Multiply(m1, m2);
+}
 //
 //Matrix4x4 MathMatrix::operator*(const Matrix4x4& m) {
 //
