@@ -19,13 +19,6 @@ class Object3d {
 ///=====================================================///
 public:
 
-	// 頂点データ
-	struct VertexData {
-		Vector4 position;
-		Vector2 texcoord;
-		Vector3 normal;
-	};
-
 	// 座標変換行列
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
@@ -45,18 +38,6 @@ public:
 		Vector4 color; // !< ライトの色
 		Vector3 direction; // !< ライトの向き
 		float intensity; // !< 輝度
-	};
-
-	// マテリアルデータ
-	struct MaterialData {
-		std::string textureFilePath;
-		uint32_t textureIndex = 0;
-	};
-
-	// モデルデータ
-	struct ModelData {
-		std::vector<VertexData> vertices;
-		MaterialData material;
 	};
 
 	// 変換データ
@@ -135,29 +116,15 @@ private:
 	// 基盤のポインタ
 	Object3dCommon* object3dCommon_ = nullptr;
 
-	// 頂点リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
 	// 座標変換行列リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
-	// マテリアルリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
 	// 平行光源リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
 
-	// 頂点データ
-	VertexData* vertexData = nullptr;
 	// 座標変換行列データ
 	TransformationMatrix* transformationMatrixData = nullptr;
-	// マテリアルデータ
-	Material* materialData = nullptr;
 	// 平行光源データ
 	DirectionalLight* directionalLightData = nullptr;
-
-	// モデルデータ
-	ModelData modelData;
-
-	// 頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
 	Transform transform;
 

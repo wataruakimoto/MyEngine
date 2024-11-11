@@ -31,6 +31,9 @@
     <Filter Include="Object3d">
       <UniqueIdentifier>{6021a595-e051-4cab-9640-4d1bd80d76dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{810a7d1f-f4f5-4209-9947-2d4895f38598}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -66,9 +69,6 @@
     <ClCompile Include="Logger.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="StringUtility.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="TextureManager.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -95,6 +95,15 @@
     </ClCompile>
     <ClCompile Include="Object3d.cpp">
       <Filter>Object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Modelcommon.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="StringUtility.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -172,6 +181,12 @@
     </ClInclude>
     <ClInclude Include="Object3d.h">
       <Filter>Object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Modelcommon.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

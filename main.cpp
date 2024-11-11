@@ -1,18 +1,5 @@
-#include <dxgidebug.h>
-#include "Vector2.h"
-#include "Vector3.h"
-#include "Vector4.h"
-#include "Matrix4x4.h"
-#include "MathVector.h"
-#include "MathMatrix.h"
-#include <cmath>
-#include <fstream>
-#include <sstream>
-
 #include "externals/imgui/imgui_impl_dx12.h"
 #include "externals/imgui/imgui_impl_win32.h"
-
-#pragma comment(lib,"dxcompiler.lib")
 
 #include "Input.h"
 #include "WinApp.h"
@@ -24,8 +11,6 @@
 #include "Object3dCommon.h"
 #include "Object3d.h"
 #include "TextureManager.h"
-
-using namespace MathMatrix;
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -255,19 +240,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	///
 
 	/// ----------最初のシーンの解放----------
-
-	//textureResource2.Reset();
-	//textureResource.Reset();
-	//vertexResource.Reset();
-	//directionalLightResource.Reset();
-	//materialResource.Reset();
-	//wvpResource.Reset();
-	//graphicsPipelineState.Reset();
-	//pixelShaderBlob.Reset();
-	//vertexShaderBlob.Reset();
-	//rootSignature.Reset();
-	//errorBlob.Reset();
-	//signatureBlob.Reset();
 
 	// 3Dオブジェクトの解放
 	delete object3d;
