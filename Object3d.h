@@ -67,22 +67,6 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// .mtlファイル読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリーパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns></returns>
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// .objファイル読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリーパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns></returns>
-	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
-
 ///=====================================================/// 
 /// クラス内関数
 ///=====================================================///

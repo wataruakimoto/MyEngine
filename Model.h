@@ -38,6 +38,45 @@ public:
 		uint32_t textureIndex = 0;
 	};
 
+	// モデルデータ
+	struct ModelData {
+		std::vector<VertexData> vertices;
+		MaterialData material;
+	};
+
+///=====================================================/// 
+/// メンバ関数
+///=====================================================///
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="modelCommon">3Dモデル基盤</param>
+	void Initialize(Modelcommon* modelCommon);
+
+	/// <summary>
+	/// .mtlファイル読み込み
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリーパス</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns></returns>
+	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+
+	/// <summary>
+	/// .objファイル読み込み
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリーパス</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns></returns>
+	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+
+///=====================================================/// 
+/// クラス内関数
+///=====================================================///
+private:
+
+
 ///=====================================================/// 
 /// メンバ変数
 ///=====================================================///
