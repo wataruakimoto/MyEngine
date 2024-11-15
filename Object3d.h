@@ -73,19 +73,9 @@ public:
 private:
 
 	/// <summary>
-	/// 頂点データ初期化
-	/// </summary>
-	void InitializeVertexData();
-
-	/// <summary>
 	/// 座標変換行列データ初期化
 	/// </summary>
 	void InitializeTransformationMatrixData();
-
-	/// <summary>
-	/// マテリアルデータ初期化
-	/// </summary>
-	void InitializeMaterialData();
 
 	/// <summary>
 	/// 平行光源データ初期化

@@ -13,19 +13,9 @@ void Object3d::Initialize(Object3dCommon* object3dCommon){
 	// 引数をメンバ変数に代入
 	this->object3dCommon_ = object3dCommon;
 
-	InitializeVertexData();
-
 	InitializeTransformationMatrixData();
 
-	InitializeMaterialData();
-
 	InitializeDirectionalLightData();
-
-	// .objの参照しているテクスチャファイル読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
-
-	// 読み込んだテクスチャの番号を取得
-	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 
 	// Transform変数を作る
 	transform = { {1.0f,1.0f,1.0f},{0.0f,3.14f,0.0f},{0.0f,0.0f,0.0f} };
@@ -52,44 +42,11 @@ void Object3d::Update(){
 
 void Object3d::Draw(){
 
-	/// === VertexBufferViewを設定 === ///
-	object3dCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-
 	/// === 座標変換行列CBufferの場所を設定 === ///
 	object3dCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
-	/// === マテリアルCBufferの場所を設定 === ///
-	object3dCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-
-	/// === SRVのDescriptorTableの先頭を設定 === ///
-	object3dCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureIndex));
-
 	/// === 平行光源CBufferの場所を設定=== ///
 	object3dCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
-
-	/// === 描画(DrawCall) === ///
-	object3dCommon_->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
-}
-
-void Object3d::InitializeVertexData() {
-
-	/// === VertexResourceを作る === ///
-	vertexResource = object3dCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
-
-	/// === VBVを作成する(値を設定するだけ) === ///
-
-	// リソースの先頭アドレスから使う
-	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-	// 使用するリソースのサイズ 頂点のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
-	// 1頂点あたりのサイズ
-	vertexBufferView.StrideInBytes = sizeof(VertexData);
-
-	/// === VertexResourceにデータを書き込むためのアドレスを取得してVertexDataに割り当てる === ///
-	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
-	// 頂点データにリソースをコピー
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
 }
 
 void Object3d::InitializeTransformationMatrixData(){
@@ -103,20 +60,6 @@ void Object3d::InitializeTransformationMatrixData(){
 	/// === TransformationMatrixDataの初期値を書き込む === ///
 	transformationMatrixData->WVP = MakeIdentity4x4(); // 単位行列を書き込む
 	transformationMatrixData->world = MakeIdentity4x4(); // 単位行列を書き込む
-}
-
-void Object3d::InitializeMaterialData() {
-
-	/// === MaterialResourceを作る === ///
-	materialResource = object3dCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
-
-	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-
-	/// === MaterialDataの初期値を書き込む === ///
-	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
-	materialData->enableLighting = false; // Lightingをしていない
-	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }
 
 void Object3d::InitializeDirectionalLightData() {

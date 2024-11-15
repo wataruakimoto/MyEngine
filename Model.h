@@ -56,6 +56,11 @@ public:
 	void Initialize(Modelcommon* modelCommon);
 
 	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw();
+
+	/// <summary>
 	/// .mtlファイル読み込み
 	/// </summary>
 	/// <param name="directoryPath">ディレクトリーパス</param>
@@ -76,6 +81,15 @@ public:
 ///=====================================================///
 private:
 
+	/// <summary>
+	/// 頂点データ初期化
+	/// </summary>
+	void InitializeVertexData();
+
+	/// <summary>
+	/// マテリアルデータ初期化
+	/// </summary>
+	void InitializeMaterialData();
 
 ///=====================================================/// 
 /// メンバ変数

@@ -1,5 +1,10 @@
 #include "Model.h"
+#include "Modelcommon.h"
 #include <fstream>
+#include "MathMatrix.h"
+#include "TextureManager.h"
+
+using namespace MathMatrix;
 
 void Model::Initialize(Modelcommon* modelCommon) {
 
@@ -8,6 +13,33 @@ void Model::Initialize(Modelcommon* modelCommon) {
 
 	// モデル読み込み
 	modelData = LoadObjFile("resources", "plane.obj");
+
+	// 頂点データ初期化
+	InitializeVertexData();
+
+	// マテリアルデータ初期化
+	InitializeMaterialData();
+
+	// .objの参照しているテクスチャファイル読み込み
+	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
+
+	// 読み込んだテクスチャの番号を取得し、メンバ変数に書き込む
+	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+}
+
+void Model::Draw() {
+
+	// 頂点バッファビューを設定
+	modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	// マテリアルCBufferの場所を設定
+	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+	// SRVのDescriptorTableの先頭を設定
+	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureIndex));
+
+	// 描画(DrawCall)
+	modelCommon_->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 }
 
 Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
@@ -126,4 +158,39 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 
 	// 4. ModelDataを返す
 	return modelData;
+}
+
+void Model::InitializeVertexData() {
+
+	/// === VertexResourceを作る === ///
+	vertexResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+
+	/// === VBVを作成する(値を設定するだけ) === ///
+
+	// リソースの先頭アドレスから使う
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	// 使用するリソースのサイズ 頂点のサイズ
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	// 1頂点あたりのサイズ
+	vertexBufferView.StrideInBytes = sizeof(VertexData);
+
+	/// === VertexResourceにデータを書き込むためのアドレスを取得してVertexDataに割り当てる === ///
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+
+	// 頂点データにリソースをコピー
+	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+}
+
+void Model::InitializeMaterialData() {
+
+	/// === MaterialResourceを作る === ///
+	materialResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+
+	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
+	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+
+	/// === MaterialDataの初期値を書き込む === ///
+	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
+	materialData->enableLighting = false; // Lightingをしていない
+	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }
