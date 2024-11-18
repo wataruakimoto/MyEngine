@@ -99,7 +99,7 @@
     <ClCompile Include="Model.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="Modelcommon.cpp">
+    <ClCompile Include="ModelCommon.cpp">
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="StringUtility.cpp">
@@ -185,7 +185,7 @@
     <ClInclude Include="Model.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Modelcommon.h">
+    <ClInclude Include="ModelCommon.h">
       <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,7 +7,7 @@
 #include "DirectXCommon.h"
 
 // === 3Dモデル共通部=== ///
-class Modelcommon;
+class ModelCommon;
 
 /// === 3Dモデル === ///
 class Model {
@@ -53,7 +53,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">3Dモデル基盤</param>
-	void Initialize(Modelcommon* modelCommon);
+	void Initialize(ModelCommon* modelCommon);
 
 	/// <summary>
 	/// 描画
@@ -97,7 +97,7 @@ private:
 private:
 
 	// ModelCommonのポインタ
-	Modelcommon* modelCommon_ = nullptr;
+	ModelCommon* modelCommon_ = nullptr;
 
 	// objファイルのデータ
 	ModelData modelData;

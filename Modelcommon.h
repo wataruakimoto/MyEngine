@@ -4,7 +4,7 @@
 class DirectXCommon;
 
 /// === 3Dモデル共通部=== ///
-class Modelcommon {
+class ModelCommon {
 
 ///=====================================================/// 
 /// メンバ関数

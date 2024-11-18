@@ -47,6 +47,11 @@ void Object3d::Draw(){
 
 	/// === 平行光源CBufferの場所を設定=== ///
 	object3dCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+
+	// 3Dモデルが割り当てられていれば描画する
+	if (model) {
+		model->Draw();
+	}
 }
 
 void Object3d::InitializeTransformationMatrixData(){

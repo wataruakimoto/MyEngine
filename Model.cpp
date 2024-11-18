@@ -6,7 +6,7 @@
 
 using namespace MathMatrix;
 
-void Model::Initialize(Modelcommon* modelCommon) {
+void Model::Initialize(ModelCommon* modelCommon) {
 
 	// 引数をメンバ変数に代入
 	modelCommon_ = modelCommon;

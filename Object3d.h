@@ -7,6 +7,10 @@
 #include <fstream>
 #include <vector>
 #include "DirectXCommon.h"
+#include "Model.h"
+
+/// === モデル基盤 === ///
+class ModelCommon;
 
 /// === 3Dオブジェクト基盤 === ///
 class Object3dCommon;
@@ -83,6 +87,58 @@ private:
 	void InitializeDirectionalLightData();
 
 ///=====================================================/// 
+/// セッター
+///=====================================================///
+public:
+
+	/// <summary>
+	/// 大きさのセッター
+	/// </summary>
+	/// <param name="scale">大きさ</param>
+	void SetScale(const Vector3& scale) { this->transform.scale = scale; }
+
+	/// <summary>
+	/// 回転のセッター
+	/// </summary>
+	/// <param name="rotate">回転</param>
+	void SetRotate(const Vector3& rotate) { this->transform.rotate = rotate; }
+
+	/// <summary>
+	/// 位置のセッター
+	/// </summary>
+	/// <param name="translate">位置</param>
+	void SetTranslate(const Vector3& translate) { this->transform.translate = translate; }
+
+	/// <summary>
+	/// モデルのセッター
+	/// </summary>
+	/// <param name="model">モデル</param>
+	void SetModel(Model* model) { this->model = model; }
+
+///=====================================================/// 
+/// ゲッター
+///=====================================================///
+public:
+
+	/// <summary>
+	/// 大きさのゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetScale() const { return transform.scale; }
+
+	/// <summary>
+	/// 回転のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetRotate() const { return transform.rotate; }
+
+	/// <summary>
+	/// 位置のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetTranslate() const { return transform.translate; }
+
+///=====================================================/// 
 /// メンバ変数
 ///=====================================================///
 private:
@@ -103,4 +159,10 @@ private:
 	Transform transform;
 
 	Transform cameraTransform;
+
+	// モデル基盤のポインタ
+	ModelCommon* modelCommon_ = nullptr;
+
+	// モデル
+	Model* model = nullptr;
 };

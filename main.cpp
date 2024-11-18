@@ -10,6 +10,8 @@
 #include "Sprite.h"
 #include "Object3dCommon.h"
 #include "Object3d.h"
+#include "ModelCommon.h"
+#include "Model.h"
 #include "TextureManager.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -35,6 +37,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 3Dオブジェクト共通部のポインタ
 	Object3dCommon* object3dCommon = nullptr;
+
+	// モデル基盤のポインタ
+	ModelCommon* modelCommon = nullptr;
 
 	/// ----------ゲームウィンドウ作成----------
 
@@ -65,6 +70,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	object3dCommon = new Object3dCommon();
 	object3dCommon->Initialize(dxCommon);
 
+	// モデル基盤初期化
+	modelCommon = new ModelCommon();
+	modelCommon->Initialize(dxCommon);
+
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
 
@@ -80,6 +89,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 3Dオブジェクトの生成・初期化
 	Object3d* object3d = new Object3d();
 	object3d->Initialize(object3dCommon);
+
+	// モデルの生成・初期化
+	Model* model = new Model();
+	model->Initialize(modelCommon);
 
 	///
 	/// 初期化処終了
@@ -189,6 +202,25 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			object3d->Update();
 
+			ImGui::Begin("Object3d");
+
+			// サイズ変更の確認
+			Vector3 scale = object3d->GetScale();
+			ImGui::DragFloat3("Scale", &scale.x, 1.0f);
+			object3d->SetScale(scale);
+
+			// 回転変更の確認
+			Vector3 rotate = object3d->GetRotate();
+			ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
+			object3d->SetRotate(rotate);
+
+			// 座標変更の確認
+			Vector3 translate = object3d->GetTranslate();
+			ImGui::DragFloat3("Translate", &translate.x, 1.0f);
+			object3d->SetTranslate(translate);
+
+			ImGui::End();
+
 			// ImGuiの内部コマンドを生成する
 			ImGui::Render();
 
@@ -241,6 +273,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	/// ----------最初のシーンの解放----------
 
+	// モデルの解放
+	delete model;
+
 	// 3Dオブジェクトの解放
 	delete object3d;
 
@@ -251,6 +286,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
+
+	// モデル基盤の解放
+	delete modelCommon;
 
 	// 3Dオブジェクト共通部の解放
 	delete object3dCommon;
