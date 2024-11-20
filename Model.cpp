@@ -12,7 +12,7 @@ void Model::Initialize(ModelCommon* modelCommon) {
 	modelCommon_ = modelCommon;
 
 	// モデル読み込み
-	modelData = LoadObjFile("resources", "plane.obj");
+	modelData = LoadObjFile("resources", "Axis.obj");
 
 	// 頂点データ初期化
 	InitializeVertexData();

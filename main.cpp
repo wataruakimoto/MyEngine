@@ -86,13 +86,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Sprite* sprite = new Sprite();
 	sprite->Initialize(spriteCommon, "resources/uvChecker.png");
 
-	// 3Dオブジェクトの生成・初期化
-	Object3d* object3d = new Object3d();
-	object3d->Initialize(object3dCommon);
-
 	// モデルの生成・初期化
 	Model* model = new Model();
 	model->Initialize(modelCommon);
+
+	// 3Dオブジェクトの生成・初期化
+	Object3d* object3d = new Object3d();
+	object3d->Initialize(object3dCommon);
+	object3d->SetModel(model);
 
 	///
 	/// 初期化処終了
@@ -204,9 +205,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			ImGui::Begin("Object3d");
 
-			// サイズ変更の確認
+			// 大きさ変更の確認
 			Vector3 scale = object3d->GetScale();
-			ImGui::DragFloat3("Scale", &scale.x, 1.0f);
+			ImGui::DragFloat3("Scale", &scale.x, 0.1f);
 			object3d->SetScale(scale);
 
 			// 回転変更の確認
@@ -216,7 +217,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			// 座標変更の確認
 			Vector3 translate = object3d->GetTranslate();
-			ImGui::DragFloat3("Translate", &translate.x, 1.0f);
+			ImGui::DragFloat3("Translate", &translate.x, 0.1f);
 			object3d->SetTranslate(translate);
 
 			ImGui::End();
