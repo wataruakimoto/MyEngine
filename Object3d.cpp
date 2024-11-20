@@ -5,6 +5,7 @@
 #include "MathMatrix.h"
 #include "WinApp.h"
 #include "TextureManager.h"
+#include "ModelManager.h"
 
 using namespace MathMatrix;
 
@@ -79,4 +80,10 @@ void Object3d::InitializeDirectionalLightData() {
 	directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を書き込む
 	directionalLightData->direction = { 0.0f, -1.0f, 0.0f }; // 向きは下から
 	directionalLightData->intensity = 1.0f; // 輝度は最大
+}
+
+void Object3d::SetModel(const std::string& filePath) {
+
+	// モデルを検索してセットする
+	model = ModelManager::GetInstance()->FindModel(filePath);
 }

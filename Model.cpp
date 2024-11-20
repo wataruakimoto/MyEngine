@@ -6,13 +6,13 @@
 
 using namespace MathMatrix;
 
-void Model::Initialize(ModelCommon* modelCommon) {
+void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypath, const std::string& filename) {
 
 	// 引数をメンバ変数に代入
 	modelCommon_ = modelCommon;
 
 	// モデル読み込み
-	modelData = LoadObjFile("resources", "Axis.obj");
+	modelData = LoadObjFile(directorypath, filename);
 
 	// 頂点データ初期化
 	InitializeVertexData();

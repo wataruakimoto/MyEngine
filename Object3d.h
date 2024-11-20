@@ -115,6 +115,12 @@ public:
 	/// <param name="model">モデル</param>
 	void SetModel(Model* model) { this->model = model; }
 
+	/// <summary>
+	/// モデルのセッター
+	/// </summary>
+	/// <param name="filePath"></param>
+	void SetModel(const std::string& filePath);
+
 ///=====================================================/// 
 /// ゲッター
 ///=====================================================///

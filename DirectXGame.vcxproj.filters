@@ -105,6 +105,9 @@
     <ClCompile Include="StringUtility.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="ModelManager.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Matrix4x4.h">
@@ -186,6 +189,9 @@
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="ModelCommon.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelManager.h">
       <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>

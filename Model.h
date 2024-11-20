@@ -53,7 +53,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="modelCommon">3Dモデル基盤</param>
-	void Initialize(ModelCommon* modelCommon);
+	void Initialize(ModelCommon* modelCommon, const std::string& directorypath, const std::string& filename);
 
 	/// <summary>
 	/// 描画

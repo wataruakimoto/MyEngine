@@ -13,6 +13,7 @@
 #include "ModelCommon.h"
 #include "Model.h"
 #include "TextureManager.h"
+#include "ModelManager.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -80,6 +81,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
+	// モデルマネージャ初期化
+	ModelManager::GetInstance()->Initialize(dxCommon);
+
+	ModelManager::GetInstance()->LoadModel("axis.obj");
+
 	/// ----------シーンの初期化----------
 
 	// スプライトの生成・初期化
@@ -88,12 +94,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// モデルの生成・初期化
 	Model* model = new Model();
-	model->Initialize(modelCommon);
+	model->Initialize(modelCommon, "resources", "plane.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	Object3d* object3d = new Object3d();
 	object3d->Initialize(object3dCommon);
 	object3d->SetModel(model);
+
+	bool useModelManager = true;
 
 	///
 	/// 初期化処終了
@@ -220,6 +228,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui::DragFloat3("Translate", &translate.x, 0.1f);
 			object3d->SetTranslate(translate);
 
+			// モデルを使うかどうかの確認
+			ImGui::Checkbox("UseModelManager", &useModelManager);
+			if (useModelManager) {
+
+				object3d->SetModel("axis.obj");
+
+			} else {
+
+				object3d->SetModel(model);
+			}
+
 			ImGui::End();
 
 			// ImGuiの内部コマンドを生成する
@@ -284,6 +303,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete sprite;
 
 	/// ----------汎用機能の解放----------
+
+	// モデルマネージャの終了
+	ModelManager::GetInstance()->Finalize();
 
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
