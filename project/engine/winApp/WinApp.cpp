@@ -1,6 +1,6 @@
 #include "WinApp.h"
 // ImGuiを使うため
-#include "externals/imgui/imgui.h"
+#include "imgui/imgui.h"
 
 #pragma comment(lib,"winmm.lib")
 

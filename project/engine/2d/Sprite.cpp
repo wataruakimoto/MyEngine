@@ -1,7 +1,7 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
-#include "MathMatrix.h"
-#include "WinApp.h"
+#include "math/MathMatrix.h"
+#include "winApp/WinApp.h"
 #include "TextureManager.h"
 
 using namespace MathMatrix;

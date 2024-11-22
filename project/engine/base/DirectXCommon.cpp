@@ -1,14 +1,14 @@
 #include "DirectXCommon.h"
 #include <cassert>
 
-#include "Logger.h"
-#include"StringUtility.h"
+#include "debug/Logger.h"
+#include "utility/StringUtility.h"
 
 #include <format>
 #include <thread>
 
-#include "externals/imgui/imgui_impl_dx12.h"
-#include "externals/imgui/imgui_impl_win32.h"
+#include "imgui/imgui_impl_dx12.h"
+#include "imgui/imgui_impl_win32.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")

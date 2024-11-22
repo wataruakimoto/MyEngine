@@ -2,9 +2,9 @@
 #include "Object3dCommon.h"
 #include <cassert>
 #include <sstream>
-#include "MathMatrix.h"
-#include "WinApp.h"
-#include "TextureManager.h"
+#include "math/MathMatrix.h"
+#include "winApp/WinApp.h"
+#include "2d/TextureManager.h"
 #include "ModelManager.h"
 
 using namespace MathMatrix;

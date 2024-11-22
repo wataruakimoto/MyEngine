@@ -8,7 +8,7 @@
 #define DIRECTINPUT_VERSION 0x0800 // DirectInputのバージョン指定
 #include <dinput.h>
 // WindowsAPIを使うため
-#include "WinApp.h"
+#include "winApp/WinApp.h"
 
 // 入力
 class Input {

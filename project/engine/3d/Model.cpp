@@ -1,8 +1,8 @@
 #include "Model.h"
 #include "Modelcommon.h"
 #include <fstream>
-#include "MathMatrix.h"
-#include "TextureManager.h"
+#include "math/MathMatrix.h"
+#include "2d/TextureManager.h"
 
 using namespace MathMatrix;
 

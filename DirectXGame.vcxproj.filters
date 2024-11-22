@@ -54,55 +54,55 @@
     <ClCompile Include="externals\imgui\imgui_widgets.cpp">
       <Filter>imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Sprite.cpp">
+    <ClCompile Include="project\engine\2d\Sprite.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteCommon.cpp">
+    <ClCompile Include="project\engine\2d\SpriteCommon.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="Object3d.cpp">
+    <ClCompile Include="project\engine\3d\Object3d.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Object3dCommon.cpp">
+    <ClCompile Include="project\engine\3d\Object3dCommon.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp">
+    <ClCompile Include="project\engine\3d\Model.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="ModelCommon.cpp">
+    <ClCompile Include="project\engine\3d\ModelCommon.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="ModelManager.cpp">
+    <ClCompile Include="project\engine\3d\ModelManager.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
+    <ClCompile Include="project\engine\input\Input.cpp">
       <Filter>Engine\input</Filter>
     </ClCompile>
-    <ClCompile Include="MathMatrix.cpp">
+    <ClCompile Include="project\engine\math\MathMatrix.cpp">
       <Filter>Engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="MathVector.cpp">
+    <ClCompile Include="project\engine\math\MathVector.cpp">
       <Filter>Engine\math</Filter>
     </ClCompile>
-    <ClCompile Include="DirectXCommon.cpp">
+    <ClCompile Include="project\engine\base\DirectXCommon.cpp">
       <Filter>Engine\base</Filter>
     </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
+    <ClCompile Include="project\engine\2d\TextureManager.cpp">
       <Filter>Engine\2d</Filter>
     </ClCompile>
-    <ClCompile Include="WinApp.cpp">
+    <ClCompile Include="project\engine\winApp\WinApp.cpp">
       <Filter>Engine\winApp</Filter>
     </ClCompile>
-    <ClCompile Include="Logger.cpp">
+    <ClCompile Include="project\engine\debug\Logger.cpp">
       <Filter>Engine\debug</Filter>
     </ClCompile>
-    <ClCompile Include="D3DResourceLeakChecker.cpp">
+    <ClCompile Include="project\engine\debug\D3DResourceLeakChecker.cpp">
       <Filter>Engine\debug</Filter>
     </ClCompile>
-    <ClCompile Include="StringUtility.cpp">
+    <ClCompile Include="project\engine\utility\StringUtility.cpp">
       <Filter>Engine\utility</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="project\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="externals\imgui\imconfig.h">
@@ -129,64 +129,64 @@
     <ClInclude Include="externals\imgui\imstb_truetype.h">
       <Filter>imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Sprite.h">
+    <ClInclude Include="project\engine\2d\Sprite.h">
       <Filter>Engine\2d</Filter>
     </ClInclude>
-    <ClInclude Include="SpriteCommon.h">
+    <ClInclude Include="project\engine\2d\SpriteCommon.h">
       <Filter>Engine\2d</Filter>
     </ClInclude>
-    <ClInclude Include="Object3d.h">
+    <ClInclude Include="project\engine\3d\Object3d.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="Object3dCommon.h">
+    <ClInclude Include="project\engine\3d\Object3dCommon.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
+    <ClInclude Include="project\engine\3d\Model.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="ModelCommon.h">
+    <ClInclude Include="project\engine\3d\ModelCommon.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="ModelManager.h">
+    <ClInclude Include="project\engine\3d\ModelManager.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
+    <ClInclude Include="project\engine\input\Input.h">
       <Filter>Engine\input</Filter>
     </ClInclude>
-    <ClInclude Include="MathMatrix.h">
+    <ClInclude Include="project\engine\math\MathMatrix.h">
       <Filter>Engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="MathVector.h">
+    <ClInclude Include="project\engine\math\MathVector.h">
       <Filter>Engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="Vector3.h">
+    <ClInclude Include="project\engine\math\Vector3.h">
       <Filter>Engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2.h">
+    <ClInclude Include="project\engine\math\Vector2.h">
       <Filter>Engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="Vector4.h">
+    <ClInclude Include="project\engine\math\Vector4.h">
       <Filter>Engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="DirectXCommon.h">
+    <ClInclude Include="project\engine\base\DirectXCommon.h">
       <Filter>Engine\base</Filter>
     </ClInclude>
-    <ClInclude Include="TextureManager.h">
+    <ClInclude Include="project\engine\2d\TextureManager.h">
       <Filter>Engine\2d</Filter>
     </ClInclude>
-    <ClInclude Include="WinApp.h">
+    <ClInclude Include="project\engine\winApp\WinApp.h">
       <Filter>Engine\winApp</Filter>
     </ClInclude>
-    <ClInclude Include="Matrix4x4.h">
+    <ClInclude Include="project\engine\math\Matrix4x4.h">
       <Filter>Engine\math</Filter>
     </ClInclude>
-    <ClInclude Include="Logger.h">
+    <ClInclude Include="project\engine\debug\Logger.h">
       <Filter>Engine\debug</Filter>
     </ClInclude>
-    <ClInclude Include="D3DResourceLeakChecker.h">
+    <ClInclude Include="project\engine\debug\D3DResourceLeakChecker.h">
       <Filter>Engine\debug</Filter>
     </ClInclude>
-    <ClInclude Include="StringUtility.h">
+    <ClInclude Include="project\engine\utility\StringUtility.h">
       <Filter>Engine\utility</Filter>
     </ClInclude>
   </ItemGroup>

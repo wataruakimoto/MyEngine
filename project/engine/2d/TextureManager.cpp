@@ -1,5 +1,5 @@
 #include "TextureManager.h"
-#include "StringUtility.h"
+#include "utility/StringUtility.h"
 
 using namespace StringUtility;
 

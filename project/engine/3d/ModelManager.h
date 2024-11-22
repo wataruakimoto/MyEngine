@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "ModelCommon.h"
-#include "DirectXCommon.h"
+#include "base/DirectXCommon.h"
 
 /// === モデル === ///
 class Model;

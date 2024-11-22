@@ -3,11 +3,11 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <wrl.h>
-#include "WinApp.h"
+#include "winApp/WinApp.h"
 #include "array"
 #include <dxcapi.h>
 #include <string>
-#include "externals/DirectXTex/DirectXTex.h"
+#include "DirectXTex/DirectXTex.h"
 #include <chrono>
 
 // DirectX基盤

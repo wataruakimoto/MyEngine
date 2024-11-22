@@ -1,9 +1,10 @@
-#include "SpriteCommon.h"
-#include "Logger.h"
+#include "Object3dCommon.h"
+#include "debug/Logger.h"
 
 using namespace Microsoft::WRL;
+using namespace Logger;
 
-void SpriteCommon::Initialize(DirectXCommon* dxCommon){
+void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 
 	// 引数をメンバ変数に代入
 	dxCommon_ = dxCommon;
@@ -12,7 +13,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon){
 	CreateGraphicsPipeline();
 }
 
-void SpriteCommon::SettingCommonDrawing() {
+void Object3dCommon::SettingCommonDrawing() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -27,7 +28,7 @@ void SpriteCommon::SettingCommonDrawing() {
 	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
-void SpriteCommon::CreateRootSignature(){
+void Object3dCommon::CreateRootSignature() {
 
 	// RootSignatureを生成する
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -40,17 +41,17 @@ void SpriteCommon::CreateRootSignature(){
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-	// RootParameter作成
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
-
-	// gTransformationMatrix CBV t0
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
-	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
+	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
+	D3D12_ROOT_PARAMETER rootParameters[4] = {};
 
 	// gMaterial CBV b0
+	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
+
+	// gTransformationMatrix CBV t0
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
 	rootParameters[1].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
 
 	// gTexture SRV t0
@@ -58,6 +59,11 @@ void SpriteCommon::CreateRootSignature(){
 	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[2].DescriptorTable.pDescriptorRanges = descriptorRange; // Tableの中身の配列を指定
 	rootParameters[2].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // Tableで利用する数
+
+	// gDirectionalLight CBV b1
+	rootParameters[3].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
+	rootParameters[3].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[3].Descriptor.ShaderRegister = 1; // レジスタ番号1を使う
 
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
@@ -81,7 +87,7 @@ void SpriteCommon::CreateRootSignature(){
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
-		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	// バイナリを元に生成
@@ -90,7 +96,7 @@ void SpriteCommon::CreateRootSignature(){
 	assert(SUCCEEDED(hr));
 }
 
-void SpriteCommon::CreateInputLayout() {
+void Object3dCommon::CreateInputLayout() {
 
 	// InputLayoutの設定を行う
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -103,37 +109,42 @@ void SpriteCommon::CreateInputLayout() {
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
+	inputElementDescs[2].SemanticName = "NORMAL";
+	inputElementDescs[2].SemanticIndex = 0;
+	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 }
 
-void SpriteCommon::CreateBlendState() {
+void Object3dCommon::CreateBlendState() {
 
 	// すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 }
 
-void SpriteCommon::CreateRasterizerState() {
+void Object3dCommon::CreateRasterizerState() {
 
-	// カリングしない(裏面も表示させる)
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	// 裏面(時計回り)を表示しない
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }
 
-void SpriteCommon::CreateVertexShader() {
+void Object3dCommon::CreateVertexShader() {
 
-	vertexShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Sprite.VS.hlsl", L"vs_6_0");
+	vertexShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 }
 
-void SpriteCommon::CreatePixelShader() {
+void Object3dCommon::CreatePixelShader() {
 
-	pixelShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Sprite.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
-void SpriteCommon::CreateDepthStencilState() {
+void Object3dCommon::CreateDepthStencilState() {
 
 	// Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = true;
@@ -143,7 +154,7 @@ void SpriteCommon::CreateDepthStencilState() {
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
 
-void SpriteCommon::CreateGraphicsPipeline() {
+void Object3dCommon::CreateGraphicsPipeline() {
 
 	// PSOを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
