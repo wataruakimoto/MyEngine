@@ -17,13 +17,14 @@
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
+#include "3d/Camera.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	
+	//
 	// 初期化処理開始
-	
+	//
 
 	/// ----------ポインタ置き場----------
 
@@ -35,6 +36,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// DirectX基盤のポインタ
 	DirectXCommon* dxCommon = nullptr;
+
+	// カメラのポインタ
+	Camera* camera = nullptr;
 
 	// スプライト共通部のポインタ
 	SpriteCommon* spriteCommon = nullptr;
@@ -66,6 +70,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	input = new Input();
 	input->Initialize(winApp);
 
+	// カメラの初期化
+	camera = new Camera();
+
 	// スプライト共通部初期化
 	spriteCommon = new SpriteCommon();
 	spriteCommon->Initialize(dxCommon);
@@ -73,6 +80,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// 3Dオブジェクト共通部初期化
 	object3dCommon = new Object3dCommon();
 	object3dCommon->Initialize(dxCommon);
+	object3dCommon->SetDefaultCamera(camera);
 
 	// モデル基盤初期化
 	modelCommon = new ModelCommon();
@@ -134,22 +142,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			/// ----------入力の更新----------
 			input->Update();
 
-			//if (input->PushKey(DIK_UP)) {
-			//	transform.translate.y += 0.1f;
-			//}
-			//
-			//if (input->TriggerKey(DIK_DOWN)) {
-			//	transform.translate.y += -0.1f;
-			//}
-			//
-			//if (input->PushKey(DIK_RIGHT)) {
-			//	transform.translate.x += 0.1f;
-			//}
-			//
-			//if (input->TriggerKey(DIK_LEFT)) {
-			//	transform.translate.x += -0.1f;
-			//}
-
 			/// ----------シーンの更新----------
 
 			/// === ImGui開始 === ///
@@ -158,6 +150,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			ImGui_ImplDX12_NewFrame();
 			ImGui_ImplWin32_NewFrame();
 			ImGui::NewFrame();
+
+			/// === カメラ更新 === ///
+			ImGui::Begin("Camera");
+
+			// 向き変更
+			Vector3 cameraRotate = camera->GetRotate();
+			ImGui::DragFloat3("Rotate", &cameraRotate.x, 0.01f);
+			camera->SetRotate(cameraRotate);
+
+			// 位置変更
+			Vector3 cameraPositon = camera->GetTranslate();
+			ImGui::DragFloat3("Translate", &cameraPositon.x, 0.1f);
+			camera->SetTranslate(cameraPositon);
+
+			camera->Update();
+
+			ImGui::End();
 
 			/// === スプライト更新 === ///
 

@@ -6,6 +6,7 @@
 #include "winApp/WinApp.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
+#include "Camera.h"
 
 using namespace MathMatrix;
 
@@ -20,7 +21,9 @@ void Object3d::Initialize(Object3dCommon* object3dCommon){
 
 	// Transform変数を作る
 	transform = { {1.0f,1.0f,1.0f},{0.0f,3.14f,0.0f},{0.0f,0.0f,0.0f} };
-	cameraTransform = { {1.0f,1.0f,1.0f},{0.3f,0.0f,0.0f},{0.0f,4.0f,-10.0f} };
+
+	// デフォルトカメラをセット
+	this->camera = object3dCommon->GetDefaultCamera();
 }
 
 void Object3d::Update(){
@@ -28,16 +31,23 @@ void Object3d::Update(){
 	/// === TransformからWorldMatrixを作る === ///
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 
-	/// === cameraTransformからcameraMatrixを作る === ///
-	Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform.scale, cameraTransform.rotate, cameraTransform.translate);
+	// WVP
+	Matrix4x4 worldViewProjectionMatrix;
 
-	/// === cameraMatrixからviewMatrixを作る === ///
-	Matrix4x4 viewMatrix = Inverse(cameraMatrix);
+	// カメラがあればviewProjectionをもらってWVPの計算を行う
+	if (camera) {
 
-	/// === ProjectionMatrixを作って透視投影行列を書き込む === ///
-	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(WinApp::kClientWidth) / float(WinApp::kClientHeight), 0.1f, 100.0f);
+		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
+		worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
-	transformationMatrixData->WVP = worldMatrix * viewMatrix * projectionMatrix;
+
+	// カメラがなければworldMatrixを代入
+	} else {
+
+		worldViewProjectionMatrix = worldMatrix;
+	}
+
+	transformationMatrixData->WVP = worldViewProjectionMatrix;
 	transformationMatrixData->world = worldMatrix;
 }
 
