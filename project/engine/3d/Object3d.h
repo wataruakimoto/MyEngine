@@ -1,6 +1,5 @@
 #pragma once
 
-#include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
@@ -8,6 +7,9 @@
 #include <vector>
 #include "base/DirectXCommon.h"
 #include "Model.h"
+
+/// === カメラ === ///
+class Camera;
 
 /// === モデル基盤 === ///
 class ModelCommon;
@@ -121,6 +123,12 @@ public:
 	/// <param name="filePath"></param>
 	void SetModel(const std::string& filePath);
 
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera) { this->camera = camera; }
+
 ///=====================================================/// 
 /// ゲッター
 ///=====================================================///
@@ -164,11 +172,12 @@ private:
 
 	Transform transform;
 
-	Transform cameraTransform;
-
 	// モデル基盤のポインタ
 	ModelCommon* modelCommon_ = nullptr;
 
 	// モデル
 	Model* model = nullptr;
+
+	// カメラ
+	Camera* camera = nullptr;
 };
