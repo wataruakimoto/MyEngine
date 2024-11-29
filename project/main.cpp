@@ -21,9 +21,9 @@
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	///
-	/// 初期化処理開始
-	///
+	
+	// 初期化処理開始
+	
 
 	/// ----------ポインタ置き場----------
 
