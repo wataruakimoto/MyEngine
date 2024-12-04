@@ -119,6 +119,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\math\MathVector.cpp" />
     <ClCompile Include="engine\utility\StringUtility.cpp" />
     <ClCompile Include="engine\winApp\WinApp.cpp" />
+    <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -143,6 +144,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\math\Vector4.h" />
     <ClInclude Include="engine\utility\StringUtility.h" />
     <ClInclude Include="engine\winApp\WinApp.h" />
+    <ClInclude Include="engine\debug\ImGuiManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

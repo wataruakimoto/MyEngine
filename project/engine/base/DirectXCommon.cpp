@@ -7,19 +7,11 @@
 #include <format>
 #include <thread>
 
-#include "imgui_impl_dx12.h"
-#include "imgui_impl_win32.h"
-
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
 DirectXCommon::~DirectXCommon() {
-
-	// ImGuiの終了処理。初期化と逆順に行う
-	ImGui_ImplDX12_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
 
 	// 各オブジェクトの解放
 	CloseHandle(fenceEvent);
@@ -58,8 +50,6 @@ void DirectXCommon::Initialize(WinApp* winApp) {
 	ScissoringRectInitialize();
 	// DXCコンパイラの生成
 	DXCCompilerGenerate();
-	// ImGuiの初期化
-	ImGuiInitialize();
 }
 
 void DirectXCommon::PreDraw() {
@@ -655,31 +645,6 @@ void DirectXCommon::DXCCompilerGenerate() {
 	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));
-}
-
-void DirectXCommon::ImGuiInitialize() {
-
-	// ----------バージョンチェック----------
-	IMGUI_CHECKVERSION();
-
-	// ----------コンテキストの生成----------
-	ImGui::CreateContext();
-
-	// ----------スタイルの設定----------
-	ImGui::StyleColorsDark();
-
-	// ----------Win32の初期化----------
-	ImGui_ImplWin32_Init(winApp_->GetHwnd());
-
-	// ----------DirectX12用の設定----------
-	ImGui_ImplDX12_Init(
-		device.Get(),
-		swapChainDesc.BufferCount,
-		rtvDesc.Format,
-		srvDescriptorHeap.Get(),
-		srvDescriptorHeap->GetCPUDescriptorHandleForHeapStart(),
-		srvDescriptorHeap->GetGPUDescriptorHandleForHeapStart()
-	);
 }
 
 void DirectXCommon::InitializeFixFPS() {
