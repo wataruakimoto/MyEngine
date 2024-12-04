@@ -1,6 +1,6 @@
 #include "WinApp.h"
 // ImGuiを使うため
-#include "imgui/imgui.h"
+#include "imgui.h"
 
 #pragma comment(lib,"winmm.lib")
 
@@ -29,7 +29,7 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 void WinApp::Initialize() {
 
 	// メインスレッドではMTAでCOM利用
-	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
+	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);1
 
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
