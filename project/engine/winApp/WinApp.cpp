@@ -29,7 +29,7 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 void WinApp::Initialize() {
 
 	// メインスレッドではMTAでCOM利用
-	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);1
+	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 
 	// ウィンドウプロシージャ
 	wc.lpfnWndProc = WindowProc;
