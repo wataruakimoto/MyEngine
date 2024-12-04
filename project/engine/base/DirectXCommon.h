@@ -49,6 +49,8 @@ public:	// メンバ関数
 
 	ComPtr<ID3D12DescriptorHeap> GetSRVDescriptorHeap() { return srvDescriptorHeap; }
 
+	uint32_t GetBackBufferCount() const { return swapChainDesc.BufferCount; }
+
 	/// <summary>
 	/// デスクリプタヒープを作成する
 	/// </summary>
@@ -203,11 +205,6 @@ private: // クラス内処理の関数
 	/// DXCコンパイラの生成
 	/// </summary>
 	void DXCCompilerGenerate();
-
-	/// <summary>
-	/// ImGuiの初期化
-	/// </summary>
-	void ImGuiInitialize();
 
 	/// <summary>
 	/// FPS固定初期化

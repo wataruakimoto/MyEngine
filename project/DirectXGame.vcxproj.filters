@@ -82,6 +82,9 @@
     <ClCompile Include="engine\winApp\WinApp.cpp">
       <Filter>Engine\winApp</Filter>
     </ClCompile>
+    <ClCompile Include="engine\debug\ImGuiManager.cpp">
+      <Filter>Engine\debug</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\3d\Camera.h">
@@ -146,6 +149,9 @@
     </ClInclude>
     <ClInclude Include="engine\winApp\WinApp.h">
       <Filter>Engine\winApp</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\debug\ImGuiManager.h">
+      <Filter>Engine\debug</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

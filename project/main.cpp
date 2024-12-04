@@ -1,23 +1,21 @@
-#include "imgui/imgui_impl_dx12.h"
-#include "imgui/imgui_impl_win32.h"
-
 #include "input/Input.h"
 #include "winApp/WinApp.h"
 #include "base/DirectXCommon.h"
 #include "debug/D3DResourceLeakChecker.h"
 #include "debug/Logger.h"
+#include "debug/ImGuiManager.h"
 #include "2d/SpriteCommon.h"
 #include "2d/Sprite.h"
+#include "2d/TextureManager.h"
 #include "3d/Object3dCommon.h"
 #include "3d/Object3d.h"
 #include "3d/ModelCommon.h"
 #include "3d/Model.h"
-#include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
+#include "3d/Camera.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
-#include "3d/Camera.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -36,6 +34,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// DirectX基盤のポインタ
 	DirectXCommon* dxCommon = nullptr;
+
+	// ImGui管理クラスのポインタ
+	ImGuiManager* imGuiManager = nullptr;
 
 	// カメラのポインタ
 	Camera* camera = nullptr;
@@ -65,6 +66,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	dxCommon->Initialize(winApp);
 
 	/// ----------汎用機能初期化----------
+
+	// ImGuiの初期化
+	imGuiManager = new ImGuiManager();
+	imGuiManager->Initialize(winApp, dxCommon);
 
 	// 入力の初期化
 	input = new Input();
@@ -145,103 +150,99 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			/// ----------シーンの更新----------
 
 			/// === ImGui開始 === ///
-
-			// ImGuiにフレーム開始を告げる
-			ImGui_ImplDX12_NewFrame();
-			ImGui_ImplWin32_NewFrame();
-			ImGui::NewFrame();
+			imGuiManager->Begin();
 
 			/// === カメラ更新 === ///
-			ImGui::Begin("Camera");
+			//ImGui::Begin("Camera");
 
 			// 向き変更
 			Vector3 cameraRotate = camera->GetRotate();
-			ImGui::DragFloat3("Rotate", &cameraRotate.x, 0.01f);
+			//ImGui::DragFloat3("Rotate", &cameraRotate.x, 0.01f);
 			camera->SetRotate(cameraRotate);
 
 			// 位置変更
 			Vector3 cameraPositon = camera->GetTranslate();
-			ImGui::DragFloat3("Translate", &cameraPositon.x, 0.1f);
+			//ImGui::DragFloat3("Translate", &cameraPositon.x, 0.1f);
 			camera->SetTranslate(cameraPositon);
 
 			camera->Update();
 
-			ImGui::End();
+			//ImGui::End();
 
 			/// === スプライト更新 === ///
 
-			ImGui::Begin("Sprite");
+			//ImGui::Begin("Sprite");
 
 			// サイズ変更の確認
 			Vector2 size = sprite->GetSize();
-			ImGui::DragFloat2("Size", &size.x, 1.0f);
+			//ImGui::DragFloat2("Size", &size.x, 1.0f);
 			sprite->SetSize(size);
 
 			// 回転変更の確認
 			float rotation = sprite->GetRotation();
-			ImGui::DragFloat("Rotation", &rotation, 0.01f);
+			//ImGui::DragFloat("Rotation", &rotation, 0.01f);
 			sprite->SetRotation(rotation);
 
 			// 座標変更の確認
 			Vector2 position = sprite->GetPosition();
-			ImGui::DragFloat2("Position", &position.x, 1.0f);
+			//ImGui::DragFloat2("Position", &position.x, 1.0f);
 			sprite->SetPosition(position);
 
 			// 色変更の確認
 			Vector4 color = sprite->GetColor();
-			ImGui::DragFloat4("Color", &color.x, 0.01f);
+			//ImGui::DragFloat4("Color", &color.x, 0.01f);
 			sprite->SetColor(color);
 
 			// アンカー変更の確認
 			Vector2 anchorPoint = sprite->GetAnchorPoint();
-			ImGui::SliderFloat2("Anchor", &anchorPoint.x, -1.0f, 1.0f);
+			//ImGui::SliderFloat2("Anchor", &anchorPoint.x, -1.0f, 1.0f);
 			sprite->SetAnchorPoint(anchorPoint);
 
 			// フリップ変更の確認
 			bool isFlipX = sprite->GetIsFlipX();
 			bool isFlipY = sprite->GetIsFlipY();
-			ImGui::Checkbox("IsFlipX", &isFlipX);
-			ImGui::Checkbox("IsFlipY", &isFlipY);
+			//ImGui::Checkbox("IsFlipX", &isFlipX);
+			//ImGui::Checkbox("IsFlipY", &isFlipY);
 			sprite->SetIsFlipX(isFlipX);
 			sprite->SetIsFlipY(isFlipY);
 
 			// テクスチャ左上座標の確認
 			Vector2 textureLeftTop = sprite->GetTextureLeftTop();
-			ImGui::DragFloat2("TextureLeftTop", &textureLeftTop.x, 1.0f);
+			//ImGui::DragFloat2("TextureLeftTop", &textureLeftTop.x, 1.0f);
 			sprite->SetTextureLeftTop(textureLeftTop);
 
 			// テクスチャ切り出しサイズの確認
 			Vector2 textureSize = sprite->GetTextureSize();
-			ImGui::DragFloat2("TextureSize", &textureSize.x, 1.0f);
+			//ImGui::DragFloat2("TextureSize", &textureSize.x, 1.0f);
 			sprite->SetTextureSize(textureSize);
 
 			sprite->Update();
 
-			ImGui::End();
+			//ImGui::End();
 
 			/// === 3Dオブジェクト更新 === ///
 
 			object3d->Update();
 
-			ImGui::Begin("Object3d");
+			//ImGui::Begin("Object3d");
 
 			// 大きさ変更の確認
 			Vector3 scale = object3d->GetScale();
-			ImGui::DragFloat3("Scale", &scale.x, 0.1f);
+			//ImGui::DragFloat3("Scale", &scale.x, 0.1f);
 			object3d->SetScale(scale);
 
 			// 回転変更の確認
 			Vector3 rotate = object3d->GetRotate();
-			ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
+			//ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
 			object3d->SetRotate(rotate);
 
 			// 座標変更の確認
 			Vector3 translate = object3d->GetTranslate();
-			ImGui::DragFloat3("Translate", &translate.x, 0.1f);
+			//ImGui::DragFloat3("Translate", &translate.x, 0.1f);
 			object3d->SetTranslate(translate);
 
 			// モデルを使うかどうかの確認
-			ImGui::Checkbox("UseModelManager", &useModelManager);
+			//ImGui::Checkbox("UseModelManager", &useModelManager);
 			if (useModelManager) {
 
 				object3d->SetModel("axis.obj");
@@ -251,12 +252,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				object3d->SetModel(model);
 			}
 
-			ImGui::End();
-
-			// ImGuiの内部コマンドを生成する
-			ImGui::Render();
+			//ImGui::End();
 
 			/// === ImGui終了 === ///
+			imGuiManager->End();
 
 			///
 			/// 更新処理終了
@@ -282,9 +281,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//TODO: 全ての3Dオブジェクト個々の描画
 			object3d->Draw();
-
-			// 実際のcommandListのImGuiの描画コマンドを積む
-			ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), dxCommon->GetCommandList().Get());
 
 			/// ----------DirectX描画処理----------
 			dxCommon->PostDraw();
@@ -333,6 +329,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 入力の解放
 	delete input;
+
+	// ImGui終了&解放
+	imGuiManager->Finalize();
+	delete imGuiManager;
 
 	/// ----------DirectXの解放----------
 	delete dxCommon;
