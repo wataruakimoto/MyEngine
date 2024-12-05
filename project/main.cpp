@@ -16,6 +16,7 @@
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
+#include <imgui.h>
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -152,97 +153,99 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			/// === ImGui開始 === ///
 			imGuiManager->Begin();
 
+			ImGui::ShowDemoWindow();
+
 			/// === カメラ更新 === ///
-			//ImGui::Begin("Camera");
+			ImGui::Begin("Camera");
 
 			// 向き変更
 			Vector3 cameraRotate = camera->GetRotate();
-			//ImGui::DragFloat3("Rotate", &cameraRotate.x, 0.01f);
+			ImGui::DragFloat3("Rotate", &cameraRotate.x, 0.01f);
 			camera->SetRotate(cameraRotate);
 
 			// 位置変更
 			Vector3 cameraPositon = camera->GetTranslate();
-			//ImGui::DragFloat3("Translate", &cameraPositon.x, 0.1f);
+			ImGui::DragFloat3("Translate", &cameraPositon.x, 0.1f);
 			camera->SetTranslate(cameraPositon);
 
 			camera->Update();
 
-			//ImGui::End();
+			ImGui::End();
 
 			/// === スプライト更新 === ///
 
-			//ImGui::Begin("Sprite");
+			ImGui::Begin("Sprite");
 
 			// サイズ変更の確認
 			Vector2 size = sprite->GetSize();
-			//ImGui::DragFloat2("Size", &size.x, 1.0f);
+			ImGui::DragFloat2("Size", &size.x, 1.0f);
 			sprite->SetSize(size);
 
 			// 回転変更の確認
 			float rotation = sprite->GetRotation();
-			//ImGui::DragFloat("Rotation", &rotation, 0.01f);
+			ImGui::DragFloat("Rotation", &rotation, 0.01f);
 			sprite->SetRotation(rotation);
 
 			// 座標変更の確認
 			Vector2 position = sprite->GetPosition();
-			//ImGui::DragFloat2("Position", &position.x, 1.0f);
+			ImGui::DragFloat2("Position", &position.x, 1.0f);
 			sprite->SetPosition(position);
 
 			// 色変更の確認
 			Vector4 color = sprite->GetColor();
-			//ImGui::DragFloat4("Color", &color.x, 0.01f);
+			ImGui::DragFloat4("Color", &color.x, 0.01f);
 			sprite->SetColor(color);
 
 			// アンカー変更の確認
 			Vector2 anchorPoint = sprite->GetAnchorPoint();
-			//ImGui::SliderFloat2("Anchor", &anchorPoint.x, -1.0f, 1.0f);
+			ImGui::SliderFloat2("Anchor", &anchorPoint.x, -1.0f, 1.0f);
 			sprite->SetAnchorPoint(anchorPoint);
 
 			// フリップ変更の確認
 			bool isFlipX = sprite->GetIsFlipX();
 			bool isFlipY = sprite->GetIsFlipY();
-			//ImGui::Checkbox("IsFlipX", &isFlipX);
-			//ImGui::Checkbox("IsFlipY", &isFlipY);
+			ImGui::Checkbox("IsFlipX", &isFlipX);
+			ImGui::Checkbox("IsFlipY", &isFlipY);
 			sprite->SetIsFlipX(isFlipX);
 			sprite->SetIsFlipY(isFlipY);
 
 			// テクスチャ左上座標の確認
 			Vector2 textureLeftTop = sprite->GetTextureLeftTop();
-			//ImGui::DragFloat2("TextureLeftTop", &textureLeftTop.x, 1.0f);
+			ImGui::DragFloat2("TextureLeftTop", &textureLeftTop.x, 1.0f);
 			sprite->SetTextureLeftTop(textureLeftTop);
 
 			// テクスチャ切り出しサイズの確認
 			Vector2 textureSize = sprite->GetTextureSize();
-			//ImGui::DragFloat2("TextureSize", &textureSize.x, 1.0f);
+			ImGui::DragFloat2("TextureSize", &textureSize.x, 1.0f);
 			sprite->SetTextureSize(textureSize);
 
 			sprite->Update();
 
-			//ImGui::End();
+			ImGui::End();
 
 			/// === 3Dオブジェクト更新 === ///
 
 			object3d->Update();
 
-			//ImGui::Begin("Object3d");
+			ImGui::Begin("Object3d");
 
 			// 大きさ変更の確認
 			Vector3 scale = object3d->GetScale();
-			//ImGui::DragFloat3("Scale", &scale.x, 0.1f);
+			ImGui::DragFloat3("Scale", &scale.x, 0.1f);
 			object3d->SetScale(scale);
 
 			// 回転変更の確認
 			Vector3 rotate = object3d->GetRotate();
-			//ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
+			ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
 			object3d->SetRotate(rotate);
 
 			// 座標変更の確認
 			Vector3 translate = object3d->GetTranslate();
-			//ImGui::DragFloat3("Translate", &translate.x, 0.1f);
+			ImGui::DragFloat3("Translate", &translate.x, 0.1f);
 			object3d->SetTranslate(translate);
 
 			// モデルを使うかどうかの確認
-			//ImGui::Checkbox("UseModelManager", &useModelManager);
+			ImGui::Checkbox("UseModelManager", &useModelManager);
 			if (useModelManager) {
 
 				object3d->SetModel("axis.obj");
@@ -252,7 +255,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 				object3d->SetModel(model);
 			}
 
-			//ImGui::End();
+			ImGui::End();
 
 			/// === ImGui終了 === ///
 			imGuiManager->End();
