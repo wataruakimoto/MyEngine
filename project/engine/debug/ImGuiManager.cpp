@@ -6,6 +6,7 @@
 void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 	// 引数をメンバ変数にコピー
+	dxCommon_ = dxCommon;
 
 	// バージョンチェック
 	IMGUI_CHECKVERSION();
@@ -62,8 +63,13 @@ void ImGuiManager::Draw() {
 	ID3D12DescriptorHeap* ppHeaps[] = { srvHeap_.Get() };
 	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
+#ifdef _DEBUG
+
 	// 実際のcommandListのImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+
+#endif // _DEBUG
+
 }
 
 void ImGuiManager::Finalize() {

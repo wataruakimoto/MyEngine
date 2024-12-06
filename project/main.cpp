@@ -153,8 +153,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			/// === ImGui開始 === ///
 			imGuiManager->Begin();
 
-			ImGui::ShowDemoWindow();
-
 			/// === カメラ更新 === ///
 			ImGui::Begin("Camera");
 
@@ -284,6 +282,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			//TODO: 全ての3Dオブジェクト個々の描画
 			object3d->Draw();
+
+			/// === ImGui描画 === ///
+			imGuiManager->Draw();
 
 			/// ----------DirectX描画処理----------
 			dxCommon->PostDraw();
