@@ -28,6 +28,9 @@
     <Filter Include="Engine\utility">
       <UniqueIdentifier>{0ef2fc93-2066-4a3b-a414-a909247b30dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\audio">
+      <UniqueIdentifier>{652420ed-feb7-4ee8-8411-6a56eba0fe1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -84,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="engine\debug\ImGuiManager.cpp">
       <Filter>Engine\debug</Filter>
+    </ClCompile>
+    <ClCompile Include="engine\audio\AudioManager.cpp">
+      <Filter>Engine\audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="engine\debug\ImGuiManager.h">
       <Filter>Engine\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="engine\audio\AudioManager.h">
+      <Filter>Engine\audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
