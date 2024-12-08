@@ -4,7 +4,6 @@
 #include <wrl.h>
 #include <stdint.h>
 #include <fstream>
-#include <cassert>
 
 #pragma comment(lib,"xaudio2.lib")
 
@@ -50,6 +49,8 @@ private:
 
 	IXAudio2MasteringVoice* masterVoice;
 
+	SoundData soundData;
+
 ///-------------------------------------------/// 
 /// シングルトン
 ///-------------------------------------------///
@@ -66,10 +67,16 @@ private:
 	// コピー代入演算子の封印
 	AudioManager& operator=(AudioManager&) = delete;
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// メンバ関数
+///-------------------------------------------///
 public:
+
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static AudioManager* GetInstance();
 
 	/// <summary>
 	/// 初期化
@@ -77,22 +84,24 @@ public:
 	void Initialize();
 
 	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
+
+	/// <summary>
 	/// 音声データ読み込み
 	/// </summary>
 	/// <param name="filename">ファイル名</param>
 	/// <returns>SoundData</returns>
-	SoundData LoadWave(const char* filename);
+	void SoundLoadWave(const char* filename);
 
 	/// <summary>
 	/// 音声データ解放
 	/// </summary>
-	/// <param name="soundData">音声データ</param>
-	void SoundUnload(SoundData* soundData);
+	void SoundUnload();
 
 	/// <summary>
 	/// 音声再生
 	/// </summary>
-	/// <param name="xAudio2"></param>
-	/// <param name="soundData">音声データ</param>
-	void SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData);
+	void SoundPlayWave();
 };

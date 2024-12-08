@@ -1,4 +1,16 @@
 #include "AudioManager.h"
+#include <cassert>
+#include <iostream>
+
+AudioManager* AudioManager::instance = nullptr;
+
+AudioManager* AudioManager::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new AudioManager;
+	}
+	return instance;
+}
 
 void AudioManager::Initialize() {
 
@@ -7,9 +19,13 @@ void AudioManager::Initialize() {
 	result = xAudio2->CreateMasteringVoice(&masterVoice);
 }
 
-AudioManager::SoundData AudioManager::LoadWave(const char* filename) {
+void AudioManager::Finalize() {
+	xAudio2.Reset();
+	delete instance;
+	instance = nullptr;
+}
 
-	HRESULT result;
+void AudioManager::SoundLoadWave(const char* filename) {
 
 	/// === ファイルオープン === ///
 
@@ -20,7 +36,7 @@ AudioManager::SoundData AudioManager::LoadWave(const char* filename) {
 	file.open(filename, std::ios_base::binary);
 
 	// ファイルオープン失敗を検出する
-	assert(file, is_open());
+	assert(file.is_open());
 
 	/// === .wavデータ読み込み === ///
 
@@ -79,28 +95,40 @@ AudioManager::SoundData AudioManager::LoadWave(const char* filename) {
 	/// === 読み込んだ音声を返す === ///
 
 	// returnする為の音声データ
-	SoundData soundData = {};
+	SoundData sound = {};
 
-	soundData.wfex = format.fmt;
-	soundData.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
-	soundData.bufferSize = data.size;
+	sound.wfex = format.fmt;
+	sound.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
+	sound.bufferSize = data.size;
 
-	return soundData;
+	soundData = sound;
 }
 
-void AudioManager::SoundUnload(SoundData* soundData) {
+void AudioManager::SoundUnload() {
 
-	delete[] soundData->pBuffer;
+	delete[] soundData.pBuffer;
 
-	soundData->pBuffer = 0;
-	soundData->bufferSize = 0;
-	soundData->wfex = {};
+	soundData.pBuffer = 0;
+	soundData.bufferSize = 0;
+	soundData.wfex = {};
 }
 
-void AudioManager::SoundPlayWave(IXAudio2* xAudio2, const SoundData& soundData) {
+void AudioManager::SoundPlayWave() {
 
 	HRESULT result;
 
 	// 波形フォーマットを元にSourceVoiceの生成
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
+	result = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+	assert(SUCCEEDED(result));
+
+	// 再生する波形データの設定
+	XAUDIO2_BUFFER buf{};
+	buf.pAudioData = soundData.pBuffer;
+	buf.AudioBytes = soundData.bufferSize;
+	buf.Flags = XAUDIO2_END_OF_STREAM;
+
+	// 波形データの再生
+	result = pSourceVoice->SubmitSourceBuffer(&buf);
+	result = pSourceVoice->Start();
 }
