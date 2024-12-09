@@ -157,7 +157,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			/// ----------シーンの更新----------
 
 			// サウンド更新
-			AudioManager::GetInstance()->SoundPlayWave();
+			if (input->TriggerKey(DIK_SPACE)) {
+
+				AudioManager::GetInstance()->SoundPlayWave();
+			}
 
 			/// === ImGui開始 === ///
 			imGuiManager->Begin();

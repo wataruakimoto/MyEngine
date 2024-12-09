@@ -1,6 +1,6 @@
 #include "AudioManager.h"
 #include <cassert>
-#include <iostream>
+#include <fstream>
 
 AudioManager* AudioManager::instance = nullptr;
 
@@ -59,7 +59,7 @@ void AudioManager::SoundLoadWave(const char* filename) {
 
 	// チャンクヘッダーの確認
 	file.read((char*)&format, sizeof(ChunkHeader));
-	if (strncmp(format.chunk.id, "fmt", 4) != 0) {
+	if (strncmp(format.chunk.id, "fmt ", 4) != 0) {
 		assert(0);
 	}
 
@@ -71,10 +71,20 @@ void AudioManager::SoundLoadWave(const char* filename) {
 	ChunkHeader data;
 	file.read((char*)&data, sizeof(data));
 
-	// JUNKチャンクを検出した場合
-	if (strncmp(data.id, "JUNK", 4) == 0) {
+	// bextを検出した場合
+	if (strncmp(data.id, "bext", 4) == 0) {
 
 		// 読み取り位置をJUNKチャンクの終わりまで進める
+		file.seekg(data.size, std::ios_base::cur);
+
+		// 再読み込み
+		file.read((char*)&data, sizeof(data));
+	}
+
+	// junkチャンクを検出した場合
+	if (strncmp(data.id, "junk", 4) == 0) {
+
+		// 読み取り位置をjunkチャンクの終わりまで進める
 		file.seekg(data.size, std::ios_base::cur);
 
 		// 再読み込み
