@@ -773,6 +773,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete input;
 
 	/// ----------DirectXの解放----------
+	dxCommon->Finalize();
 	delete dxCommon;
 
 	/// ----------ゲームウィンドウ解放----------
