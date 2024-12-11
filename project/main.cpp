@@ -339,6 +339,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	delete imGuiManager;
 
 	/// ----------DirectXの解放----------
+	dxCommon->Finalize();
 	delete dxCommon;
 
 	/// ----------ゲームウィンドウ解放----------

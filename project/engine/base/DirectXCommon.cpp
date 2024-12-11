@@ -11,12 +11,6 @@
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
-DirectXCommon::~DirectXCommon() {
-
-	// 各オブジェクトの解放
-	CloseHandle(fenceEvent);
-}
-
 void DirectXCommon::Initialize(WinApp* winApp) {
 
 	// NULL検出
@@ -150,6 +144,12 @@ void DirectXCommon::PostDraw() {
 	// ----------コマンドリストのリセット----------
 	hr = commandList->Reset(commandAllocator.Get(), nullptr);
 	assert(SUCCEEDED(hr));
+}
+
+void DirectXCommon::Finalize() {
+
+	// 各オブジェクトの解放
+	CloseHandle(fenceEvent);
 }
 
 Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> DirectXCommon::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
