@@ -16,6 +16,7 @@
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
+#include "audio/AudioManager.h"
 #include <imgui.h>
 
 // Windowsアプリでのエントリーポイント(main関数)
@@ -103,6 +104,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	ModelManager::GetInstance()->LoadModel("axis.obj");
 
+	// オーディオマネージャ初期化
+	AudioManager::GetInstance()->Initialize();
+
+	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
+
 	/// ----------シーンの初期化----------
 
 	// スプライトの生成・初期化
@@ -149,6 +155,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			input->Update();
 
 			/// ----------シーンの更新----------
+
+			// サウンド更新
+			if (input->TriggerKey(DIK_SPACE)) {
+
+				AudioManager::GetInstance()->SoundPlayWave();
+			}
 
 			/// === ImGui開始 === ///
 			imGuiManager->Begin();
@@ -330,6 +342,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// スプライト共通部の解放
 	delete spriteCommon;
+
+	// オーディオマネージャ終了
+	AudioManager::GetInstance()->Finalize();
 
 	// 入力の解放
 	delete input;
