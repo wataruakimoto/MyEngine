@@ -3,24 +3,27 @@
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
-	// 生成
-	MyGame game;
+	// ゲームの生成
+	MyGame* game = new MyGame();
 
-	// 初期化
-	game.Initialize();
+	// ゲームの初期化
+	game->Initialize();
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (true) {
 
-		// 更新
-		game.Update();
+		// ゲームの更新
+		game->Update();
 
-		// 描画
-		game.Draw();
+		// ゲームの描画
+		game->Draw();
 	}
 
 	// ゲーム終了
-	game.Finalize();
+	game->Finalize();
+
+	// ゲーム削除
+	delete game;
 
 	return 0;
 }

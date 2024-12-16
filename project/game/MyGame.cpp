@@ -2,10 +2,7 @@
 
 #include "debug/D3DResourceLeakChecker.h"
 #include "debug/Logger.h"
-#include "2d/Sprite.h"
 #include "2d/TextureManager.h"
-#include "3d/Object3d.h"
-#include "3d/Model.h"
 #include "3d/ModelManager.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
@@ -75,11 +72,11 @@ void MyGame::Initialize() {
 	/// === シーンの初期化 === ///
 
 	// スプライトの生成・初期化
-	Sprite* sprite = new Sprite();
+	sprite = new Sprite();
 	sprite->Initialize(spriteCommon, "resources/uvChecker.png");
 
 	// モデルの生成・初期化
-	Model* model = new Model();
+	model = new Model();
 	model->Initialize(modelCommon, "resources", "plane.obj");
 
 	// 3Dオブジェクトの生成・初期化

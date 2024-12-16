@@ -4,9 +4,12 @@
 #include "winApp/WinApp.h"
 #include "base/DirectXCommon.h"
 #include "debug/ImGuiManager.h"
+#include "2d/Sprite.h"
 #include "2d/SpriteCommon.h"
-#include "3d/Object3dCommon.h"
+#include "3d/Model.h"
 #include "3d/ModelCommon.h"
+#include "3d/Object3d.h"
+#include "3d/Object3dCommon.h"
 #include "3d/Camera.h"
 
 /// === ゲーム関連 === ///
@@ -60,9 +63,18 @@ private:
 	// スプライト共通部のポインタ
 	SpriteCommon* spriteCommon = nullptr;
 
+	// モデル基盤のポインタ
+	ModelCommon* modelCommon = nullptr;
+
 	// 3Dオブジェクト共通部のポインタ
 	Object3dCommon* object3dCommon = nullptr;
 
-	// モデル基盤のポインタ
-	ModelCommon* modelCommon = nullptr;
+	// スプライトのポインタ
+	Sprite* sprite = nullptr;
+
+	// モデルのポインタ
+	Model* model = nullptr;
+
+	// 3Dオブジェクトのポインタ
+	Object3d* object3d = nullptr;
 };
