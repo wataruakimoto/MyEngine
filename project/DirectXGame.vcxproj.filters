@@ -31,6 +31,9 @@
     <Filter Include="Engine\audio">
       <UniqueIdentifier>{652420ed-feb7-4ee8-8411-6a56eba0fe1c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{7c8e140e-93b6-4893-a355-dd044f132554}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -90,6 +93,9 @@
     </ClCompile>
     <ClCompile Include="engine\audio\AudioManager.cpp">
       <Filter>Engine\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="game\MyGame.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +167,9 @@
     </ClInclude>
     <ClInclude Include="engine\audio\AudioManager.h">
       <Filter>Engine\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="game\MyGame.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
