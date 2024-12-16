@@ -80,7 +80,7 @@ void MyGame::Initialize() {
 	model->Initialize(modelCommon, "resources", "plane.obj");
 
 	// 3Dオブジェクトの生成・初期化
-	Object3d* object3d = new Object3d();
+	object3d = new Object3d();
 	object3d->Initialize(object3dCommon);
 	object3d->SetModel(model);
 
