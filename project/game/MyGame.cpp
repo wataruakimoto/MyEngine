@@ -13,14 +13,8 @@
 
 void MyGame::Initialize() {
 
-	/// === ゲームウィンドウ作成 === ///
-
-	// WindowsAPIの初期化
-	winApp = new WinApp();
-	winApp->Initialize();
-
-	// ウィンドウを表示する
-	ShowWindow(winApp->GetHwnd(), SW_SHOW);
+	// 基底クラス初期化
+	Framework::Initialize();
 
 	/// === DirectX初期化 === ///
 
@@ -89,9 +83,12 @@ void MyGame::Initialize() {
 
 void MyGame::Update() {
 
+	// 基底クラス更新
+	Framework::Update();
+
 	/// === Windowsメッセージ処理=== ///
 
-		// Windowにメッセージが来てたら最優先で処理させる
+	// Windowにメッセージが来てたら最優先で処理させる
 	if (winApp->ProcessMessage()) {
 
 		// ゲームループを抜ける
@@ -310,12 +307,8 @@ void MyGame::Finalize() {
 	/// ----------DirectXの解放----------
 	delete dxCommon;
 
-	/// ----------ゲームウィンドウ解放----------
-
-	// WindowsAPIの終了処理
-	winApp->Finalize();
-	// WindowsAPIの解放
-	delete winApp;
+	// 基底クラス解放
+	Framework::Finalize();
 
 	D3DResourceLeakChecker leakCheck;
 

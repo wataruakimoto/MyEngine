@@ -121,6 +121,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\utility\StringUtility.cpp" />
     <ClCompile Include="engine\winApp\WinApp.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
+    <ClCompile Include="game\Framework.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="game\MyGame.cpp" />
   </ItemGroup>
@@ -148,6 +149,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\utility\StringUtility.h" />
     <ClInclude Include="engine\winApp\WinApp.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
+    <ClInclude Include="game\Framework.h" />
     <ClInclude Include="game\MyGame.h" />
   </ItemGroup>
   <ItemGroup>

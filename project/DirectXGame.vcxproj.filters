@@ -97,6 +97,7 @@
     <ClCompile Include="game\MyGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="game\Framework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\3d\Camera.h">
@@ -171,6 +172,7 @@
     <ClInclude Include="game\MyGame.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="game\Framework.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
