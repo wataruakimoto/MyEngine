@@ -40,6 +40,12 @@ public:
 	/// </summary>
 	void Finalize();
 
+	/// <summary>
+	/// 終了フラグのチェック
+	/// </summary>
+	/// <returns></returns>
+	bool IsEndRequest() { return endRequest_; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -77,4 +83,9 @@ private:
 
 	// 3Dオブジェクトのポインタ
 	Object3d* object3d = nullptr;
+
+	bool useModelManager;
+
+	// ゲーム終了フラグ
+	bool endRequest_ = false;
 };

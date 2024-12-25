@@ -84,7 +84,7 @@ void MyGame::Initialize() {
 	object3d->Initialize(object3dCommon);
 	object3d->SetModel(model);
 
-	bool useModelManager = true;
+	useModelManager = true;
 }
 
 void MyGame::Update() {
@@ -95,10 +95,9 @@ void MyGame::Update() {
 	if (winApp->ProcessMessage()) {
 
 		// ゲームループを抜ける
-		break;
+		endRequest_ = true;
 
-	}
-	else {
+	} else {
 
 		///
 		/// 更新処理開始

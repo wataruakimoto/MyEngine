@@ -15,6 +15,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// ゲームの更新
 		game->Update();
 
+		// 終了リクエストが来たら抜ける
+		if (game->IsEndRequest()) {
+			break;
+		}
+
 		// ゲームの描画
 		game->Draw();
 	}
@@ -22,7 +27,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	// ゲーム終了
 	game->Finalize();
 
-	// ゲーム削除
+	// ゲーム解放
 	delete game;
 
 	return 0;
