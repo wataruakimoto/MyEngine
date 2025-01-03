@@ -1,13 +1,10 @@
 #include "MyGame.h"
-
-#include "debug/D3DResourceLeakChecker.h"
-#include "debug/Logger.h"
+#include "audio/AudioManager.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
-#include "audio/AudioManager.h"
 #include <imgui.h>
 
 
@@ -16,50 +13,16 @@ void MyGame::Initialize() {
 	// 基底クラス初期化
 	Framework::Initialize();
 
-	/// === DirectX初期化 === ///
-
-	dxCommon = new DirectXCommon();
-	dxCommon->Initialize(winApp);
-
-	/// === 汎用機能初期化 === ///
-
-	// ImGuiの初期化
-	imGuiManager = new ImGuiManager();
-	imGuiManager->Initialize(winApp, dxCommon);
-
-	// 入力の初期化
-	input = new Input();
-	input->Initialize(winApp);
-
 	// カメラの初期化
 	camera = new Camera();
 
-	// スプライト共通部初期化
-	spriteCommon = new SpriteCommon();
-	spriteCommon->Initialize(dxCommon);
-
-	// 3Dオブジェクト共通部初期化
-	object3dCommon = new Object3dCommon();
-	object3dCommon->Initialize(dxCommon);
+	// カメラを設定
 	object3dCommon->SetDefaultCamera(camera);
-
-	// モデル基盤初期化
-	modelCommon = new ModelCommon();
-	modelCommon->Initialize(dxCommon);
-
-	// テクスチャマネージャ初期化
-	TextureManager::GetInstance()->Initialize(dxCommon);
 
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
 
-	// モデルマネージャ初期化
-	ModelManager::GetInstance()->Initialize(dxCommon);
-
 	ModelManager::GetInstance()->LoadModel("axis.obj");
-
-	// オーディオマネージャ初期化
-	AudioManager::GetInstance()->Initialize();
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
 
@@ -83,11 +46,6 @@ void MyGame::Initialize() {
 
 void MyGame::Update() {
 
-	// 基底クラス更新
-	Framework::Update();
-
-	/// === Windowsメッセージ処理=== ///
-
 	// Windowにメッセージが来てたら最優先で処理させる
 	if (winApp->ProcessMessage()) {
 
@@ -96,14 +54,8 @@ void MyGame::Update() {
 
 	} else {
 
-		///
-		/// 更新処理開始
-		///
-
-		/// ----------入力の更新----------
-		input->Update();
-
-		/// ----------シーンの更新----------
+		// 基底クラス更新
+		Framework::Update();
 
 		// サウンド更新
 		if (input->TriggerKey(DIK_SPACE)) {
@@ -219,18 +171,10 @@ void MyGame::Update() {
 
 		/// === ImGui終了 === ///
 		imGuiManager->End();
-
-		///
-		/// 更新処理終了
-		///
 	}
 }
 
 void MyGame::Draw() {
-
-	///
-	/// 描画処理開始
-	///
 
 	/// ----------DirectX描画開始----------
 	dxCommon->PreDraw();
@@ -254,19 +198,9 @@ void MyGame::Draw() {
 
 	/// ----------DirectX描画処理----------
 	dxCommon->PostDraw();
-
-	///
-	/// 描画処理終了
-	///
 }
 
 void MyGame::Finalize() {
-
-	///
-	/// 解放処理開始
-	///
-
-	/// ----------最初のシーンの解放----------
 
 	// モデルの解放
 	delete model;
@@ -277,42 +211,6 @@ void MyGame::Finalize() {
 	// スプライトの解放
 	delete sprite;
 
-	/// ----------汎用機能の解放----------
-
-	// モデルマネージャの終了
-	ModelManager::GetInstance()->Finalize();
-
-	// テクスチャマネージャの終了
-	TextureManager::GetInstance()->Finalize();
-
-	// モデル基盤の解放
-	delete modelCommon;
-
-	// 3Dオブジェクト共通部の解放
-	delete object3dCommon;
-
-	// スプライト共通部の解放
-	delete spriteCommon;
-
-	// オーディオマネージャ終了
-	AudioManager::GetInstance()->Finalize();
-
-	// 入力の解放
-	delete input;
-
-	// ImGui終了&解放
-	imGuiManager->Finalize();
-	delete imGuiManager;
-
-	/// ----------DirectXの解放----------
-	delete dxCommon;
-
 	// 基底クラス解放
 	Framework::Finalize();
-
-	D3DResourceLeakChecker leakCheck;
-
-	///
-	/// 解放処理終了
-	///
 }

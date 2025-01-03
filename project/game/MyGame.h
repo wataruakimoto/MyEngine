@@ -2,15 +2,9 @@
 
 #include "Framework.h"
 
-#include "input/Input.h"
-#include "base/DirectXCommon.h"
-#include "debug/ImGuiManager.h"
 #include "2d/Sprite.h"
-#include "2d/SpriteCommon.h"
 #include "3d/Model.h"
-#include "3d/ModelCommon.h"
 #include "3d/Object3d.h"
-#include "3d/Object3dCommon.h"
 #include "3d/Camera.h"
 
 /// === ゲーム関連 === ///
@@ -46,26 +40,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	// 入力のポインタ
-	Input* input = nullptr;
-
-	// DirectX基盤のポインタ
-	DirectXCommon* dxCommon = nullptr;
-
-	// ImGui管理クラスのポインタ
-	ImGuiManager* imGuiManager = nullptr;
-
 	// カメラのポインタ
 	Camera* camera = nullptr;
-
-	// スプライト共通部のポインタ
-	SpriteCommon* spriteCommon = nullptr;
-
-	// モデル基盤のポインタ
-	ModelCommon* modelCommon = nullptr;
-
-	// 3Dオブジェクト共通部のポインタ
-	Object3dCommon* object3dCommon = nullptr;
 
 	// スプライトのポインタ
 	Sprite* sprite = nullptr;
