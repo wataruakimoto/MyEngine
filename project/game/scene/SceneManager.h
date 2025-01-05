@@ -10,5 +10,6 @@ class SceneManager {
 ///-------------------------------------------///
 private:
 
+	// 今のシーン
 	BaseScene* scene = nullptr;
 };
