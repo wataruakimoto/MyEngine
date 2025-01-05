@@ -102,6 +102,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="game\scene\BaseScene.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
     <ClCompile Include="engine\3d\Camera.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
@@ -121,12 +122,14 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\utility\StringUtility.cpp" />
     <ClCompile Include="engine\winApp\WinApp.cpp" />
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
-    <ClCompile Include="game\GameScene.cpp" />
+    <ClCompile Include="game\scene\GameScene.cpp" />
     <ClCompile Include="game\Framework.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="game\MyGame.cpp" />
+    <ClCompile Include="game\scene\TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="game\scene\BaseScene.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />
     <ClInclude Include="engine\3d\Camera.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
@@ -150,9 +153,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\utility\StringUtility.h" />
     <ClInclude Include="engine\winApp\WinApp.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
-    <ClInclude Include="game\GameScene.h" />
+    <ClInclude Include="game\scene\GameScene.h" />
     <ClInclude Include="game\Framework.h" />
     <ClInclude Include="game\MyGame.h" />
+    <ClInclude Include="game\scene\TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

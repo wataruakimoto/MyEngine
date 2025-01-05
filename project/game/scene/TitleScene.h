@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Framework.h"
-#include "scene/TitleScene.h"
-#include "scene/GameScene.h"
+#include "BaseScene.h"
+#include "2d/Sprite.h"
 
-/// === ゲーム関連 === ///
-class MyGame : public Framework {
+/// ===== タイトルシーン ===== ///
+class TitleScene : public BaseScene {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -37,7 +36,6 @@ public:
 ///-------------------------------------------///
 private:
 
-	TitleScene* titleScene = nullptr;
-
-	GameScene* gameScene = nullptr;
+	// スプライトのポインタ
+	Sprite* sprite = nullptr;
 };

@@ -5,8 +5,11 @@ void MyGame::Initialize() {
 	// 基底クラス初期化
 	Framework::Initialize();
 
-	gameScene = new GameScene();
-	gameScene->Initialize();
+	titleScene = new TitleScene();
+	titleScene->Initialize();
+
+	//gameScene = new GameScene();
+	//gameScene->Initialize();
 }
 
 void MyGame::Update() {
@@ -25,7 +28,9 @@ void MyGame::Update() {
 		/// === ImGui開始 === ///
 		imGuiManager->Begin();
 
-		gameScene->Update();
+		titleScene->Update();
+
+		//gameScene->Update();
 
 		/// === ImGui終了 === ///
 		imGuiManager->End();
@@ -37,7 +42,9 @@ void MyGame::Draw() {
 	/// === DirectX描画開始 === ///
 	dxCommon->PreDraw();
 
-	gameScene->Draw();
+	titleScene->Draw();
+
+	//gameScene->Draw();
 
 	/// === ImGui描画 === ///
 	imGuiManager->Draw();
@@ -48,8 +55,11 @@ void MyGame::Draw() {
 
 void MyGame::Finalize() {
 
-	gameScene->Finalize();
-	delete gameScene;
+	titleScene->Finalize();
+	delete titleScene;
+
+	//gameScene->Finalize();
+	//delete gameScene;
 
 	// 基底クラス解放
 	Framework::Finalize();

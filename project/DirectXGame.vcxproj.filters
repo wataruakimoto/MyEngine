@@ -34,6 +34,9 @@
     <Filter Include="Game">
       <UniqueIdentifier>{7c8e140e-93b6-4893-a355-dd044f132554}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{aab7704f-f607-408e-ac94-e63cf6a6b35a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -100,8 +103,14 @@
     <ClCompile Include="game\Framework.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="game\GameScene.cpp">
-      <Filter>Game</Filter>
+    <ClCompile Include="game\scene\BaseScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\GameScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\TitleScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -180,8 +189,14 @@
     <ClInclude Include="game\Framework.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="game\GameScene.h">
-      <Filter>Game</Filter>
+    <ClInclude Include="game\scene\BaseScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\GameScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\TitleScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,12 +1,13 @@
 #pragma once
 
+#include "BaseScene.h"
 #include "2d/Sprite.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
 #include "3d/Camera.h"
 
 /// ===== ゲームシーン ===== ///
-class GameScene {
+class GameScene : public BaseScene {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -16,22 +17,22 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize() override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	void Draw() override;
 
 	/// <summary>
 	/// 終了
 	/// </summary>
-	void Finalize();
+	void Finalize() override;
 
 ///-------------------------------------------/// 
 /// メンバ変数
