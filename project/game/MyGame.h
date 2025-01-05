@@ -1,11 +1,7 @@
 #pragma once
 
 #include "Framework.h"
-
-#include "2d/Sprite.h"
-#include "3d/Model.h"
-#include "3d/Object3d.h"
-#include "3d/Camera.h"
+#include "GameScene.h"
 
 /// === ゲーム関連 === ///
 class MyGame : public Framework {
@@ -40,17 +36,5 @@ public:
 ///-------------------------------------------///
 private:
 
-	// カメラのポインタ
-	Camera* camera = nullptr;
-
-	// スプライトのポインタ
-	Sprite* sprite = nullptr;
-
-	// モデルのポインタ
-	Model* model = nullptr;
-
-	// 3Dオブジェクトのポインタ
-	Object3d* object3d = nullptr;
-
-	bool useModelManager;
+	GameScene* gameScene = nullptr;
 };

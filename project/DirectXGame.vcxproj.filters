@@ -97,7 +97,12 @@
     <ClCompile Include="game\MyGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="game\Framework.cpp" />
+    <ClCompile Include="game\Framework.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="game\GameScene.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\3d\Camera.h">
@@ -172,7 +177,12 @@
     <ClInclude Include="game\MyGame.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="game\Framework.h" />
+    <ClInclude Include="game\Framework.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="game\GameScene.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

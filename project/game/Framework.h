@@ -63,15 +63,6 @@ protected:
 	// 入力のポインタ
 	Input* input = nullptr;
 
-	// スプライト共通部のポインタ
-	SpriteCommon* spriteCommon = nullptr;
-
-	// モデル基盤のポインタ
-	ModelCommon* modelCommon = nullptr;
-
-	// 3Dオブジェクト共通部のポインタ
-	Object3dCommon* object3dCommon = nullptr;
-
 	// ゲーム終了フラグ
 	bool endRequest_ = false;
 };

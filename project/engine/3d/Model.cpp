@@ -6,10 +6,7 @@
 
 using namespace MathMatrix;
 
-void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypath, const std::string& filename) {
-
-	// 引数をメンバ変数に代入
-	modelCommon_ = modelCommon;
+void Model::Initialize(const std::string& directorypath, const std::string& filename) {
 
 	// モデル読み込み
 	modelData = LoadObjFile(directorypath, filename);
@@ -30,16 +27,16 @@ void Model::Initialize(ModelCommon* modelCommon, const std::string& directorypat
 void Model::Draw() {
 
 	// 頂点バッファビューを設定
-	modelCommon_->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	modelCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureIndex));
+	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureIndex));
 
 	// 描画(DrawCall)
-	modelCommon_->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 }
 
 Model::MaterialData Model::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
@@ -163,7 +160,7 @@ Model::ModelData Model::LoadObjFile(const std::string& directoryPath, const std:
 void Model::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	vertexResource = ModelCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
@@ -184,7 +181,7 @@ void Model::InitializeVertexData() {
 void Model::InitializeMaterialData() {
 
 	/// === MaterialResourceを作る === ///
-	materialResource = modelCommon_->GetDxCommon()->CreateBufferResource(sizeof(Material));
+	materialResource = ModelCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(Material));
 
 	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));

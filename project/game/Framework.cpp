@@ -34,18 +34,14 @@ void Framework::Initialize() {
 	// モデルマネージャ初期化
 	ModelManager::GetInstance()->Initialize(dxCommon);
 
-
 	// スプライト共通部初期化
-	spriteCommon = new SpriteCommon();
-	spriteCommon->Initialize(dxCommon);
+	SpriteCommon::GetInstance()->Initialize(dxCommon);
 
 	// 3Dオブジェクト共通部初期化
-	object3dCommon = new Object3dCommon();
-	object3dCommon->Initialize(dxCommon);
+	Object3dCommon::GetInstance()->Initialize(dxCommon);
 
 	// モデル基盤初期化
-	modelCommon = new ModelCommon();
-	modelCommon->Initialize(dxCommon);
+	ModelCommon::GetInstance()->Initialize(dxCommon);
 }
 
 void Framework::Update() {
@@ -57,13 +53,13 @@ void Framework::Update() {
 void Framework::Finalize() {
 
 	// モデル基盤の解放
-	delete modelCommon;
+	ModelCommon::GetInstance()->Finalize();
 
 	// 3Dオブジェクト共通部の解放
-	delete object3dCommon;
+	Object3dCommon::GetInstance()->Finalize();
 
 	// スプライト共通部の解放
-	delete spriteCommon;
+	SpriteCommon::GetInstance()->Finalize();
 
 	// モデルマネージャの終了
 	ModelManager::GetInstance()->Finalize();
