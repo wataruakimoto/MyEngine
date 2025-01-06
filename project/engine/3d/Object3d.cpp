@@ -10,10 +10,7 @@
 
 using namespace MathMatrix;
 
-void Object3d::Initialize(Object3dCommon* object3dCommon){
-
-	// 引数をメンバ変数に代入
-	this->object3dCommon_ = object3dCommon;
+void Object3d::Initialize(){
 
 	InitializeTransformationMatrixData();
 
@@ -23,7 +20,7 @@ void Object3d::Initialize(Object3dCommon* object3dCommon){
 	transform = { {1.0f,1.0f,1.0f},{0.0f,3.14f,0.0f},{0.0f,0.0f,0.0f} };
 
 	// デフォルトカメラをセット
-	this->camera = object3dCommon->GetDefaultCamera();
+	this->camera = Object3dCommon::GetInstance()->GetDefaultCamera();
 }
 
 void Object3d::Update(){
@@ -54,10 +51,10 @@ void Object3d::Update(){
 void Object3d::Draw(){
 
 	/// === 座標変換行列CBufferの場所を設定 === ///
-	object3dCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
 	/// === 平行光源CBufferの場所を設定=== ///
-	object3dCommon_->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 	// 3Dモデルが割り当てられていれば描画する
 	if (model) {
@@ -68,7 +65,7 @@ void Object3d::Draw(){
 void Object3d::InitializeTransformationMatrixData(){
 
 	/// === TransformationMatrixResourceを作る === ///
-	transformationMatrixResource = object3dCommon_->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+	transformationMatrixResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	/// === TransformationMatrixResourceにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる === ///
 	transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
@@ -81,7 +78,7 @@ void Object3d::InitializeTransformationMatrixData(){
 void Object3d::InitializeDirectionalLightData() {
 
 	/// === DirectionalLightResourceを作る === ///
-	directionalLightResource = object3dCommon_->GetDxCommon()->CreateBufferResource(sizeof(DirectionalLight));
+	directionalLightResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(DirectionalLight));
 
 	/// === DirectionalLightResourceにデータを書き込むためのアドレスを取得してDirectionalLightDataに割り当てる === ///
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));

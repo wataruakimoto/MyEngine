@@ -4,6 +4,16 @@
 using namespace Microsoft::WRL;
 using namespace Logger;
 
+Object3dCommon* Object3dCommon::instance = nullptr;
+
+Object3dCommon* Object3dCommon::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new Object3dCommon;
+	}
+	return instance;
+}
+
 void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 
 	// 引数をメンバ変数に代入
@@ -11,6 +21,11 @@ void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
+}
+
+void Object3dCommon::Finalize() {
+	delete instance;
+	instance = nullptr;
 }
 
 void Object3dCommon::SettingCommonDrawing() {

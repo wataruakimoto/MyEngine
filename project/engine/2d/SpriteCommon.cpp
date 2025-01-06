@@ -3,6 +3,16 @@
 
 using namespace Microsoft::WRL;
 
+SpriteCommon* SpriteCommon::instance = nullptr;
+
+SpriteCommon* SpriteCommon::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new SpriteCommon;
+	}
+	return instance;
+}
+
 void SpriteCommon::Initialize(DirectXCommon* dxCommon){
 
 	// 引数をメンバ変数に代入
@@ -10,6 +20,11 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon){
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
+}
+
+void SpriteCommon::Finalize() {
+	delete instance;
+	instance = nullptr;
 }
 
 void SpriteCommon::SettingCommonDrawing() {

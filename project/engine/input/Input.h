@@ -17,7 +17,33 @@ public:
 	// namespace省略 エイリアステンプレート
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-public: // メンバ関数
+///-------------------------------------------/// 
+/// シングルトン
+///-------------------------------------------///
+private:
+
+	// インスタンス
+	static Input* instance;
+	// コンストラクタの隠蔽
+	Input() = default;
+	// デストラクタの隠蔽
+	~Input() = default;
+	// コピーコンストラクタの封印
+	Input(Input&) = delete;
+	// コピー代入演算子の封印
+	Input& operator=(Input&) = delete;
+
+///-------------------------------------------/// 
+/// メンバ関数
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static Input* GetInstance();
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -27,6 +53,11 @@ public: // メンバ関数
 	/// 更新
 	/// </summary>
 	void Update();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// キーの押下をチェック
