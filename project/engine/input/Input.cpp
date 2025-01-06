@@ -5,6 +5,16 @@
 #pragma comment(lib,"dinput8.lib")
 #pragma comment(lib,"dxguid.lib")
 
+Input* Input::instance = nullptr;
+
+Input* Input::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new Input;
+	}
+	return instance;
+}
+
 void Input::Initialize(WinApp* winApp) {
 
 	// 借りてきたWinAppのインスタンスを記録
@@ -40,6 +50,12 @@ void Input::Update(){
 	keyboard->Acquire();
 	// 全キーの入力情報を取得する
 	keyboard->GetDeviceState(sizeof(key), key);
+}
+
+void Input::Finalize() {
+
+	delete instance;
+	instance = nullptr;
 }
 
 bool Input::PushKey(BYTE keyNumber) {

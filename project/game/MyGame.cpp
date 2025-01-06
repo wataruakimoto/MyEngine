@@ -1,15 +1,16 @@
 #include "MyGame.h"
+#include "scene/SceneManager.h"
+#include "scene/TitleScene.h"
 
 void MyGame::Initialize() {
 
 	// 基底クラス初期化
 	Framework::Initialize();
 
-	titleScene = new TitleScene();
-	titleScene->Initialize();
-
-	//gameScene = new GameScene();
-	//gameScene->Initialize();
+	// 最初のシーンを生成
+	BaseScene* scene = new TitleScene();
+	// シーンマネージャに最初のシーンをセット
+	SceneManager::GetInstance()->SetNextScene(scene);
 }
 
 void MyGame::Update() {
@@ -28,9 +29,8 @@ void MyGame::Update() {
 		/// === ImGui開始 === ///
 		imGuiManager->Begin();
 
-		titleScene->Update();
-
-		//gameScene->Update();
+		// シーンマネージャの更新
+		SceneManager::GetInstance()->Update();
 
 		/// === ImGui終了 === ///
 		imGuiManager->End();
@@ -42,9 +42,8 @@ void MyGame::Draw() {
 	/// === DirectX描画開始 === ///
 	dxCommon->PreDraw();
 
-	titleScene->Draw();
-
-	//gameScene->Draw();
+	// シーンマネージャの描画
+	SceneManager::GetInstance()->Draw();
 
 	/// === ImGui描画 === ///
 	imGuiManager->Draw();
@@ -54,12 +53,6 @@ void MyGame::Draw() {
 }
 
 void MyGame::Finalize() {
-
-	titleScene->Finalize();
-	delete titleScene;
-
-	//gameScene->Finalize();
-	//delete gameScene;
 
 	// 基底クラス解放
 	Framework::Finalize();

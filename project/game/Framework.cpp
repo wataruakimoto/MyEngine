@@ -1,8 +1,10 @@
 #include "Framework.h"
 #include "audio/AudioManager.h"
+#include "input/Input.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
 #include "debug/D3DResourceLeakChecker.h"
+#include "scene/SceneManager.h"
 
 void Framework::Initialize() {
 
@@ -21,12 +23,11 @@ void Framework::Initialize() {
 	imGuiManager = new ImGuiManager();
 	imGuiManager->Initialize(winApp, dxCommon);
 
-	// 入力の初期化
-	input = new Input();
-	input->Initialize(winApp);
-
 	// オーディオマネージャ初期化
 	AudioManager::GetInstance()->Initialize();
+
+	// 入力の初期化
+	Input::GetInstance()->Initialize(winApp);
 
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
@@ -47,7 +48,7 @@ void Framework::Initialize() {
 void Framework::Update() {
 
 	// 入力の更新
-	input->Update();
+	Input::GetInstance()->Update();
 }
 
 void Framework::Finalize() {
@@ -67,11 +68,14 @@ void Framework::Finalize() {
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
 
+	// 入力の終了
+	Input::GetInstance()->Finalize();
+
 	// オーディオマネージャ終了
 	AudioManager::GetInstance()->Finalize();
 
-	// 入力の解放
-	delete input;
+	// シーンマネージャ終了
+	SceneManager::GetInstance()->Finalize();
 
 	// ImGuiの終了
 	imGuiManager->Finalize();

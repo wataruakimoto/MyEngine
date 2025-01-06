@@ -1,5 +1,8 @@
 #pragma once
 
+/// ===== シーンマネージャ前方宣言 ===== ///
+class SceneManager;
+
 /// ===== シーン基底 ===== ///
 class BaseScene {
 
@@ -32,4 +35,14 @@ public:
 	/// 終了
 	/// </summary>
 	virtual void Finalize() = 0;
+
+	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
+private:
+
+	// シーンマネージャのポインタ
+	SceneManager* sceneManager_ = nullptr;
 };

@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "audio/AudioManager.h"
+#include "input/Input.h"
 #include "2d/TextureManager.h"
 #include "2d/SpriteCommon.h"
 #include "3d/ModelManager.h"
@@ -44,10 +45,10 @@ void GameScene::Initialize() {
 void GameScene::Update() {
 
 	// サウンド更新
-	//if (input->TriggerKey(DIK_SPACE)) {
-	//
-	//	AudioManager::GetInstance()->SoundPlayWave();
-	//}
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+	
+		AudioManager::GetInstance()->SoundPlayWave();
+	}
 
 	/// === カメラ更新 === ///
 	ImGui::Begin("Camera");

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Framework.h"
-#include "scene/TitleScene.h"
-#include "scene/GameScene.h"
 
 /// === ゲーム関連 === ///
 class MyGame : public Framework {
@@ -37,7 +35,4 @@ public:
 ///-------------------------------------------///
 private:
 
-	TitleScene* titleScene = nullptr;
-
-	GameScene* gameScene = nullptr;
 };
