@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseScene.h"
+#include "AbstractSceneFactory.h"
 
 /// ===== シーン管理 ===== ///
 class SceneManager {
@@ -34,12 +35,6 @@ public:
 	static SceneManager* GetInstance();
 
 	/// <summary>
-	/// 次のシーンに変更
-	/// </summary>
-	/// <param name="nextScene">次のシーン</param>
-	void SetNextScene(BaseScene* nextScene) { nextScene_ = nextScene; }
-
-	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
@@ -54,6 +49,18 @@ public:
 	/// </summary>
 	void Finalize();
 
+	/// <summary>
+	/// シーンファクトリーのセッター
+	/// </summary>
+	/// <param name="sceneFactory">シーンファクトリー</param>
+	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
+
+	/// <summary>
+	/// シーンを変更
+	/// </summary>
+	/// <param name="sceneName">シーン名</param>
+	void ChangeScene(const std::string& sceneName);
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -64,4 +71,7 @@ private:
 
 	// 次のシーン
 	BaseScene* nextScene_ = nullptr;
+
+	// シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 };

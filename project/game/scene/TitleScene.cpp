@@ -1,6 +1,5 @@
 #include "TitleScene.h"
 #include "SceneManager.h"
-#include "GameScene.h"
 #include "input/Input.h"
 #include "2d/TextureManager.h"
 #include "2d/SpriteCommon.h"
@@ -71,11 +70,8 @@ void TitleScene::Update() {
 	// エンターキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
 
-		// ゲームシーンを作成
-		BaseScene* scene = new GameScene();
-
 		// シーン切り替え
-		SceneManager::GetInstance()->SetNextScene(scene);
+		SceneManager::GetInstance()->ChangeScene("GAME");
 	}
 }
 

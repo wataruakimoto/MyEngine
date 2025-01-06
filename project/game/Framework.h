@@ -6,6 +6,7 @@
 #include "2d/SpriteCommon.h"
 #include "3d/ModelCommon.h"
 #include "3d/Object3dCommon.h"
+#include "scene/AbstractSceneFactory.h"
 
 class Framework {
 
@@ -58,6 +59,9 @@ protected:
 
 	// ImGui管理クラスのポインタ
 	ImGuiManager* imGuiManager = nullptr;
+
+	// シーンファクトリー
+	AbstractSceneFactory* sceneFactory_ = nullptr;
 
 	// ゲーム終了フラグ
 	bool endRequest_ = false;

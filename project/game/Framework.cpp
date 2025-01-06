@@ -77,6 +77,9 @@ void Framework::Finalize() {
 	// シーンマネージャ終了
 	SceneManager::GetInstance()->Finalize();
 
+	// シーンファクトリーの解放
+	delete sceneFactory_;
+
 	// ImGuiの終了
 	imGuiManager->Finalize();
 	// ImGuiの解放

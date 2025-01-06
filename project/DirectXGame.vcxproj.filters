@@ -34,7 +34,7 @@
     <Filter Include="Game">
       <UniqueIdentifier>{7c8e140e-93b6-4893-a355-dd044f132554}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene">
+    <Filter Include="Game\Scene">
       <UniqueIdentifier>{aab7704f-f607-408e-ac94-e63cf6a6b35a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -104,16 +104,22 @@
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\BaseScene.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\GameScene.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\TitleScene.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="game\scene\SceneManager.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\AbstractSceneFactory.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="game\scene\SceneFactory.cpp">
+      <Filter>Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,16 +199,22 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\BaseScene.h">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\GameScene.h">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\TitleScene.h">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="game\scene\SceneManager.h">
-      <Filter>Scene</Filter>
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\AbstractSceneFactory.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="game\scene\SceneFactory.h">
+      <Filter>Game\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
