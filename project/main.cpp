@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲーム実行
 	game->Run();
-
+  
 	// ゲーム解放
 	delete game;
 

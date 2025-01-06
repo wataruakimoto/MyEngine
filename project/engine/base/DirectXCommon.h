@@ -20,11 +20,6 @@ public:
 public:	// メンバ関数
 
 	/// <summary>
-	/// デストラクタ
-	/// </summary>
-	~DirectXCommon();
-
-	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize(WinApp* winApp);
@@ -38,6 +33,11 @@ public:	// メンバ関数
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 	///-------------------------------------------/// 
 	/// ゲッター
