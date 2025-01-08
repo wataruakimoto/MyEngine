@@ -32,14 +32,14 @@ void GameScene::Initialize() {
 
 	// モデルの生成・初期化
 	model = new Model();
-	model->Initialize("resources", "plane.obj");
+	model->Initialize("resources/plane", "plane.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object3d = new Object3d();
 	object3d->Initialize();
 	object3d->SetModel(model);
 
-	useModelManager = true;
+	useModelManager = false;
 }
 
 void GameScene::Update() {
