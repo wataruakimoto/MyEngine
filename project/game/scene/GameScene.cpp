@@ -3,7 +3,6 @@
 #include "input/Input.h"
 #include "2d/TextureManager.h"
 #include "2d/SpriteCommon.h"
-#include "3d/ModelManager.h"
 #include "3d/Object3dCommon.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
@@ -19,8 +18,6 @@ void GameScene::Initialize() {
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera);
 
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
-
-	ModelManager::GetInstance()->LoadModel("axis.obj");
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
 
@@ -38,8 +35,6 @@ void GameScene::Initialize() {
 	object3d = new Object3d();
 	object3d->Initialize();
 	object3d->SetModel(model);
-
-	useModelManager = false;
 }
 
 void GameScene::Update() {
@@ -139,17 +134,25 @@ void GameScene::Update() {
 	ImGui::DragFloat3("Translate", &translate.x, 0.1f);
 	object3d->SetTranslate(translate);
 
-	// モデルを使うかどうかの確認
-	ImGui::Checkbox("UseModelManager", &useModelManager);
-	if (useModelManager) {
+	// 色変更の確認
+	Vector4 rightColor = object3d->GetColor();
+	ImGui::DragFloat4("Color", &rightColor.x, 0.01f);
+	object3d->SetColor(rightColor);
 
-		object3d->SetModel("axis.obj");
+	// 向き変更の確認
+	Vector3 direction = object3d->GetDirection();
+	ImGui::DragFloat3("Direction", &direction.x, 0.01f);
+	object3d->SetDirection(direction);
 
-	}
-	else {
+	// 輝度変更の確認
+	float intensity = object3d->GetIntensity();
+	ImGui::DragFloat("Intensity", &intensity, 0.01f);
+	object3d->SetIntensity(intensity);
 
-		object3d->SetModel(model);
-	}
+	// ライティングの有効無効
+	bool isLighting = model->GetEnableLighting();
+	ImGui::Checkbox("EnableLighting", &isLighting);
+	model->SetEnableLighting(isLighting);
 
 	ImGui::End();
 }

@@ -3,12 +3,8 @@
 #include <map>
 #include <string>
 #include <memory>
-
-#include "ModelCommon.h"
+#include "Model.h"
 #include "base/DirectXCommon.h"
-
-/// === モデル === ///
-class Model;
 
 /// === モデルマネージャー === ///
 class ModelManager {
@@ -68,6 +64,22 @@ public:
 	/// <returns>モデル</returns>
 	Model* FindModel(const std::string& filePath);
 
+	/// <summary>
+	/// .mtlファイル読み込み
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリーパス</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns></returns>
+	static Model::MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+
+	/// <summary>
+	/// .objファイル読み込み
+	/// </summary>
+	/// <param name="directoryPath">ディレクトリーパス</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns></returns>
+	static Model::ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -75,7 +87,4 @@ private:
 
 	// モデルデータ
 	std::map<std::string, std::unique_ptr<Model>> models;
-
-	// モデル共通部のインスタンス
-	ModelCommon* modelCommon = nullptr;
 };

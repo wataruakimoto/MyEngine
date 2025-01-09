@@ -59,22 +59,6 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// .mtlファイル読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリーパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns></returns>
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// .objファイル読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリーパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns></returns>
-	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
-
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -89,6 +73,23 @@ private:
 	/// マテリアルデータ初期化
 	/// </summary>
 	void InitializeMaterialData();
+
+///-------------------------------------------/// 
+/// ゲッター&セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ライティングの有効無効のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const bool GetEnableLighting() const { return materialData->enableLighting; }
+
+	/// <summary>
+	/// ライティングの有効無効のセッター
+	/// </summary>
+	/// <param name="enableLighting"></param>
+	void SetEnableLighting(bool enableLighting) { materialData->enableLighting = enableLighting; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
