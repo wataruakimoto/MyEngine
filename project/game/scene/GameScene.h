@@ -50,6 +50,4 @@ private:
 
 	// 3Dオブジェクトのポインタ
 	Object3d* object3d = nullptr;
-
-	bool useModelManager;
 };

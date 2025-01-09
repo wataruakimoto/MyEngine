@@ -10,7 +10,7 @@ Camera::Camera() {
 
 	fovY = 0.45f;
 
-	aspectRatio = static_cast<float>(WinApp::kClientWidth / WinApp::kClientHeight);
+	aspectRatio = static_cast<float>(WinApp::kClientWidth) / static_cast<float>(WinApp::kClientHeight);
 
 	nearClip = 0.1f;
 

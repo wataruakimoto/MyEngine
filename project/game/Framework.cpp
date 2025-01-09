@@ -86,6 +86,7 @@ void Framework::Finalize() {
 	delete imGuiManager;
 
 	// DirectXの解放
+	dxCommon->Finalize();
 	delete dxCommon;
 
 	// WindowsAPIの終了処理

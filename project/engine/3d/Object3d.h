@@ -17,23 +17,15 @@ class ModelCommon;
 /// === 3Dオブジェクト === ///
 class Object3d {
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
 public:
 
 	// 座標変換行列
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 world;
-	};
-
-	// マテリアルデータ
-	struct Material {
-		Vector4 color;
-		bool enableLighting;
-		float padding[3];
-		Matrix4x4 uvTransform;
 	};
 
 	// 平行光源データ
@@ -50,9 +42,9 @@ public:
 		Vector3 translate;
 	};
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -70,9 +62,9 @@ public:
 	/// </summary>
 	void Draw();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// クラス内関数
+	///-------------------------------------------///
 private:
 
 	/// <summary>
@@ -85,9 +77,9 @@ private:
 	/// </summary>
 	void InitializeDirectionalLightData();
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -126,9 +118,27 @@ public:
 	/// <param name="camera">カメラ</param>
 	void SetCamera(Camera* camera) { this->camera = camera; }
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
+	/// <summary>
+	/// 色のセッター
+	/// </summary>
+	/// <param name="color"></param>
+	void SetColor(const Vector4& color) { this->directionalLightData->color = color; }
+
+	/// <summary>
+	///	向きのセッター
+	/// </summary>
+	/// <param name="direction"></param>
+	void SetDirection(const Vector3& direction) { this->directionalLightData->direction = direction; }
+
+	/// <summary>
+	/// 輝度のセッター
+	/// </summary>
+	/// <param name="intensity"></param>
+	void SetIntensity(float intensity) { this->directionalLightData->intensity = intensity; }
+
+	///-------------------------------------------/// 
+	/// ゲッター
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -149,9 +159,27 @@ public:
 	/// <returns></returns>
 	const Vector3& GetTranslate() const { return transform.translate; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
+	/// <summary>
+	/// 色のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector4& GetColor() const { return directionalLightData->color; }
+
+	/// <summary>
+	/// 向きのゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetDirection() const { return directionalLightData->direction; }
+
+	/// <summary>
+	/// 輝度のゲッター
+	/// </summary>
+	/// <returns></returns>
+	float GetIntensity() const { return directionalLightData->intensity; }
+
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	// 座標変換行列リソース
