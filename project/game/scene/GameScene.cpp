@@ -29,7 +29,7 @@ void GameScene::Initialize() {
 
 	// モデルの生成・初期化
 	model = new Model();
-	model->Initialize("resources/plane", "plane.obj");
+	model->Initialize("resources/sphere", "sphere.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object3d = new Object3d();
@@ -149,10 +149,15 @@ void GameScene::Update() {
 	ImGui::DragFloat("Intensity", &intensity, 0.01f);
 	object3d->SetIntensity(intensity);
 
-	// ライティングの有効無効
-	bool isLighting = model->GetEnableLighting();
-	ImGui::Checkbox("EnableLighting", &isLighting);
-	model->SetEnableLighting(isLighting);
+	// ライティングの仕方の設定
+	int lightingMode = model->GetLightingMode();
+	ImGui::Combo("LightingMode", &lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0");
+	model->SetLightingMode(lightingMode);
+
+	// 光沢度の設定の確認
+	float lightShininess = model->GetShininess();
+	ImGui::DragFloat("Shininess", &lightShininess, 0.1f);
+	model->SetShininess(lightShininess);
 
 	ImGui::End();
 }

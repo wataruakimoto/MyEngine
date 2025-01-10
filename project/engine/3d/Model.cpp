@@ -70,6 +70,7 @@ void Model::InitializeMaterialData() {
 
 	/// === MaterialDataの初期値を書き込む === ///
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
-	materialData->enableLighting = true; // Lightingをしていない
+	materialData->lightingMode = 0; // Lightingをしていない
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
+	materialData->shininess = 70.0f;
 }

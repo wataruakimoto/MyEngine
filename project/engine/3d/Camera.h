@@ -146,4 +146,10 @@ public:
 	/// </summary>
 	/// <returns>Matrix4x4</returns>
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
+
+	/// <summary>
+	/// ワールド座標のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetWorldPosition() const;
 };
