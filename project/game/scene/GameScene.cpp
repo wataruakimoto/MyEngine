@@ -151,7 +151,7 @@ void GameScene::Update() {
 
 	// ライティングの仕方の設定
 	int lightingMode = model->GetLightingMode();
-	ImGui::Combo("LightingMode", &lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0");
+	ImGui::Combo("LightingMode", &lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0");
 	model->SetLightingMode(lightingMode);
 
 	// 光沢度の設定の確認

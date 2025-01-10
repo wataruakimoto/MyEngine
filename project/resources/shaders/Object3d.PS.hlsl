@@ -79,6 +79,29 @@ PixelShaderOutput main(VertexShaderOutput input)
         output.color.a = gMaterial.color.a * textureColor.a;
         
     }
+    else if (gMaterial.lightingMode == 4)
+    { // Blinn-Phong Reflection Model
+        
+         // 拡散反射の計算
+        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
+        
+        // 鏡面反射の計算
+        float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
+        float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
+        float NdotH = dot(normalize(input.normal), halfVector);
+        float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+        
+        // 拡散反射
+        float3 diffuse = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
+        // 鏡面反射
+        float3 specular = float3(1.0f, 1.0f, 1.0f) * gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow;
+        
+        // 拡散反射と鏡面反射の合成
+        output.color.rgb = diffuse + specular;
+        // アルファ値はテクスチャをそのまま
+        output.color.a = gMaterial.color.a * textureColor.a;
+    }
     else
     { // Lightingしない場合
         
