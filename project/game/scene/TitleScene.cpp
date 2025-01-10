@@ -67,6 +67,10 @@ void TitleScene::Update() {
 
 	ImGui::End();
 
+	ImGui::Begin("Scene");
+	ImGui::Text("Push Return : Next Scene");
+	ImGui::End();
+
 	// エンターキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {
 
