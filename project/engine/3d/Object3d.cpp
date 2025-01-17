@@ -8,6 +8,7 @@
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
 #include "Camera.h"
+#include <imgui.h>
 
 using namespace MathMatrix;
 
@@ -53,6 +54,10 @@ void Object3d::Update() {
 	transformationMatrixData->world = worldMatrix;
 
 	directionalLightData->direction = Normalize(directionalLightData->direction);
+
+	ImGui::Begin("CameraForOBJ");
+	ImGui::DragFloat3("worldPos", &cameraData.x, 0.01f);
+	ImGui::End();
 }
 
 void Object3d::Draw() {
@@ -101,14 +106,14 @@ void Object3d::InitializeDirectionalLightData() {
 
 void Object3d::InitializeCameraData() {
 
-	// === CameraResource === ///
+	/// === CameraResource === ///
 	cameraResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(Vector3));
 
 	/// === CameraResourceにデータを書き込むためのアドレスを取得してCameraDataに割り当てる === ///
 	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
 
 	/// === CameraDataの初期値を書き込む === ///
-	cameraData = camera->GetTranslate();
+	cameraData = camera->GetWorldPosition();
 }
 
 void Object3d::SetModel(const std::string& filePath) {

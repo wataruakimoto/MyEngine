@@ -46,21 +46,7 @@ void GameScene::Update() {
 	}
 
 	/// === カメラ更新 === ///
-	ImGui::Begin("Camera");
-
-	// 向き変更
-	Vector3 cameraRotate = camera->GetRotate();
-	ImGui::DragFloat3("Rotate", &cameraRotate.x, 0.01f);
-	camera->SetRotate(cameraRotate);
-
-	// 位置変更
-	Vector3 cameraPositon = camera->GetTranslate();
-	ImGui::DragFloat3("Translate", &cameraPositon.x, 0.1f);
-	camera->SetTranslate(cameraPositon);
-
 	camera->Update();
-
-	ImGui::End();
 
 	/// === スプライト更新 === ///
 
