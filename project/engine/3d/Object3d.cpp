@@ -7,7 +7,7 @@
 #include "winApp/WinApp.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
-#include "Camera.h"
+#include "camera/Camera.h"
 #include <imgui.h>
 
 using namespace MathMatrix;

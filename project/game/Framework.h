@@ -3,6 +3,7 @@
 #include "winApp/WinApp.h"
 #include "base/DirectXCommon.h"
 #include "debug/ImGuiManager.h"
+#include "camera/DebugCamera.h"
 #include "2d/SpriteCommon.h"
 #include "3d/ModelCommon.h"
 #include "3d/Object3dCommon.h"
@@ -59,6 +60,8 @@ protected:
 
 	// ImGui管理クラスのポインタ
 	ImGuiManager* imGuiManager = nullptr;
+
+	DebugCamera* debugCamera = nullptr;
 
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;

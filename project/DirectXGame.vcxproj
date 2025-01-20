@@ -102,10 +102,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="engine\camera\DebugCamera.cpp" />
     <ClCompile Include="game\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="game\scene\BaseScene.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
-    <ClCompile Include="engine\3d\Camera.cpp" />
+    <ClCompile Include="engine\camera\Camera.cpp" />
     <ClCompile Include="engine\2d\Sprite.cpp" />
     <ClCompile Include="engine\2d\SpriteCommon.cpp" />
     <ClCompile Include="engine\2d\TextureManager.cpp" />
@@ -132,10 +133,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\scene\SceneFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="engine\camera\DebugCamera.h" />
     <ClInclude Include="game\scene\AbstractSceneFactory.h" />
     <ClInclude Include="game\scene\BaseScene.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />
-    <ClInclude Include="engine\3d\Camera.h" />
+    <ClInclude Include="engine\camera\Camera.h" />
     <ClInclude Include="engine\2d\Sprite.h" />
     <ClInclude Include="engine\2d\SpriteCommon.h" />
     <ClInclude Include="engine\2d\TextureManager.h" />

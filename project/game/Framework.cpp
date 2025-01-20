@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
+#include "camera/DebugCamera.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
 #include "debug/D3DResourceLeakChecker.h"
@@ -29,6 +30,9 @@ void Framework::Initialize() {
 	// 入力の初期化
 	Input::GetInstance()->Initialize(winApp);
 
+	// デバッグカメラ初期化
+	debugCamera = new DebugCamera();
+
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
 
@@ -41,6 +45,8 @@ void Framework::Initialize() {
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize(dxCommon);
 
+	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera);
+
 	// モデル基盤初期化
 	ModelCommon::GetInstance()->Initialize(dxCommon);
 }
@@ -49,6 +55,9 @@ void Framework::Update() {
 
 	// 入力の更新
 	Input::GetInstance()->Update();
+
+	// デバッグカメラの更新
+	debugCamera->Update();
 }
 
 void Framework::Finalize() {
@@ -67,6 +76,9 @@ void Framework::Finalize() {
 
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
+
+	// デバッグカメラの解放
+	delete debugCamera;
 
 	// 入力の終了
 	Input::GetInstance()->Finalize();

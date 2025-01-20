@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="engine\3d\Camera.cpp">
+    <ClCompile Include="engine\camera\Camera.cpp">
       <Filter>Engine\3d</Filter>
     </ClCompile>
     <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
@@ -121,9 +121,10 @@
     <ClCompile Include="game\scene\SceneFactory.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="engine\camera\DebugCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine\3d\Camera.h">
+    <ClInclude Include="engine\camera\Camera.h">
       <Filter>Engine\3d</Filter>
     </ClInclude>
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h">
@@ -216,6 +217,7 @@
     <ClInclude Include="game\scene\SceneFactory.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="engine\camera\DebugCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
