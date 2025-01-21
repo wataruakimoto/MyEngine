@@ -42,7 +42,7 @@ void Object3d::Update() {
 		worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 		// カメラのワールド座標を代入
-		cameraData = camera->GetWorldPosition();
+		*cameraData = camera->GetWorldPosition();
 
 	// カメラがなければworldMatrixを代入
 	} else {
@@ -54,10 +54,6 @@ void Object3d::Update() {
 	transformationMatrixData->world = worldMatrix;
 
 	directionalLightData->direction = Normalize(directionalLightData->direction);
-
-	ImGui::Begin("CameraForOBJ");
-	ImGui::DragFloat3("worldPos", &cameraData.x, 0.01f);
-	ImGui::End();
 }
 
 void Object3d::Draw() {
@@ -113,7 +109,7 @@ void Object3d::InitializeCameraData() {
 	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
 
 	/// === CameraDataの初期値を書き込む === ///
-	cameraData = camera->GetWorldPosition();
+	*cameraData = camera->GetWorldPosition();
 }
 
 void Object3d::SetModel(const std::string& filePath) {

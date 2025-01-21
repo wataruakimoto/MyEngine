@@ -64,7 +64,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         
         // 鏡面反射の計算
         float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
-        float3 reflectLight = reflect(normalize(-gDirectionalLight.direction), normalize(input.normal));
+        float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
         float RdotE = dot(toEye, reflectLight);
         float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
         
