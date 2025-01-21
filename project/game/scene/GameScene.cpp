@@ -14,8 +14,6 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	camera = new Camera();
 
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera);
-
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");

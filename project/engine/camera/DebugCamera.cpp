@@ -6,7 +6,7 @@ using namespace MathMatrix;
 
 DebugCamera::DebugCamera() {
 
-	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 	fovY = 0.45f;
 
