@@ -21,6 +21,8 @@ void Object3d::Initialize() {
 
 	InitializeDirectionalLightData();
 
+	InitializePointLightData();
+
 	InitializeCameraData();
 
 	// Transform変数を作る
@@ -61,11 +63,14 @@ void Object3d::Draw() {
 	/// === 座標変換行列CBufferの場所を設定 === ///
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
-	/// === 平行光源CBufferの場所を設定=== ///
+	/// === 平行光源CBufferの場所を設定 === ///
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
-	/// === カメラCBufferの場所を設定=== ///
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, cameraResource->GetGPUVirtualAddress());
+	/// === 点光源CBufferの場所を設定 === ///
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
+
+	/// === カメラCBufferの場所を設定 === ///
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource->GetGPUVirtualAddress());
 
 	// 3Dモデルが割り当てられていれば描画する
 	if (model) {
@@ -98,6 +103,20 @@ void Object3d::InitializeDirectionalLightData() {
 	directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を書き込む
 	directionalLightData->direction = { 0.0f, -1.0f, 0.0f }; // 向きは下から
 	directionalLightData->intensity = 1.0f; // 輝度は最大
+}
+
+void Object3d::InitializePointLightData() {
+
+	/// === PointLightResourceを作る === ///
+	pointLightResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(PointLight));
+
+	/// === PointLightResourceにデータを書き込むためのアドレスを取得してPointLightDataに割り当てる === ///
+	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
+
+	/// === PointLightDataの初期値を書き込む === ///
+	pointLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を書き込む
+	pointLightData->position = { 0.0f, -1.0f, 0.0f }; // 位置は下から
+	pointLightData->intensity = 1.0f; // 輝度は最大
 }
 
 void Object3d::InitializeCameraData() {

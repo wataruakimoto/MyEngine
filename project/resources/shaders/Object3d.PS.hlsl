@@ -10,9 +10,16 @@ struct Material
 
 struct DirectionalLight
 {
-    float4 color; // !< ライトの色
-    float3 direction; // !< ライトの向き
-    float intensity; // !< 輝度
+    float4 color; // ライトの色
+    float3 direction; // ライトの向き
+    float intensity; // 輝度
+};
+
+struct PointLight
+{
+    float4 color; // ライトの色
+    float3 position; // ライトの位置
+    float intensity; // 輝度
 };
 
 struct Camera
@@ -24,7 +31,9 @@ ConstantBuffer<Material> gMaterial : register(b0);
 
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
 
-ConstantBuffer<Camera> gCamera : register(b2);
+ConstantBuffer<PointLight> gPointLight : register(b2);
+
+ConstantBuffer<Camera> gCamera : register(b3);
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);

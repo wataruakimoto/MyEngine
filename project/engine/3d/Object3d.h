@@ -35,6 +35,13 @@ public:
 		float intensity; // !< 輝度
 	};
 
+	// 点光源データ
+	struct PointLight {
+		Vector4 color; // ライトの色
+		Vector3 position; // ライトの位置
+		float intensity; // 輝度
+	};
+
 	// 変換データ
 	struct Transform {
 		Vector3 scale;
@@ -76,6 +83,11 @@ private:
 	/// 平行光源データ初期化
 	/// </summary>
 	void InitializeDirectionalLightData();
+
+	/// <summary>
+	/// 点光源データ初期化
+	/// </summary>
+	void InitializePointLightData();
 
 	/// <summary>
 	/// カメラデータ初期化
@@ -191,6 +203,8 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
 	// 平行光源リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
+	// 点光源リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
 	// カメラリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
@@ -198,6 +212,8 @@ private:
 	TransformationMatrix* transformationMatrixData = nullptr;
 	// 平行光源データ
 	DirectionalLight* directionalLightData = nullptr;
+	// 点光源データ
+	PointLight* pointLightData = nullptr;
 	// カメラデータ
 	Vector3* cameraData;
 
