@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
+#include <imgui.h>
 
 using namespace MathMatrix;
 
@@ -23,6 +24,11 @@ Camera::Camera() {
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
 
 	viewProjectionMatrix = viewMatrix * projectionMatrix;
+
+	// ワールド座標をワールド行列から得る
+	worldPosition.x = worldMatrix.m[3][0];
+	worldPosition.y = worldMatrix.m[3][1];
+	worldPosition.z = worldMatrix.m[3][2];
 }
 
 void Camera::Update() {
@@ -38,16 +44,15 @@ void Camera::Update() {
 
 	// viewMatrixとprojectionMatrixを合わせる
 	viewProjectionMatrix = viewMatrix * projectionMatrix;
-}
 
-const Vector3& Camera::GetWorldPosition() const {
-
-	static Vector3 worldPosition;
-
-	// 行列の座標に該当する場所を代入
+	// ワールド座標をワールド行列から得る
 	worldPosition.x = worldMatrix.m[3][0];
 	worldPosition.y = worldMatrix.m[3][1];
 	worldPosition.z = worldMatrix.m[3][2];
 
-	return worldPosition;
+	ImGui::Begin("Camera");
+	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
+	ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
+	ImGui::DragFloat3("worldPos", &worldPosition.x, 0.01f);
+	ImGui::End();
 }

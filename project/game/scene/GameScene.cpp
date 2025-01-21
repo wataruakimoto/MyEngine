@@ -14,9 +14,6 @@ void GameScene::Initialize() {
 	// カメラの初期化
 	camera = new Camera();
 
-	// カメラを設定
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera);
-
 	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
@@ -35,6 +32,7 @@ void GameScene::Initialize() {
 	object3d = new Object3d();
 	object3d->Initialize();
 	object3d->SetModel(model);
+	object3d->SetCamera(camera);
 }
 
 void GameScene::Update() {
@@ -46,21 +44,7 @@ void GameScene::Update() {
 	}
 
 	/// === カメラ更新 === ///
-	ImGui::Begin("Camera");
-
-	// 向き変更
-	Vector3 cameraRotate = camera->GetRotate();
-	ImGui::DragFloat3("Rotate", &cameraRotate.x, 0.01f);
-	camera->SetRotate(cameraRotate);
-
-	// 位置変更
-	Vector3 cameraPositon = camera->GetTranslate();
-	ImGui::DragFloat3("Translate", &cameraPositon.x, 0.1f);
-	camera->SetTranslate(cameraPositon);
-
 	camera->Update();
-
-	ImGui::End();
 
 	/// === スプライト更新 === ///
 

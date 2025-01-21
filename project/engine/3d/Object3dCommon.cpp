@@ -1,5 +1,6 @@
 #include "Object3dCommon.h"
 #include "debug/Logger.h"
+#include "camera/DebugCamera.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;

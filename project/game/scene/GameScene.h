@@ -4,7 +4,7 @@
 #include "2d/Sprite.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
-#include "3d/Camera.h"
+#include "camera/Camera.h"
 
 /// ===== ゲームシーン ===== ///
 class GameScene : public BaseScene {

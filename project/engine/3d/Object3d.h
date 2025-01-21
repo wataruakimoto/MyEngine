@@ -199,7 +199,7 @@ private:
 	// 平行光源データ
 	DirectionalLight* directionalLightData = nullptr;
 	// カメラデータ
-	Vector3 cameraData;
+	Vector3* cameraData;
 
 	Transform transform;
 
