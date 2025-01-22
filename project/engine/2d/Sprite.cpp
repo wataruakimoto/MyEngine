@@ -3,6 +3,7 @@
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
 #include "TextureManager.h"
+#include <imgui.h>
 
 using namespace MathMatrix;
 
@@ -20,6 +21,27 @@ void Sprite::Initialize(std::string textureFilePath) {
 }
 
 void Sprite::Update() {
+
+	ImGui::Begin("Sprite");
+
+	if (ImGui::TreeNode("Transform")) {
+		ImGui::DragFloat2("Scale", &size.x, 0.01f); // 大きさ
+		ImGui::DragFloat("Rotate", &rotation, 0.01f); // 回転
+		ImGui::DragFloat2("Translate", &position.x, 0.01f); // 位置
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Other")) {
+		ImGui::ColorEdit4("Color", &materialData->color.x); // 色
+		ImGui::SliderFloat2("Anchor", &anchorPoint.x, -1.0f, 1.0f); // アンカー
+		ImGui::Checkbox("IsFlipX", &isFlipX); // フリップ
+		ImGui::Checkbox("IsFlipY", &isFlipY); // フリップ
+		ImGui::DragFloat2("TextureLeftTop", &textureLeftTop.x, 1.0f); // テクスチャ左上座標
+		ImGui::DragFloat2("TextureSize", &textureSize.x, 1.0f); // テクスチャ切り出しサイズ
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
 
 	/// === アンカーポイント反映 === ///
 

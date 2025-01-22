@@ -1,7 +1,6 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "2d/Sprite.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
 #include "camera/Camera.h"
@@ -42,12 +41,13 @@ private:
 	// カメラのポインタ
 	Camera* camera = nullptr;
 
-	// スプライトのポインタ
-	Sprite* sprite = nullptr;
-
 	// モデルのポインタ
-	Model* model = nullptr;
+	Model* modelMonsterBall = nullptr;
+
+	Model* modelTerrain = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	Object3d* object3d = nullptr;
+	Object3d* monsterBall = nullptr;
+
+	Object3d* terrain = nullptr;
 };

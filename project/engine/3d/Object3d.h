@@ -11,9 +11,6 @@
 /// === カメラ === ///
 class Camera;
 
-/// === モデル基盤 === ///
-class ModelCommon;
-
 /// === 3Dオブジェクト === ///
 class Object3d {
 
@@ -30,16 +27,19 @@ public:
 
 	// 平行光源データ
 	struct DirectionalLight {
-		Vector4 color; // !< ライトの色
-		Vector3 direction; // !< ライトの向き
-		float intensity; // !< 輝度
+		Vector4 color; // 色
+		Vector3 direction; // 向き
+		float intensity; // 輝度
 	};
 
 	// 点光源データ
 	struct PointLight {
-		Vector4 color; // ライトの色
-		Vector3 position; // ライトの位置
+		Vector4 color; // 色
+		Vector3 position; // 位置
 		float intensity; // 輝度
+		float radius; // 光の届く最大距離
+		float decay; // 減衰率
+		float padding[2];
 	};
 
 	// 変換データ
@@ -218,9 +218,6 @@ private:
 	Vector3* cameraData;
 
 	Transform transform;
-
-	// モデル基盤のポインタ
-	ModelCommon* modelCommon_ = nullptr;
 
 	// モデル
 	Model* model = nullptr;

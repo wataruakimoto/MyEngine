@@ -7,7 +7,7 @@ using namespace MathMatrix;
 
 Camera::Camera() {
 
-	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,-10.0f} };
+	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 	fovY = 0.45f;
 
@@ -53,6 +53,5 @@ void Camera::Update() {
 	ImGui::Begin("Camera");
 	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
 	ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
-	ImGui::DragFloat3("worldPos", &worldPosition.x, 0.01f);
 	ImGui::End();
 }
