@@ -201,7 +201,7 @@ private:
 
 	// 頂点リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
-	// リソース
+	// 参照リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource;
 	// 座標変換行列リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
