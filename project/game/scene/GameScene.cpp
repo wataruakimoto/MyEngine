@@ -11,7 +11,7 @@ void GameScene::Initialize() {
 
 	// カメラの初期化
 	camera = new Camera();
-	camera->SetRotate({ 0.25f,0.0f,0.0f });
+	camera->SetRotate({ 0.2f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
