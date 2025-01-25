@@ -27,9 +27,10 @@ public:
 	// マテリアルデータ
 	struct Material {
 		Vector4 color;
-		bool enableLighting;
+		int lightingMode;
 		float padding[3];
 		Matrix4x4 uvTransform;
+		float shininess;
 	};
 
 	// マテリアルデータ
@@ -80,16 +81,28 @@ private:
 public:
 
 	/// <summary>
-	/// ライティングの有効無効のゲッター
+	/// ライティングの種類のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const bool GetEnableLighting() const { return materialData->enableLighting; }
+	const int& GetLightingMode() const { return materialData->lightingMode; }
 
 	/// <summary>
-	/// ライティングの有効無効のセッター
+	/// ライティングの種類のセッター
 	/// </summary>
-	/// <param name="enableLighting"></param>
-	void SetEnableLighting(bool enableLighting) { materialData->enableLighting = enableLighting; }
+	/// <param name="lightingMode"></param>
+	void SetLightingMode(int lightingMode) { materialData->lightingMode = lightingMode; }
+
+	/// <summary>
+	/// ライトの明るさのゲッター
+	/// </summary>
+	/// <returns></returns>
+	const float& GetShininess() const { return materialData->shininess; }
+
+	/// <summary>
+	/// ライトの明るさのセッター
+	/// </summary>
+	/// <param name="shininess"></param>
+	void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
 
 ///-------------------------------------------/// 
 /// メンバ変数

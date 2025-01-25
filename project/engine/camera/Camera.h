@@ -38,6 +38,9 @@ private:
 	// ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix;
 
+	// ワールド座標
+	Vector3 worldPosition = {};
+
 	// 水平方向視野 (field of view)
 	float fovY;
 
@@ -146,4 +149,10 @@ public:
 	/// </summary>
 	/// <returns>Matrix4x4</returns>
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
+
+	/// <summary>
+	/// ワールド座標のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetWorldPosition() const { return worldPosition; }
 };
