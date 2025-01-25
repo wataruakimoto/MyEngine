@@ -23,6 +23,7 @@ public:
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 world;
+		Matrix4x4 worldInverseTranspose;
 	};
 
 	// 平行光源データ

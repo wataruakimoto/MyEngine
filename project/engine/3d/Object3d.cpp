@@ -97,6 +97,7 @@ void Object3d::Update() {
 
 	transformationMatrixData->WVP = worldViewProjectionMatrix;
 	transformationMatrixData->world = worldMatrix;
+	transformationMatrixData->worldInverseTranspose = Inverse(worldMatrix);
 
 	directionalLightData->direction = Normalize(directionalLightData->direction);
 	spotLightData->direction = Normalize(spotLightData->direction);
@@ -141,6 +142,7 @@ void Object3d::InitializeTransformationMatrixData() {
 	/// === TransformationMatrixDataの初期値を書き込む === ///
 	transformationMatrixData->WVP = MakeIdentity4x4(); // 単位行列を書き込む
 	transformationMatrixData->world = MakeIdentity4x4(); // 単位行列を書き込む
+	transformationMatrixData->worldInverseTranspose = MakeIdentity4x4(); // 単位行列を書き込む
 }
 
 void Object3d::InitializeDirectionalLightData() {
