@@ -37,9 +37,22 @@ public:
 		Vector4 color; // 色
 		Vector3 position; // 位置
 		float intensity; // 輝度
-		float radius; // 光の届く最大距離
+		float distance; // 光の届く最大距離
 		float decay; // 減衰率
 		float padding[2];
+	};
+
+	// スポットライトデータ
+	struct SpotLight {
+		Vector4 color; // 色
+		Vector3 position; // 位置
+		float padding;
+		Vector3 direction; // 向き
+		float intensity; // 輝度
+		float distance; // 光の届く最大距離
+		float decay; // 減衰率
+		float cosAngle; // 余弦
+		float cosFalloffStart; // Falloffの開始角度
 	};
 
 	// 変換データ
@@ -90,13 +103,18 @@ private:
 	void InitializePointLightData();
 
 	/// <summary>
+	/// スポットライトデータ初期化
+	/// </summary>
+	void InitializeSpotLightData();
+
+	/// <summary>
 	/// カメラデータ初期化
 	/// </summary>
 	void InitializeCameraData();
 
-	///-------------------------------------------/// 
-	/// セッター
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -153,9 +171,9 @@ public:
 	/// <param name="intensity"></param>
 	void SetIntensity(float intensity) { this->directionalLightData->intensity = intensity; }
 
-	///-------------------------------------------/// 
-	/// ゲッター
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -194,9 +212,9 @@ public:
 	/// <returns></returns>
 	float GetIntensity() const { return directionalLightData->intensity; }
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
 private:
 
 	// 座標変換行列リソース
@@ -205,6 +223,8 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
 	// 点光源リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
+	// スポットライトリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
 	// カメラリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
@@ -214,6 +234,8 @@ private:
 	DirectionalLight* directionalLightData = nullptr;
 	// 点光源データ
 	PointLight* pointLightData = nullptr;
+	// スポットライトデータ
+	SpotLight* spotLightData = nullptr;
 	// カメラデータ
 	Vector3* cameraData;
 

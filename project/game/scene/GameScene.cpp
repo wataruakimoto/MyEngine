@@ -54,7 +54,7 @@ void GameScene::Update() {
 
 	// ライティングの仕方の設定
 	int lightingMode = modelMonsterBall->GetLightingMode();
-	ImGui::Combo("LightingMode", &lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0");
+	ImGui::Combo("LightingMode", &lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0");
 	modelMonsterBall->SetLightingMode(lightingMode);
 	modelTerrain->SetLightingMode(lightingMode);
 

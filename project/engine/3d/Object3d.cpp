@@ -1,13 +1,15 @@
 #include "Object3d.h"
 #include "Object3dCommon.h"
-#include <cassert>
-#include <sstream>
 #include "math/MathVector.h"
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
 #include "camera/Camera.h"
+
+#include <cassert>
+#include <sstream>
+#include <numbers>
 #include <imgui.h>
 
 using namespace MathMatrix;
@@ -22,6 +24,8 @@ void Object3d::Initialize() {
 	InitializeDirectionalLightData();
 
 	InitializePointLightData();
+
+	InitializeSpotLightData();
 
 	InitializeCameraData();
 
@@ -51,8 +55,20 @@ void Object3d::Update() {
 		ImGui::ColorEdit4("Color", &pointLightData->color.x); // 色
 		ImGui::DragFloat3("Position", &pointLightData->position.x, 0.01f); // 位置
 		ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f); // 輝度
-		ImGui::DragFloat("Radius", &pointLightData->radius, 0.01f); // 最大距離
+		ImGui::DragFloat("Distance", &pointLightData->distance, 0.01f); // 最大距離
 		ImGui::DragFloat("Decay", &pointLightData->decay, 0.01f); // 減衰率
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("SpotLight")) {
+		ImGui::ColorEdit4("Color", &spotLightData->color.x); // 色
+		ImGui::DragFloat3("Position", &spotLightData->position.x, 0.01f); // 位置
+		ImGui::DragFloat3("Direction", &spotLightData->direction.x, 0.01f); // 向き
+		ImGui::DragFloat("Intensity", &spotLightData->intensity, 0.01f); // 輝度
+		ImGui::DragFloat("Distance", &spotLightData->distance, 0.01f); // 最大距離
+		ImGui::DragFloat("Decay", &spotLightData->decay, 0.01f); // 減衰率
+		ImGui::DragFloat("CosAngle", &spotLightData->cosAngle, 0.01f); // 余弦
+		ImGui::DragFloat("CosFalloffStart", &spotLightData->cosFalloffStart, 0.01f); // Falloff開始角度
 		ImGui::TreePop();
 	}
 
@@ -83,6 +99,12 @@ void Object3d::Update() {
 	transformationMatrixData->world = worldMatrix;
 
 	directionalLightData->direction = Normalize(directionalLightData->direction);
+	spotLightData->direction = Normalize(spotLightData->direction);
+
+	// cosFalloffStartがcosAngleより小さい場合、cosAngleを更新
+	if (spotLightData->cosFalloffStart < spotLightData->cosAngle) {
+		spotLightData->cosFalloffStart = spotLightData->cosAngle + 0.01f;
+	}
 }
 
 void Object3d::Draw() {
@@ -96,8 +118,11 @@ void Object3d::Draw() {
 	/// === 点光源CBufferの場所を設定 === ///
 	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
 
+	/// === スポットライトCBufferの場所を設定 === ///
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
+
 	/// === カメラCBufferの場所を設定 === ///
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, cameraResource->GetGPUVirtualAddress());
+	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
 
 	// 3Dモデルが割り当てられていれば描画する
 	if (model) {
@@ -128,7 +153,7 @@ void Object3d::InitializeDirectionalLightData() {
 
 	/// === DirectionalLightDataの初期値を書き込む === ///
 	directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を書き込む
-	directionalLightData->direction = { 0.0f, -1.0f, 0.0f }; // 向きは下から
+	directionalLightData->direction = Normalize({ 0.0f, -1.0f, 0.0f }); // 向きは下から
 	directionalLightData->intensity = 1.0f; // 輝度は最大
 }
 
@@ -144,8 +169,27 @@ void Object3d::InitializePointLightData() {
 	pointLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を書き込む
 	pointLightData->position = { 0.0f, 2.0f, 0.0f }; // 位置は上から
 	pointLightData->intensity = 1.0f; // 輝度は最大
-	pointLightData->radius = 5.0f; // 最大距離は広く
+	pointLightData->distance = 5.0f; // 最大距離は広く
 	pointLightData->decay = 2.0f; // 減衰あり
+}
+
+void Object3d::InitializeSpotLightData() {
+
+	/// === SpotLightResourceを作る === ///
+	spotLightResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(SpotLight));
+
+	/// === SpotLightResourceにデータを書き込むためのアドレスを取得してSpotLightDataに割り当てる === ///
+	spotLightResource->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData));
+
+	/// === SpotLightDataの初期値を書き込む === ///
+	spotLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 色は白
+	spotLightData->position = { -2.0f, 1.25f, 0.0f }; // 位置は左から
+	spotLightData->direction = Normalize({ -1.0f, 0.0f, 0.0f }); // 右向き
+	spotLightData->intensity = 4.0f; // 輝度は強め
+	spotLightData->distance = 7.0f; // 最大距離は広く
+	spotLightData->decay = 2.0f; // 減衰あり
+	spotLightData->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f); // π/3
+	spotLightData->cosFalloffStart = spotLightData->cosAngle + 0.01f; // cosAngleよりちょっと大きい
 }
 
 void Object3d::InitializeCameraData() {
