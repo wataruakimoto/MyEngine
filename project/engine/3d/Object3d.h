@@ -83,6 +83,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	/// <param name="name"></param>
+	void ShowImGui(const char* name);
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -247,4 +253,6 @@ private:
 
 	// カメラ
 	Camera* camera = nullptr;
+
+	bool isDraw = true;
 };

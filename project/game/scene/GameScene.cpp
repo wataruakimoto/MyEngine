@@ -5,7 +5,6 @@
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
-#include <imgui.h>
 
 void GameScene::Initialize() {
 
@@ -44,28 +43,15 @@ void GameScene::Update() {
 	}
 
 	/// === カメラ更新 === ///
+	camera->ShowImGui("camera");
 	camera->Update();
 
 	/// === 3Dオブジェクト更新 === ///
 
+	monsterBall->ShowImGui("monsterBall");
 	monsterBall->Update();
 
-	ImGui::Begin("model");
-
-	// ライティングの仕方の設定
-	int lightingMode = modelMonsterBall->GetLightingMode();
-	ImGui::Combo("LightingMode", &lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0");
-	modelMonsterBall->SetLightingMode(lightingMode);
-	modelTerrain->SetLightingMode(lightingMode);
-
-	// 光沢度の設定の確認
-	float lightShininess = modelMonsterBall->GetShininess();
-	ImGui::DragFloat("Shininess", &lightShininess, 0.01f);
-	modelMonsterBall->SetShininess(lightShininess);
-	modelTerrain->SetShininess(lightShininess);
-
-	ImGui::End();
-
+	terrain->ShowImGui("terrain");
 	terrain->Update();
 }
 

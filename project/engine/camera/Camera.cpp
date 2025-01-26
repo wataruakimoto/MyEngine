@@ -49,8 +49,11 @@ void Camera::Update() {
 	worldPosition.x = worldMatrix.m[3][0];
 	worldPosition.y = worldMatrix.m[3][1];
 	worldPosition.z = worldMatrix.m[3][2];
+}
 
-	ImGui::Begin("Camera");
+void Camera::ShowImGui(const char* name) {
+
+	ImGui::Begin(name);
 	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
 	ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
 	ImGui::End();

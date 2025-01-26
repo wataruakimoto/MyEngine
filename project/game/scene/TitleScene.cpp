@@ -18,6 +18,7 @@ void TitleScene::Initialize() {
 
 void TitleScene::Update() {
 
+	sprite->ShowImGui("sprite");
 	sprite->Update();
 
 	ImGui::Begin("Scene");

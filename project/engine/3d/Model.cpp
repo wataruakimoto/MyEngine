@@ -3,6 +3,7 @@
 #include "math/MathMatrix.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
+#include <imgui.h>
 
 using namespace MathMatrix;
 
@@ -37,6 +38,16 @@ void Model::Draw() {
 
 	// 描画(DrawCall)
 	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+}
+
+void Model::ShowImGui() {
+
+	if (ImGui::TreeNode("Model")) {
+		ImGui::ColorEdit4("Color", &materialData->color.x);
+		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0");
+		ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
+		ImGui::TreePop();
+	}
 }
 
 void Model::InitializeVertexData() {
