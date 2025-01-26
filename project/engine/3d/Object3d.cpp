@@ -35,45 +35,6 @@ void Object3d::Initialize() {
 
 void Object3d::Update() {
 
-	ImGui::Begin("Object3d");
-
-	if (ImGui::TreeNode("Transform")) {
-		ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f); // 大きさ
-		ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f); // 回転
-		ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f); // 位置
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("DirectionalLight")) {
-		ImGui::ColorEdit4("Color", &directionalLightData->color.x); // 色
-		ImGui::DragFloat3("Direction", &directionalLightData->direction.x, 0.01f); // 向き
-		ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f); // 輝度
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("PointLight")) {
-		ImGui::ColorEdit4("Color", &pointLightData->color.x); // 色
-		ImGui::DragFloat3("Position", &pointLightData->position.x, 0.01f); // 位置
-		ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f); // 輝度
-		ImGui::DragFloat("Distance", &pointLightData->distance, 0.01f); // 最大距離
-		ImGui::DragFloat("Decay", &pointLightData->decay, 0.01f); // 減衰率
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("SpotLight")) {
-		ImGui::ColorEdit4("Color", &spotLightData->color.x); // 色
-		ImGui::DragFloat3("Position", &spotLightData->position.x, 0.01f); // 位置
-		ImGui::DragFloat3("Direction", &spotLightData->direction.x, 0.01f); // 向き
-		ImGui::DragFloat("Intensity", &spotLightData->intensity, 0.01f); // 輝度
-		ImGui::DragFloat("Distance", &spotLightData->distance, 0.01f); // 最大距離
-		ImGui::DragFloat("Decay", &spotLightData->decay, 0.01f); // 減衰率
-		ImGui::DragFloat("CosAngle", &spotLightData->cosAngle, 0.01f); // 余弦
-		ImGui::DragFloat("CosFalloffStart", &spotLightData->cosFalloffStart, 0.01f); // Falloff開始角度
-		ImGui::TreePop();
-	}
-
-	ImGui::End();
-
 	/// === TransformからWorldMatrixを作る === ///
 	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 
@@ -110,25 +71,76 @@ void Object3d::Update() {
 
 void Object3d::Draw() {
 
-	/// === 座標変換行列CBufferの場所を設定 === ///
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	if (isDraw) {
 
-	/// === 平行光源CBufferの場所を設定 === ///
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+		/// === 座標変換行列CBufferの場所を設定 === ///
+		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
-	/// === 点光源CBufferの場所を設定 === ///
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
+		/// === 平行光源CBufferの場所を設定 === ///
+		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
-	/// === スポットライトCBufferの場所を設定 === ///
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
+		/// === 点光源CBufferの場所を設定 === ///
+		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
 
-	/// === カメラCBufferの場所を設定 === ///
-	Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
+		/// === スポットライトCBufferの場所を設定 === ///
+		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
 
-	// 3Dモデルが割り当てられていれば描画する
-	if (model) {
-		model->Draw();
+		/// === カメラCBufferの場所を設定 === ///
+		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
+
+		// 3Dモデルが割り当てられていれば描画する
+		if (model) {
+			model->Draw();
+		}
 	}
+}
+
+void Object3d::ShowImGui(const char* name) {
+
+	ImGui::Begin(name);
+
+	ImGui::Checkbox("Draw", &isDraw);
+
+	if (ImGui::TreeNode("Transform")) {
+		ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f); // 大きさ
+		ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f); // 回転
+		ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f); // 位置
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("DirectionalLight")) {
+		ImGui::ColorEdit4("Color", &directionalLightData->color.x); // 色
+		ImGui::DragFloat3("Direction", &directionalLightData->direction.x, 0.01f); // 向き
+		ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f); // 輝度
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("PointLight")) {
+		ImGui::ColorEdit4("Color", &pointLightData->color.x); // 色
+		ImGui::DragFloat3("Position", &pointLightData->position.x, 0.01f); // 位置
+		ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f); // 輝度
+		ImGui::DragFloat("Distance", &pointLightData->distance, 0.01f); // 最大距離
+		ImGui::DragFloat("Decay", &pointLightData->decay, 0.01f); // 減衰率
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("SpotLight")) {
+		ImGui::ColorEdit4("Color", &spotLightData->color.x); // 色
+		ImGui::DragFloat3("Position", &spotLightData->position.x, 0.01f); // 位置
+		ImGui::DragFloat3("Direction", &spotLightData->direction.x, 0.01f); // 向き
+		ImGui::DragFloat("Intensity", &spotLightData->intensity, 0.01f); // 輝度
+		ImGui::DragFloat("Distance", &spotLightData->distance, 0.01f); // 最大距離
+		ImGui::DragFloat("Decay", &spotLightData->decay, 0.01f); // 減衰率
+		ImGui::DragFloat("CosAngle", &spotLightData->cosAngle, 0.01f); // 余弦
+		ImGui::DragFloat("CosFalloffStart", &spotLightData->cosFalloffStart, 0.01f); // Falloff開始角度
+		ImGui::TreePop();
+	}
+
+	if (model) {
+		model->ShowImGui();
+	}
+
+	ImGui::End();
 }
 
 void Object3d::InitializeTransformationMatrixData() {
