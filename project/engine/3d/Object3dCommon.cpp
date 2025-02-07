@@ -1,6 +1,7 @@
 #include "Object3dCommon.h"
 #include "debug/Logger.h"
 #include "camera/DebugCamera.h"
+#include "base/SrvManager.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;
@@ -40,7 +41,7 @@ void Object3dCommon::SettingCommonDrawing() {
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { dxCommon_->GetSRVDescriptorHeap().Get() };
+	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
 	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 

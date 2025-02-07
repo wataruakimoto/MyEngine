@@ -237,8 +237,8 @@ private:
 	// 座標
 	Vector2 position = { 0.0f,0.0f };
 	
-	// テクスチャ番号
-	uint32_t textureIndex = 0;
+	// テクスチャファイルパス
+	std::string textureFilePath = "";
 
 	// アンカーポイント
 	Vector2 anchorPoint = { 0.0f,0.0f };

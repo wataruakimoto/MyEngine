@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "base/SrvManager.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
 #include "camera/DebugCamera.h"
@@ -19,6 +20,9 @@ void Framework::Initialize() {
 	// DirectX初期化
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
+
+	// SrVマネージャ初期化
+	SrvManager::GetInstance()->Initialize(dxCommon);
 
 	// ImGuiの初期化
 	imGuiManager = new ImGuiManager();
@@ -96,6 +100,9 @@ void Framework::Finalize() {
 	imGuiManager->Finalize();
 	// ImGuiの解放
 	delete imGuiManager;
+
+	// SrVマネージャの終了
+	SrvManager::GetInstance()->Finalize();
 
 	// DirectXの解放
 	dxCommon->Finalize();

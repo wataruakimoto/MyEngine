@@ -122,6 +122,7 @@
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
+    <ClCompile Include="engine\base\SrvManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -218,6 +219,7 @@
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\camera\DebugCamera.h" />
+    <ClInclude Include="engine\base\SrvManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

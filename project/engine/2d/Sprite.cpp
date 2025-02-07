@@ -9,13 +9,13 @@ using namespace MathMatrix;
 
 void Sprite::Initialize(std::string textureFilePath) {
 
+	this->textureFilePath = textureFilePath;
+
 	InitializeVertexData();
 
 	InitializeTransformationMatrixData();
 
 	InitializeMaterialData();
-
-	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 
 	AdjustTextureSize();
 }
@@ -45,7 +45,7 @@ void Sprite::Update() {
 
 	/// === テクスチャ範囲反映 === ///
 
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureIndex);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
 
 	float texLeft = textureLeftTop.x / metadata.width;
 	float texRight = (textureLeftTop.x + textureSize.x) / metadata.width;
@@ -106,7 +106,7 @@ void Sprite::Draw() {
 	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	/// === SRVのDescriptorTableの先頭を設定 === ///
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureIndex));
+	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureFilePath));
 
 	/// === 描画(DrawCall) === ///
 	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -195,7 +195,7 @@ void Sprite::InitializeMaterialData() {
 
 void Sprite::AdjustTextureSize() {
 
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureIndex);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
 
 	textureSize.x = static_cast<float>(metadata.width);
 	textureSize.y = static_cast<float>(metadata.height);
