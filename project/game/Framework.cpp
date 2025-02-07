@@ -1,6 +1,8 @@
 #include "Framework.h"
+#include "base/SrvManager.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
+#include "camera/DebugCamera.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
 #include "debug/D3DResourceLeakChecker.h"
@@ -19,6 +21,9 @@ void Framework::Initialize() {
 	dxCommon = new DirectXCommon();
 	dxCommon->Initialize(winApp);
 
+	// SrVマネージャ初期化
+	SrvManager::GetInstance()->Initialize(dxCommon);
+
 	// ImGuiの初期化
 	imGuiManager = new ImGuiManager();
 	imGuiManager->Initialize(winApp, dxCommon);
@@ -28,6 +33,9 @@ void Framework::Initialize() {
 
 	// 入力の初期化
 	Input::GetInstance()->Initialize(winApp);
+
+	// デバッグカメラ初期化
+	debugCamera = new DebugCamera();
 
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxCommon);
@@ -40,6 +48,8 @@ void Framework::Initialize() {
 
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize(dxCommon);
+	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
+	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera);
 
 	// モデル基盤初期化
 	ModelCommon::GetInstance()->Initialize(dxCommon);
@@ -49,6 +59,9 @@ void Framework::Update() {
 
 	// 入力の更新
 	Input::GetInstance()->Update();
+
+	// デバッグカメラの更新
+	debugCamera->Update();
 }
 
 void Framework::Finalize() {
@@ -68,6 +81,9 @@ void Framework::Finalize() {
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
 
+	// デバッグカメラの解放
+	delete debugCamera;
+
 	// 入力の終了
 	Input::GetInstance()->Finalize();
 
@@ -84,6 +100,9 @@ void Framework::Finalize() {
 	imGuiManager->Finalize();
 	// ImGuiの解放
 	delete imGuiManager;
+
+	// SrVマネージャの終了
+	SrvManager::GetInstance()->Finalize();
 
 	// DirectXの解放
 	dxCommon->Finalize();

@@ -28,6 +28,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	/// <param name="name"></param>
+	void ShowImGui(const char* name);
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -201,7 +207,7 @@ private:
 
 	// 頂点リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
-	// リソース
+	// 参照リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource;
 	// 座標変換行列リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
@@ -231,8 +237,8 @@ private:
 	// 座標
 	Vector2 position = { 0.0f,0.0f };
 	
-	// テクスチャ番号
-	uint32_t textureIndex = 0;
+	// テクスチャファイルパス
+	std::string textureFilePath = "";
 
 	// アンカーポイント
 	Vector2 anchorPoint = { 0.0f,0.0f };

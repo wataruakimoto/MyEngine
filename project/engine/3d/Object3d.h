@@ -11,28 +11,49 @@
 /// === カメラ === ///
 class Camera;
 
-/// === モデル基盤 === ///
-class ModelCommon;
-
 /// === 3Dオブジェクト === ///
 class Object3d {
 
-	///-------------------------------------------/// 
-	/// 構造体
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
 public:
 
 	// 座標変換行列
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 world;
+		Matrix4x4 worldInverseTranspose;
 	};
 
 	// 平行光源データ
 	struct DirectionalLight {
-		Vector4 color; // !< ライトの色
-		Vector3 direction; // !< ライトの向き
-		float intensity; // !< 輝度
+		Vector4 color; // 色
+		Vector3 direction; // 向き
+		float intensity; // 輝度
+	};
+
+	// 点光源データ
+	struct PointLight {
+		Vector4 color; // 色
+		Vector3 position; // 位置
+		float intensity; // 輝度
+		float distance; // 光の届く最大距離
+		float decay; // 減衰率
+		float padding[2];
+	};
+
+	// スポットライトデータ
+	struct SpotLight {
+		Vector4 color; // 色
+		Vector3 position; // 位置
+		float padding;
+		Vector3 direction; // 向き
+		float intensity; // 輝度
+		float distance; // 光の届く最大距離
+		float decay; // 減衰率
+		float cosAngle; // 余弦
+		float cosFalloffStart; // Falloffの開始角度
 	};
 
 	// 変換データ
@@ -42,9 +63,9 @@ public:
 		Vector3 translate;
 	};
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// メンバ関数
+///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -62,9 +83,15 @@ public:
 	/// </summary>
 	void Draw();
 
-	///-------------------------------------------/// 
-	/// クラス内関数
-	///-------------------------------------------///
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	/// <param name="name"></param>
+	void ShowImGui(const char* name);
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
 private:
 
 	/// <summary>
@@ -77,9 +104,24 @@ private:
 	/// </summary>
 	void InitializeDirectionalLightData();
 
-	///-------------------------------------------/// 
-	/// セッター
-	///-------------------------------------------///
+	/// <summary>
+	/// 点光源データ初期化
+	/// </summary>
+	void InitializePointLightData();
+
+	/// <summary>
+	/// スポットライトデータ初期化
+	/// </summary>
+	void InitializeSpotLightData();
+
+	/// <summary>
+	/// カメラデータ初期化
+	/// </summary>
+	void InitializeCameraData();
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -136,9 +178,9 @@ public:
 	/// <param name="intensity"></param>
 	void SetIntensity(float intensity) { this->directionalLightData->intensity = intensity; }
 
-	///-------------------------------------------/// 
-	/// ゲッター
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -177,29 +219,40 @@ public:
 	/// <returns></returns>
 	float GetIntensity() const { return directionalLightData->intensity; }
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
 private:
 
 	// 座標変換行列リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
 	// 平行光源リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
+	// 点光源リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
+	// スポットライトリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
+	// カメラリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
 	// 座標変換行列データ
 	TransformationMatrix* transformationMatrixData = nullptr;
 	// 平行光源データ
 	DirectionalLight* directionalLightData = nullptr;
+	// 点光源データ
+	PointLight* pointLightData = nullptr;
+	// スポットライトデータ
+	SpotLight* spotLightData = nullptr;
+	// カメラデータ
+	Vector3* cameraData;
 
 	Transform transform;
-
-	// モデル基盤のポインタ
-	ModelCommon* modelCommon_ = nullptr;
 
 	// モデル
 	Model* model = nullptr;
 
 	// カメラ
 	Camera* camera = nullptr;
+
+	bool isDraw = true;
 };

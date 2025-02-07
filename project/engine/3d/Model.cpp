@@ -3,6 +3,7 @@
 #include "math/MathMatrix.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
+#include <imgui.h>
 
 using namespace MathMatrix;
 
@@ -33,10 +34,20 @@ void Model::Draw() {
 	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureIndex));
+	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureFilePath));
 
 	// 描画(DrawCall)
 	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+}
+
+void Model::ShowImGui() {
+
+	if (ImGui::TreeNode("Model")) {
+		ImGui::ColorEdit4("Color", &materialData->color.x);
+		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0");
+		ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
+		ImGui::TreePop();
+	}
 }
 
 void Model::InitializeVertexData() {
@@ -70,6 +81,7 @@ void Model::InitializeMaterialData() {
 
 	/// === MaterialDataの初期値を書き込む === ///
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
-	materialData->enableLighting = true; // Lightingをしていない
+	materialData->lightingMode = 0; // Lightingをしていない
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
+	materialData->shininess = 70.0f;
 }

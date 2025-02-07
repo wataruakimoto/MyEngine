@@ -3,18 +3,19 @@
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
 #include "TextureManager.h"
+#include <imgui.h>
 
 using namespace MathMatrix;
 
 void Sprite::Initialize(std::string textureFilePath) {
+
+	this->textureFilePath = textureFilePath;
 
 	InitializeVertexData();
 
 	InitializeTransformationMatrixData();
 
 	InitializeMaterialData();
-
-	textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(textureFilePath);
 
 	AdjustTextureSize();
 }
@@ -44,7 +45,7 @@ void Sprite::Update() {
 
 	/// === テクスチャ範囲反映 === ///
 
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureIndex);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
 
 	float texLeft = textureLeftTop.x / metadata.width;
 	float texRight = (textureLeftTop.x + textureSize.x) / metadata.width;
@@ -105,10 +106,34 @@ void Sprite::Draw() {
 	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	/// === SRVのDescriptorTableの先頭を設定 === ///
-	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureIndex));
+	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureFilePath));
 
 	/// === 描画(DrawCall) === ///
 	SpriteCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+}
+
+void Sprite::ShowImGui(const char* name) {
+
+	ImGui::Begin(name);
+
+	if (ImGui::TreeNode("Transform")) {
+		ImGui::DragFloat2("Scale", &size.x, 0.01f); // 大きさ
+		ImGui::DragFloat("Rotate", &rotation, 0.01f); // 回転
+		ImGui::DragFloat2("Translate", &position.x, 0.01f); // 位置
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Other")) {
+		ImGui::ColorEdit4("Color", &materialData->color.x); // 色
+		ImGui::SliderFloat2("Anchor", &anchorPoint.x, -1.0f, 1.0f); // アンカー
+		ImGui::Checkbox("IsFlipX", &isFlipX); // フリップ
+		ImGui::Checkbox("IsFlipY", &isFlipY); // フリップ
+		ImGui::DragFloat2("TextureLeftTop", &textureLeftTop.x, 1.0f); // テクスチャ左上座標
+		ImGui::DragFloat2("TextureSize", &textureSize.x, 1.0f); // テクスチャ切り出しサイズ
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
 }
 
 void Sprite::InitializeVertexData() {
@@ -170,7 +195,7 @@ void Sprite::InitializeMaterialData() {
 
 void Sprite::AdjustTextureSize() {
 
-	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureIndex);
+	const DirectX::TexMetadata& metadata = TextureManager::GetInstance()->GetMetadata(textureFilePath);
 
 	textureSize.x = static_cast<float>(metadata.width);
 	textureSize.y = static_cast<float>(metadata.height);

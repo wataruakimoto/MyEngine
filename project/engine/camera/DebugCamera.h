@@ -1,10 +1,9 @@
 #pragma once
-
 #include "math/Vector3.h"
 #include "math/Matrix4x4.h"
+#include "Camera.h"
 
-/// === カメラ === ///
-class Camera {
+class DebugCamera : public Camera {
 
 ///-------------------------------------------/// 
 /// 構造体
@@ -38,6 +37,9 @@ private:
 	// ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix;
 
+	// ワールド座標
+	Vector3 worldPosition = {};
+
 	// 水平方向視野 (field of view)
 	float fovY;
 
@@ -58,7 +60,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Camera();
+	DebugCamera();
 
 	/// <summary>
 	/// 更新
@@ -146,4 +148,10 @@ public:
 	/// </summary>
 	/// <returns>Matrix4x4</returns>
 	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
+
+	/// <summary>
+	/// ワールド座標のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetWorldPosition() const { return worldPosition; }
 };
