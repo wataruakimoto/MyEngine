@@ -2,6 +2,7 @@
 #include "audio/AudioManager.h"
 #include "input/Input.h"
 #include "3d/Object3dCommon.h"
+#include "3d/ParticleManager.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
@@ -32,6 +33,15 @@ void GameScene::Initialize() {
 	terrain->Initialize();
 	terrain->SetModel(modelTerrain);
 	terrain->SetCamera(camera);
+
+	modelPlane = new Model();
+	modelPlane->Initialize("resources/plane", "plane.obj");
+
+	// パーティクルの生成・初期化
+	particle = new Particle();
+	particle->Initialize();
+	particle->SetModel(modelPlane);
+	particle->SetCamera(camera);
 }
 
 void GameScene::Update() {
@@ -53,6 +63,9 @@ void GameScene::Update() {
 
 	terrain->ShowImGui("terrain");
 	terrain->Update();
+
+	particle->ShowImGui("particle");
+	particle->Update();
 }
 
 void GameScene::Draw() {
@@ -64,6 +77,12 @@ void GameScene::Draw() {
 	monsterBall->Draw();
 
 	terrain->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	ParticleManager::GetInstance()->SettingCommonDrawing();
+
+	// パーティクルの描画
+	particle->Draw();
 }
 
 void GameScene::Finalize() {
@@ -73,8 +92,12 @@ void GameScene::Finalize() {
 
 	delete terrain;
 
+	delete particle;
+
 	// モデルの解放
 	delete modelMonsterBall;
 
 	delete modelTerrain;
+
+	delete modelPlane;
 }

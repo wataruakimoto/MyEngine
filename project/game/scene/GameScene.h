@@ -3,6 +3,7 @@
 #include "BaseScene.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
+#include "3d/Particle.h"
 #include "camera/Camera.h"
 
 /// ===== ゲームシーン ===== ///
@@ -46,8 +47,13 @@ private:
 
 	Model* modelTerrain = nullptr;
 
+	Model* modelPlane = nullptr;
+
 	// 3Dオブジェクトのポインタ
 	Object3d* monsterBall = nullptr;
 
 	Object3d* terrain = nullptr;
+
+	// パーティクルのポインタ
+	Particle* particle = nullptr;
 };

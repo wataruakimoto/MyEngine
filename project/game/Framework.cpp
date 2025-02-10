@@ -5,6 +5,7 @@
 #include "camera/DebugCamera.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
+#include "3d/ParticleManager.h"
 #include "debug/D3DResourceLeakChecker.h"
 #include "scene/SceneManager.h"
 
@@ -51,6 +52,11 @@ void Framework::Initialize() {
 	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
 	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera);
 
+	// パーティクル基盤初期化
+	ParticleManager::GetInstance()->Initialize(dxCommon);
+	// パーティクルのデフォルトカメラにデバッグカメラをセット
+	ParticleManager::GetInstance()->SetDefaultCamera(debugCamera);
+
 	// モデル基盤初期化
 	ModelCommon::GetInstance()->Initialize(dxCommon);
 }
@@ -68,6 +74,9 @@ void Framework::Finalize() {
 
 	// モデル基盤の解放
 	ModelCommon::GetInstance()->Finalize();
+
+	// パーティクル基盤の解放
+	ParticleManager::GetInstance()->Finalize();
 
 	// 3Dオブジェクト共通部の解放
 	Object3dCommon::GetInstance()->Finalize();
