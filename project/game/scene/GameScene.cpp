@@ -2,7 +2,7 @@
 #include "audio/AudioManager.h"
 #include "input/Input.h"
 #include "3d/Object3dCommon.h"
-#include "3d/ParticleManager.h"
+#include "3d/ParticleCommon.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
@@ -39,8 +39,7 @@ void GameScene::Initialize() {
 
 	// パーティクルの生成・初期化
 	particle = new Particle();
-	particle->Initialize();
-	particle->SetModel(modelPlane);
+	particle->Initialize("resources/plane", "plane.obj");
 	particle->SetCamera(camera);
 }
 
@@ -79,7 +78,7 @@ void GameScene::Draw() {
 	terrain->Draw();
 
 	/// === パーティクルの描画準備 === ///
-	ParticleManager::GetInstance()->SettingCommonDrawing();
+	ParticleCommon::GetInstance()->SettingCommonDrawing();
 
 	// パーティクルの描画
 	particle->Draw();

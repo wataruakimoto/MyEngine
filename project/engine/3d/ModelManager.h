@@ -1,5 +1,6 @@
 #pragma once
-
+#include "Data/MaterialData.h"
+#include "Data/ModelData.h"
 #include <map>
 #include <string>
 #include <memory>
@@ -70,7 +71,7 @@ public:
 	/// <param name="directoryPath">ディレクトリーパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns></returns>
-	static Model::MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
 	/// .objファイル読み込み
@@ -78,7 +79,7 @@ public:
 	/// <param name="directoryPath">ディレクトリーパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns></returns>
-	static Model::ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+	static ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
 
 ///-------------------------------------------/// 
 /// メンバ変数

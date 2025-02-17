@@ -4,7 +4,6 @@ struct PerticleForGPU
 {
     float4x4 WVP;
     float4x4 world;
-    float4 color;
 };
 
 StructuredBuffer<PerticleForGPU> gParticle : register(t0);
@@ -21,6 +20,6 @@ VertexShaderOutput main(VertexShaderInput input, uint instanceId : SV_InstanceID
     VertexShaderOutput output;
     output.position = mul(input.position, gParticle[instanceId].WVP);
     output.texcoord = input.texcoord;
-    output.color = gParticle[instanceId].color;
+    output.color = input.color;
     return output;
 }
