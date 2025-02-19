@@ -32,6 +32,37 @@ public:
 	struct TransformationMatrix {
 		Matrix4x4 WVP;
 		Matrix4x4 world;
+		Matrix4x4 worldInverseTranspose;
+	};
+
+	// 平行光源データ
+	struct DirectionalLight {
+		Vector4 color; // 色
+		Vector3 direction; // 向き
+		float intensity; // 輝度
+	};
+
+	// 点光源データ
+	struct PointLight {
+		Vector4 color; // 色
+		Vector3 position; // 位置
+		float intensity; // 輝度
+		float distance; // 光の届く最大距離
+		float decay; // 減衰率
+		float padding[2];
+	};
+
+	// スポットライトデータ
+	struct SpotLight {
+		Vector4 color; // 色
+		Vector3 position; // 位置
+		float padding;
+		Vector3 direction; // 向き
+		float intensity; // 輝度
+		float distance; // 光の届く最大距離
+		float decay; // 減衰率
+		float cosAngle; // 余弦
+		float cosFalloffStart; // Falloffの開始角度
 	};
 
 	// マテリアルデータ
@@ -68,7 +99,13 @@ public:
 	/// </summary>
 	void ShowImGui(const char* name);
 
-	///-------------------------------------------/// 
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera) { this->camera = camera; }
+
+///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
 private:
@@ -77,6 +114,26 @@ private:
 	/// 座標変換行列データ初期化
 	/// </summary>
 	void InitializeTransformationMatrixData();
+
+	/// <summary>
+	/// 平行光源データ初期化
+	/// </summary>
+	void InitializeDirectionalLightData();
+
+	/// <summary>
+	/// 点光源データ初期化
+	/// </summary>
+	void InitializePointLightData();
+
+	/// <summary>
+	/// スポットライトデータ初期化
+	/// </summary>
+	void InitializeSpotLightData();
+
+	/// <summary>
+	/// カメラデータ初期化
+	/// </summary>
+	void InitializeCameraData();
 
 	/// <summary>
 	/// 頂点データ初期化
@@ -88,82 +145,6 @@ private:
 	/// </summary>
 	void InitializeMaterialData();
 
-	///-------------------------------------------/// 
-	/// セッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 大きさのセッター
-	/// </summary>
-	/// <param name="scale">大きさ</param>
-	void SetScale(const Vector3& scale) { this->transform.scale = scale; }
-
-	/// <summary>
-	/// 回転のセッター
-	/// </summary>
-	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate) { this->transform.rotate = rotate; }
-
-	/// <summary>
-	/// 位置のセッター
-	/// </summary>
-	/// <param name="translate">位置</param>
-	void SetTranslate(const Vector3& translate) { this->transform.translate = translate; }
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
-
-	/// <summary>
-	/// ライティングの種類のセッター
-	/// </summary>
-	/// <param name="lightingMode"></param>
-	void SetLightingMode(int lightingMode) { materialData->lightingMode = lightingMode; }
-
-	/// <summary>
-	/// ライトの明るさのセッター
-	/// </summary>
-	/// <param name="shininess"></param>
-	void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
-
-	///-------------------------------------------/// 
-	/// ゲッター
-	///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 大きさのゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetScale() const { return transform.scale; }
-
-	/// <summary>
-	/// 回転のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetRotate() const { return transform.rotate; }
-
-	/// <summary>
-	/// 位置のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetTranslate() const { return transform.translate; }
-
-	/// <summary>
-	/// ライティングの種類のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const int& GetLightingMode() const { return materialData->lightingMode; }
-
-	/// <summary>
-	/// ライトの明るさのゲッター
-	/// </summary>
-	/// <returns></returns>
-	const float& GetShininess() const { return materialData->shininess; }
-
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -171,6 +152,14 @@ private:
 
 	// 座標変換行列リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
+	// 平行光源リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
+	// 点光源リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
+	// スポットライトリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
+	// カメラリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
 	// 頂点リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
@@ -179,6 +168,14 @@ private:
 
 	// 座標変換行列データ
 	TransformationMatrix* transformationMatrixData = nullptr;
+	// 平行光源データ
+	DirectionalLight* directionalLightData = nullptr;
+	// 点光源データ
+	PointLight* pointLightData = nullptr;
+	// スポットライトデータ
+	SpotLight* spotLightData = nullptr;
+	// カメラデータ
+	Vector3* cameraData;
 
 	// 頂点データ
 	VertexData* vertexData = nullptr;
