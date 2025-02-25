@@ -104,6 +104,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="engine\3d\Particle.cpp" />
+    <ClCompile Include="engine\3d\ParticleCommon.cpp" />
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
     <ClCompile Include="game\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="game\scene\BaseScene.cpp" />
@@ -136,6 +138,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\base\SrvManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="engine\3d\Data\MaterialData.h" />
+    <ClInclude Include="engine\3d\Data\ModelData.h" />
+    <ClInclude Include="engine\3d\Particle.h" />
+    <ClInclude Include="engine\3d\ParticleCommon.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
     <ClInclude Include="game\scene\AbstractSceneFactory.h" />
     <ClInclude Include="game\scene\BaseScene.h" />
@@ -169,6 +175,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="game\scene\SceneManager.h" />
     <ClInclude Include="game\scene\SceneFactory.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
+    <ClInclude Include="engine\3d\Data\VertexData.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
