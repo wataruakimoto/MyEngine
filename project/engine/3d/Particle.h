@@ -1,5 +1,8 @@
 #pragma once
 #include "base/DirectXCommon.h"
+#include "Data/MaterialData.h"
+#include "Data/ModelData.h"
+#include "Data/VertexData.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
@@ -59,6 +62,15 @@ public:
 		Vector3 translate;
 	};
 
+	// マテリアルデータ
+	struct Material {
+		Vector4 color;
+		int lightingMode;
+		float padding[3];
+		Matrix4x4 uvTransform;
+		float shininess;
+	};
+
 ///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
@@ -67,7 +79,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(const std::string& directorypath, const std::string& filename);
 
 	/// <summary>
 	/// 更新
@@ -115,6 +127,16 @@ public:
 	/// </summary>
 	void InitializeCameraData();
 
+	/// <summary>
+	/// 頂点データ初期化
+	/// </summary>
+	void InitializeVertexData();
+
+	/// <summary>
+	/// マテリアルデータ初期化
+	/// </summary>
+	void InitializeMaterialData();
+
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
@@ -124,6 +146,12 @@ public:
 /// セッター
 ///-------------------------------------------///
 public:
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetCamera(Camera* camera) { this->camera = camera; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -141,6 +169,11 @@ private:
 	// カメラリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
+	// 頂点リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
+	// マテリアルリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
+
 	// 座標変換行列データ
 	TransformationMatrix* transformationMatrixData = nullptr;
 	// 平行光源データ
@@ -152,10 +185,21 @@ private:
 	// カメラデータ
 	Vector3* cameraData;
 
+	// 頂点データ
+	VertexData* vertexData = nullptr;
+	// マテリアルデータ
+	Material* materialData = nullptr;
+
+	// 頂点バッファビュー
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+
 	Transform transform;
 
 	// カメラ
 	Camera* camera = nullptr;
+
+	// objファイルのデータ
+	ModelData modelData;
 
 	bool isDraw = true;
 };

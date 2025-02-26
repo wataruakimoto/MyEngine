@@ -32,6 +32,10 @@ void GameScene::Initialize() {
 	terrain->Initialize();
 	terrain->SetModel(modelTerrain);
 	terrain->SetCamera(camera);
+
+	particle = new Particle();
+	particle->Initialize("resources/plane", "plane.obj");
+	particle->SetCamera(camera);
 }
 
 void GameScene::Update() {
@@ -53,6 +57,9 @@ void GameScene::Update() {
 
 	terrain->ShowImGui("terrain");
 	terrain->Update();
+
+	particle->ShowImGui("particle");
+	particle->Update();
 }
 
 void GameScene::Draw() {
@@ -64,6 +71,8 @@ void GameScene::Draw() {
 	monsterBall->Draw();
 
 	terrain->Draw();
+
+	particle->Draw();
 }
 
 void GameScene::Finalize() {
@@ -72,6 +81,8 @@ void GameScene::Finalize() {
 	delete monsterBall;
 
 	delete terrain;
+
+	delete particle;
 
 	// モデルの解放
 	delete modelMonsterBall;

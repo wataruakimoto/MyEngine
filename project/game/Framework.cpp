@@ -5,6 +5,7 @@
 #include "camera/DebugCamera.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
+#include "3d/ParticleCommon.h"
 #include "debug/D3DResourceLeakChecker.h"
 #include "scene/SceneManager.h"
 
@@ -53,6 +54,10 @@ void Framework::Initialize() {
 
 	// モデル基盤初期化
 	ModelCommon::GetInstance()->Initialize(dxCommon);
+
+	// パーティクル基盤初期化
+	ParticleCommon::GetInstance()->Initialize(dxCommon);
+	ParticleCommon::GetInstance()->SetDefaultCamera(debugCamera);
 }
 
 void Framework::Update() {
@@ -65,6 +70,9 @@ void Framework::Update() {
 }
 
 void Framework::Finalize() {
+
+	// パーティクル基盤の終了
+	ParticleCommon::GetInstance()->Finalize();
 
 	// モデル基盤の解放
 	ModelCommon::GetInstance()->Finalize();

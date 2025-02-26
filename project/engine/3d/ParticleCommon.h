@@ -1,6 +1,9 @@
 #pragma once
 #include "base/DirectXCommon.h"
 
+/// ===== カメラ ===== ///
+class Camera;
+
 /// ===== パーティクル基盤 ===== ///
 class ParticleCommon {
 
@@ -96,10 +99,28 @@ public:
 	/// <returns></returns>
 	static ParticleCommon* GetInstance();
 
+	/// <summary>
+	/// DirectXCommonのゲッター
+	/// </summary>
+	/// <returns></returns>
+	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+
+	/// <summary>
+	/// デフォルトカメラのゲッター
+	/// </summary>
+	/// <returns>Camera</returns>
+	Camera* GetDefaultCamera() const { return defaultCamera_; }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
 public:
+
+	/// <summary>
+	/// デフォルトカメラのセッター
+	/// </summary>
+	/// <param name="camera">カメラ</param>
+	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -133,5 +154,8 @@ private:
 
 	// GraphicsPipeline
 	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
+
+	// デフォルトカメラ
+	Camera* defaultCamera_ = nullptr;
 };
 
