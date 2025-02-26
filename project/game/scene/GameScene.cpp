@@ -2,6 +2,7 @@
 #include "audio/AudioManager.h"
 #include "input/Input.h"
 #include "3d/Object3dCommon.h"
+#include "3d/ParticleCommon.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
@@ -71,6 +72,9 @@ void GameScene::Draw() {
 	monsterBall->Draw();
 
 	terrain->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	ParticleCommon::GetInstance()->SettingDrawing();
 
 	particle->Draw();
 }
