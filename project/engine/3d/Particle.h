@@ -19,40 +19,10 @@ class Particle {
 public:
 
 	// 座標変換行列
-	struct TransformationMatrix {
+	struct ShaderTransform {
 		Matrix4x4 WVP;
 		Matrix4x4 world;
-		Matrix4x4 worldInverseTranspose;
-	};
-
-	// 平行光源データ
-	struct DirectionalLight {
-		Vector4 color; // 色
-		Vector3 direction; // 向き
-		float intensity; // 輝度
-	};
-
-	// 点光源データ
-	struct PointLight {
-		Vector4 color; // 色
-		Vector3 position; // 位置
-		float intensity; // 輝度
-		float distance; // 光の届く最大距離
-		float decay; // 減衰率
-		float padding[2];
-	};
-
-	// スポットライトデータ
-	struct SpotLight {
-		Vector4 color; // 色
-		Vector3 position; // 位置
-		float padding;
-		Vector3 direction; // 向き
-		float intensity; // 輝度
-		float distance; // 光の届く最大距離
-		float decay; // 減衰率
-		float cosAngle; // 余弦
-		float cosFalloffStart; // Falloffの開始角度
+		Vector4 color;
 	};
 
 	// 変換データ
@@ -97,6 +67,11 @@ public:
 	/// <param name="name"></param>
 	void ShowImGui(const char* name);
 
+	/// <summary>
+	/// ランダム生成
+	/// </summary>
+	void CreateRandom();
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -105,22 +80,7 @@ public:
 	/// <summary>
 	/// 座標変換行列データ初期化
 	/// </summary>
-	void InitializeTransformationMatrixData();
-
-	/// <summary>
-	/// 平行光源データ初期化
-	/// </summary>
-	void InitializeDirectionalLightData();
-
-	/// <summary>
-	/// 点光源データ初期化
-	/// </summary>
-	void InitializePointLightData();
-
-	/// <summary>
-	/// スポットライトデータ初期化
-	/// </summary>
-	void InitializeSpotLightData();
+	void InitializeShaderTransformData();
 
 	/// <summary>
 	/// カメラデータ初期化
@@ -164,13 +124,7 @@ public:
 private:
 
 	// 座標変換行列リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
-	// 平行光源リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
-	// 点光源リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
-	// スポットライトリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
+	Microsoft::WRL::ComPtr <ID3D12Resource> ShaderTransformResource;
 	// カメラリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
@@ -180,13 +134,7 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
 
 	// 座標変換行列データ
-	TransformationMatrix* transformationMatrixData = nullptr;
-	// 平行光源データ
-	DirectionalLight* directionalLightData = nullptr;
-	// 点光源データ
-	PointLight* pointLightData = nullptr;
-	// スポットライトデータ
-	SpotLight* spotLightData = nullptr;
+	ShaderTransform* ShaderTransformData = nullptr;
 	// カメラデータ
 	Vector3* cameraData;
 
@@ -207,11 +155,23 @@ private:
 	bool isDraw = true;
 
 	// インスタンス数
-	static const int kNumInstance = 10;
+	static const int kNumMaxInstance = 10;
+	// 描画すべきインスタンスの数
+	uint32_t numInstance = 0;
 
 	// SRVインデックス
 	uint32_t srvIndex;
 
-	Transform transform[kNumInstance];
+	Transform transform[kNumMaxInstance];
+
+	Vector3 velocity[kNumMaxInstance];
+
+	Vector4 color[kNumMaxInstance];
+
+	float lifeTime[kNumMaxInstance];
+	float currentTime[kNumMaxInstance];
+
+	// Δt
+	const float kDeltaTime = 1.0f / 60.0f;
 };
 

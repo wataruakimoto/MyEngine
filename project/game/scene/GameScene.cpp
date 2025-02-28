@@ -44,7 +44,9 @@ void GameScene::Update() {
 	// サウンド更新
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 	
-		AudioManager::GetInstance()->SoundPlayWave();
+		//AudioManager::GetInstance()->SoundPlayWave();
+
+		particle->CreateRandom();
 	}
 
 	/// === カメラ更新 === ///
