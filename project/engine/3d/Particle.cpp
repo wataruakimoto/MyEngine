@@ -1,5 +1,6 @@
 #include "Particle.h"
 #include "ParticleCommon.h"
+#include "base/SrvManager.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
 #include "camera/Camera.h"
@@ -17,6 +18,9 @@ void Particle::Initialize(const std::string& directorypath, const std::string& f
 	this->camera = ParticleCommon::GetInstance()->GetDefaultCamera();
 
 	InitializeTransformationMatrixData();
+
+	// SRVを作成
+	CreateSRVForTransformationMatrix();
 
 	InitializeDirectionalLightData();
 
@@ -42,36 +46,44 @@ void Particle::Initialize(const std::string& directorypath, const std::string& f
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 
 	// Transform変数を作る
-	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
+
+		transform[index].scale = { 1.0f,1.0f,1.0f };
+		transform[index].rotate = { 0.0f,3.14f,0.0f };
+		transform[index].translate = { index * 0.1f,index * 0.1f,index * 0.1f };
+	}
 }
 
 void Particle::Update() {
 
-	/// === TransformからWorldMatrixを作る === ///
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
 
-	// WVP
-	Matrix4x4 worldViewProjectionMatrix;
+		/// === TransformからWorldMatrixを作る === ///
+		Matrix4x4 worldMatrix = MakeAffineMatrix(transform[index].scale, transform[index].rotate, transform[index].translate);
 
-	// カメラがあればviewProjectionをもらってWVPの計算を行う
-	if (camera) {
+		// WVP
+		Matrix4x4 worldViewProjectionMatrix;
 
-		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
-		worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+		// カメラがあればviewProjectionをもらってWVPの計算を行う
+		if (camera) {
 
-		// カメラのワールド座標を代入
-		*cameraData = camera->GetWorldPosition();
+			const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
+			worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
-		// カメラがなければworldMatrixを代入
+			// カメラのワールド座標を代入
+			*cameraData = camera->GetWorldPosition();
+
+			// カメラがなければworldMatrixを代入
+		}
+		else {
+
+			worldViewProjectionMatrix = worldMatrix;
+		}
+
+		transformationMatrixData[index].WVP = worldViewProjectionMatrix;
+		transformationMatrixData[index].world = worldMatrix;
+		transformationMatrixData[index].worldInverseTranspose = Inverse(worldMatrix);
 	}
-	else {
-
-		worldViewProjectionMatrix = worldMatrix;
-	}
-
-	transformationMatrixData->WVP = worldViewProjectionMatrix;
-	transformationMatrixData->world = worldMatrix;
-	transformationMatrixData->worldInverseTranspose = Inverse(worldMatrix);
 
 	directionalLightData->direction = Normalize(directionalLightData->direction);
 	spotLightData->direction = Normalize(spotLightData->direction);
@@ -85,7 +97,7 @@ void Particle::Update() {
 void Particle::Draw() {
 
 	/// === 座標変換行列CBufferの場所を設定 === ///
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 
 	/// === 平行光源CBufferの場所を設定 === ///
 	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
@@ -109,18 +121,25 @@ void Particle::Draw() {
 	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureFilePath));
 
 	// 描画(DrawCall)
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), kNumInstance, 0, 0);
 }
+
+#include <string>
 
 void Particle::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	if (ImGui::TreeNode("Transform")) {
-		ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f); // 大きさ
-		ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f); // 回転
-		ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f); // 位置
-		ImGui::TreePop();
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
+
+		std::string nam = std::to_string(index);
+
+		if (ImGui::TreeNode(nam.c_str())) {
+			ImGui::DragFloat3("Scale", &transform[index].scale.x, 0.01f); // 大きさ
+			ImGui::DragFloat3("Rotate", &transform[index].rotate.x, 0.01f); // 回転
+			ImGui::DragFloat3("Translate", &transform[index].translate.x, 0.01f); // 位置
+			ImGui::TreePop();
+		}
 	}
 
 	ImGui::End();
@@ -129,15 +148,17 @@ void Particle::ShowImGui(const char* name) {
 void Particle::InitializeTransformationMatrixData() {
 
 	/// === TransformationMatrixResourceを作る === ///
-	transformationMatrixResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+	transformationMatrixResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix) * kNumInstance);
 
 	/// === TransformationMatrixResourceにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる === ///
 	transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
 
 	/// === TransformationMatrixDataの初期値を書き込む === ///
-	transformationMatrixData->WVP = MakeIdentity4x4(); // 単位行列を書き込む
-	transformationMatrixData->world = MakeIdentity4x4(); // 単位行列を書き込む
-	transformationMatrixData->worldInverseTranspose = MakeIdentity4x4(); // 単位行列を書き込む
+	for (uint32_t index = 0; index < kNumInstance; ++index) {
+		transformationMatrixData[index].WVP = MakeIdentity4x4(); // 単位行列を書き込む
+		transformationMatrixData[index].world = MakeIdentity4x4(); // 単位行列を書き込む
+		transformationMatrixData[index].worldInverseTranspose = MakeIdentity4x4(); // 単位行列を書き込む
+	}
 }
 
 void Particle::InitializeDirectionalLightData() {
@@ -235,4 +256,18 @@ void Particle::InitializeMaterialData() {
 	materialData->lightingMode = 0; // Lightingをしていない
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 	materialData->shininess = 70.0f;
+}
+
+void Particle::CreateSRVForTransformationMatrix() {
+
+	// SRVのインデックスを取得
+	srvIndex = SrvManager::GetInstance()->Allocate();
+
+	// 構造化バッファのリソース、要素数、ストライドを設定
+	ID3D12Resource* pResource = transformationMatrixResource.Get();
+	uint32_t numElements = kNumInstance;
+	UINT structureByteStride = sizeof(TransformationMatrix);
+
+	// SRVを作成
+	SrvManager::GetInstance()->CreateSRVforStructuredBuffer(srvIndex, pResource, numElements, structureByteStride);
 }

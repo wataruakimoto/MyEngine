@@ -137,6 +137,11 @@ public:
 	/// </summary>
 	void InitializeMaterialData();
 
+	/// <summary>
+	/// SRV作成
+	/// </summary>
+	void CreateSRVForTransformationMatrix();
+
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
@@ -193,8 +198,6 @@ private:
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-	Transform transform;
-
 	// カメラ
 	Camera* camera = nullptr;
 
@@ -202,5 +205,13 @@ private:
 	ModelData modelData;
 
 	bool isDraw = true;
+
+	// インスタンス数
+	static const int kNumInstance = 10;
+
+	// SRVインデックス
+	uint32_t srvIndex;
+
+	Transform transform[kNumInstance];
 };
 
