@@ -55,5 +55,8 @@ private:
 	// パーティクルのポインタ
 	ParticleSystem* particleSystem = nullptr;
 
+	// パーティクルのポインタ
+	ParticleSystem* particleSystem1 = nullptr;
+
 	int textureNum = 0;
 };

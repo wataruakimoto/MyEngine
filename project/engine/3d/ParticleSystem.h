@@ -5,44 +5,50 @@
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
 
+#include <random>
+#include <list>
+
+// 変換データ
+struct Transform {
+	Vector3 scale;
+	Vector3 rotate;
+	Vector3 translate;
+};
+
+// マテリアルデータ
+struct Material {
+	Vector4 color;
+	Matrix4x4 uvTransform;
+};
+
+struct ParticleForGPU {
+	Matrix4x4 WVP;
+	Matrix4x4 world;
+	Vector4 color;
+};
+
+// パーティクル
+struct Particle {
+	Transform transform;
+	Vector3 velocity;
+	Vector4 color;
+	float lifeTime;
+	float currentTime;
+};
+
+// エミッター
+struct Emitter {
+	Transform transform;
+	uint32_t count; // 発生数
+	float frequency; // 発生頻度
+	float frequencyTime; // 頻度用時刻
+};
+
 /// ===== カメラ ===== ///
 class Camera;
 
 /// ===== パーティクルシステム ===== ///
 class ParticleSystem {
-
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
-
-	// 変換データ
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-
-	// マテリアルデータ
-	struct Material {
-		Vector4 color;
-		Matrix4x4 uvTransform;
-	};
-
-	struct ParticleForGPU {
-		Matrix4x4 WVP;
-		Matrix4x4 world;
-		Vector4 color;
-	};
-
-	// パーティクル
-	struct Particle {
-		Transform transform;
-		Vector3 velocity;
-		Vector4 color;
-		float lifeTime;
-		float currentTime;
-	};
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -71,9 +77,14 @@ public:
 	void ShowImGui(const char* name);
 
 	/// <summary>
-	/// ランダム生成
+	/// パーティクル生成
 	/// </summary>
-	void CreateRandom();
+	Particle MakeNewParticle();
+
+	/// <summary>
+	/// 生成
+	/// </summary>
+	std::list<Particle> Emit(const Emitter& emitter);
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -168,11 +179,14 @@ private:
 	uint32_t numInstance = 0;
 	
 	// パーティクル
-	Particle particles[kNumMaxInstance];
+	std::list<Particle> particles;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;
 
 	Matrix4x4 backToFrontMatrix = {};
-};
 
+	// 乱数生成器
+	std::random_device seedGenerator;
+	std::mt19937 randomEngine;
+};

@@ -38,10 +38,14 @@ void GameScene::Initialize() {
 	terrain->Initialize();
 	terrain->SetModel(modelTerrain);
 	terrain->SetCamera(camera);
-
+	
 	particleSystem = new ParticleSystem();
 	particleSystem->Initialize("resources/circle.png");
 	particleSystem->SetCamera(camera);
+
+	particleSystem1 = new ParticleSystem();
+	particleSystem1->Initialize("resources/uvChecker.png");
+	particleSystem1->SetCamera(camera);
 }
 
 void GameScene::Update() {
@@ -49,9 +53,7 @@ void GameScene::Update() {
 	// サウンド更新
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
 	
-		//AudioManager::GetInstance()->SoundPlayWave();
-
-		particleSystem->CreateRandom();
+		AudioManager::GetInstance()->SoundPlayWave();
 	}
 
 	/// === カメラ更新 === ///
@@ -68,6 +70,9 @@ void GameScene::Update() {
 
 	particleSystem->ShowImGui("particleSystem");
 	particleSystem->Update();
+
+	particleSystem1->ShowImGui("particleSystem1");
+	particleSystem1->Update();
 }
 
 void GameScene::Draw() {
@@ -84,6 +89,8 @@ void GameScene::Draw() {
 	ParticleCommon::GetInstance()->SettingDrawing();
 
 	particleSystem->Draw();
+
+	particleSystem1->Draw();
 }
 
 void GameScene::Finalize() {
@@ -92,6 +99,8 @@ void GameScene::Finalize() {
 	delete monsterBall;
 
 	delete terrain;
+
+	delete particleSystem1;
 
 	delete particleSystem;
 

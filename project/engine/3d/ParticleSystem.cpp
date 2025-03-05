@@ -7,8 +7,8 @@
 #include "math/MathVector.h"
 #include "math/MathMatrix.h"
 
+#include <string>
 #include <numbers>
-#include <random>
 #include <imgui.h>
 
 using namespace MathMatrix;
@@ -34,9 +34,9 @@ void ParticleSystem::Initialize(std::string textureFilePath) {
 	// マテリアルデータ初期化
 	InitializeMaterialData();
 
-	CreateRandom();
-
 	backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+
+	randomEngine.seed(seedGenerator());
 }
 
 void ParticleSystem::Update() {
@@ -48,52 +48,51 @@ void ParticleSystem::Update() {
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
 
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+	for (std::list<Particle>::iterator iterator = particles.begin(); iterator != particles.end();) {
 
 		// 生存期間を過ぎていたら更新せず描画対象にしない
-		if (particles[index].lifeTime <= particles[index].currentTime) {
+		if (iterator->lifeTime <= iterator->currentTime) {
+
+			// Listから削除する
+			iterator = particles.erase(iterator);
 			continue;
 		}
 
-		particles[index].transform.translate += particles[index].velocity * kDeltaTime;
+		iterator->transform.translate += iterator->velocity * kDeltaTime;
 
-		particles[index].currentTime += kDeltaTime;
+		iterator->currentTime += kDeltaTime;
 
 		// α値を下げる
-		float alpha = 1.0f - (particles[index].currentTime / particles[index].lifeTime);
+		float alpha = 1.0f - (iterator->currentTime / iterator->lifeTime);
 
 		// Scaleのみの行列
-		Matrix4x4 scaleMatrix = MakeScaleMatrix(particles[index].transform.scale);
+		Matrix4x4 scaleMatrix = MakeScaleMatrix(iterator->transform.scale);
 
 		// Translateのみの行列
-		Matrix4x4 translateMatrix = MakeTranslateMatrix(particles[index].transform.translate);
+		Matrix4x4 translateMatrix = MakeTranslateMatrix(iterator->transform.translate);
 
 		/// === WorldMatrixを作る === ///
 		Matrix4x4 worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
 
+		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
+
 		// WVP
-		Matrix4x4 worldViewProjectionMatrix;
+		Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
-		// カメラがあればviewProjectionをもらってWVPの計算を行う
-		if (camera) {
+		if (numInstance < kNumMaxInstance) {
 
-			const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
-			worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+			// データに送る
+			ParticleData[numInstance].WVP = worldViewProjectionMatrix;
+			ParticleData[numInstance].world = worldMatrix;
+			ParticleData[numInstance].color = iterator->color;
+			ParticleData[numInstance].color.w = alpha;
 
-			// カメラがなければworldMatrixを代入
+			// 生きているParticleの数を1つカウントする
+			++numInstance;
 		}
-		else {
 
-			worldViewProjectionMatrix = worldMatrix;
-		}
-
-		ParticleData[index].WVP = worldViewProjectionMatrix;
-		ParticleData[index].world = worldMatrix;
-		ParticleData[index].color = particles[index].color;
-		ParticleData[index].color.w = alpha;
-
-		// 生きているParticleの数を1つカウントする
-		++numInstance;
+		// 次のイテレーターに進める
+		++iterator;
 	}
 }
 
@@ -118,23 +117,27 @@ void ParticleSystem::Draw() {
 	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, numInstance, 0, 0, 0);
 }
 
-#include <string>
-
 void ParticleSystem::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+	if (ImGui::Button("Add Particle")) {
+		particles.push_back(MakeNewParticle());
+		particles.push_back(MakeNewParticle());
+		particles.push_back(MakeNewParticle());
+	}
 
-		std::string namber = std::to_string(index);
+	for (std::list<Particle>::iterator iterator = particles.begin(); iterator != particles.end(); ++iterator) {
+
+		std::string namber = std::to_string(std::distance(particles.begin(), iterator));
 
 		if (ImGui::TreeNode(namber.c_str())) {
-			ImGui::DragFloat3("Scale", &particles[index].transform.scale.x, 0.01f); // 大きさ
-			ImGui::DragFloat3("Rotate", &particles[index].transform.rotate.x, 0.01f); // 回転
-			ImGui::DragFloat3("Translate", &particles[index].transform.translate.x, 0.01f); // 位置
-			ImGui::DragFloat("life", &particles[index].lifeTime, 0.01f);
-			ImGui::DragFloat("current", &particles[index].currentTime, 0.01f);
-			ImGui::DragFloat("Alpha", &ParticleData[index].color.w, 0.01f);
+			ImGui::DragFloat3("Scale", &iterator->transform.scale.x, 0.01f); // 大きさ
+			ImGui::DragFloat3("Rotate", &iterator->transform.rotate.x, 0.01f); // 回転
+			ImGui::DragFloat3("Translate", &iterator->transform.translate.x, 0.01f); // 位置
+			ImGui::DragFloat("life", &iterator->lifeTime, 0.01f);
+			ImGui::DragFloat("current", &iterator->currentTime, 0.01f);
+			ImGui::DragFloat("Alpha", &iterator->color.w, 0.01f);
 			ImGui::TreePop();
 		}
 	}
@@ -142,12 +145,7 @@ void ParticleSystem::ShowImGui(const char* name) {
 	ImGui::End();
 }
 
-void ParticleSystem::CreateRandom() {
-
-	// 乱数生成器
-	std::random_device seedGenerator;
-
-	std::mt19937 randomEngine(seedGenerator());
+Particle ParticleSystem::MakeNewParticle() {
 
 	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 
@@ -155,20 +153,31 @@ void ParticleSystem::CreateRandom() {
 
 	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
 
-	// Transform変数を作る
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+	Particle particle;
 
-		particles[index].transform.scale = { 1.0f,1.0f,1.0f };
-		particles[index].transform.rotate = { 0.0f,3.14f,0.0f };
-		particles[index].transform.translate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	particle.transform.scale = { 1.0f,1.0f,1.0f };
+	particle.transform.rotate = { 0.0f,3.14f,0.0f };
+	particle.transform.translate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 
-		particles[index].velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
 
-		particles[index].color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+	particle.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
 
-		particles[index].lifeTime = distTime(randomEngine);
-		particles[index].currentTime = 0.0f;
+	particle.lifeTime = distTime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+std::list<Particle> ParticleSystem::Emit(const Emitter& emitter) {
+
+	std::list<Particle> particles;
+
+	for (uint32_t count = 0; count < emitter.count; ++count) {
+		particles.push_back(MakeNewParticle());
 	}
+
+	return particles;
 }
 
 void ParticleSystem::InitializeParticleData() {
