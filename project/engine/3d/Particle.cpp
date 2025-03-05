@@ -41,11 +41,18 @@ void Particle::Initialize(const std::string& directorypath, const std::string& f
 	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
 
 	CreateRandom();
+
+	backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
 }
 
 void Particle::Update() {
 
 	numInstance = 0;
+
+	Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, camera->GetWorldMatrix());
+	billboardMatrix.m[3][0] = 0.0f;
+	billboardMatrix.m[3][1] = 0.0f;
+	billboardMatrix.m[3][2] = 0.0f;
 
 	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
 
@@ -61,8 +68,14 @@ void Particle::Update() {
 		// α値を下げる
 		float alpha = 1.0f - (currentTime[index] / lifeTime[index]);
 
-		/// === TransformからWorldMatrixを作る === ///
-		Matrix4x4 worldMatrix = MakeAffineMatrix(transform[index].scale, transform[index].rotate, transform[index].translate);
+		// Scaleのみの行列
+		Matrix4x4 scaleMatrix = MakeScaleMatrix(transform[index].scale);
+
+		// Translateのみの行列
+		Matrix4x4 translateMatrix = MakeTranslateMatrix(transform[index].translate);
+
+		/// === WorldMatrixを作る === ///
+		Matrix4x4 worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
 
 		// WVP
 		Matrix4x4 worldViewProjectionMatrix;

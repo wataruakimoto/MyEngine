@@ -225,6 +225,20 @@ Matrix4x4 MathMatrix::MakeScaleMatrix(const Vector3& scale) {
 	return resultTransform;
 }*/
 
+Matrix4x4 MathMatrix::MakeRotateYMatrix(float radian) {
+
+	Matrix4x4 rotateY = { 0.0f };
+
+	rotateY.m[0][0] = cosf(radian);
+	rotateY.m[0][2] = -sinf(radian);
+	rotateY.m[1][1] = 1.0f;
+	rotateY.m[2][0] = sinf(radian);
+	rotateY.m[2][2] = cosf(radian);
+	rotateY.m[3][3] = 1.0f;
+
+	return rotateY;
+}
+
 Matrix4x4 MathMatrix::MakeRotateMatrix(Vector3 radian) {
 
 	Matrix4x4 rotateX = { 0.0f };
