@@ -3,19 +3,10 @@
 struct Material
 {
     float4 color;
-    int lightingMode;
     float4x4 uvTransform;
-    float shininess;
-};
-
-struct Camera
-{
-    float3 worldPosition;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
-
-ConstantBuffer<Camera> gCamera : register(b1);
 
 Texture2D<float4> gTexture : register(t0);
 SamplerState gSampler : register(s0);

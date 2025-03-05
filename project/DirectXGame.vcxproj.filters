@@ -123,7 +123,7 @@
     </ClCompile>
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
-    <ClCompile Include="engine\3d\Particle.cpp" />
+    <ClCompile Include="engine\3d\ParticleSystem.cpp" />
     <ClCompile Include="engine\3d\ParticleCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -225,7 +225,7 @@
     <ClInclude Include="engine\3d\Data\VertexData.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
     <ClInclude Include="engine\3d\Data\ModelData.h" />
-    <ClInclude Include="engine\3d\Particle.h" />
+    <ClInclude Include="engine\3d\ParticleSystem.h" />
     <ClInclude Include="engine\3d\ParticleCommon.h" />
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 #include "BaseScene.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
-#include "3d/Particle.h"
+#include "3d/ParticleSystem.h"
 #include "camera/Camera.h"
 
 /// ===== ゲームシーン ===== ///
@@ -53,5 +53,7 @@ private:
 	Object3d* terrain = nullptr;
 
 	// パーティクルのポインタ
-	Particle* particle = nullptr;
+	ParticleSystem* particleSystem = nullptr;
+
+	int textureNum = 0;
 };

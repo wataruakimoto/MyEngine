@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
+#include "2d/TextureManager.h"
 #include "3d/Object3dCommon.h"
 #include "3d/ParticleCommon.h"
 #include "math/Vector2.h"
@@ -15,6 +16,10 @@ void GameScene::Initialize() {
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
+
+	TextureManager::GetInstance()->LoadTexture("resources/circle.png");
+
+	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 
 	// モデルの生成・初期化
 	modelMonsterBall = new Model();
@@ -34,9 +39,9 @@ void GameScene::Initialize() {
 	terrain->SetModel(modelTerrain);
 	terrain->SetCamera(camera);
 
-	particle = new Particle();
-	particle->Initialize("resources/plane", "plane.obj");
-	particle->SetCamera(camera);
+	particleSystem = new ParticleSystem();
+	particleSystem->Initialize("resources/circle.png");
+	particleSystem->SetCamera(camera);
 }
 
 void GameScene::Update() {
@@ -46,7 +51,7 @@ void GameScene::Update() {
 	
 		//AudioManager::GetInstance()->SoundPlayWave();
 
-		particle->CreateRandom();
+		particleSystem->CreateRandom();
 	}
 
 	/// === カメラ更新 === ///
@@ -61,8 +66,8 @@ void GameScene::Update() {
 	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	particle->ShowImGui("particle");
-	particle->Update();
+	particleSystem->ShowImGui("particleSystem");
+	particleSystem->Update();
 }
 
 void GameScene::Draw() {
@@ -78,7 +83,7 @@ void GameScene::Draw() {
 	/// === パーティクルの描画準備 === ///
 	ParticleCommon::GetInstance()->SettingDrawing();
 
-	particle->Draw();
+	particleSystem->Draw();
 }
 
 void GameScene::Finalize() {
@@ -88,7 +93,7 @@ void GameScene::Finalize() {
 
 	delete terrain;
 
-	delete particle;
+	delete particleSystem;
 
 	// モデルの解放
 	delete modelMonsterBall;
