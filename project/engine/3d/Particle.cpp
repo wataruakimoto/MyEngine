@@ -130,8 +130,7 @@ void Particle::ShowImGui(const char* name) {
 			ImGui::DragFloat3("Translate", &transform[index].translate.x, 0.01f); // 位置
 			ImGui::DragFloat("life", &lifeTime[index], 0.01f);
 			ImGui::DragFloat("current", &currentTime[index], 0.01f);
-			float alpha = 1.0f - (currentTime[index] / lifeTime[index]);
-			ImGui::DragFloat("Alpha", &alpha, 0.01f);
+			ImGui::DragFloat("Alpha", &ShaderTransformData[index].color.w, 0.01f);
 			ImGui::TreePop();
 		}
 	}
