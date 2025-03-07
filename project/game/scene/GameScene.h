@@ -3,7 +3,7 @@
 #include "BaseScene.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
-#include "3d/ParticleSystem.h"
+#include "3d/ParticleEmitter.h"
 #include "camera/Camera.h"
 
 /// ===== ゲームシーン ===== ///
@@ -52,11 +52,6 @@ private:
 
 	Object3d* terrain = nullptr;
 
-	// パーティクルのポインタ
-	ParticleSystem* particleSystem = nullptr;
-
-	// パーティクルのポインタ
-	ParticleSystem* particleSystem1 = nullptr;
-
-	int textureNum = 0;
+	// パーティクル発生機
+	ParticleEmitter* particleEmitter = nullptr;
 };

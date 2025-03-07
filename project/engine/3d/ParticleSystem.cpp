@@ -13,17 +13,10 @@
 
 using namespace MathMatrix;
 
-void ParticleSystem::Initialize(std::string textureFilePath) {
-
-	this->textureFilePath = textureFilePath;
+void ParticleSystem::Initialize() {
 
 	// デフォルトカメラをセット
 	this->camera = ParticleCommon::GetInstance()->GetDefaultCamera();
-
-	InitializeParticleData();
-
-	// SRVを作成
-	CreateSRVForTransformationMatrix();
 
 	// 頂点データ初期化
 	InitializeVertexData();
@@ -41,65 +34,65 @@ void ParticleSystem::Initialize(std::string textureFilePath) {
 
 void ParticleSystem::Update() {
 
-	numInstance = 0;
-
+	// billboardMatrixの計算
 	Matrix4x4 billboardMatrix = Multiply(backToFrontMatrix, camera->GetWorldMatrix());
 	billboardMatrix.m[3][0] = 0.0f;
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
 
-	for (std::list<Particle>::iterator iterator = particles.begin(); iterator != particles.end();) {
+	// ViewProjectionMatrixをカメラから取得
+	const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
 
-		// 生存期間を過ぎていたら更新せず描画対象にしない
-		if (iterator->lifeTime <= iterator->currentTime) {
+	// 各パーティクルグループの更新を行う
+	for (auto& [key, particleGroup] : particleGroups) {
 
-			// Listから削除する
-			iterator = particles.erase(iterator);
-			continue;
+		// 寿命に達していたらグループから外す
+		for (std::list<Particle>::iterator iterator = particleGroup.particles.begin(); iterator != particleGroup.particles.end();) {
+
+			// 生存期間を過ぎていたら更新せず描画対象にしない
+			if (iterator->lifeTime <= iterator->currentTime) {
+
+				// Listから削除する
+				iterator = particleGroup.particles.erase(iterator);
+				continue;
+			}
+
+			// 移動処理
+			iterator->transform.translate += iterator->velocity * kDeltaTime;
+			iterator->currentTime += kDeltaTime;
+
+			// α値を下げる
+			float alpha = 1.0f - (iterator->currentTime / iterator->lifeTime);
+
+			// Scaleのみの行列
+			Matrix4x4 scaleMatrix = MakeScaleMatrix(iterator->transform.scale);
+			// Translateのみの行列
+			Matrix4x4 translateMatrix = MakeTranslateMatrix(iterator->transform.translate);
+			// WorldMatrixを計算
+			Matrix4x4 worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
+
+			// WVPMatrixを合成
+			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+
+			if (particleGroup.numInstance < kNumMaxInstance) {
+
+				// データ１個分の書き込み
+				particleGroup.particleData[particleGroup.numInstance].WVP = worldViewProjectionMatrix;
+				particleGroup.particleData[particleGroup.numInstance].world = worldMatrix;
+				particleGroup.particleData[particleGroup.numInstance].color = iterator->color;
+				particleGroup.particleData[particleGroup.numInstance].color.w = alpha;
+
+				// 生きているParticleの数を1つカウントする
+				++particleGroup.numInstance;
+			}
+
+			// 次のイテレーターに進める
+			++iterator;
 		}
-
-		iterator->transform.translate += iterator->velocity * kDeltaTime;
-
-		iterator->currentTime += kDeltaTime;
-
-		// α値を下げる
-		float alpha = 1.0f - (iterator->currentTime / iterator->lifeTime);
-
-		// Scaleのみの行列
-		Matrix4x4 scaleMatrix = MakeScaleMatrix(iterator->transform.scale);
-
-		// Translateのみの行列
-		Matrix4x4 translateMatrix = MakeTranslateMatrix(iterator->transform.translate);
-
-		/// === WorldMatrixを作る === ///
-		Matrix4x4 worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
-
-		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
-
-		// WVP
-		Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
-
-		if (numInstance < kNumMaxInstance) {
-
-			// データに送る
-			ParticleData[numInstance].WVP = worldViewProjectionMatrix;
-			ParticleData[numInstance].world = worldMatrix;
-			ParticleData[numInstance].color = iterator->color;
-			ParticleData[numInstance].color.w = alpha;
-
-			// 生きているParticleの数を1つカウントする
-			++numInstance;
-		}
-
-		// 次のイテレーターに進める
-		++iterator;
 	}
 }
 
 void ParticleSystem::Draw() {
-
-	/// === 座標変換行列CBufferの場所を設定 === ///
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 
 	// 頂点バッファビューを設定
 	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -110,34 +103,35 @@ void ParticleSystem::Draw() {
 	// マテリアルCBufferの場所を設定
 	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	// SRVのDescriptorTableの先頭を設定
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureFilePath));
+	// 各パーティクルグループの描画
+	for (auto& [key, particleGroup] : particleGroups) {
 
-	// 描画(DrawCall)
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, numInstance, 0, 0, 0);
+		// SRVのDescriptorTableの先頭を設定
+		ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(particleGroup.textureFilePath));
+
+		/// === パーティクルCBufferの場所を設定 === ///
+		ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
+
+		// 描画(DrawCall)
+		ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
+	}
+}
+
+void ParticleSystem::Finalize() {
+
+	delete instance;
+	instance = nullptr;
 }
 
 void ParticleSystem::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	if (ImGui::Button("Add Particle")) {
-		particles.push_back(MakeNewParticle());
-		particles.push_back(MakeNewParticle());
-		particles.push_back(MakeNewParticle());
-	}
-
-	for (std::list<Particle>::iterator iterator = particles.begin(); iterator != particles.end(); ++iterator) {
-
-		std::string namber = std::to_string(std::distance(particles.begin(), iterator));
-
-		if (ImGui::TreeNode(namber.c_str())) {
-			ImGui::DragFloat3("Scale", &iterator->transform.scale.x, 0.01f); // 大きさ
-			ImGui::DragFloat3("Rotate", &iterator->transform.rotate.x, 0.01f); // 回転
-			ImGui::DragFloat3("Translate", &iterator->transform.translate.x, 0.01f); // 位置
-			ImGui::DragFloat("life", &iterator->lifeTime, 0.01f);
-			ImGui::DragFloat("current", &iterator->currentTime, 0.01f);
-			ImGui::DragFloat("Alpha", &iterator->color.w, 0.01f);
+	// 各パーティクルグループの表示
+	for (auto& [key, particleGroup] : particleGroups) {
+		if (ImGui::TreeNode(key.c_str())) {
+			ImGui::Text("TextureFilePath: %s", particleGroup.textureFilePath.c_str());
+			ImGui::Text("NumInstance: %d", particleGroup.numInstance);
 			ImGui::TreePop();
 		}
 	}
@@ -145,54 +139,67 @@ void ParticleSystem::ShowImGui(const char* name) {
 	ImGui::End();
 }
 
-Particle ParticleSystem::MakeNewParticle() {
+void ParticleSystem::CreateParticleGroup(const std::string name, const std::string textureFilePath) {
 
-	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	// 登録済みの名前かチェック
+	if (particleGroups.find(name) != particleGroups.end()) {
 
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
-
-	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
-
-	Particle particle;
-
-	particle.transform.scale = { 1.0f,1.0f,1.0f };
-	particle.transform.rotate = { 0.0f,3.14f,0.0f };
-	particle.transform.translate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
-
-	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
-
-	particle.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
-
-	particle.lifeTime = distTime(randomEngine);
-	particle.currentTime = 0.0f;
-
-	return particle;
-}
-
-std::list<Particle> ParticleSystem::Emit(const Emitter& emitter) {
-
-	std::list<Particle> particles;
-
-	for (uint32_t count = 0; count < emitter.count; ++count) {
-		particles.push_back(MakeNewParticle());
+		// 登録済みなら終了
+		return;
 	}
 
-	return particles;
+	// 新たなパーティクルグループの作成
+	ParticleGroup particleGroup;
+
+	// コンテナに登録
+	particleGroups[name] = particleGroup;
+
+	// テクスチャファイルパスを設定
+	particleGroups[name].textureFilePath = textureFilePath;
+
+	// テクスチャ読み込み
+	TextureManager::GetInstance()->LoadTexture(textureFilePath);
+
+	// SRVインデックスを取得
+	particleGroups[name].srvIndex = SrvManager::GetInstance()->Allocate();
+
+	/// === ParticleResourceを作る === ///
+	particleGroups[name].particleResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+
+	/// === ParticleResourceにデータを書き込むためのアドレスを取得してParticleDataに割り当てる === ///
+	particleGroups[name].particleResource->Map(0, nullptr, reinterpret_cast<void**>(&particleGroups[name].particleData));
+
+	/// === ParticleDataの初期値を書き込む === ///
+	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
+		particleGroups[name].particleData[index].WVP = MakeIdentity4x4(); // 単位行列を書き込む
+		particleGroups[name].particleData[index].world = MakeIdentity4x4(); // 単位行列を書き込む
+		particleGroups[name].particleData[index].color = { 1.0f,1.0f,1.0f,1.0f }; // 白を書き込む
+	}
+
+	// SRV生成
+	SrvManager::GetInstance()->CreateSRVforStructuredBuffer(particleGroups[name].srvIndex, particleGroups[name].particleResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 }
 
-void ParticleSystem::InitializeParticleData() {
+void ParticleSystem::Emit(const std::string name, const Vector3& position, uint32_t count) {
 
-	/// === ShaderTransformResourceを作る === ///
-	ParticleResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+	// 登録済みのパーティクルグループ名かチェック
+	if (particleGroups.find(name) == particleGroups.end()) {
 
-	/// === ShaderTransformResourceにデータを書き込むためのアドレスを取得してShaderTransformDataに割り当てる === ///
-	ParticleResource->Map(0, nullptr, reinterpret_cast<void**>(&ParticleData));
+		// 登録済みなら終了
+		return;
+	}
 
-	/// === ShaderTransformDataの初期値を書き込む === ///
-	for (uint32_t index = 0; index < kNumMaxInstance; ++index) {
-		ParticleData[index].WVP = MakeIdentity4x4(); // 単位行列を書き込む
-		ParticleData[index].world = MakeIdentity4x4(); // 単位行列を書き込む
-		ParticleData[index].color = { 1.0f,1.0f,1.0f,1.0f }; // 白を書き込む
+	// 新しいパーティクルを作成
+	for (uint32_t index = 0; index < count; ++index) {
+
+		// 新しいパーティクルを作成
+		Particle particle = MakeNewParticle();
+
+		// 位置を設定
+		particle.transform.translate = position;
+
+		// 指定されたパーティクルグループに追加
+		particleGroups[name].particles.push_back(particle);
 	}
 }
 
@@ -269,16 +276,39 @@ void ParticleSystem::InitializeMaterialData() {
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }
 
-void ParticleSystem::CreateSRVForTransformationMatrix() {
+Particle ParticleSystem::MakeNewParticle() {
 
-	// SRVのインデックスを取得
-	srvIndex = SrvManager::GetInstance()->Allocate();
+	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
 
-	// 構造化バッファのリソース、要素数、ストライドを設定
-	ID3D12Resource* pResource = ParticleResource.Get();
-	uint32_t numElements = kNumMaxInstance;
-	UINT structureByteStride = sizeof(ParticleForGPU);
+	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
 
-	// SRVを作成
-	SrvManager::GetInstance()->CreateSRVforStructuredBuffer(srvIndex, pResource, numElements, structureByteStride);
+	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
+
+	Vector3 randomTranslate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+
+	Particle particle;
+
+	particle.transform.scale = { 1.0f,1.0f,1.0f };
+	particle.transform.rotate = { 0.0f,3.14f,0.0f };
+	particle.transform.translate += randomTranslate;
+
+	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+
+	particle.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+
+	particle.lifeTime = distTime(randomEngine);
+	particle.currentTime = 0.0f;
+
+	return particle;
+}
+
+ParticleSystem* ParticleSystem::instance = nullptr;
+
+ParticleSystem* ParticleSystem::GetInstance() {
+	
+	if (instance == nullptr) {
+		instance = new ParticleSystem;
+	}
+
+	return instance;
 }

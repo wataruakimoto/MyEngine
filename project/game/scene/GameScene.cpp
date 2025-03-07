@@ -4,6 +4,7 @@
 #include "2d/TextureManager.h"
 #include "3d/Object3dCommon.h"
 #include "3d/ParticleCommon.h"
+#include "3d/ParticleSystem.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
@@ -38,14 +39,13 @@ void GameScene::Initialize() {
 	terrain->Initialize();
 	terrain->SetModel(modelTerrain);
 	terrain->SetCamera(camera);
-	
-	particleSystem = new ParticleSystem();
-	particleSystem->Initialize("resources/circle.png");
-	particleSystem->SetCamera(camera);
 
-	particleSystem1 = new ParticleSystem();
-	particleSystem1->Initialize("resources/uvChecker.png");
-	particleSystem1->SetCamera(camera);
+	// パーティクルシステムの初期化
+	ParticleSystem::GetInstance()->Initialize();
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "resources/circle.png");
+
+	// エミッタ生成
+	particleEmitter = new ParticleEmitter("circle", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} }, 5, 0.5f);
 }
 
 void GameScene::Update() {
@@ -68,11 +68,12 @@ void GameScene::Update() {
 	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	particleSystem->ShowImGui("particleSystem");
-	particleSystem->Update();
+	// パーティクル発生
+	particleEmitter->Emit();
 
-	particleSystem1->ShowImGui("particleSystem1");
-	particleSystem1->Update();
+	// パーティクルシステムの更新
+	ParticleSystem::GetInstance()->ShowImGui("ParticleSystem");
+	ParticleSystem::GetInstance()->Update();
 }
 
 void GameScene::Draw() {
@@ -88,21 +89,19 @@ void GameScene::Draw() {
 	/// === パーティクルの描画準備 === ///
 	ParticleCommon::GetInstance()->SettingDrawing();
 
-	particleSystem->Draw();
-
-	particleSystem1->Draw();
+	// パーティクルシステムの描画
+	ParticleSystem::GetInstance()->Draw();
 }
 
 void GameScene::Finalize() {
+
+	// パーティクルシステムの終了
+	ParticleSystem::GetInstance()->Finalize();
 
 	// 3Dオブジェクトの解放
 	delete monsterBall;
 
 	delete terrain;
-
-	delete particleSystem1;
-
-	delete particleSystem;
 
 	// モデルの解放
 	delete modelMonsterBall;

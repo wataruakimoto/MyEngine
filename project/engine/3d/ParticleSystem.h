@@ -1,19 +1,14 @@
 #pragma once
 #include "base/DirectXCommon.h"
 #include "Data/VertexData.h"
+#include "Data/Transform.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
 
 #include <random>
 #include <list>
-
-// 変換データ
-struct Transform {
-	Vector3 scale;
-	Vector3 rotate;
-	Vector3 translate;
-};
+#include <unordered_map>
 
 // マテリアルデータ
 struct Material {
@@ -21,6 +16,7 @@ struct Material {
 	Matrix4x4 uvTransform;
 };
 
+// シェーダー用パーティクルデータ
 struct ParticleForGPU {
 	Matrix4x4 WVP;
 	Matrix4x4 world;
@@ -36,12 +32,14 @@ struct Particle {
 	float currentTime;
 };
 
-// エミッター
-struct Emitter {
-	Transform transform;
-	uint32_t count; // 発生数
-	float frequency; // 発生頻度
-	float frequencyTime; // 頻度用時刻
+// パーティクルグループ
+struct ParticleGroup {
+	std::string textureFilePath; // テクスチャファイルパス
+	std::list<Particle> particles; // パーティクルのリスト
+	uint32_t srvIndex; // SRVインデックス
+	Microsoft::WRL::ComPtr <ID3D12Resource> particleResource; // パーティクルリソース
+	ParticleForGPU* particleData; // パーティクルデータ
+	uint32_t numInstance; // インスタンスの数
 };
 
 /// ===== カメラ ===== ///
@@ -51,6 +49,22 @@ class Camera;
 class ParticleSystem {
 
 ///-------------------------------------------/// 
+/// シングルトン
+///-------------------------------------------///
+private:
+
+	// インスタンス
+	static ParticleSystem* instance;
+	// コンストラクタの隠蔽
+	ParticleSystem() = default;
+	// デストラクタの隠蔽
+	~ParticleSystem() = default;
+	// コピーコンストラクタの封印
+	ParticleSystem(ParticleSystem&) = delete;
+	// コピー代入演算子の封印
+	ParticleSystem& operator=(ParticleSystem&) = delete;
+
+///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
@@ -58,7 +72,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(std::string textureFilePath);
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -71,30 +85,32 @@ public:
 	void Draw();
 
 	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
+
+	/// <summary>
 	/// ImGui表示
 	/// </summary>
 	/// <param name="name"></param>
 	void ShowImGui(const char* name);
 
 	/// <summary>
-	/// パーティクル生成
+	/// パーティクルグループの生成
 	/// </summary>
-	Particle MakeNewParticle();
+	/// <param name="name"></param>
+	/// <param name="textureFilePath"></param>
+	void CreateParticleGroup(const std::string name, const std::string textureFilePath);
 
 	/// <summary>
-	/// 生成
+	/// パーティクルの発生
 	/// </summary>
-	std::list<Particle> Emit(const Emitter& emitter);
+	void Emit(const std::string name, const Vector3& position, uint32_t count);
 
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
 public:
-
-	/// <summary>
-	/// パーティクルデータ初期化
-	/// </summary>
-	void InitializeParticleData();
 
 	/// <summary>
 	/// 頂点データ初期化
@@ -112,21 +128,25 @@ public:
 	void InitializeMaterialData();
 
 	/// <summary>
-	/// SRV作成
+	/// パーティクル生成
 	/// </summary>
-	void CreateSRVForTransformationMatrix();
+	Particle MakeNewParticle();
 
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
 public:
 
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static ParticleSystem* GetInstance();
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
 public:
-
-	void SetTexture(std::string textureFilePath) { this->textureFilePath = textureFilePath; }
 
 	/// <summary>
 	/// カメラのセッター
@@ -139,18 +159,12 @@ public:
 ///-------------------------------------------///
 private:
 
-	// パーティクルリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> ParticleResource;
-
 	// 頂点リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
 	// 参照リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource;
 	// マテリアルリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
-
-	// 座標変換行列データ
-	ParticleForGPU* ParticleData = nullptr;
 
 	// 頂点データ
 	VertexData* vertexData = nullptr;
@@ -164,22 +178,11 @@ private:
 	// Index用のビュー
 	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 
-	// テクスチャファイルパス
-	std::string textureFilePath = "";
-
-	// SRVインデックス
-	uint32_t srvIndex;
-
 	// カメラ
 	Camera* camera = nullptr;
 
 	// インスタンス数
 	static const int kNumMaxInstance = 10;
-	// 描画すべきインスタンスの数
-	uint32_t numInstance = 0;
-	
-	// パーティクル
-	std::list<Particle> particles;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;
@@ -189,4 +192,7 @@ private:
 	// 乱数生成器
 	std::random_device seedGenerator;
 	std::mt19937 randomEngine;
+
+	// パーティクルグループコンテナ
+	std::unordered_map<std::string, ParticleGroup> particleGroups;
 };
