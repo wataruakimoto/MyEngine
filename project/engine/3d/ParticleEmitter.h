@@ -22,13 +22,15 @@ public:
 	/// </summary>
 	void Emit();
 
+	void ShowImGui(const char* name);
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
 	// 名前
-	std::string name;
+	std::string particleName;
 
 	// 位置
 	Transform transform;
@@ -40,7 +42,7 @@ private:
 	float frequency;
 
 	// 頻度用時刻
-	float frequencyTime = 0.0f;
+	float frequencyTime;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;

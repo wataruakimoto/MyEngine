@@ -1,6 +1,6 @@
 #include "MathMatrix.h"
-#include "cassert"
-#include "cmath"
+#include <cassert>
+#include <cmath>
 
 Matrix4x4 MathMatrix::Add(const Matrix4x4& m1, const Matrix4x4& m2) {
 
@@ -229,11 +229,11 @@ Matrix4x4 MathMatrix::MakeRotateYMatrix(float radian) {
 
 	Matrix4x4 rotateY = { 0.0f };
 
-	rotateY.m[0][0] = cosf(radian);
-	rotateY.m[0][2] = -sinf(radian);
+	rotateY.m[0][0] = cos(radian);
+	rotateY.m[0][2] = -sin(radian);
 	rotateY.m[1][1] = 1.0f;
-	rotateY.m[2][0] = sinf(radian);
-	rotateY.m[2][2] = cosf(radian);
+	rotateY.m[2][0] = sin(radian);
+	rotateY.m[2][2] = cos(radian);
 	rotateY.m[3][3] = 1.0f;
 
 	return rotateY;

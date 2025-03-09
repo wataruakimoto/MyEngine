@@ -39,7 +39,7 @@ struct ParticleGroup {
 	uint32_t srvIndex; // SRVインデックス
 	Microsoft::WRL::ComPtr <ID3D12Resource> particleResource; // パーティクルリソース
 	ParticleForGPU* particleData; // パーティクルデータ
-	uint32_t numInstance; // インスタンスの数
+	uint32_t numInstance = 0; // インスタンスの数
 };
 
 /// ===== カメラ ===== ///
@@ -182,7 +182,7 @@ private:
 	Camera* camera = nullptr;
 
 	// インスタンス数
-	static const int kNumMaxInstance = 10;
+	static const int kNumMaxInstance = 50;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;

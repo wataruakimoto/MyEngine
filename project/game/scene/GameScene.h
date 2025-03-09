@@ -54,4 +54,5 @@ private:
 
 	// パーティクル発生機
 	ParticleEmitter* particleEmitter = nullptr;
+	ParticleEmitter* particleEmitter2 = nullptr;
 };

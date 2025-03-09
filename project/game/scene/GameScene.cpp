@@ -41,11 +41,13 @@ void GameScene::Initialize() {
 	terrain->SetCamera(camera);
 
 	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->Initialize();
+	ParticleSystem::GetInstance()->SetCamera(camera);
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "resources/circle.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "resources/uvChecker.png");
 
 	// エミッタ生成
-	particleEmitter = new ParticleEmitter("circle", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} }, 5, 0.5f);
+	particleEmitter = new ParticleEmitter("circle", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{-2.0f,2.5f,0.0f} }, 5, 0.5f);
+	particleEmitter2 = new ParticleEmitter("uv", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{2.0f,2.5f,0.0f} }, 5, 0.5f);
 }
 
 void GameScene::Update() {
@@ -68,12 +70,13 @@ void GameScene::Update() {
 	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	// パーティクル発生
+	particleEmitter->ShowImGui("particleEmitter");
 	particleEmitter->Emit();
 
-	// パーティクルシステムの更新
-	ParticleSystem::GetInstance()->ShowImGui("ParticleSystem");
-	ParticleSystem::GetInstance()->Update();
+	particleEmitter2->ShowImGui("particleEmitter2");
+	particleEmitter2->Emit();
+
+	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
 }
 
 void GameScene::Draw() {
@@ -85,18 +88,9 @@ void GameScene::Draw() {
 	monsterBall->Draw();
 
 	terrain->Draw();
-
-	/// === パーティクルの描画準備 === ///
-	ParticleCommon::GetInstance()->SettingDrawing();
-
-	// パーティクルシステムの描画
-	ParticleSystem::GetInstance()->Draw();
 }
 
 void GameScene::Finalize() {
-
-	// パーティクルシステムの終了
-	ParticleSystem::GetInstance()->Finalize();
 
 	// 3Dオブジェクトの解放
 	delete monsterBall;

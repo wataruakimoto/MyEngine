@@ -6,12 +6,14 @@
 #include "camera/Camera.h"
 #include "math/MathVector.h"
 #include "math/MathMatrix.h"
+#include "debug/Logger.h"
 
 #include <string>
 #include <numbers>
 #include <imgui.h>
 
 using namespace MathMatrix;
+using namespace Logger;
 
 void ParticleSystem::Initialize() {
 
@@ -43,10 +45,13 @@ void ParticleSystem::Update() {
 	// ViewProjectionMatrixをカメラから取得
 	const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
 
-	// 各パーティクルグループの更新を行う
+	// 各パーティクルグループの更新
 	for (auto& [key, particleGroup] : particleGroups) {
 
-		// 寿命に達していたらグループから外す
+		// パーティクル数をリセット
+		particleGroup.numInstance = 0;
+
+		// グループ内のパーティクルを更新
 		for (std::list<Particle>::iterator iterator = particleGroup.particles.begin(); iterator != particleGroup.particles.end();) {
 
 			// 生存期間を過ぎていたら更新せず描画対象にしない
@@ -75,6 +80,11 @@ void ParticleSystem::Update() {
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 			if (particleGroup.numInstance < kNumMaxInstance) {
+
+				// デバッグ情報を出力
+				if (particleGroup.particleData == nullptr) {
+					Log("particleData is nullptr\n");
+				}
 
 				// データ１個分の書き込み
 				particleGroup.particleData[particleGroup.numInstance].WVP = worldViewProjectionMatrix;
@@ -127,11 +137,20 @@ void ParticleSystem::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	// 各パーティクルグループの表示
 	for (auto& [key, particleGroup] : particleGroups) {
 		if (ImGui::TreeNode(key.c_str())) {
-			ImGui::Text("TextureFilePath: %s", particleGroup.textureFilePath.c_str());
-			ImGui::Text("NumInstance: %d", particleGroup.numInstance);
+			int particleIndex = 0;
+			for (const auto& particle : particleGroup.particles) {
+				if (ImGui::TreeNode((key + " Particle " + std::to_string(particleIndex)).c_str())) {
+					ImGui::Text("Position: (%.2f, %.2f, %.2f)", particle.transform.translate.x, particle.transform.translate.y, particle.transform.translate.z);
+					ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", particle.velocity.x, particle.velocity.y, particle.velocity.z);
+					ImGui::Text("Color: (%.2f, %.2f, %.2f, %.2f)", particle.color.x, particle.color.y, particle.color.z, particle.color.w);
+					ImGui::Text("LifeTime: %.2f", particle.lifeTime);
+					ImGui::Text("CurrentTime: %.2f", particle.currentTime);
+					ImGui::TreePop();
+				}
+				++particleIndex;
+			}
 			ImGui::TreePop();
 		}
 	}
@@ -182,10 +201,11 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 
 void ParticleSystem::Emit(const std::string name, const Vector3& position, uint32_t count) {
 
-	// 登録済みのパーティクルグループ名かチェック
+	// 登録済みのParticleGroupかチェック
 	if (particleGroups.find(name) == particleGroups.end()) {
 
-		// 登録済みなら終了
+		// 登録されていないならエラーメッセージを出す
+		Log("Not found ParticleGroup: " + name + "\n");
 		return;
 	}
 
@@ -305,7 +325,7 @@ Particle ParticleSystem::MakeNewParticle() {
 ParticleSystem* ParticleSystem::instance = nullptr;
 
 ParticleSystem* ParticleSystem::GetInstance() {
-	
+
 	if (instance == nullptr) {
 		instance = new ParticleSystem;
 	}
