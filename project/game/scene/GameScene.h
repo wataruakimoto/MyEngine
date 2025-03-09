@@ -3,6 +3,7 @@
 #include "BaseScene.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
+#include "3d/ParticleEmitter.h"
 #include "camera/Camera.h"
 
 /// ===== ゲームシーン ===== ///
@@ -50,4 +51,8 @@ private:
 	Object3d* monsterBall = nullptr;
 
 	Object3d* terrain = nullptr;
+
+	// パーティクル発生機
+	ParticleEmitter* particleEmitter = nullptr;
+	ParticleEmitter* particleEmitter2 = nullptr;
 };

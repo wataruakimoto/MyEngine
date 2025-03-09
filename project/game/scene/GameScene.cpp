@@ -1,7 +1,10 @@
 #include "GameScene.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
+#include "2d/TextureManager.h"
 #include "3d/Object3dCommon.h"
+#include "3d/ParticleCommon.h"
+#include "3d/ParticleSystem.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
@@ -14,6 +17,10 @@ void GameScene::Initialize() {
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
+
+	TextureManager::GetInstance()->LoadTexture("resources/circle.png");
+
+	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
 
 	// モデルの生成・初期化
 	modelMonsterBall = new Model();
@@ -32,6 +39,15 @@ void GameScene::Initialize() {
 	terrain->Initialize();
 	terrain->SetModel(modelTerrain);
 	terrain->SetCamera(camera);
+
+	// パーティクルシステムの初期化
+	ParticleSystem::GetInstance()->SetCamera(camera);
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "resources/circle.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "resources/uvChecker.png");
+
+	// エミッタ生成
+	particleEmitter = new ParticleEmitter("circle", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{-2.0f,2.5f,0.0f} }, 5, 0.5f);
+	particleEmitter2 = new ParticleEmitter("uv", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{2.0f,2.5f,0.0f} }, 5, 0.5f);
 }
 
 void GameScene::Update() {
@@ -53,6 +69,14 @@ void GameScene::Update() {
 
 	terrain->ShowImGui("terrain");
 	terrain->Update();
+
+	particleEmitter->ShowImGui("particleEmitter");
+	particleEmitter->Emit();
+
+	particleEmitter2->ShowImGui("particleEmitter2");
+	particleEmitter2->Emit();
+
+	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
 }
 
 void GameScene::Draw() {

@@ -50,10 +50,10 @@ Model* ModelManager::FindModel(const std::string& filePath) {
 	return nullptr;
 }
 
-Model::MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
+MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
 
 	// 1. 中で必要となる変数の宣言
-	Model::MaterialData materialData; // 構築するMaterialData
+	MaterialData materialData; // 構築するMaterialData
 	std::string line; // ファイルから読んだ1行を格納するもの
 
 	// 2. ファイルを開く
@@ -80,10 +80,10 @@ Model::MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& di
 	return materialData;
 }
 
-Model::ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
 
 	// 1. 中で必要となる変数の宣言
-	Model::ModelData modelData; // 構築するModelData
+	ModelData modelData; // 構築するModelData
 	std::vector<Vector4>positions; // 位置
 	std::vector<Vector3>normals; // 法線
 	std::vector<Vector2>texcoords; // テクスチャ座標
@@ -124,7 +124,7 @@ Model::ModelData ModelManager::LoadObjFile(const std::string& directoryPath, con
 		}
 		else if (identifier == "f") {
 
-			Model::VertexData triangle[3];
+			VertexData triangle[3];
 
 			// 面は三角形限定。その他は未対応
 			for (int32_t faceVertex = 0; faceVertex < 3; ++faceVertex) {
