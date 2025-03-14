@@ -3,6 +3,7 @@
 #include "BaseScene.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
+#include "3d/ParticleEmitter.h"
 #include "camera/Camera.h"
 
 /// ===== ゲームシーン ===== ///
@@ -50,4 +51,11 @@ private:
 	std::unique_ptr<Object3d> monsterBall = nullptr;
 
 	std::unique_ptr<Object3d> terrain = nullptr;
+
+	// パーティクル発生機
+	std::unique_ptr<ParticleEmitter> particleEmitter = nullptr;
+	std::unique_ptr<ParticleEmitter> particleEmitter2 = nullptr;
+
+	Transform transfromEmitter = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{-2.0f,2.5f,0.0f} };
+	Transform transfromEmitter2 = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{2.0f,2.5f,0.0f} };
 };

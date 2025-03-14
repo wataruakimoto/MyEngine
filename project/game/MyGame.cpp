@@ -1,6 +1,8 @@
 #include "MyGame.h"
 #include "scene/SceneManager.h"
 #include "scene/SceneFactory.h"
+#include "3d/ParticleCommon.h"
+#include "3d/ParticleSystem.h"
 
 void MyGame::Initialize() {
 
@@ -13,6 +15,9 @@ void MyGame::Initialize() {
 	
 	// シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
+
+	// パーティクルシステムの初期化
+	ParticleSystem::GetInstance()->Initialize();
 }
 
 void MyGame::Update() {
@@ -34,6 +39,9 @@ void MyGame::Update() {
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();
 
+		// パーティクルシステムの更新
+		ParticleSystem::GetInstance()->Update();
+
 		/// === ImGui終了 === ///
 		imGuiManager->End();
 	}
@@ -47,6 +55,12 @@ void MyGame::Draw() {
 	// シーンマネージャの描画
 	SceneManager::GetInstance()->Draw();
 
+	/// === パーティクルの描画準備 === ///
+	ParticleCommon::GetInstance()->SettingDrawing();
+
+	// パーティクルシステムの描画
+	ParticleSystem::GetInstance()->Draw();
+
 	/// === ImGui描画 === ///
 	imGuiManager->Draw();
 
@@ -55,6 +69,9 @@ void MyGame::Draw() {
 }
 
 void MyGame::Finalize() {
+
+	// パーティクルシステムの終了
+	ParticleSystem::GetInstance()->Finalize();
 
 	// 基底クラス解放
 	Framework::Finalize();

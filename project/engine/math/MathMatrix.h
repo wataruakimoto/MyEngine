@@ -36,6 +36,9 @@ namespace MathMatrix {
 	// 座標変換
 	//Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
+	// Y回転行列
+	Matrix4x4 MakeRotateYMatrix(float radian);
+
 	// 3次元回転行列
 	Matrix4x4 MakeRotateMatrix(Vector3 radian);
 
