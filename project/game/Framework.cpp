@@ -11,48 +11,48 @@
 void Framework::Initialize() {
 
 	// WindowsAPIの初期化
-	winApp = new WinApp();
+	winApp = std::make_unique<WinApp>();
 	winApp->Initialize();
 
 	// ウィンドウを表示する
 	ShowWindow(winApp->GetHwnd(), SW_SHOW);
 
 	// DirectX初期化
-	dxCommon = new DirectXCommon();
-	dxCommon->Initialize(winApp);
+	dxCommon = std::make_unique<DirectXCommon>();
+	dxCommon->Initialize(winApp.get());
 
 	// SrVマネージャ初期化
-	SrvManager::GetInstance()->Initialize(dxCommon);
+	SrvManager::GetInstance()->Initialize(dxCommon.get());
 
 	// ImGuiの初期化
-	imGuiManager = new ImGuiManager();
-	imGuiManager->Initialize(winApp, dxCommon);
+	imGuiManager = std::make_unique <ImGuiManager>();
+	imGuiManager->Initialize(winApp.get(), dxCommon.get());
 
 	// オーディオマネージャ初期化
 	AudioManager::GetInstance()->Initialize();
 
 	// 入力の初期化
-	Input::GetInstance()->Initialize(winApp);
+	Input::GetInstance()->Initialize(winApp.get());
 
 	// デバッグカメラ初期化
-	debugCamera = new DebugCamera();
+	debugCamera = std::make_unique <DebugCamera>();
 
 	// テクスチャマネージャ初期化
-	TextureManager::GetInstance()->Initialize(dxCommon);
+	TextureManager::GetInstance()->Initialize(dxCommon.get());
 
 	// モデルマネージャ初期化
-	ModelManager::GetInstance()->Initialize(dxCommon);
+	ModelManager::GetInstance()->Initialize(dxCommon.get());
 
 	// スプライト共通部初期化
-	SpriteCommon::GetInstance()->Initialize(dxCommon);
+	SpriteCommon::GetInstance()->Initialize(dxCommon.get());
 
 	// 3Dオブジェクト共通部初期化
-	Object3dCommon::GetInstance()->Initialize(dxCommon);
+	Object3dCommon::GetInstance()->Initialize(dxCommon.get());
 	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
-	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera);
+	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
 
 	// モデル基盤初期化
-	ModelCommon::GetInstance()->Initialize(dxCommon);
+	ModelCommon::GetInstance()->Initialize(dxCommon.get());
 }
 
 void Framework::Update() {
@@ -81,9 +81,6 @@ void Framework::Finalize() {
 	// テクスチャマネージャの終了
 	TextureManager::GetInstance()->Finalize();
 
-	// デバッグカメラの解放
-	delete debugCamera;
-
 	// 入力の終了
 	Input::GetInstance()->Finalize();
 
@@ -93,25 +90,17 @@ void Framework::Finalize() {
 	// シーンマネージャ終了
 	SceneManager::GetInstance()->Finalize();
 
-	// シーンファクトリーの解放
-	delete sceneFactory_;
-
 	// ImGuiの終了
 	imGuiManager->Finalize();
-	// ImGuiの解放
-	delete imGuiManager;
 
 	// SrVマネージャの終了
 	SrvManager::GetInstance()->Finalize();
 
 	// DirectXの解放
 	dxCommon->Finalize();
-	delete dxCommon;
 
 	// WindowsAPIの終了処理
 	winApp->Finalize();
-	// WindowsAPIの解放
-	delete winApp;
 
 	// リークチェック
 	D3DResourceLeakChecker leakCheck;

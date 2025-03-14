@@ -9,29 +9,29 @@
 void GameScene::Initialize() {
 
 	// カメラの初期化
-	camera = new Camera();
+	camera = std::make_unique <Camera>();
 	camera->SetRotate({ 0.2f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
 	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
 
 	// モデルの生成・初期化
-	modelMonsterBall = new Model();
+	modelMonsterBall = std::make_unique <Model>();
 	modelMonsterBall->Initialize("resources/sphere", "sphere.obj");
 
 	// 3Dオブジェクトの生成・初期化
-	monsterBall = new Object3d();
+	monsterBall = std::make_unique <Object3d>();
 	monsterBall->Initialize();
-	monsterBall->SetModel(modelMonsterBall);
-	monsterBall->SetCamera(camera);
+	monsterBall->SetModel(modelMonsterBall.get());
+	monsterBall->SetCamera(camera.get());
 
-	modelTerrain = new Model();
+	modelTerrain = std::make_unique <Model>();
 	modelTerrain->Initialize("resources/terrain", "terrain.obj");
 
-	terrain = new Object3d();
+	terrain = std::make_unique <Object3d>();
 	terrain->Initialize();
-	terrain->SetModel(modelTerrain);
-	terrain->SetCamera(camera);
+	terrain->SetModel(modelTerrain.get());
+	terrain->SetCamera(camera.get());
 }
 
 void GameScene::Update() {
@@ -67,14 +67,4 @@ void GameScene::Draw() {
 }
 
 void GameScene::Finalize() {
-
-	// 3Dオブジェクトの解放
-	delete monsterBall;
-
-	delete terrain;
-
-	// モデルの解放
-	delete modelMonsterBall;
-
-	delete modelTerrain;
 }

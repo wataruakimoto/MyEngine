@@ -53,18 +53,18 @@ public:
 protected:
 
 	// WindowsAPIのポインタ
-	WinApp* winApp = nullptr;
+	std::unique_ptr<WinApp> winApp = nullptr;
 
 	// DirectX基盤のポインタ
-	DirectXCommon* dxCommon = nullptr;
+	std::unique_ptr <DirectXCommon> dxCommon = nullptr;
 
 	// ImGui管理クラスのポインタ
-	ImGuiManager* imGuiManager = nullptr;
+	std::unique_ptr<ImGuiManager> imGuiManager = nullptr;
 
-	DebugCamera* debugCamera = nullptr;
+	std::unique_ptr<DebugCamera> debugCamera = nullptr;
 
 	// シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 
 	// ゲーム終了フラグ
 	bool endRequest_ = false;

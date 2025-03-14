@@ -8,9 +8,9 @@
 /// ===== ゲームシーン ===== ///
 class GameScene : public BaseScene {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -33,21 +33,21 @@ public:
 	/// </summary>
 	void Finalize() override;
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 private:
 
 	// カメラのポインタ
-	Camera* camera = nullptr;
+	std::unique_ptr<Camera> camera = nullptr;
 
 	// モデルのポインタ
-	Model* modelMonsterBall = nullptr;
+	std::unique_ptr<Model> modelMonsterBall = nullptr;
 
-	Model* modelTerrain = nullptr;
+	std::unique_ptr<Model> modelTerrain = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	Object3d* monsterBall = nullptr;
+	std::unique_ptr<Object3d> monsterBall = nullptr;
 
-	Object3d* terrain = nullptr;
+	std::unique_ptr<Object3d> terrain = nullptr;
 };

@@ -37,5 +37,5 @@ public:
 private:
 
 	// スプライトのポインタ
-	Sprite* sprite = nullptr;
+	std::unique_ptr <Sprite> sprite = nullptr;
 };
