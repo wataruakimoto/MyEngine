@@ -1,20 +1,11 @@
-#include "SpriteCommon.h"
-#include "debug/Logger.h"
+#include "ParticleCommon.h"
 #include "base/SrvManager.h"
+#include "debug/Logger.h"
 
 using namespace Microsoft::WRL;
+using namespace Logger;
 
-SpriteCommon* SpriteCommon::instance = nullptr;
-
-SpriteCommon* SpriteCommon::GetInstance() {
-
-	if (instance == nullptr) {
-		instance = new SpriteCommon;
-	}
-	return instance;
-}
-
-void SpriteCommon::Initialize(DirectXCommon* dxCommon){
+void ParticleCommon::Initialize(DirectXCommon* dxCommon) {
 
 	// 引数をメンバ変数に代入
 	dxCommon_ = dxCommon;
@@ -23,12 +14,7 @@ void SpriteCommon::Initialize(DirectXCommon* dxCommon){
 	CreateGraphicsPipeline();
 }
 
-void SpriteCommon::Finalize() {
-	delete instance;
-	instance = nullptr;
-}
-
-void SpriteCommon::SettingCommonDrawing() {
+void ParticleCommon::SettingDrawing() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -43,7 +29,13 @@ void SpriteCommon::SettingCommonDrawing() {
 	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
-void SpriteCommon::CreateRootSignature(){
+void ParticleCommon::Finalize() {
+
+	delete instance;
+	instance = nullptr;
+}
+
+void ParticleCommon::CreateRootSignature() {
 
 	// RootSignatureを生成する
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -56,18 +48,19 @@ void SpriteCommon::CreateRootSignature(){
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-	// RootParameter作成
+	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 
-	// gTransformationMatrix CBV t0
+	// gMaterial CBV b0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
+	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
 
-	// gMaterial CBV b0
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
+	// gTransformationMatrix SRV t0
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
+	rootParameters[1].DescriptorTable.pDescriptorRanges = descriptorRange; // Tableの中身の配列を指定
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = _countof(descriptorRange); // Tableで利用する数
 
 	// gTexture SRV t0
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
@@ -97,7 +90,7 @@ void SpriteCommon::CreateRootSignature(){
 	HRESULT hr = D3D12SerializeRootSignature(&descriptionRootSignature,
 		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
 	if (FAILED(hr)) {
-		Logger::Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
 		assert(false);
 	}
 	// バイナリを元に生成
@@ -106,7 +99,7 @@ void SpriteCommon::CreateRootSignature(){
 	assert(SUCCEEDED(hr));
 }
 
-void SpriteCommon::CreateInputLayout() {
+void ParticleCommon::CreateInputLayout() {
 
 	// InputLayoutの設定を行う
 	inputElementDescs[0].SemanticName = "POSITION";
@@ -119,47 +112,59 @@ void SpriteCommon::CreateInputLayout() {
 	inputElementDescs[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	inputElementDescs[1].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
+	inputElementDescs[2].SemanticName = "COLOR";
+	inputElementDescs[2].SemanticIndex = 0;
+	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
+
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 }
 
-void SpriteCommon::CreateBlendState() {
+void ParticleCommon::CreateBlendState() {
 
 	// すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[0].BlendEnable = true;
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 }
 
-void SpriteCommon::CreateRasterizerState() {
+void ParticleCommon::CreateRasterizerState() {
 
-	// カリングしない(裏面も表示させる)
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+	// 裏面(時計回り)を表示しない
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }
 
-void SpriteCommon::CreateVertexShader() {
+void ParticleCommon::CreateVertexShader() {
 
-	vertexShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Sprite.VS.hlsl", L"vs_6_0");
+	vertexShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Particle.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 }
 
-void SpriteCommon::CreatePixelShader() {
+void ParticleCommon::CreatePixelShader() {
 
-	pixelShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Sprite.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Particle.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
-void SpriteCommon::CreateDepthStencilState() {
+void ParticleCommon::CreateDepthStencilState() {
 
 	// Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = true;
 	// 書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
 
-void SpriteCommon::CreateGraphicsPipeline() {
+void ParticleCommon::CreateGraphicsPipeline() {
 
 	// PSOを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -205,4 +210,15 @@ void SpriteCommon::CreateGraphicsPipeline() {
 	HRESULT hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
+}
+
+ParticleCommon* ParticleCommon::instance = nullptr;
+
+ParticleCommon* ParticleCommon::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new ParticleCommon;
+	}
+
+	return instance;
 }

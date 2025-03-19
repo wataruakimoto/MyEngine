@@ -45,6 +45,4 @@ public:
 private:
 
 	DirectXCommon* dxCommon_ = nullptr;
-
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> srvHeap_;
 };

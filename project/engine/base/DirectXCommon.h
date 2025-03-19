@@ -47,8 +47,6 @@ public:	// メンバ関数
 
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return commandList; }
 
-	ComPtr<ID3D12DescriptorHeap> GetSRVDescriptorHeap() { return srvDescriptorHeap; }
-
 	uint32_t GetBackBufferCount() const { return swapChainDesc.BufferCount; }
 
 	/// <summary>
@@ -73,20 +71,6 @@ public:	// メンバ関数
 	/// <param name="index"></param>
 	/// <returns></returns>
 	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// SRVのCPUのデスクリプタハンドルを取得
-	/// </summary>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetSRVCPUDescriptorHandle(uint32_t index);
-
-	/// <summary>
-	/// SRVのGPUのデスクリプタハンドルを取得
-	/// </summary>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUDescriptorHandle(uint32_t index);
 
 	/// <summary>
 	/// DSVのCPUのデスクリプタハンドルを取得
@@ -247,17 +231,11 @@ private: // メンバ変数
 	// RTV用デスクリプタサイズ
 	uint32_t rtvDescriptorSize;
 
-	// SRV用デスクリプタサイズ
-	uint32_t srvDescriptorSize;
-
 	// DSV用デスクリプタサイズ
 	uint32_t dsvDescriptorSize;
 
 	// RTV用デスクリプタヒープ
 	ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
-
-	// SRV用デスクリプタヒープ
-	ComPtr <ID3D12DescriptorHeap> srvDescriptorHeap;
 
 	// DSV用デスクリプタヒープ
 	ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
@@ -302,12 +280,4 @@ private: // メンバ変数
 
 	// 記録時間(FPS固定用)
 	std::chrono::steady_clock::time_point reference_;
-
-///=====================================================/// 
-/// 定数
-///=====================================================///
-public:
-
-	// SRV用のヒープ生成
-	static const uint32_t kMaxSRVCount;
 };

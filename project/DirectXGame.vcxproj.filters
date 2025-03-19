@@ -122,6 +122,10 @@
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
+    <ClCompile Include="engine\base\SrvManager.cpp" />
+    <ClCompile Include="engine\3d\ParticleSystem.cpp" />
+    <ClCompile Include="engine\3d\ParticleCommon.cpp" />
+    <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -218,6 +222,14 @@
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\camera\DebugCamera.h" />
+    <ClInclude Include="engine\base\SrvManager.h" />
+    <ClInclude Include="engine\3d\Data\VertexData.h" />
+    <ClInclude Include="engine\3d\Data\MaterialData.h" />
+    <ClInclude Include="engine\3d\Data\ModelData.h" />
+    <ClInclude Include="engine\3d\ParticleSystem.h" />
+    <ClInclude Include="engine\3d\ParticleCommon.h" />
+    <ClInclude Include="engine\3d\ParticleEmitter.h" />
+    <ClInclude Include="engine\3d\Data\Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -226,6 +238,7 @@
     <None Include="resources\shaders\Object3d.hlsli">
       <Filter>Engine\3d</Filter>
     </None>
+    <None Include="resources\shaders\Particle.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
@@ -240,5 +253,7 @@
     <FxCompile Include="resources\shaders\Object3d.VS.hlsl">
       <Filter>Engine\3d</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\Particle.VS.hlsl" />
+    <FxCompile Include="resources\shaders\Particle.PS.hlsl" />
   </ItemGroup>
 </Project>
