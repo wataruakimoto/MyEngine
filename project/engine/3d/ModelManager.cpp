@@ -90,7 +90,7 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
 	// assimpを使ってobjファイルを読み込む
 	Assimp::Importer importer;
 	std::string filePath = directoryPath + "/" + filename;
-	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_Triangulate | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes()); // meshがないのは対応しない
 
 	// meshを解析する
@@ -103,16 +103,16 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
 		// faceを解析する
 		for (uint32_t faceIndex = 0; faceIndex < mesh->mNumFaces; ++faceIndex) {
 
-			aiFace face = mesh->mFaces[faceIndex];
+			aiFace& face = mesh->mFaces[faceIndex];
 			assert(face.mNumIndices == 3); // 三角形以外は対応しない
 
 			//vertexを解析する
 			for (uint32_t element = 0; element < face.mNumIndices; ++element) {
 
 				uint32_t vertexIndex = face.mIndices[element];
-				aiVector3D position = mesh->mVertices[vertexIndex];
-				aiVector3D normal = mesh->mNormals[vertexIndex];
-				aiVector3D texcoord = mesh->mTextureCoords[0][vertexIndex];
+				aiVector3D& position = mesh->mVertices[vertexIndex];
+				aiVector3D& normal = mesh->mNormals[vertexIndex];
+				aiVector3D& texcoord = mesh->mTextureCoords[0][vertexIndex];
 
 				VertexData vertex;
 				vertex.position = { position.x, position.y, position.z, 1.0f };
