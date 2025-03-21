@@ -24,7 +24,7 @@ void GameScene::Initialize() {
 
 	// モデルの生成・初期化
 	modelMonsterBall = new Model();
-	modelMonsterBall->Initialize("resources/sphere", "sphere.obj");
+	modelMonsterBall->Initialize("resources/sphere", "sphere.gltf");
 
 	// 3Dオブジェクトの生成・初期化
 	monsterBall = new Object3d();

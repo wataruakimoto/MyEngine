@@ -1,9 +1,5 @@
 #include "ModelManager.h"
-#include "Model.h"
 #include <fstream>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 ModelManager* ModelManager::instance = nullptr;
 
@@ -83,15 +79,15 @@ MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directory
 	return materialData;
 }
 
-ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std::string& filename) {
+ModelData ModelManager::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
 
 	ModelData modelData;
 
-	// assimpを使ってobjファイルを読み込む
+	// assimpを使ってファイルを読み込む
 	Assimp::Importer importer;
 	std::string filePath = directoryPath + "/" + filename;
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
-	assert(scene->HasMeshes()); // meshがないのは対応しない
+	assert(scene && scene->HasMeshes()); // meshがないのは対応しない
 
 	// meshを解析する
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
@@ -134,12 +130,39 @@ ModelData ModelManager::LoadObjFile(const std::string& directoryPath, const std:
 		aiMaterial* material = scene->mMaterials[materialIndex];
 
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
-			
+
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
 			modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
 		}
 	}
 
+	modelData.rootNode = ReadNode(scene->mRootNode);
+
 	return modelData;
+}
+
+Node ModelManager::ReadNode(aiNode* node) {
+
+	Node result;
+
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation; // nodeのlocalMatrixを取得
+	aiLocalMatrix.Transpose(); // 列ベクトル形式を行ベクトル形式に転置
+
+	for (uint32_t i = 0; i < 4; ++i) {
+		for (uint32_t j = 0; j < 4; ++j) {
+			result.localMatrix.m[i][j] = aiLocalMatrix[j][i];
+		}
+	}
+
+	result.name = node->mName.C_Str(); // Node名を格納
+	result.children.resize(node->mNumChildren); // 子ノードの数だけ確保
+
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+
+		// 再帰的に読んで階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
 }
