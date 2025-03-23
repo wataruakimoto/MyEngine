@@ -1,5 +1,9 @@
 #include "ModelManager.h"
 #include <fstream>
+#include <iostream>
+#include "Debug/Logger.h"
+
+using namespace Logger;
 
 ModelManager* ModelManager::instance = nullptr;
 
@@ -87,7 +91,7 @@ ModelData ModelManager::LoadModelFile(const std::string& directoryPath, const st
 	Assimp::Importer importer;
 	std::string filePath = directoryPath + "/" + filename;
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
-	assert(scene && scene->HasMeshes()); // meshがないのは対応しない
+	assert(scene->HasMeshes()); // meshがないのは対応しない
 
 	// meshを解析する
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {

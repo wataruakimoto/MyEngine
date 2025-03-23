@@ -16,15 +16,15 @@ void GameScene::Initialize() {
 	camera->SetRotate({ 0.2f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
-	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
+	AudioManager::GetInstance()->SoundLoadWave("Resources/fanfare.wav");
 
-	TextureManager::GetInstance()->LoadTexture("resources/circle.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
 
-	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
 
 	// モデルの生成・初期化
 	modelMonsterBall = new Model();
-	modelMonsterBall->Initialize("resources/sphere", "sphere.gltf");
+	modelMonsterBall->Initialize("Resources/sphere", "sphere.gltf");
 
 	// 3Dオブジェクトの生成・初期化
 	monsterBall = new Object3d();
@@ -33,7 +33,7 @@ void GameScene::Initialize() {
 	monsterBall->SetCamera(camera);
 
 	modelTerrain = new Model();
-	modelTerrain->Initialize("resources/terrain", "terrain.obj");
+	modelTerrain->Initialize("Resources/terrain", "terrain.gltf");
 
 	terrain = new Object3d();
 	terrain->Initialize();
@@ -42,8 +42,8 @@ void GameScene::Initialize() {
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(camera);
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "resources/circle.png");
-	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "resources/uvChecker.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "Resources/circle.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "Resources/uvChecker.png");
 
 	// エミッタ生成
 	particleEmitter = new ParticleEmitter("circle", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{-2.0f,2.5f,0.0f} }, 5, 0.5f);

@@ -89,6 +89,8 @@ public:
 	/// <param name="shininess"></param>
 	void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
 
+	const Matrix4x4& GetRootMatrix() const { return modelData.rootNode.localMatrix; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

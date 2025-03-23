@@ -56,9 +56,9 @@ void Object3d::Update() {
 		worldViewProjectionMatrix = worldMatrix;
 	}
 
-	transformationMatrixData->WVP = worldViewProjectionMatrix;
-	transformationMatrixData->world = worldMatrix;
-	transformationMatrixData->worldInverseTranspose = Inverse(worldMatrix);
+	transformationMatrixData->WVP = model->GetRootMatrix() * worldViewProjectionMatrix;
+	transformationMatrixData->world = model->GetRootMatrix() * worldMatrix;
+	transformationMatrixData->worldInverseTranspose = Inverse(model->GetRootMatrix() * worldMatrix);
 
 	directionalLightData->direction = Normalize(directionalLightData->direction);
 	spotLightData->direction = Normalize(spotLightData->direction);
