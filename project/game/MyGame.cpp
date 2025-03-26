@@ -3,6 +3,7 @@
 #include "scene/SceneFactory.h"
 #include "3d/ParticleCommon.h"
 #include "3d/ParticleSystem.h"
+#include "debug/ImGuiManager.h"
 
 void MyGame::Initialize() {
 
@@ -10,8 +11,8 @@ void MyGame::Initialize() {
 	Framework::Initialize();
 
 	// シーンファクトリーを生成
-	sceneFactory_ = new SceneFactory();
-	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_);
+	sceneFactory_ = std::make_unique <SceneFactory>();
+	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
 	
 	// シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
@@ -34,7 +35,7 @@ void MyGame::Update() {
 		Framework::Update();
 
 		/// === ImGui開始 === ///
-		imGuiManager->Begin();
+		ImGuiManager::GetInstance()->Begin();
 
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();
@@ -43,7 +44,7 @@ void MyGame::Update() {
 		ParticleSystem::GetInstance()->Update();
 
 		/// === ImGui終了 === ///
-		imGuiManager->End();
+		ImGuiManager::GetInstance()->End();
 	}
 }
 
@@ -62,7 +63,7 @@ void MyGame::Draw() {
 	ParticleSystem::GetInstance()->Draw();
 
 	/// === ImGui描画 === ///
-	imGuiManager->Draw();
+	ImGuiManager::GetInstance()->Draw();
 
 	/// === DirectX描画処理 === ///
 	dxCommon->PostDraw();

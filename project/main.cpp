@@ -1,5 +1,6 @@
 #include "game/Framework.h"
 #include "game/MyGame.h"
+#include "debug/D3DResourceLeakChecker.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -9,9 +10,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲーム実行
 	game->Run();
-  
-	// ゲーム解放
+
+	// ゲームの解放
 	delete game;
+
+	// リークチェック
+	D3DResourceLeakChecker leakCheck;
 
 	return 0;
 }

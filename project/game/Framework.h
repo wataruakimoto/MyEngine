@@ -2,7 +2,6 @@
 
 #include "winApp/WinApp.h"
 #include "base/DirectXCommon.h"
-#include "debug/ImGuiManager.h"
 #include "camera/DebugCamera.h"
 #include "2d/SpriteCommon.h"
 #include "3d/ModelCommon.h"
@@ -53,18 +52,16 @@ public:
 protected:
 
 	// WindowsAPIのポインタ
-	WinApp* winApp = nullptr;
+	std::unique_ptr <WinApp> winApp = nullptr;
 
 	// DirectX基盤のポインタ
-	DirectXCommon* dxCommon = nullptr;
+	std::unique_ptr <DirectXCommon> dxCommon = nullptr;
 
-	// ImGui管理クラスのポインタ
-	ImGuiManager* imGuiManager = nullptr;
-
-	DebugCamera* debugCamera = nullptr;
+	// デバッグカメラ
+	std::unique_ptr <DebugCamera> debugCamera = nullptr;
 
 	// シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
+	std::unique_ptr <AbstractSceneFactory> sceneFactory_ = nullptr;
 
 	// ゲーム終了フラグ
 	bool endRequest_ = false;

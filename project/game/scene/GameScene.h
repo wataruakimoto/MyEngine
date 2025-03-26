@@ -40,19 +40,22 @@ public:
 private:
 
 	// カメラのポインタ
-	Camera* camera = nullptr;
+	std::unique_ptr<Camera> camera = nullptr;
 
 	// モデルのポインタ
-	Model* modelMonsterBall = nullptr;
+	std::unique_ptr <Model> modelMonsterBall = nullptr;
 
-	Model* modelTerrain = nullptr;
+	std::unique_ptr <Model> modelTerrain = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	Object3d* monsterBall = nullptr;
+	std::unique_ptr <Object3d> monsterBall = nullptr;
 
-	Object3d* terrain = nullptr;
+	std::unique_ptr <Object3d> terrain = nullptr;
 
 	// パーティクル発生機
-	ParticleEmitter* particleEmitter = nullptr;
-	ParticleEmitter* particleEmitter2 = nullptr;
+	std::unique_ptr <ParticleEmitter> particleEmitter1 = nullptr;
+	std::unique_ptr <ParticleEmitter> particleEmitter2 = nullptr;
+
+	Transform EmitterTransform1 = {};
+	Transform EmitterTransform2 = {};
 };
