@@ -1,10 +1,14 @@
 #pragma once
+#include "base/DirectXCommon.h"
+#include "3d/Model.h"
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 #include <map>
 #include <string>
 #include <memory>
-#include "Model.h"
-#include "base/DirectXCommon.h"
 
 /// === モデルマネージャー === ///
 class ModelManager {
@@ -70,15 +74,17 @@ public:
 	/// <param name="directoryPath">ディレクトリーパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns></returns>
-	static Model::MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
+	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
-	/// .objファイル読み込み
+	/// .モデル読み込み
 	/// </summary>
 	/// <param name="directoryPath">ディレクトリーパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns></returns>
-	static Model::ModelData LoadObjFile(const std::string& directoryPath, const std::string& filename);
+	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+
+	static Node ReadNode(aiNode* node);
 
 ///-------------------------------------------/// 
 /// メンバ変数

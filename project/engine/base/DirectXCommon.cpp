@@ -79,10 +79,6 @@ void DirectXCommon::PreDraw() {
 	// ----------画面全体の深度をクリア----------
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	// ----------SRV用のデスクリプタヒープを指定する----------
-	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU = GetCPUDescriptorHandle(srvDescriptorHeap, srvDescriptorSize, 1);
-	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU = GetGPUDescriptorHandle(srvDescriptorHeap, srvDescriptorSize, 1);
-
 	// ----------ビューポート領域の設定----------
 	commandList->RSSetViewports(1, &viewport);
 
@@ -172,16 +168,6 @@ D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetRTVCPUDescriptorHandle(uint32_t in
 D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetRTVGPUDescriptorHandle(uint32_t index) {
 
 	return GetGPUDescriptorHandle(rtvDescriptorHeap, rtvDescriptorSize, index);
-}
-
-D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVCPUDescriptorHandle(uint32_t index) {
-
-	return GetCPUDescriptorHandle(srvDescriptorHeap, srvDescriptorSize, index);
-}
-
-D3D12_GPU_DESCRIPTOR_HANDLE DirectXCommon::GetSRVGPUDescriptorHandle(uint32_t index) {
-
-	return GetGPUDescriptorHandle(srvDescriptorHeap, srvDescriptorSize, index);
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXCommon::GetDSVCPUDescriptorHandle(uint32_t index) {
@@ -510,15 +496,10 @@ void DirectXCommon::DepthBufferGenerate() {
 	assert(SUCCEEDED(hr));
 }
 
-const uint32_t DirectXCommon::kMaxSRVCount = 512;
-
 void DirectXCommon::VariousDescriptorHeapGenerate() {
 
 	// ----------RTV用のDescriptorSizeを取得----------
 	rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-
-	// ----------SRV用のDescriptorSizeを取得----------
-	srvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
 	// ----------DSV用のDescriptorSizeを取得----------
 	dsvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
@@ -526,10 +507,6 @@ void DirectXCommon::VariousDescriptorHeapGenerate() {
 	// ----------RTV用のDescriptorHeap生成----------
 	// RTV用のヒープでディスクリプタの数はダブルバッファ用に2つ。RTVはShader内で触るものではないので、ShaderVisibleはfalse
 	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
-
-	// ----------SRV用のDescriptorHeap生成----------
-	// SRV用のヒープでディスクリプタの数は128。SRVはShader内で触るものなので、ShaderVisibleはtrue
-	srvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);
 
 	// ----------DSV用のDescriptorHeap生成----------
 	// DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので、ShaderVisibleはfalse

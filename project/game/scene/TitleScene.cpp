@@ -9,11 +9,11 @@
 
 void TitleScene::Initialize() {
 
-	TextureManager::GetInstance()->LoadTexture("resources/monsterBall.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/monsterBall.png");
 
 	// スプライトの生成・初期化
 	sprite = new Sprite();
-	sprite->Initialize("resources/monsterBall.png");
+	sprite->Initialize("Resources/monsterBall.png");
 }
 
 void TitleScene::Update() {
