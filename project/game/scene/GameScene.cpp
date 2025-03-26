@@ -12,49 +12,53 @@
 void GameScene::Initialize() {
 
 	// カメラの初期化
-	camera = new Camera();
+	camera = std::make_unique <Camera>();
 	camera->SetRotate({ 0.2f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
-	AudioManager::GetInstance()->SoundLoadWave("resources/fanfare.wav");
+	AudioManager::GetInstance()->SoundLoadWave("Resources/fanfare.wav");
 
-	TextureManager::GetInstance()->LoadTexture("resources/circle.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
 
-	TextureManager::GetInstance()->LoadTexture("resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
 
 	// モデルの生成・初期化
-	modelMonsterBall = new Model();
-	modelMonsterBall->Initialize("resources/sphere", "sphere.obj");
+	modelMonsterBall = std::make_unique <Model>();
+	modelMonsterBall->Initialize("Resources/sphere", "sphere.gltf");
 
 	// 3Dオブジェクトの生成・初期化
-	monsterBall = new Object3d();
+	monsterBall = std::make_unique <Object3d>();
 	monsterBall->Initialize();
-	monsterBall->SetModel(modelMonsterBall);
-	monsterBall->SetCamera(camera);
+	monsterBall->SetModel(modelMonsterBall.get());
+	monsterBall->SetCamera(camera.get());
 
-	modelTerrain = new Model();
-	modelTerrain->Initialize("resources/terrain", "terrain.obj");
+	modelTerrain = std::make_unique <Model>();
+	modelTerrain->Initialize("Resources/terrain", "terrain.gltf");
 
-	terrain = new Object3d();
+	terrain = std::make_unique <Object3d>();
 	terrain->Initialize();
-	terrain->SetModel(modelTerrain);
-	terrain->SetCamera(camera);
+	terrain->SetModel(modelTerrain.get());
+	terrain->SetCamera(camera.get());
 
 	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->SetCamera(camera);
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "resources/circle.png");
-	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "resources/uvChecker.png");
+	ParticleSystem::GetInstance()->SetCamera(camera.get());
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "Resources/circle.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "Resources/uvChecker.png");
+
+	// Transformの設定
+	EmitterTransform1.translate = { -2.0f,2.5f,0.0f };
+	EmitterTransform2.translate = { 2.0f,2.5f,0.0f };
 
 	// エミッタ生成
-	particleEmitter = new ParticleEmitter("circle", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{-2.0f,2.5f,0.0f} }, 5, 0.5f);
-	particleEmitter2 = new ParticleEmitter("uv", { {1.0f,1.0f,1.0f} ,{0.0f,0.0f,0.0f},{2.0f,2.5f,0.0f} }, 5, 0.5f);
+	particleEmitter1 = std::make_unique <ParticleEmitter>("circle", EmitterTransform1, 5, 0.5f);
+	particleEmitter2 = std::make_unique <ParticleEmitter>("uv", EmitterTransform2, 5, 0.5f);
 }
 
 void GameScene::Update() {
 
 	// サウンド更新
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-	
+
 		AudioManager::GetInstance()->SoundPlayWave();
 	}
 
@@ -70,8 +74,8 @@ void GameScene::Update() {
 	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	particleEmitter->ShowImGui("particleEmitter");
-	particleEmitter->Emit();
+	particleEmitter1->ShowImGui("particleEmitter");
+	particleEmitter1->Emit();
 
 	particleEmitter2->ShowImGui("particleEmitter2");
 	particleEmitter2->Emit();
@@ -91,14 +95,4 @@ void GameScene::Draw() {
 }
 
 void GameScene::Finalize() {
-
-	// 3Dオブジェクトの解放
-	delete monsterBall;
-
-	delete terrain;
-
-	// モデルの解放
-	delete modelMonsterBall;
-
-	delete modelTerrain;
 }
