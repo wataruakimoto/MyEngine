@@ -12,7 +12,7 @@ void TitleScene::Initialize() {
 	TextureManager::GetInstance()->LoadTexture("Resources/monsterBall.png");
 
 	// スプライトの生成・初期化
-	sprite = new Sprite();
+	sprite = std::make_unique <Sprite>();
 	sprite->Initialize("Resources/monsterBall.png");
 }
 
@@ -43,6 +43,4 @@ void TitleScene::Draw() {
 }
 
 void TitleScene::Finalize() {
-
-	delete sprite;
 }

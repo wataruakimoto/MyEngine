@@ -71,4 +71,17 @@ void ImGuiManager::Finalize() {
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+	delete instance;
+	instance = nullptr;
+}
+
+ImGuiManager* ImGuiManager::instance = nullptr;
+
+ImGuiManager* ImGuiManager::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new ImGuiManager;
+	}
+	return instance;
 }

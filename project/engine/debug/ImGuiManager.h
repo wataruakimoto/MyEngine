@@ -8,6 +8,26 @@ class WinApp;
 class ImGuiManager {
 
 ///-------------------------------------------/// 
+/// シングルトン
+///-------------------------------------------///
+private:
+
+	// インスタンス
+	static ImGuiManager* instance;
+
+	// コンストラクタ(隠蔽)
+	ImGuiManager() = default;
+
+	// デストラクタ(隠蔽)
+	~ImGuiManager() = default;
+
+	// コピーコンストラクタ(封印)
+	ImGuiManager(ImGuiManager&) = delete;
+
+	// コピー代入演算子(封印)
+	ImGuiManager& operator=(ImGuiManager&) = delete;
+
+///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
@@ -38,6 +58,17 @@ public:
 	/// 終了
 	/// </summary>
 	void Finalize();
+
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static ImGuiManager* GetInstance();
 
 ///-------------------------------------------/// 
 /// メンバ変数
