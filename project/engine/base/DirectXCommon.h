@@ -9,6 +9,7 @@
 #include <string>
 #include "DirectXTex/DirectXTex.h"
 #include <chrono>
+#include "math/Vector4.h"
 
 // DirectX基盤
 class DirectXCommon {
@@ -114,6 +115,16 @@ public:	// メンバ関数
 	/// <param name="texture"></param>
 	/// <param name="mipImages"></param>
 	void UploadTextureData(ComPtr <ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
+
+	/// <summary>
+	/// レンダーテクスチャ生成
+	/// </summary>
+	/// <param name="width"></param>
+	/// <param name="height"></param>
+	/// <param name="format"></param>
+	/// <param name="clearColor"></param>
+	/// <returns></returns>
+	ComPtr <ID3D12Resource> CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
 private: // クラス内処理の関数
 
