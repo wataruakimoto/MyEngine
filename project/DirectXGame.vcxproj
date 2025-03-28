@@ -141,6 +141,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
+    <ClCompile Include="engine\base\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
@@ -183,6 +184,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\3d\Data\VertexData.h" />
     <ClInclude Include="engine\3d\ParticleEmitter.h" />
+    <ClInclude Include="engine\base\RenderTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

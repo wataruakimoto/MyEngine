@@ -126,6 +126,7 @@
     <ClCompile Include="engine\3d\ParticleSystem.cpp" />
     <ClCompile Include="engine\3d\ParticleCommon.cpp" />
     <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
+    <ClCompile Include="engine\base\RenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -230,6 +231,7 @@
     <ClInclude Include="engine\3d\ParticleCommon.h" />
     <ClInclude Include="engine\3d\ParticleEmitter.h" />
     <ClInclude Include="engine\3d\Data\Transform.h" />
+    <ClInclude Include="engine\base\RenderTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
