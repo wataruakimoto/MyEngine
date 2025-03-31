@@ -80,7 +80,7 @@ void DirectXCommon::PreDraw() {
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// ----------ビューポート領域の設定----------
-	commandList->RSSetViewports(1, &viewport);
+	commandList->RSSetViewports(1, &viewportRect);
 
 	// ----------シザー矩形の設定----------
 	commandList->RSSetScissorRects(1, &scissorRect);
@@ -588,12 +588,12 @@ void DirectXCommon::ViewportRectInitialize() {
 
 	// ----------ビューポート矩形の設定----------
 	// クライアント領域のサイズと一緒にして画面全体に表示
-	viewport.Width = winApp_->kClientWidth;
-	viewport.Height = winApp_->kClientHeight;
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
+	viewportRect.Width = winApp_->kClientWidth;
+	viewportRect.Height = winApp_->kClientHeight;
+	viewportRect.TopLeftX = 0;
+	viewportRect.TopLeftY = 0;
+	viewportRect.MinDepth = 0.0f;
+	viewportRect.MaxDepth = 1.0f;
 }
 
 void DirectXCommon::ScissoringRectInitialize() {

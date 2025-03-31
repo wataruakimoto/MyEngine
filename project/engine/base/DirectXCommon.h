@@ -47,6 +47,12 @@ public:	// メンバ関数
 
 	ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return commandList; }
 
+	// ビューポートの取得
+	D3D12_VIEWPORT GetViewportRect() const { return viewportRect; }
+
+	// シザリング矩形の取得
+	D3D12_RECT GetScissorRect() const { return scissorRect; }
+
 	uint32_t GetBackBufferCount() const { return swapChainDesc.BufferCount; }
 
 	/// <summary>
@@ -261,7 +267,7 @@ private: // メンバ変数
 	HANDLE fenceEvent;
 
 	// ビューポート矩形
-	D3D12_VIEWPORT viewport{};
+	D3D12_VIEWPORT viewportRect{};
 
 	// シザー矩形
 	D3D12_RECT scissorRect{};
