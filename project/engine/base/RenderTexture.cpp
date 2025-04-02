@@ -33,6 +33,12 @@ void RenderTexture::PreDraw() {
 	dxCommon->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 }
 
+void RenderTexture::Finalize() {
+
+	delete instance;
+	instance = nullptr;
+}
+
 void RenderTexture::DescriptorHeapGenerate() {
 
 	// RTV用のデスクリプタサイズを取得
@@ -165,4 +171,14 @@ Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateDepthStencilResource
 	);
 
 	return resource;
+}
+
+RenderTexture* RenderTexture::instance = nullptr;
+
+RenderTexture* RenderTexture::GetInstance() {
+	
+	if (instance == nullptr) {
+		instance = new RenderTexture();
+	}
+	return instance;
 }

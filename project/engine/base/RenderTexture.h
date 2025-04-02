@@ -7,6 +7,22 @@
 class RenderTexture {
 
 ///-------------------------------------------/// 
+/// シングルトン
+///-------------------------------------------///
+private:
+
+	// インスタンス
+	static RenderTexture* instance;
+	// コンストラクタの隠蔽
+	RenderTexture() = default;
+	// デストラクタの隠蔽
+	~RenderTexture() = default;
+	// コピーコンストラクタの封印
+	RenderTexture(RenderTexture&) = delete;
+	// コピー代入演算子の封印
+	RenderTexture& operator=(RenderTexture&) = delete;
+
+///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
@@ -21,6 +37,11 @@ public:
 	/// 描画前処理
 	/// </summary>
 	void PreDraw();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -61,10 +82,17 @@ private:
 	/// <param name="clearDepth"></param>
 	/// <returns></returns>
 	Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth);
-	
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
+
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	static RenderTexture* GetInstance();
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
 private:
 
 	// DirectX12共通処理
