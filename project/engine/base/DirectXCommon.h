@@ -43,16 +43,6 @@ public:	// メンバ関数
 	/// ゲッター
 	///-------------------------------------------///
 
-	ComPtr<ID3D12Device> GetDevice() { return device; }
-
-	ComPtr<ID3D12GraphicsCommandList> GetCommandList() { return commandList; }
-
-	// ビューポートの取得
-	D3D12_VIEWPORT GetViewportRect() const { return viewportRect; }
-
-	// シザリング矩形の取得
-	D3D12_RECT GetScissorRect() const { return scissorRect; }
-
 	uint32_t GetBackBufferCount() const { return swapChainDesc.BufferCount; }
 
 	/// <summary>
@@ -124,21 +114,6 @@ public:	// メンバ関数
 private: // クラス内処理の関数
 
 	/// <summary>
-	/// デバイスの初期化
-	/// </summary>
-	void DeviceInitialize();
-
-	/// <summary>
-	/// コマンド関連の初期化
-	/// </summary>
-	void CommandRelatedInitialize();
-
-	/// <summary>
-	/// スワップチェーンの生成
-	/// </summary>
-	void SwapChainGenerate();
-
-	/// <summary>
 	/// 深度バッファの生成
 	/// </summary>
 	void DepthBufferGenerate();
@@ -177,26 +152,6 @@ private: // クラス内処理の関数
 	void DepthStencilViewInitialize();
 
 	/// <summary>
-	/// フェンスの初期化
-	/// </summary>
-	void FenceInitialize();
-
-	/// <summary>
-	/// ビューポート矩形の初期化
-	/// </summary>
-	void ViewportRectInitialize();
-
-	/// <summary>
-	/// シザリング矩形の初期化
-	/// </summary>
-	void ScissoringRectInitialize();
-
-	/// <summary>
-	/// DXCコンパイラの生成
-	/// </summary>
-	void DXCCompilerGenerate();
-
-	/// <summary>
 	/// FPS固定初期化
 	/// </summary>
 	void InitializeFixFPS();
@@ -210,26 +165,6 @@ private: // メンバ変数
 
 	// WindowsAPI
 	WinApp* winApp_ = nullptr;
-
-	// DirectX12デバイス
-	ComPtr<ID3D12Device> device = nullptr;
-
-	// DXGIファクトリー
-	ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
-
-	// コマンドアロケータ
-	ComPtr <ID3D12CommandAllocator> commandAllocator = nullptr;
-
-	// コマンドリスト
-	ComPtr <ID3D12GraphicsCommandList> commandList = nullptr;
-
-	// コマンドキュー
-	ComPtr <ID3D12CommandQueue> commandQueue = nullptr;
-
-	// スワップチェーン
-	ComPtr <IDXGISwapChain4> swapChain = nullptr;
-
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
 	// 深度バッファ
 	ComPtr<ID3D12Resource> depthStencilResource;
@@ -246,40 +181,10 @@ private: // メンバ変数
 	// DSV用デスクリプタヒープ
 	ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
 
-	// スワップチェーンから引っ張ってきたリソース
-	ComPtr <ID3D12Resource> swapChainResources[2] = { nullptr };
-
-	// スワップチェーンリソース
-	//std::array<ComPtr<ID3D12Resource>, 2> swapChainResources;
-
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
 	// RTVハンドル
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
-
-	// フェンス
-	ComPtr <ID3D12Fence> fence = nullptr;
-
-	// フェンスの値
-	uint64_t fenceValue = 0;
-
-	// フェンスイベント
-	HANDLE fenceEvent;
-
-	// ビューポート矩形
-	D3D12_VIEWPORT viewportRect{};
-
-	// シザー矩形
-	D3D12_RECT scissorRect{};
-
-	// DXCユーティリティ
-	ComPtr <IDxcUtils> dxcUtils = nullptr;
-
-	// DXCコンパイラ
-	ComPtr <IDxcCompiler3> dxcCompiler = nullptr;
-
-	// デフォルトインクルードハンドラ
-	ComPtr <IDxcIncludeHandler> includeHandler = nullptr;
 
 	// TrainsitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};

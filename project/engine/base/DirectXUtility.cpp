@@ -1,0 +1,185 @@
+#include "DirectXUtility.h"
+#include "winApp/WinApp.h"
+#include "debug/Logger.h"
+#include "utility/StringUtility.h"
+
+#include <cassert>
+#include <format>
+
+using namespace Microsoft::WRL;
+using namespace Logger;
+using namespace StringUtility;
+
+void DirectXUtility::Initialize() {
+
+	// デバイスの初期化
+	DeviceInitialize();
+
+	// コマンド関連の初期化
+	CommandRelatedInitialize();
+
+	// DXCコンパイラの生成
+	DXCCompilerGenerate();
+}
+
+void DirectXUtility::DeviceInitialize() {
+
+	// ----------デバッグレイヤーをオンに----------
+#ifdef _DEBUG
+	ComPtr <ID3D12Debug1> debugController = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+		// デバックレイヤーを有効化する
+		debugController->EnableDebugLayer();
+		// さらにGPU側でもチェックを行うようにする
+		debugController->SetEnableGPUBasedValidation(TRUE);
+	}
+#endif
+
+	// ----------DXGIファクトリーの生成----------
+	// HRESULTはWindows系のエラーコードであり、
+	// 関数が成功したかどうかをSUCCEEDEDマクロで判定できる
+	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgiFactory));
+	// 初期化の根本的な部分でエラーが出た場合はプログラムが間違っているかどうか、
+	// どうにもできない場合が多いのでassertにしておく
+	assert(SUCCEEDED(hr));
+
+	// ----------アダプターの列挙----------
+
+	// 使用するアダプタ用の変数。最初にnullptrを入れておく
+	ComPtr <IDXGIAdapter4> useAdapter = nullptr;
+	// 良い順にアダプタを頼む
+	for (UINT i = 0; dxgiFactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) != DXGI_ERROR_NOT_FOUND; ++i) {
+		// アダプタの情報を取得する
+		DXGI_ADAPTER_DESC3 adapterDesc{};
+		hr = useAdapter->GetDesc3(&adapterDesc);
+		assert(SUCCEEDED(hr)); // 取得できないのは一大事
+		// ソフトウェアアダプタでなければ採用!
+		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE)) {
+			// 採用したアダプタの情報をログに出力。wstringの方なので注意
+			Logger::Log(StringUtility::ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
+			break;
+		}
+		useAdapter = nullptr; // ソフトウェアアダプタの場合は見なかったことにする
+	}
+	// 適切なアダプタが見つからなかったので起動できない
+	assert(useAdapter != nullptr);
+
+	// ----------デバイス生成----------
+	// 機能レベルとログ出力用の文字列
+	D3D_FEATURE_LEVEL featureLevels[] = {
+		D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0
+	};
+	const char* featureLevelStrings[] = { "12.2","12.1","12.0" };
+	// 高い順に生成できるか試していく
+	for (size_t i = 0; i < _countof(featureLevels); ++i) {
+		// 採用したアダプタでデバイスを生成
+		hr = D3D12CreateDevice(useAdapter.Get(), featureLevels[i], IID_PPV_ARGS(&device));
+		// 指定した機能レベルでデバイスが生成できたかを確認
+		if (SUCCEEDED(hr)) {
+			// 生成できたのでログ出力を行ってループを抜ける
+			Logger::Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
+			break;
+		}
+	}
+	// デバイスの生成がうまくいかなかったので起動できない
+	assert(device != nullptr);
+	Logger::Log("Complete create D3D12Device!!!\n"); //初期化完了のログをだす
+
+	// ----------エラー時にブレークを発生させる設定----------
+#ifdef _DEBUG
+	ComPtr <ID3D12InfoQueue> infoQueue = nullptr;
+	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+		// ヤバいエラー時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		// エラー時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		// 警告時に止まる
+		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+
+		// 抑制するメッセージのID
+		D3D12_MESSAGE_ID denyIds[] = {
+			// Windows11でのDXGIデバックレイヤーとDX12デバックレイヤーの相互作用バグによるエラーメッセージ
+			// https://stackoverflow.com/questions/69805245/directx-12-application-is-crashing-in-windows-11
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+		};
+		// 抑制するレベル
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+		D3D12_INFO_QUEUE_FILTER filter{};
+		filter.DenyList.NumIDs = _countof(denyIds);
+		filter.DenyList.pIDList = denyIds;
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		// 指定したメッセージの表示を抑制する
+		infoQueue->PushStorageFilter(&filter);
+	}
+#endif
+}
+
+void DirectXUtility::CommandRelatedInitialize() {
+
+	// ----------コマンドアロケータ生成----------
+	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	// コマンドアロケーターの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドリスト生成----------
+	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
+	// コマンドリストの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドキュー生成----------
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	// デバッガの機能の終了後に停止させないで警告を表示
+	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
+	// コマンドキューの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+}
+
+void DirectXUtility::FenceInitialize() {
+
+	// ----------フェンス生成----------
+	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
+
+	// FenceのSignalを持つためのイベントを作成する
+	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
+}
+
+void DirectXUtility::ViewportRectInitialize() {
+
+	// ----------ビューポート矩形の設定----------
+	// クライアント領域のサイズと一緒にして画面全体に表示
+	viewportRect.Width = WinApp::kClientWidth;
+	viewportRect.Height = WinApp::kClientHeight;
+	viewportRect.TopLeftX = 0;
+	viewportRect.TopLeftY = 0;
+	viewportRect.MinDepth = 0.0f;
+	viewportRect.MaxDepth = 1.0f;
+}
+
+void DirectXUtility::ScissoringRectInitialize() {
+
+	// ----------シザリング矩形の設定----------
+	// 基本的にビューポートと同じ矩形が構成されるようにする
+	scissorRect.left = 0;
+	scissorRect.right = WinApp::kClientWidth;
+	scissorRect.top = 0;
+	scissorRect.bottom = WinApp::kClientHeight;
+}
+
+void DirectXUtility::DXCCompilerGenerate() {
+
+	// ----------DXCユーティリティの生成----------
+	hr = DxcCreateInstance(CLSID_DxcUtils, IID_PPV_ARGS(&dxcUtils));
+	assert(SUCCEEDED(hr));
+
+	// ----------DXCコンパイラの生成----------
+	hr = DxcCreateInstance(CLSID_DxcCompiler, IID_PPV_ARGS(&dxcCompiler));
+	assert(SUCCEEDED(hr));
+
+	// ----------デフォルトインクルードハンドラの生成----------
+	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
+	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
+	assert(SUCCEEDED(hr));
+}
