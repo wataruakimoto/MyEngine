@@ -1,5 +1,4 @@
 #include "DirectXUtility.h"
-#include "winApp/WinApp.h"
 #include "debug/Logger.h"
 #include "utility/StringUtility.h"
 
@@ -14,9 +13,6 @@ void DirectXUtility::Initialize() {
 
 	// デバイスの初期化
 	DeviceInitialize();
-
-	// コマンド関連の初期化
-	CommandRelatedInitialize();
 
 	// DXCコンパイラの生成
 	DXCCompilerGenerate();
@@ -113,59 +109,6 @@ void DirectXUtility::DeviceInitialize() {
 		infoQueue->PushStorageFilter(&filter);
 	}
 #endif
-}
-
-void DirectXUtility::CommandRelatedInitialize() {
-
-	// ----------コマンドアロケータ生成----------
-	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-	// コマンドアロケーターの生成がうまくいかなかったので起動できない
-	assert(SUCCEEDED(hr));
-
-	// ----------コマンドリスト生成----------
-	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
-	// コマンドリストの生成がうまくいかなかったので起動できない
-	assert(SUCCEEDED(hr));
-
-	// ----------コマンドキュー生成----------
-	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
-	// デバッガの機能の終了後に停止させないで警告を表示
-	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
-	// コマンドキューの生成がうまくいかなかったので起動できない
-	assert(SUCCEEDED(hr));
-}
-
-void DirectXUtility::FenceInitialize() {
-
-	// ----------フェンス生成----------
-	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-	assert(SUCCEEDED(hr));
-
-	// FenceのSignalを持つためのイベントを作成する
-	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	assert(fenceEvent != nullptr);
-}
-
-void DirectXUtility::ViewportRectInitialize() {
-
-	// ----------ビューポート矩形の設定----------
-	// クライアント領域のサイズと一緒にして画面全体に表示
-	viewportRect.Width = WinApp::kClientWidth;
-	viewportRect.Height = WinApp::kClientHeight;
-	viewportRect.TopLeftX = 0;
-	viewportRect.TopLeftY = 0;
-	viewportRect.MinDepth = 0.0f;
-	viewportRect.MaxDepth = 1.0f;
-}
-
-void DirectXUtility::ScissoringRectInitialize() {
-
-	// ----------シザリング矩形の設定----------
-	// 基本的にビューポートと同じ矩形が構成されるようにする
-	scissorRect.left = 0;
-	scissorRect.right = WinApp::kClientWidth;
-	scissorRect.top = 0;
-	scissorRect.bottom = WinApp::kClientHeight;
 }
 
 void DirectXUtility::DXCCompilerGenerate() {

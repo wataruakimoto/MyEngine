@@ -28,16 +28,6 @@ private:
 	void DeviceInitialize();
 
 	/// <summary>
-	/// コマンド関連の初期化
-	/// </summary>
-	void CommandRelatedInitialize();
-
-	/// <summary>
-	/// フェンスの初期化
-	/// </summary>
-	void FenceInitialize();
-
-	/// <summary>
 	/// DXCコンパイラの生成
 	/// </summary>
 	void DXCCompilerGenerate();
@@ -53,6 +43,12 @@ public:
 	/// <returns>ID3D12Device</returns>
 	Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device; }
 
+	/// <summary>
+	/// DXGIファクトリーの取得
+	/// </summary>
+	/// <returns></returns>
+	Microsoft::WRL::ComPtr<IDXGIFactory7> GetDXGIFactory() { return dxgiFactory; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -66,18 +62,6 @@ private:
 
 	// DXGIファクトリー
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
-
-	// コマンドキュー
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
-
-	// フェンス
-	Microsoft::WRL::ComPtr <ID3D12Fence> fence = nullptr;
-
-	// フェンスの値
-	uint64_t fenceValue = 0;
-
-	// フェンスイベント
-	HANDLE fenceEvent;
 
 	// DXCユーティリティ
 	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils = nullptr;

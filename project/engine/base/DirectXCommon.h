@@ -8,7 +8,6 @@
 #include <dxcapi.h>
 #include <string>
 #include "DirectXTex/DirectXTex.h"
-#include <chrono>
 
 // DirectX基盤
 class DirectXCommon {
@@ -18,26 +17,6 @@ public:
 	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
 
 public:	// メンバ関数
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(WinApp* winApp);
-
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	void PreDraw();
-
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
-	void PostDraw();
-
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
 
 	///-------------------------------------------/// 
 	/// ゲッター
@@ -114,21 +93,6 @@ public:	// メンバ関数
 private: // クラス内処理の関数
 
 	/// <summary>
-	/// 深度バッファの生成
-	/// </summary>
-	void DepthBufferGenerate();
-
-	/// <summary>
-	/// 各種デスクリプターヒープの生成
-	/// </summary>
-	void VariousDescriptorHeapGenerate();
-
-	/// <summary>
-	/// レンダーターゲットビューの初期化
-	/// </summary>
-	void RenderTargetViewInitialize();
-
-	/// <summary>
 	/// CPUのデスクリプタハンドルを取得する
 	/// </summary>
 	/// <param name="descriptorHeap"></param>
@@ -146,49 +110,8 @@ private: // クラス内処理の関数
 	/// <returns></returns>
 	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(ComPtr <ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
-	/// <summary>
-	/// 深度ステンシルビューの初期化
-	/// </summary>
-	void DepthStencilViewInitialize();
-
-	/// <summary>
-	/// FPS固定初期化
-	/// </summary>
-	void InitializeFixFPS();
-
-	/// <summary>
-	/// FPS固定更新
-	/// </summary>
-	void UpdateFixFPS();
-
 private: // メンバ変数
 
 	// WindowsAPI
 	WinApp* winApp_ = nullptr;
-
-	// 深度バッファ
-	ComPtr<ID3D12Resource> depthStencilResource;
-
-	// RTV用デスクリプタサイズ
-	uint32_t rtvDescriptorSize;
-
-	// DSV用デスクリプタサイズ
-	uint32_t dsvDescriptorSize;
-
-	// RTV用デスクリプタヒープ
-	ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
-
-	// DSV用デスクリプタヒープ
-	ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
-
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
-
-	// RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
-
-	// TrainsitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
-
-	// 記録時間(FPS固定用)
-	std::chrono::steady_clock::time_point reference_;
 };
