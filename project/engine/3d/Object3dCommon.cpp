@@ -1,7 +1,9 @@
 #include "Object3dCommon.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
+#include "base/SrvManager.h"
 #include "debug/Logger.h"
 #include "camera/DebugCamera.h"
-#include "base/SrvManager.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;
@@ -16,10 +18,11 @@ Object3dCommon* Object3dCommon::GetInstance() {
 	return instance;
 }
 
-void Object3dCommon::Initialize(DirectXCommon* dxCommon) {
+void Object3dCommon::Initialize(DirectXUtility* dxUtility, SwapChain* swapChain) {
 
 	// 引数をメンバ変数に代入
-	dxCommon_ = dxCommon;
+	dxUtility_ = dxUtility;
+	swapChain_ = swapChain;
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
@@ -33,16 +36,16 @@ void Object3dCommon::Finalize() {
 void Object3dCommon::SettingCommonDrawing() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
-	dxCommon_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+	swapChain_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
+	swapChain_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
-	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	swapChain_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
-	dxCommon_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+	swapChain_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void Object3dCommon::CreateRootSignature() {
@@ -123,7 +126,7 @@ void Object3dCommon::CreateRootSignature() {
 		assert(false);
 	}
 	// バイナリを元に生成
-	hr = dxCommon_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
+	hr = dxUtility_->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
 		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
 	assert(SUCCEEDED(hr));
 }
@@ -166,13 +169,13 @@ void Object3dCommon::CreateRasterizerState() {
 
 void Object3dCommon::CreateVertexShader() {
 
-	vertexShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Object3d.VS.hlsl", L"vs_6_0");
+	vertexShaderBlob = dxUtility_->CompileShader(L"resources/shaders/Object3d.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 }
 
 void Object3dCommon::CreatePixelShader() {
 
-	pixelShaderBlob = dxCommon_->CompileShader(L"resources/shaders/Object3d.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxUtility_->CompileShader(L"resources/shaders/Object3d.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
@@ -229,7 +232,7 @@ void Object3dCommon::CreateGraphicsPipeline() {
 	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
 	// 実際に生成
-	HRESULT hr = dxCommon_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
+	HRESULT hr = dxUtility_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
 }

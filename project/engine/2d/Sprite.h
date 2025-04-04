@@ -3,7 +3,14 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
-#include "base/DirectXCommon.h"
+
+#include <string>
+#include <d3d12.h>
+#include <wrl.h>
+
+/// === 前方宣言 === ///
+class DirectXUtility;
+class SwapChain;
 
 // スプライト
 class Sprite {
@@ -206,13 +213,13 @@ public:
 private:
 
 	// 頂点リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
 	// 参照リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> indexResource;
 	// 座標変換行列リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource;
 	// マテリアルリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 
 	// 頂点データ
 	VertexData* vertexData = nullptr;

@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <chrono>
 
+/// === 前方宣言 === ///
 class WinApp;
 class DirectXUtility;
 
@@ -95,6 +96,51 @@ private:
 	/// FPS固定更新
 	/// </summary>
 	void UpdateFixFPS();
+
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// コマンドリストを取得
+	/// </summary>
+	/// <returns></returns>
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() const { return commandList; }
+
+	/// <summary>
+	/// バッファカウントを取得
+	/// </summary>
+	/// <returns></returns>
+	uint32_t GetBackBufferCount() const { return swapChainDesc.BufferCount; }
+
+	/// <summary>
+	/// RTVのCPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// RTVのGPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// DSVのCPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
+
+	/// <summary>
+	/// DSVのGPUのデスクリプタハンドルを取得
+	/// </summary>
+	/// <param name="index"></param>
+	/// <returns></returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
 ///-------------------------------------------/// 
 /// メンバ変数

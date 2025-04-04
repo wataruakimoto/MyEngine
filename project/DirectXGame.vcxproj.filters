@@ -46,9 +46,6 @@
     <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
       <Filter>Engine\debug</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\DirectXCommon.cpp">
-      <Filter>Engine\base</Filter>
-    </ClCompile>
     <ClCompile Include="engine\input\Input.cpp">
       <Filter>Engine\input</Filter>
     </ClCompile>
@@ -126,7 +123,6 @@
     <ClCompile Include="engine\3d\ParticleSystem.cpp" />
     <ClCompile Include="engine\3d\ParticleCommon.cpp" />
     <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
-    <ClCompile Include="engine\base\RenderTexture.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
   </ItemGroup>
@@ -136,9 +132,6 @@
     </ClInclude>
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h">
       <Filter>Engine\debug</Filter>
-    </ClInclude>
-    <ClInclude Include="engine\base\DirectXCommon.h">
-      <Filter>Engine\base</Filter>
     </ClInclude>
     <ClInclude Include="engine\input\Input.h">
       <Filter>Engine\input</Filter>
@@ -233,7 +226,6 @@
     <ClInclude Include="engine\3d\ParticleCommon.h" />
     <ClInclude Include="engine\3d\ParticleEmitter.h" />
     <ClInclude Include="engine\3d\Data\Transform.h" />
-    <ClInclude Include="engine\base\RenderTexture.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
   </ItemGroup>

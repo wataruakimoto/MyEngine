@@ -1,3 +1,4 @@
+#include "Windows.h"
 #include "game/Framework.h"
 #include "game/MyGame.h"
 #include "debug/D3DResourceLeakChecker.h"

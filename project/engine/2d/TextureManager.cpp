@@ -1,6 +1,7 @@
 #include "TextureManager.h"
+#include "base/DirectXUtility.h"
+#include "base/SrvManager.h"
 #include "utility/StringUtility.h"
-#include  "base/SrvManager.h"
 
 using namespace StringUtility;
 
@@ -14,10 +15,10 @@ TextureManager* TextureManager::GetInstance() {
 	return instance;
 }
 
-void TextureManager::Initialize(DirectXCommon* dxCommon) {
+void TextureManager::Initialize(DirectXUtility* dxUtility) {
 
 	// 引数をメンバ変数に代入
-	dxCommon_ = dxCommon;
+	dxUtility_ = dxUtility;
 
 	// SRVの数と同数
 	textureDatas.reserve(SrvManager::kMaxSRVCount);
@@ -62,11 +63,11 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	/// === テクスチャデータ書き込み === ///
 
 	textureData.metaData = mipImages.GetMetadata();
-	textureData.resource = dxCommon_->CreateTextureResource(textureData.metaData);
+	textureData.resource = dxUtility_->CreateTextureResource(textureData.metaData);
 
 	/// === テクスチャデータ送信 === ///
 
-	dxCommon_->UploadTextureData(textureData.resource, mipImages);
+	dxUtility_->UploadTextureData(textureData.resource, mipImages);
 
 	/// === デスクリプタハンドルの計算 === ///
 

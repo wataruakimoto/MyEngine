@@ -177,11 +177,11 @@ void SwapChain::VariousDescriptorHeapGenerate() {
 
 	// ----------RTV用のDescriptorHeap生成----------
 	// RTV用のヒープでディスクリプタの数はダブルバッファ用に2つ。RTVはShader内で触るものではないので、ShaderVisibleはfalse
-	rtvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
+	rtvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false);
 
 	// ----------DSV用のDescriptorHeap生成----------
 	// DSV用のヒープでディスクリプタの数は1。DSVはShader内で触るものではないので、ShaderVisibleはfalse
-	dsvDescriptorHeap = CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
+	dsvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false);
 }
 
 void SwapChain::RenderTargetViewInitialize() {
@@ -324,4 +324,24 @@ void SwapChain::UpdateFixFPS() {
 	}
 	// 現在の時間を記録する
 	reference = std::chrono::steady_clock::now();
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE SwapChain::GetRTVCPUDescriptorHandle(uint32_t index) {
+
+	return dxUtility->GetCPUDescriptorHandle(rtvDescriptorHeap, rtvDescriptorSize, index);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE SwapChain::GetRTVGPUDescriptorHandle(uint32_t index) {
+
+	return dxUtility->GetGPUDescriptorHandle(rtvDescriptorHeap, rtvDescriptorSize, index);
+}
+
+D3D12_CPU_DESCRIPTOR_HANDLE SwapChain::GetDSVCPUDescriptorHandle(uint32_t index) {
+	
+	return dxUtility->GetCPUDescriptorHandle(dsvDescriptorHeap, dsvDescriptorSize, index);
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE SwapChain::GetDSVGPUDescriptorHandle(uint32_t index) {
+
+	return dxUtility->GetGPUDescriptorHandle(dsvDescriptorHeap, dsvDescriptorSize, index);
 }

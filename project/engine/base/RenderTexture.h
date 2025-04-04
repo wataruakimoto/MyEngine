@@ -1,5 +1,5 @@
 #pragma once
-#include "DirectXCommon.h"
+#include "DirectXUtility.h"
 #include "math/Vector4.h"
 #include <wrl.h>
 
@@ -30,8 +30,8 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon"></param>
-	void Initialize(DirectXCommon* dxCommon);
+	/// <param name="dxUtility"></param>
+	void Initialize(DirectXUtility* dxUtility);
 
 	/// <summary>
 	/// 描画前処理
@@ -96,7 +96,7 @@ public:
 private:
 
 	// DirectX12共通処理
-	DirectXCommon* dxCommon = nullptr;
+	DirectXUtility* dxUtility = nullptr;
 
 	// RTV用デスクリプタサイズ
 	uint32_t rtvDescriptorSize;

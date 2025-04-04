@@ -2,12 +2,14 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
 #include "winApp/WinApp.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
 #include "base/SrvManager.h"
 
-void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
+void ImGuiManager::Initialize(WinApp* winApp, DirectXUtility* dxUtility, SwapChain* swapChain) {
 
 	// 引数をメンバ変数にコピー
-	dxCommon_ = dxCommon;
+	swapChain_ = swapChain;
 
 	// バージョンチェック
 	IMGUI_CHECKVERSION();
@@ -26,8 +28,8 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXCommon* dxCommon) {
 
 	// DirectX12用の設定
 	ImGui_ImplDX12_Init(
-		dxCommon->GetDevice().Get(),
-		dxCommon->GetBackBufferCount(),
+		dxUtility->GetDevice().Get(),
+		swapChain->GetBackBufferCount(),
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 		SrvManager::GetInstance()->GetDescriptorHeap().Get(),
 		SrvManager::GetInstance()->GetCPUDescriptorHandle(srvIndex),
@@ -51,7 +53,7 @@ void ImGuiManager::End() {
 
 void ImGuiManager::Draw() {
 
-	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList().Get();
+	ID3D12GraphicsCommandList* commandList = swapChain_->GetCommandList().Get();
 
 	// デスクリプタヒープの配列をセットするコマンド
 	ID3D12DescriptorHeap* ppHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };

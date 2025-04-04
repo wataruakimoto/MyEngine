@@ -1,12 +1,18 @@
 #include "Framework.h"
+#include "winApp/WinApp.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
 #include "base/SrvManager.h"
+#include "debug/ImGuiManager.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
 #include "camera/DebugCamera.h"
 #include "2d/TextureManager.h"
+#include "2d/SpriteCommon.h"
+#include "3d/Object3dCommon.h"
+#include "3d/ModelCommon.h"
 #include "3d/ModelManager.h"
 #include "3d/ParticleCommon.h"
-#include "debug/ImGuiManager.h"
 #include "scene/SceneManager.h"
 
 void Framework::Initialize() {
@@ -19,14 +25,18 @@ void Framework::Initialize() {
 	ShowWindow(winApp->GetHwnd(), SW_SHOW);
 
 	// DirectX初期化
-	dxCommon = std::make_unique <DirectXCommon>();
-	dxCommon->Initialize(winApp.get());
+	dxUtility = std::make_unique <DirectXUtility>();
+	dxUtility->Initialize();
+
+	// スワップチェイン初期化
+	swapChain = std::make_unique <SwapChain>();
+	swapChain->Initialize(winApp.get(), dxUtility.get());
 
 	// SrVマネージャ初期化
-	SrvManager::GetInstance()->Initialize(dxCommon.get());
+	SrvManager::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
 
 	// ImGuiの初期化
-	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxCommon.get());
+	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxUtility.get(), swapChain.get());
 
 	// オーディオマネージャ初期化
 	AudioManager::GetInstance()->Initialize();
@@ -38,24 +48,24 @@ void Framework::Initialize() {
 	debugCamera = std::make_unique <DebugCamera>();
 
 	// テクスチャマネージャ初期化
-	TextureManager::GetInstance()->Initialize(dxCommon.get());
+	TextureManager::GetInstance()->Initialize(dxUtility.get());
 
 	// モデルマネージャ初期化
-	ModelManager::GetInstance()->Initialize(dxCommon.get());
+	ModelManager::GetInstance()->Initialize(dxUtility.get());
 
 	// スプライト共通部初期化
-	SpriteCommon::GetInstance()->Initialize(dxCommon.get());
+	SpriteCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
 
 	// 3Dオブジェクト共通部初期化
-	Object3dCommon::GetInstance()->Initialize(dxCommon.get());
+	Object3dCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
 	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
 	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
 
 	// モデル基盤初期化
-	ModelCommon::GetInstance()->Initialize(dxCommon.get());
+	ModelCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
 
 	// パーティクル基盤初期化
-	ParticleCommon::GetInstance()->Initialize(dxCommon.get());
+	ParticleCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
 	ParticleCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
 }
 
@@ -100,11 +110,11 @@ void Framework::Finalize() {
 	// ImGuiの終了
 	ImGuiManager::GetInstance()->Finalize();
 
-	// SrVマネージャの終了
+	// Srvマネージャの終了
 	SrvManager::GetInstance()->Finalize();
 
-	// DirectXの解放
-	dxCommon->Finalize();
+	// SwapChainの終了
+	swapChain->Finalize();
 	
 	// WindowsAPIの終了処理
 	winApp->Finalize();

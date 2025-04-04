@@ -3,34 +3,34 @@
 
 using namespace Microsoft::WRL;
 
-void RenderTexture::Initialize(DirectXCommon* dxCommon) {
+void RenderTexture::Initialize(DirectXUtility* dxUtility) {
 
 	// NULL検出
-	assert(dxCommon);
+	assert(dxUtility);
 
 	// メンバ変数に記録
-	this->dxCommon = dxCommon;
+	this->dxUtility = dxUtility;
 }
 
 void RenderTexture::PreDraw() {
 
 	// 描画先のRTVを指定
-	dxCommon->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, nullptr);
+	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, nullptr);
 
 	// 画面全体の色をクリア
 	float clearColor[] = { kRenderTargetClearValue.x, kRenderTargetClearValue.y, kRenderTargetClearValue.z, kRenderTargetClearValue.w };
-	dxCommon->GetCommandList()->ClearRenderTargetView(rtvHandles[0], clearColor, 0, nullptr);
+	dxUtility->GetCommandList()->ClearRenderTargetView(rtvHandles[0], clearColor, 0, nullptr);
 
 	// 画面全体の震度をクリア
-	dxCommon->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	dxUtility->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// ビューポート矩形の設定
-    D3D12_VIEWPORT viewRect = dxCommon->GetViewportRect();
-    dxCommon->GetCommandList()->RSSetViewports(1, &viewRect);
+    D3D12_VIEWPORT viewRect = dxUtility->GetViewportRect();
+    dxUtility->GetCommandList()->RSSetViewports(1, &viewRect);
 
 	// シザリング矩形の設定
-	D3D12_RECT scissorRect = dxCommon->GetScissorRect();
-	dxCommon->GetCommandList()->RSSetScissorRects(1, &scissorRect);
+	D3D12_RECT scissorRect = dxUtility->GetScissorRect();
+	dxUtility->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 }
 
 void RenderTexture::Finalize() {
@@ -42,16 +42,16 @@ void RenderTexture::Finalize() {
 void RenderTexture::DescriptorHeapGenerate() {
 
 	// RTV用のデスクリプタサイズを取得
-	rtvDescriptorSize = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	rtvDescriptorSize = dxUtility->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	// RTV用のデスクリプタヒープを生成
-	rtvDescriptorHeap = dxCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false); // 数は2 シェーダで使わない
+	rtvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false); // 数は2 シェーダで使わない
 
 	// DSV用のデスクリプタサイズを取得
-	dsvDescriptorSize = dxCommon->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	dsvDescriptorSize = dxUtility->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 	// DSV用のデスクリプタヒープを生成
-	dsvDescriptorHeap = dxCommon->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false); // 数は1 シェーダで使わない
+	dsvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false); // 数は1 シェーダで使わない
 }
 
 void RenderTexture::RenderTargetViewInitialize() {
@@ -78,7 +78,7 @@ void RenderTexture::RenderTargetViewInitialize() {
 		rtvHandles[i].ptr += rtvDescriptorSize * i;
 		
 		// RTV生成
-		dxCommon->GetDevice()->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandles[i]);
+		dxUtility->GetDevice()->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandles[i]);
 	}
 }
 
@@ -97,7 +97,7 @@ void RenderTexture::DepthStencilViewInitialize() {
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
 
 	// DSV生成
-	dxCommon->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
+	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
 }
 
 ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
@@ -124,7 +124,7 @@ ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width
 	// Resourceの生成
 	ComPtr <ID3D12Resource> resource = nullptr;
 
-	dxCommon->GetDevice()->CreateCommittedResource(
+	dxUtility->GetDevice()->CreateCommittedResource(
 		&heapProperties, // Heapの設定
 		D3D12_HEAP_FLAG_NONE, // Heapの特殊な設定。特になし
 		&resourceDesc, // Resourceの設定
@@ -161,7 +161,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateDepthStencilResource
 	// Resourceの生成
 	ComPtr <ID3D12Resource> resource = nullptr;
 
-	dxCommon->GetDevice()->CreateCommittedResource(
+	dxUtility->GetDevice()->CreateCommittedResource(
 		&heapProperties, // Heapの設定
 		D3D12_HEAP_FLAG_NONE, // Heapの特殊な設定。特になし
 		&resourceDesc, // Resourceの設定

@@ -1,5 +1,7 @@
 #include "Model.h"
 #include "Modelcommon.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
 #include "math/MathMatrix.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
@@ -28,16 +30,16 @@ void Model::Initialize(const std::string& directorypath, const std::string& file
 void Model::Draw() {
 
 	// 頂点バッファビューを設定
-	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureFilePath));
+	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureFilePath));
 
 	// 描画(DrawCall)
-	ModelCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 }
 
 void Model::ShowImGui() {
@@ -53,7 +55,7 @@ void Model::ShowImGui() {
 void Model::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ModelCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	vertexResource = ModelCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
@@ -74,7 +76,7 @@ void Model::InitializeVertexData() {
 void Model::InitializeMaterialData() {
 
 	/// === MaterialResourceを作る === ///
-	materialResource = ModelCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(Material));
+	materialResource = ModelCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
 
 	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));

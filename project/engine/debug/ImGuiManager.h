@@ -1,8 +1,9 @@
 #pragma once
-#include "base/DirectXCommon.h"
 
-/// === WindowsAPIクラス === ///
+/// === 前方宣言 === ///
 class WinApp;
+class DirectXUtility;
+class SwapChain;
 
 /// === ImGui管理クラス === ///
 class ImGuiManager {
@@ -35,9 +36,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="winApp">WinAppクラスのポインタ</param>
-	/// <param name="dxCommon">DirectXCommonクラスのポインタ</param>
-	void Initialize(WinApp* winApp, DirectXCommon* dxCommon);
+	void Initialize(WinApp* winApp, DirectXUtility* dxUtility, SwapChain* swapChain);
 
 	/// <summary>
 	/// 受付開始
@@ -75,5 +74,5 @@ public:
 ///-------------------------------------------///
 private:
 
-	DirectXCommon* dxCommon_ = nullptr;
+	SwapChain* swapChain_ = nullptr;
 };

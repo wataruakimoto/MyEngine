@@ -1,6 +1,13 @@
 #pragma once
-#include "base/DirectXCommon.h"
+#include "DirectXTex/DirectXTex.h"
+
+#include <d3d12.h>
 #include <unordered_map>
+#include <string>
+#include <wrl.h>
+
+/// === 前方宣言 === ///
+class DirectXUtility;
 
 /// === テクスチャマネージャ === ///
 class TextureManager {
@@ -36,7 +43,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(DirectXUtility* dxUtility);
 
 	/// <summary>
 	/// 終了
@@ -89,8 +96,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXCommonのポインタ
-	DirectXCommon* dxCommon_;
+	// DirectXのポインタ
+	DirectXUtility* dxUtility_;
 
 	// テクスチャデータ
 	std::unordered_map<std::string,TextureData> textureDatas;
