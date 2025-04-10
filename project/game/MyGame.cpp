@@ -1,6 +1,4 @@
 #include "MyGame.h"
-#include "winApp/WinApp.h"
-#include "base/SwapChain.h"
 #include "debug/ImGuiManager.h"
 #include "3d/ParticleCommon.h"
 #include "3d/ParticleSystem.h"

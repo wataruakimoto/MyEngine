@@ -1,4 +1,8 @@
 #pragma once
+#include "winApp/WinApp.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
+#include "camera/DebugCamera.h"
 #include "scene/AbstractSceneFactory.h"
 
 #include <memory>
@@ -6,8 +10,6 @@
 /// === 前方宣言 === ///
 class WinApp;
 class DirectXUtility;
-class SwapChain;
-class DebugCamera;
 
 /// === フレームワーク === ///
 class Framework {

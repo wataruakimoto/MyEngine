@@ -20,6 +20,18 @@ void SwapChain::Initialize(WinApp* winApp, DirectXUtility* dxUtility) {
 	// スワップチェーンの生成
 	SwapChainGenerate();
 
+	// 深度バッファの生成
+	DepthBufferGenerate();
+
+	// 各種デスクリプターヒープの生成
+	VariousDescriptorHeapGenerate();
+
+	// レンダーターゲットビューの初期化
+	RenderTargetViewInitialize();
+
+	// 深度ステンシルビューの初期化
+	DepthStencilViewInitialize();
+
 	// フェンスの初期化
 	FenceInitialize();
 
