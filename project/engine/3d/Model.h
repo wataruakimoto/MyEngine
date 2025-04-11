@@ -1,12 +1,16 @@
 #pragma once
 #include "math/Matrix4x4.h"
-#include "base/DirectXCommon.h"
 #include "Data/MaterialData.h"
 #include "Data/ModelData.h"
 #include "Data/VertexData.h"
 
-// === 3Dモデル共通部=== ///
+#include <d3d12.h>
+#include <wrl.h>
+
+// === 前方宣言=== ///
 class ModelCommon;
+class DirectXUtility;
+class SwapChain;
 
 /// === 3Dモデル === ///
 class Model {
@@ -100,7 +104,7 @@ private:
 	ModelData modelData;
 
 	// 頂点リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
 
 	// 頂点バッファビュー
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
@@ -109,7 +113,7 @@ private:
 	VertexData* vertexData = nullptr;
 
 	// マテリアルリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
 
 	// マテリアルデータ
 	Material* materialData = nullptr;

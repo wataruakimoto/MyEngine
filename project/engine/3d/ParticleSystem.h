@@ -1,14 +1,15 @@
 #pragma once
-#include "base/DirectXCommon.h"
 #include "Data/VertexData.h"
 #include "Data/Transform.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
 
+#include <d3d12.h>
 #include <random>
 #include <list>
 #include <unordered_map>
+#include <wrl.h>
 
 // マテリアルデータ
 struct Material {
@@ -42,8 +43,10 @@ struct ParticleGroup {
 	uint32_t numInstance = 0; // インスタンスの数
 };
 
-/// ===== カメラ ===== ///
+/// ===== 前方宣言 ===== ///
 class Camera;
+class DirectXUtility;
+class SwapChain;
 
 /// ===== パーティクルシステム ===== ///
 class ParticleSystem {

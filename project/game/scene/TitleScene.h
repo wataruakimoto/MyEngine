@@ -1,7 +1,8 @@
 #pragma once
-
 #include "BaseScene.h"
 #include "2d/Sprite.h"
+
+#include <memory>
 
 /// ===== タイトルシーン ===== ///
 class TitleScene : public BaseScene {
@@ -37,5 +38,5 @@ public:
 private:
 
 	// スプライトのポインタ
-	std::unique_ptr <Sprite> sprite = nullptr;
+	std::unique_ptr<Sprite> sprite = nullptr;
 };

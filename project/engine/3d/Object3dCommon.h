@@ -1,8 +1,12 @@
 #pragma once
-#include "base/DirectXCommon.h"
+#include <d3d12.h>
+#include <dxcapi.h>
+#include <wrl.h>
 
-/// === カメラ === ///
+/// === 前方宣言 === ///
 class Camera;
+class DirectXUtility;
+class SwapChain;
 
 /// === 3Dオブジェクト共通部 === ///
 class Object3dCommon {
@@ -38,7 +42,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(DirectXUtility* dxUtility, SwapChain* swapChain);
 
 	/// <summary>
 	/// 終了
@@ -112,10 +116,16 @@ public:
 public:
 
 	/// <summary>
-	/// DirectXCommonのゲッター
+	/// DirectXUtilityのゲッター
 	/// </summary>
 	/// <returns></returns>
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+	DirectXUtility* GetdxUtility() const { return dxUtility_; }
+
+	/// <summary>
+	/// SwapChainの取得
+	/// </summary>
+	/// <returns></returns>
+	SwapChain* GetSwapChain() const { return swapChain_; }
 
 	/// <summary>
 	/// デフォルトカメラのゲッター
@@ -128,11 +138,14 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXCommonのポインタ
-	DirectXCommon* dxCommon_;
+	// DirectXUtilityのポインタ
+	DirectXUtility* dxUtility_ = nullptr;
+
+	// SwapChainのポインタ
+	SwapChain* swapChain_ = nullptr;
 
 	// RootSignature
-	Microsoft::WRL::ComPtr <ID3D12RootSignature> rootSignature = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
 	// InputLayout
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
@@ -145,10 +158,10 @@ private:
 	D3D12_RASTERIZER_DESC rasterizerDesc{};
 
 	// VertexShader
-	Microsoft::WRL::ComPtr <IDxcBlob> vertexShaderBlob = nullptr;
+	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = nullptr;
 
 	// PixelShader
-	Microsoft::WRL::ComPtr <IDxcBlob> pixelShaderBlob = nullptr;
+	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = nullptr;
 
 	// DepthStencilState
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
