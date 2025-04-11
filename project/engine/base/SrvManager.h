@@ -1,5 +1,11 @@
 #pragma once
-#include "DirectXCommon.h"
+#include <stdint.h>
+#include <d3d12.h>
+#include <wrl.h>
+
+/// === 前方宣言 === ///
+class DirectXUtility;
+class SwapChain;
 
 class SrvManager {
 
@@ -34,7 +40,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(DirectXUtility* dxUtility, SwapChain* swapChain);
 
 	/// <summary>
 	/// 描画前処理
@@ -80,6 +86,14 @@ public:
 	/// <param name="structureByteStride"></param>
 	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, uint32_t numElements, UINT structureByteStride);
 
+	/// <summary>
+	/// SRV生成(レンダーテクスチャ用)
+	/// </summary>
+	/// <param name="srvIndex"></param>
+	/// <param name="pResource"></param>
+	/// <param name="format"></param>
+	void CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format);
+
 	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex);
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetDescriptorHeap() { return descriptorHeap; }
@@ -89,8 +103,11 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXCommonのポインタ
-	DirectXCommon* dxCommon_;
+	// DirectXUtilityのポインタ
+	DirectXUtility* dxUtility_ = nullptr;
+
+	// スワップチェインのポインタ
+	SwapChain* swapChain_ = nullptr;
 
 	// SRV用デスクリプタサイズ
 	uint32_t descriptorSize;

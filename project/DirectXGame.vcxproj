@@ -108,8 +108,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="engine\3d\ParticleSystem.cpp" />
     <ClCompile Include="engine\3d\ParticleCommon.cpp" />
+    <ClCompile Include="Engine\Base\SwapChain.cpp" />
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
     <ClCompile Include="game\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="game\scene\BaseScene.cpp" />
@@ -123,7 +125,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\ModelManager.cpp" />
     <ClCompile Include="engine\3d\Object3d.cpp" />
     <ClCompile Include="engine\3d\Object3dCommon.cpp" />
-    <ClCompile Include="engine\base\DirectXCommon.cpp" />
     <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp" />
     <ClCompile Include="engine\debug\Logger.cpp" />
     <ClCompile Include="engine\input\Input.cpp" />
@@ -143,11 +144,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
     <ClInclude Include="engine\3d\Data\ModelData.h" />
     <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="engine\3d\ParticleSystem.h" />
     <ClInclude Include="engine\3d\ParticleCommon.h" />
+    <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
     <ClInclude Include="game\scene\AbstractSceneFactory.h" />
     <ClInclude Include="game\scene\BaseScene.h" />
@@ -161,7 +164,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\ModelManager.h" />
     <ClInclude Include="engine\3d\Object3d.h" />
     <ClInclude Include="engine\3d\Object3dCommon.h" />
-    <ClInclude Include="engine\base\DirectXCommon.h" />
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h" />
     <ClInclude Include="engine\debug\Logger.h" />
     <ClInclude Include="engine\input\Input.h" />

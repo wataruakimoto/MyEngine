@@ -1,7 +1,8 @@
 #pragma once
 
-/// === DirectX基盤 === ///
-class DirectXCommon;
+/// === 前方宣言 === ///
+class DirectXUtility;
+class SwapChain;
 
 /// === 3Dモデル共通部=== ///
 class ModelCommon {
@@ -37,8 +38,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon">DirectX基盤</param>
-	void Initialize(DirectXCommon* dxCommon);
+	void Initialize(DirectXUtility* dxUtility, SwapChain* swapChain);
 
 	/// <summary>
 	/// 終了
@@ -50,7 +50,17 @@ public:
 ///-------------------------------------------///
 public:
 
-	DirectXCommon* GetDxCommon() const { return dxCommon_; }
+	/// <summary>
+	/// DirectX基盤のポインタを取得
+	/// </summary>
+	/// <returns></returns>
+	DirectXUtility* GetdxUtility() const { return dxUtility_; }
+
+	/// <summary>
+	/// SwapChainのポインタを取得
+	/// </summary>
+	/// <returns></returns>
+	SwapChain* GetSwapChain() const { return swapChain_; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -58,5 +68,8 @@ public:
 private:
 
 	// DirectX基盤のポインタ
-	DirectXCommon* dxCommon_ = nullptr;
+	DirectXUtility* dxUtility_ = nullptr;
+
+	// SwapChainのポインタ
+	SwapChain* swapChain_ = nullptr;
 };

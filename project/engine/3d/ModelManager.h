@@ -1,14 +1,16 @@
 #pragma once
-#include "base/DirectXCommon.h"
 #include "3d/Model.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include <map>
 #include <string>
+#include <map>
 #include <memory>
+
+/// === 前方宣言 === ///
+class DirectXUtility;
 
 /// === モデルマネージャー === ///
 class ModelManager {
@@ -47,8 +49,8 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxCommon">DirectX基盤</param>
-	void Initialize(DirectXCommon* dxCommon);
+	/// <param name="dxUtility">DirectX基盤</param>
+	void Initialize(DirectXUtility* dxUtility);
 
 	/// <summary>
 	/// 終了

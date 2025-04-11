@@ -1,9 +1,9 @@
 #include "MyGame.h"
-#include "scene/SceneManager.h"
-#include "scene/SceneFactory.h"
+#include "debug/ImGuiManager.h"
 #include "3d/ParticleCommon.h"
 #include "3d/ParticleSystem.h"
-#include "debug/ImGuiManager.h"
+#include "scene/SceneManager.h"
+#include "scene/SceneFactory.h"
 
 void MyGame::Initialize() {
 
@@ -51,7 +51,7 @@ void MyGame::Update() {
 void MyGame::Draw() {
 
 	/// === DirectX描画開始 === ///
-	dxCommon->PreDraw();
+	swapChain->PreDraw();
 
 	// シーンマネージャの描画
 	SceneManager::GetInstance()->Draw();
@@ -66,7 +66,7 @@ void MyGame::Draw() {
 	ImGuiManager::GetInstance()->Draw();
 
 	/// === DirectX描画処理 === ///
-	dxCommon->PostDraw();
+	swapChain->PostDraw();
 }
 
 void MyGame::Finalize() {

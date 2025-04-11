@@ -1,4 +1,6 @@
 #include "Modelcommon.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
 
 ModelCommon* ModelCommon::instance = nullptr;
 
@@ -10,10 +12,11 @@ ModelCommon* ModelCommon::GetInstance() {
 	return instance;
 }
 
-void ModelCommon::Initialize(DirectXCommon* dxCommon) {
+void ModelCommon::Initialize(DirectXUtility* dxUtility, SwapChain* swapChain) {
 
 	// 引数をメンバ変数にコピー
-	dxCommon_ = dxCommon;
+	dxUtility_ = dxUtility;
+	swapChain_ = swapChain;
 }
 
 void ModelCommon::Finalize() {

@@ -1,13 +1,17 @@
 #pragma once
-
 #include "winApp/WinApp.h"
-#include "base/DirectXCommon.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
 #include "camera/DebugCamera.h"
-#include "2d/SpriteCommon.h"
-#include "3d/ModelCommon.h"
-#include "3d/Object3dCommon.h"
 #include "scene/AbstractSceneFactory.h"
 
+#include <memory>
+
+/// === 前方宣言 === ///
+class WinApp;
+class DirectXUtility;
+
+/// === フレームワーク === ///
 class Framework {
 
 ///-------------------------------------------/// 
@@ -52,16 +56,19 @@ public:
 protected:
 
 	// WindowsAPIのポインタ
-	std::unique_ptr <WinApp> winApp = nullptr;
+	std::unique_ptr<WinApp> winApp = nullptr;
 
 	// DirectX基盤のポインタ
-	std::unique_ptr <DirectXCommon> dxCommon = nullptr;
+	std::unique_ptr<DirectXUtility> dxUtility = nullptr;
+
+	// スワップチェインのポインタ
+	std::unique_ptr<SwapChain> swapChain = nullptr;
 
 	// デバッグカメラ
-	std::unique_ptr <DebugCamera> debugCamera = nullptr;
+	std::unique_ptr<DebugCamera> debugCamera = nullptr;
 
 	// シーンファクトリー
-	std::unique_ptr <AbstractSceneFactory> sceneFactory_ = nullptr;
+	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
 
 	// ゲーム終了フラグ
 	bool endRequest_ = false;

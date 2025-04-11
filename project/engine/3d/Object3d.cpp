@@ -3,6 +3,8 @@
 #include "math/MathVector.h"
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
 #include "camera/Camera.h"
@@ -74,19 +76,19 @@ void Object3d::Draw() {
 	if (isDraw) {
 
 		/// === 座標変換行列CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
 		/// === 平行光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 		/// === 点光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
 
 		/// === スポットライトCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
 
 		/// === カメラCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {
@@ -146,7 +148,7 @@ void Object3d::ShowImGui(const char* name) {
 void Object3d::InitializeTransformationMatrixData() {
 
 	/// === TransformationMatrixResourceを作る === ///
-	transformationMatrixResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(TransformationMatrix));
+	transformationMatrixResource = Object3dCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(TransformationMatrix));
 
 	/// === TransformationMatrixResourceにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる === ///
 	transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
@@ -160,7 +162,7 @@ void Object3d::InitializeTransformationMatrixData() {
 void Object3d::InitializeDirectionalLightData() {
 
 	/// === DirectionalLightResourceを作る === ///
-	directionalLightResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(DirectionalLight));
+	directionalLightResource = Object3dCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(DirectionalLight));
 
 	/// === DirectionalLightResourceにデータを書き込むためのアドレスを取得してDirectionalLightDataに割り当てる === ///
 	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
@@ -174,7 +176,7 @@ void Object3d::InitializeDirectionalLightData() {
 void Object3d::InitializePointLightData() {
 
 	/// === PointLightResourceを作る === ///
-	pointLightResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(PointLight));
+	pointLightResource = Object3dCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(PointLight));
 
 	/// === PointLightResourceにデータを書き込むためのアドレスを取得してPointLightDataに割り当てる === ///
 	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
@@ -190,7 +192,7 @@ void Object3d::InitializePointLightData() {
 void Object3d::InitializeSpotLightData() {
 
 	/// === SpotLightResourceを作る === ///
-	spotLightResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(SpotLight));
+	spotLightResource = Object3dCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(SpotLight));
 
 	/// === SpotLightResourceにデータを書き込むためのアドレスを取得してSpotLightDataに割り当てる === ///
 	spotLightResource->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData));
@@ -209,7 +211,7 @@ void Object3d::InitializeSpotLightData() {
 void Object3d::InitializeCameraData() {
 
 	/// === CameraResource === ///
-	cameraResource = Object3dCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(Vector3));
+	cameraResource = Object3dCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Vector3));
 
 	/// === CameraResourceにデータを書き込むためのアドレスを取得してCameraDataに割り当てる === ///
 	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));

@@ -1,7 +1,10 @@
 #include "ModelManager.h"
+#include "base/DirectXUtility.h"
+#include "Debug/Logger.h"
+
 #include <fstream>
 #include <iostream>
-#include "Debug/Logger.h"
+#include <sstream>
 
 using namespace Logger;
 
@@ -15,7 +18,7 @@ ModelManager* ModelManager::GetInstance() {
 	return instance;
 }
 
-void ModelManager::Initialize(DirectXCommon* dxCommon) {}
+void ModelManager::Initialize(DirectXUtility* dxUtility) {}
 
 void ModelManager::Finalize() {
 

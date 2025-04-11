@@ -1,5 +1,7 @@
 #include "ParticleSystem.h"
 #include "ParticleCommon.h"
+#include "base/DirectXUtility.h"
+#include "base/SwapChain.h"
 #include "base/SrvManager.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
@@ -105,25 +107,25 @@ void ParticleSystem::Update() {
 void ParticleSystem::Draw() {
 
 	// 頂点バッファビューを設定
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// 参照バッファビューを設定
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// 各パーティクルグループの描画
 	for (auto& [key, particleGroup] : particleGroups) {
 
 		// SRVのDescriptorTableの先頭を設定
-		ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(particleGroup.textureFilePath));
+		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(particleGroup.textureFilePath));
 
 		/// === パーティクルCBufferの場所を設定 === ///
-		ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
+		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
 
 		// 描画(DrawCall)
-		ParticleCommon::GetInstance()->GetDxCommon()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
+		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
 	}
 }
 
@@ -183,7 +185,7 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 	particleGroups[name].srvIndex = SrvManager::GetInstance()->Allocate();
 
 	/// === ParticleResourceを作る === ///
-	particleGroups[name].particleResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+	particleGroups[name].particleResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 
 	/// === ParticleResourceにデータを書き込むためのアドレスを取得してParticleDataに割り当てる === ///
 	particleGroups[name].particleResource->Map(0, nullptr, reinterpret_cast<void**>(&particleGroups[name].particleData));
@@ -226,7 +228,7 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 void ParticleSystem::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(VertexData) * 6);
+	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
@@ -259,7 +261,7 @@ void ParticleSystem::InitializeVertexData() {
 void ParticleSystem::InitializeIndexData() {
 
 	/// === IndexResourceを作る === ///
-	indexResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(uint32_t) * 6);
+	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
 
 	/// === IBVを作成する(値を設定するだけ) === ///
 
@@ -286,7 +288,7 @@ void ParticleSystem::InitializeIndexData() {
 void ParticleSystem::InitializeMaterialData() {
 
 	/// === MaterialResourceを作る === ///
-	materialResource = ParticleCommon::GetInstance()->GetDxCommon()->CreateBufferResource(sizeof(Material));
+	materialResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
 
 	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
