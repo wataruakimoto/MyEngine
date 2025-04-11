@@ -1,5 +1,6 @@
 #include "RenderTexture.h"
 #include "winApp/WinApp.h"
+#include "DirectXUtility.h"
 
 using namespace Microsoft::WRL;
 
@@ -10,33 +11,126 @@ void RenderTexture::Initialize(DirectXUtility* dxUtility) {
 
 	// メンバ変数に記録
 	this->dxUtility = dxUtility;
+
+	// コマンド関連の初期化
+	CommandRelatedInitialize();
+
+	// ディスクリプタヒープの生成
+	DescriptorHeapGenerate();
+
+	// レンダーターゲットビューの初期化
+	RenderTargetViewInitialize();
+
+	// 深度ステンシルビューの初期化
+	DepthStencilViewInitialize();
+
+	// フェンスの初期化
+	FenceInitialize();
+
+	// ビューポート矩形の初期化
+	ViewportRectInitialize();
+
+	// シザリング矩形の初期化
+	ScissoringRectInitialize();
 }
 
 void RenderTexture::PreDraw() {
 
 	// 描画先のRTVを指定
-	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, nullptr);
+	commandList->OMSetRenderTargets(1, &rtvHandles[0], false, nullptr);
 
 	// 画面全体の色をクリア
 	float clearColor[] = { kRenderTargetClearValue.x, kRenderTargetClearValue.y, kRenderTargetClearValue.z, kRenderTargetClearValue.w };
-	dxUtility->GetCommandList()->ClearRenderTargetView(rtvHandles[0], clearColor, 0, nullptr);
+	commandList->ClearRenderTargetView(rtvHandles[0], clearColor, 0, nullptr);
 
 	// 画面全体の震度をクリア
-	dxUtility->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// ビューポート矩形の設定
-    D3D12_VIEWPORT viewRect = dxUtility->GetViewportRect();
-    dxUtility->GetCommandList()->RSSetViewports(1, &viewRect);
+	commandList->RSSetViewports(1, &viewportRect);
 
 	// シザリング矩形の設定
-	D3D12_RECT scissorRect = dxUtility->GetScissorRect();
-	dxUtility->GetCommandList()->RSSetScissorRects(1, &scissorRect);
+	commandList->RSSetScissorRects(1, &scissorRect);
+}
+
+void RenderTexture::PostDraw() {
+
+	// ----------バックバッファの番号取得----------
+	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+
+	// ----------リソースバリアで表示状態に変更----------
+	// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
+	// 今回はRenderTargetからPresentにする
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	// TransitionBarrierを張る
+	commandList->ResourceBarrier(1, &barrier);
+
+	// ----------グラフィックスコマンドをクローズ----------
+	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseすること
+	hr = commandList->Close();
+	assert(SUCCEEDED(hr));
+
+	// ----------GPUコマンドの実行----------
+	ID3D12CommandList* commandLists[] = { commandList.Get() };
+	commandQueue->ExecuteCommandLists(1, commandLists);
+
+	// ----------GPU画面の交換を通知----------
+	swapChain->Present(1, 0);
+
+	// ----------Fenceの値を更新----------
+	fenceValue++;
+
+	// ----------コマンドキューにシグナルを送る----------
+	commandQueue->Signal(fence.Get(), fenceValue);
+
+	// ----------コマンド完了待ち----------
+	// Fenceの値が指定したSignal値にたどり着いているか確認する
+	// GetCompletedValueの初期値はFence作成時に渡した初期値
+	if (fence->GetCompletedValue() < fenceValue) {
+
+		// 指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+		// イベント待つ
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+
+	// ----------コマンドアロケータのリセット----------
+	hr = commandAllocator->Reset();
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドリストのリセット----------
+	hr = commandList->Reset(commandAllocator.Get(), nullptr);
+	assert(SUCCEEDED(hr));
 }
 
 void RenderTexture::Finalize() {
 
+	// 各オブジェクトの解放
+	CloseHandle(fenceEvent);
+
 	delete instance;
 	instance = nullptr;
+}
+
+void RenderTexture::CommandRelatedInitialize() {
+
+	// ----------コマンドアロケータ生成----------
+	hr = dxUtility->GetDevice()->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	// コマンドアロケーターの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドリスト生成----------
+	hr = dxUtility->GetDevice()->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
+	// コマンドリストの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドキュー生成----------
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	// デバッガの機能の終了後に停止させないで警告を表示
+	hr = dxUtility->GetDevice()->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
+	// コマンドキューの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
 }
 
 void RenderTexture::DescriptorHeapGenerate() {
@@ -98,6 +192,39 @@ void RenderTexture::DepthStencilViewInitialize() {
 
 	// DSV生成
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
+}
+
+void RenderTexture::FenceInitialize() {
+
+	// ----------フェンス生成----------
+	hr = dxUtility->GetDevice()->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
+
+	// FenceのSignalを持つためのイベントを作成する
+	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
+}
+
+void RenderTexture::ViewportRectInitialize() {
+
+	// ----------ビューポート矩形の設定----------
+	// クライアント領域のサイズと一緒にして画面全体に表示
+	viewportRect.Width = WinApp::kClientWidth;
+	viewportRect.Height = WinApp::kClientHeight;
+	viewportRect.TopLeftX = 0;
+	viewportRect.TopLeftY = 0;
+	viewportRect.MinDepth = 0.0f;
+	viewportRect.MaxDepth = 1.0f;
+}
+
+void RenderTexture::ScissoringRectInitialize() {
+
+	// ----------シザリング矩形の設定----------
+	// 基本的にビューポートと同じ矩形が構成されるようにする
+	scissorRect.left = 0;
+	scissorRect.right = WinApp::kClientWidth;
+	scissorRect.top = 0;
+	scissorRect.bottom = WinApp::kClientHeight;
 }
 
 ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {

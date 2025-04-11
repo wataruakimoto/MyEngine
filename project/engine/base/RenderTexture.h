@@ -1,7 +1,10 @@
 #pragma once
-#include "DirectXUtility.h"
 #include "math/Vector4.h"
+#include <d3d12.h>
 #include <wrl.h>
+
+/// === 前方宣言 === ///
+class DirectXUtility;
 
 /// === レンダーテクスチャ処理 === ///
 class RenderTexture {
@@ -39,6 +42,11 @@ public:
 	void PreDraw();
 
 	/// <summary>
+	/// 描画後処理
+	/// </summary>
+	void PostDraw();
+
+	/// <summary>
 	/// 終了
 	/// </summary>
 	void Finalize();
@@ -49,7 +57,12 @@ public:
 private:
 
 	/// <summary>
-	/// ディスクリプタヒープ生成
+	/// コマンド関連の初期化
+	/// </summary>
+	void CommandRelatedInitialize();
+
+	/// <summary>
+	/// デスクリプタヒープ生成
 	/// </summary>
 	void DescriptorHeapGenerate();
 
@@ -62,6 +75,21 @@ private:
 	/// 深度ステンシルビュー初期化
 	/// </summary>
 	void DepthStencilViewInitialize();
+
+	/// <summary>
+	/// フェンスの初期化
+	/// </summary>
+	void FenceInitialize();
+
+	/// <summary>
+	/// ビューポート矩形の初期化
+	/// </summary>
+	void ViewportRectInitialize();
+
+	/// <summary>
+	/// シザリング矩形の初期化
+	/// </summary>
+	void ScissoringRectInitialize();
 
 	/// <summary>
 	/// レンダーテクスチャ生成
@@ -95,8 +123,17 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectX12共通処理
-	DirectXUtility* dxUtility = nullptr;
+	// HRESULT
+	HRESULT hr;
+
+	// コマンドアロケータ
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
+
+	// コマンドリスト
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
+
+	// コマンドキュー
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 
 	// RTV用デスクリプタサイズ
 	uint32_t rtvDescriptorSize;
@@ -127,5 +164,26 @@ private:
 
 	// クリアする深度
 	const float kDepthClearValue = 1.0f;
+
+	// フェンス
+	Microsoft::WRL::ComPtr <ID3D12Fence> fence = nullptr;
+
+	// フェンスの値
+	uint64_t fenceValue = 0;
+
+	// フェンスイベント
+	HANDLE fenceEvent;
+
+	// ビューポート矩形
+	D3D12_VIEWPORT viewportRect{};
+
+	// シザー矩形
+	D3D12_RECT scissorRect{};
+
+	// TrainsitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+
+	// DirectX12共通処理
+	DirectXUtility* dxUtility = nullptr;
 };
 

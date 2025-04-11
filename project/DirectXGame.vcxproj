@@ -111,6 +111,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="engine\3d\ParticleSystem.cpp" />
     <ClCompile Include="engine\3d\ParticleCommon.cpp" />
+    <ClCompile Include="engine\base\RenderTexture.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
     <ClCompile Include="game\scene\AbstractSceneFactory.cpp" />
@@ -150,6 +151,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="engine\3d\ParticleSystem.h" />
     <ClInclude Include="engine\3d\ParticleCommon.h" />
+    <ClInclude Include="engine\base\RenderTexture.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
     <ClInclude Include="game\scene\AbstractSceneFactory.h" />
