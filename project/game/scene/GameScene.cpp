@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 
 	TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/circle2.png");
 
 	// モデルの生成・初期化
 	modelMonsterBall = std::make_unique <Model>();
@@ -43,7 +43,7 @@ void GameScene::Initialize() {
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(camera.get());
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "Resources/circle.png");
-	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "Resources/uvChecker.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png");
 
 	// Transformの設定
 	EmitterTransform1.translate = { -2.0f,2.5f,0.0f };
@@ -51,7 +51,7 @@ void GameScene::Initialize() {
 
 	// エミッタ生成
 	particleEmitter1 = std::make_unique <ParticleEmitter>("circle", EmitterTransform1, 5, 0.5f);
-	particleEmitter2 = std::make_unique <ParticleEmitter>("uv", EmitterTransform2, 5, 0.5f);
+	particleEmitter2 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform2, 5, 0.5f);
 }
 
 void GameScene::Update() {
