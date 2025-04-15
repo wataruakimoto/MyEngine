@@ -56,7 +56,7 @@ void RenderTexture::PreDraw() {
 void RenderTexture::PostDraw() {
 
 	// ----------バックバッファの番号取得----------
-	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+	//UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 
 	// ----------リソースバリアで表示状態に変更----------
 	// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
@@ -76,7 +76,7 @@ void RenderTexture::PostDraw() {
 	commandQueue->ExecuteCommandLists(1, commandLists);
 
 	// ----------GPU画面の交換を通知----------
-	swapChain->Present(1, 0);
+	//swapChain->Present(1, 0);
 
 	// ----------Fenceの値を更新----------
 	fenceValue++;
@@ -108,9 +108,6 @@ void RenderTexture::Finalize() {
 
 	// 各オブジェクトの解放
 	CloseHandle(fenceEvent);
-
-	delete instance;
-	instance = nullptr;
 }
 
 void RenderTexture::CommandRelatedInitialize() {
@@ -151,7 +148,7 @@ void RenderTexture::DescriptorHeapGenerate() {
 void RenderTexture::RenderTargetViewInitialize() {
 	
 	// Resourceの生成
-	auto renderTextureResource = CreateRenderTextureResource(
+	renderTextureResource = CreateRenderTextureResource(
 		WinApp::kClientWidth, // クライアント領域の幅
 		WinApp::kClientHeight, // クライアント領域の高さ
 		DXGI_FORMAT_R8G8B8A8_UNORM, // フォーマット
@@ -179,7 +176,7 @@ void RenderTexture::RenderTargetViewInitialize() {
 void RenderTexture::DepthStencilViewInitialize() {
 
 	// Resourceの生成
-	auto depthStencilResource = CreateDepthStencilResource(
+	depthStencilResource = CreateDepthStencilResource(
 		WinApp::kClientWidth, // クライアント領域の幅
 		WinApp::kClientHeight, // クライアント領域の高さ
 		DXGI_FORMAT_D24_UNORM_S8_UINT, // フォーマット
@@ -189,6 +186,9 @@ void RenderTexture::DepthStencilViewInitialize() {
 	// DSV用の設定
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // フォーマット
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+
+	// デスクリプタヒープの先頭を取得
+	dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
 	// DSV生成
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
@@ -231,9 +231,13 @@ ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width
 
 	// Resourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	resourceDesc.Width = width; // Textureの幅
 	resourceDesc.Height = height; // Textureの高さ
+	resourceDesc.DepthOrArraySize = 1; // 2Dテクスチャの配列に合わせるが通常1
+	resourceDesc.MipLevels = 1; // mipmapの数
 	resourceDesc.Format = format; // Textureのフォーマット
+	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして使う
 
 	// Heapの設定
@@ -270,8 +274,8 @@ Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateDepthStencilResource
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; // 2次元
 	resourceDesc.Width = width; // Textureの幅
 	resourceDesc.Height = height; // Textureの高さ
-	resourceDesc.MipLevels = 1; // mipmapの数	
 	resourceDesc.DepthOrArraySize = 1; // 奥行きor配列Textureの配列数
+	resourceDesc.MipLevels = 1; // mipmapの数
 	resourceDesc.Format = format; // Textureのフォーマット
 	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; // DepthStencilとして使う
@@ -298,14 +302,4 @@ Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateDepthStencilResource
 	);
 
 	return resource;
-}
-
-RenderTexture* RenderTexture::instance = nullptr;
-
-RenderTexture* RenderTexture::GetInstance() {
-	
-	if (instance == nullptr) {
-		instance = new RenderTexture();
-	}
-	return instance;
 }

@@ -24,6 +24,10 @@ void Framework::Initialize() {
 	dxUtility = std::make_unique <DirectXUtility>();
 	dxUtility->Initialize();
 
+	// レンダーテクスチャ初期化
+	renderTexture = std::make_unique <RenderTexture>();
+	renderTexture->Initialize(dxUtility.get());
+
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
 	swapChain->Initialize(winApp.get(), dxUtility.get());
@@ -111,6 +115,9 @@ void Framework::Finalize() {
 
 	// SwapChainの終了
 	swapChain->Finalize();
+
+	// レンダーテクスチャの終了
+	renderTexture->Finalize();
 	
 	// WindowsAPIの終了処理
 	winApp->Finalize();

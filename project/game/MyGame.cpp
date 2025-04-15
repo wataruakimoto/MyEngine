@@ -50,8 +50,8 @@ void MyGame::Update() {
 
 void MyGame::Draw() {
 
-	/// === DirectX描画開始 === ///
-	swapChain->PreDraw();
+	/// === レンダーテクスチャ描画開始=== ///
+	renderTexture->PreDraw();
 
 	// シーンマネージャの描画
 	SceneManager::GetInstance()->Draw();
@@ -62,10 +62,16 @@ void MyGame::Draw() {
 	// パーティクルシステムの描画
 	ParticleSystem::GetInstance()->Draw();
 
+	/// === スワップチェイン描画開始 === ///
+	swapChain->PreDraw();
+
 	/// === ImGui描画 === ///
 	ImGuiManager::GetInstance()->Draw();
 
-	/// === DirectX描画処理 === ///
+	/// === レンダーテクスチャ描画処理 === ///
+	renderTexture->PostDraw();
+
+	/// === スワップチェイン描画処理 === ///
 	swapChain->PostDraw();
 }
 

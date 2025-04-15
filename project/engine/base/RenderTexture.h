@@ -2,28 +2,13 @@
 #include "math/Vector4.h"
 #include <d3d12.h>
 #include <wrl.h>
+#include <stdint.h>
 
 /// === 前方宣言 === ///
 class DirectXUtility;
 
 /// === レンダーテクスチャ処理 === ///
 class RenderTexture {
-
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
-
-	// インスタンス
-	static RenderTexture* instance;
-	// コンストラクタの隠蔽
-	RenderTexture() = default;
-	// デストラクタの隠蔽
-	~RenderTexture() = default;
-	// コピーコンストラクタの封印
-	RenderTexture(RenderTexture&) = delete;
-	// コピー代入演算子の封印
-	RenderTexture& operator=(RenderTexture&) = delete;
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -112,13 +97,6 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth);
 
 ///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
-
-	static RenderTexture* GetInstance();
-
-///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
@@ -135,6 +113,9 @@ private:
 	// コマンドキュー
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 
+	// レンダーテクスチャリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
+
 	// RTV用デスクリプタサイズ
 	uint32_t rtvDescriptorSize;
 
@@ -149,6 +130,9 @@ private:
 
 	// クリアする色
 	const Vector4 kRenderTargetClearValue = { 1.0f, 0.0f, 0.0f, 1.0f }; // 赤に設定
+
+	// 深度バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
 
 	// DSV用デスクリプタサイズ
 	uint32_t dsvDescriptorSize;
