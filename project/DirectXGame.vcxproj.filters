@@ -228,6 +228,7 @@
     <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
+    <ClInclude Include="engine\3d\Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

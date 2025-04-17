@@ -39,6 +39,9 @@ namespace MathMatrix {
 	// Y回転行列
 	Matrix4x4 MakeRotateYMatrix(float radian);
 
+	// Z回転行列
+	Matrix4x4 MakeRotateZMatrix(float radian);
+
 	// 3次元回転行列
 	Matrix4x4 MakeRotateMatrix(Vector3 radian);
 

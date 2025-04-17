@@ -73,10 +73,12 @@ void ParticleSystem::Update() {
 
 			// Scaleのみの行列
 			Matrix4x4 scaleMatrix = MakeScaleMatrix(iterator->transform.scale);
+			// Rotateのみの行列
+			Matrix4x4 rotateMatrix = MakeRotateMatrix(iterator->transform.rotate);
 			// Translateのみの行列
 			Matrix4x4 translateMatrix = MakeTranslateMatrix(iterator->transform.translate);
 			// WorldMatrixを計算
-			Matrix4x4 worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
+			Matrix4x4 worldMatrix = scaleMatrix * rotateMatrix * billboardMatrix * translateMatrix;
 
 			// WVPMatrixを合成
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
@@ -144,7 +146,9 @@ void ParticleSystem::ShowImGui(const char* name) {
 			int particleIndex = 0;
 			for (const auto& particle : particleGroup.particles) {
 				if (ImGui::TreeNode((key + " Particle " + std::to_string(particleIndex)).c_str())) {
-					ImGui::Text("Position: (%.2f, %.2f, %.2f)", particle.transform.translate.x, particle.transform.translate.y, particle.transform.translate.z);
+					ImGui::Text("Scale: (%.2f, %.2f, %.2f)", particle.transform.scale.x, particle.transform.scale.y, particle.transform.scale.z);
+					ImGui::Text("Rotate: (%.2f, %.2f, %.2f)", particle.transform.rotate.x, particle.transform.rotate.y, particle.transform.rotate.z);
+					ImGui::Text("Translate: (%.2f, %.2f, %.2f)", particle.transform.translate.x, particle.transform.translate.y, particle.transform.translate.z);
 					ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", particle.velocity.x, particle.velocity.y, particle.velocity.z);
 					ImGui::Text("Color: (%.2f, %.2f, %.2f, %.2f)", particle.color.x, particle.color.y, particle.color.z, particle.color.w);
 					ImGui::Text("LifeTime: %.2f", particle.lifeTime);
@@ -201,7 +205,7 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 	SrvManager::GetInstance()->CreateSRVforStructuredBuffer(particleGroups[name].srvIndex, particleGroups[name].particleResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 }
 
-void ParticleSystem::Emit(const std::string name, const Vector3& position, uint32_t count) {
+void ParticleSystem::Emit(const std::string name, const Vector3& position, uint32_t count, Particle setting) {
 
 	// 登録済みのParticleGroupかチェック
 	if (particleGroups.find(name) == particleGroups.end()) {
@@ -215,7 +219,7 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 	for (uint32_t index = 0; index < count; ++index) {
 
 		// 新しいパーティクルを作成
-		Particle particle = MakeNewParticle();
+		Particle particle = MakeNewParticle(setting);
 
 		// 位置を設定
 		particle.transform.translate = position;
@@ -298,30 +302,136 @@ void ParticleSystem::InitializeMaterialData() {
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }
 
-Particle ParticleSystem::MakeNewParticle() {
+Particle ParticleSystem::MakeNewParticle(Particle setting) {
 
-	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	// 返す用のパーティクル
+	Particle resultParticle;
+	
+	// Scaleの設定
+	if (setting.randomizeScale) {
 
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+		// X軸のスケールをランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomScaleMin.x, setting.randomScaleMax.x);
+		resultParticle.transform.scale.x = distributionX(randomEngine);
 
-	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
+		// Y軸のスケールをランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomScaleMin.y, setting.randomScaleMax.y);
+		resultParticle.transform.scale.y = distributionY(randomEngine);
 
-	Vector3 randomTranslate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+		// Z軸のスケールをランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomScaleMin.z, setting.randomScaleMax.z);
+		resultParticle.transform.scale.z = distributionZ(randomEngine);
+	}
+	else {
 
-	Particle particle;
+		// 設定項目を引き継ぐ
+		resultParticle.transform.scale = setting.transform.scale;
+	}
 
-	particle.transform.scale = { 1.0f,1.0f,1.0f };
-	particle.transform.rotate = { 0.0f,3.14f,0.0f };
-	particle.transform.translate += randomTranslate;
+	// Rotateの設定
+	if (setting.randomizeRotate) {
 
-	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+		// X軸の回転をランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomRotateMin.x, setting.randomRotateMax.x);
+		resultParticle.transform.rotate.x = distributionX(randomEngine);
 
-	particle.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+		// Y軸の回転をランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomRotateMin.y, setting.randomRotateMax.y);
+		resultParticle.transform.rotate.y = distributionY(randomEngine);
 
-	particle.lifeTime = distTime(randomEngine);
-	particle.currentTime = 0.0f;
+		// Z軸の回転をランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomRotateMin.z, setting.randomRotateMax.z);
+		resultParticle.transform.rotate.z = distributionZ(randomEngine);
+	}
+	else {
 
-	return particle;
+		// 設定項目を引き継ぐ
+		resultParticle.transform.rotate = setting.transform.rotate;
+	}
+
+	// Translateの設定
+	if (setting.randomizeTranslate) {
+
+		// X軸の位置をランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomTranslateMin.x, setting.randomTranslateMax.x);
+		resultParticle.transform.translate.x = distributionX(randomEngine);
+
+		// Y軸の位置をランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomTranslateMin.y, setting.randomTranslateMax.y);
+		resultParticle.transform.translate.y = distributionY(randomEngine);
+
+		// Z軸の位置をランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomTranslateMin.z, setting.randomTranslateMax.z);
+		resultParticle.transform.translate.z = distributionZ(randomEngine);
+	}
+	else {
+		
+		// 設定項目を引き継ぐ
+		resultParticle.transform.translate = setting.transform.translate;
+	}
+
+	// Velocityの設定
+	if (setting.randomizeVelocity) {
+		
+		// X軸の速度をランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomVelocityMin.x, setting.randomVelocityMax.x);
+		resultParticle.velocity.x = distributionX(randomEngine);
+		
+		// Y軸の速度をランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomVelocityMin.y, setting.randomVelocityMax.y);
+		resultParticle.velocity.y = distributionY(randomEngine);
+		
+		// Z軸の速度をランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomVelocityMin.z, setting.randomVelocityMax.z);
+		resultParticle.velocity.z = distributionZ(randomEngine);
+	}
+	else {
+		
+		// 設定項目を引き継ぐ
+		resultParticle.velocity = setting.velocity;
+	}
+
+	// Colorの設定
+	if (setting.randomizeColor) {
+
+		// Rの色をランダムに設定
+		std::uniform_real_distribution<float> distributionR(setting.randomColorMin.x, setting.randomColorMax.x);
+		resultParticle.color.x = distributionR(randomEngine);
+
+		// Gの色をランダムに設定
+		std::uniform_real_distribution<float> distributionG(setting.randomColorMin.y, setting.randomColorMax.y);
+		resultParticle.color.y = distributionG(randomEngine);
+
+		// Bの色をランダムに設定
+		std::uniform_real_distribution<float> distributionB(setting.randomColorMin.z, setting.randomColorMax.z);
+		resultParticle.color.z = distributionB(randomEngine);
+
+		// Aの色をランダムに設定
+		std::uniform_real_distribution<float> distributionA(setting.randomColorMin.w, setting.randomColorMax.w);
+		resultParticle.color.w = distributionA(randomEngine);
+	}
+	else {
+		
+		// 設定項目を引き継ぐ
+		resultParticle.color = setting.color;
+	}
+
+	// LifeTimeの設定
+	if (setting.randomizeLifeTime) {
+
+		// 寿命をランダムに設定
+		std::uniform_real_distribution<float> distribution(setting.randomLifeTimeMin, setting.randomLifeTimeMax);
+		resultParticle.lifeTime = distribution(randomEngine);
+	}
+	else {
+
+		// 設定項目を引き継ぐ
+		resultParticle.lifeTime = setting.lifeTime;
+	}
+
+	resultParticle.currentTime = 0.0f;
+
+	return resultParticle;
 }
 
 ParticleSystem* ParticleSystem::instance = nullptr;

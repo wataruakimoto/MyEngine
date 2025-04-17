@@ -9,6 +9,8 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 
+#include <numbers>
+
 void GameScene::Initialize() {
 
 	// カメラの初期化
@@ -49,9 +51,30 @@ void GameScene::Initialize() {
 	EmitterTransform1.translate = { -2.0f,2.5f,0.0f };
 	EmitterTransform2.translate = { 2.0f,2.5f,0.0f };
 
+	// パーティクルの設定
+	particleSetting1.randomizeTranslate = true;
+	particleSetting1.randomTranslateMin = { -1.0f,-1.0f,-1.0f };
+	particleSetting1.randomTranslateMax = { 1.0f,1.0f,1.0f };
+	particleSetting1.randomizeVelocity = true;
+	particleSetting1.randomVelocityMin = { -1.0f,-1.0f,-1.0f };
+	particleSetting1.randomVelocityMax = { 1.0f,1.0f,1.0f };
+	particleSetting1.randomizeColor = true;
+	particleSetting1.randomColorMin = { 0.0f,0.0f,0.0f,1.0f };
+	particleSetting1.randomColorMax = { 1.0f,1.0f,1.0f,1.0f };
+	particleSetting1.randomizeLifeTime = true;
+	particleSetting1.randomLifeTimeMin = 1.0f;
+	particleSetting1.randomLifeTimeMax = 3.0f;
+
+	particleSetting2.randomizeScale = true;
+	particleSetting2.randomScaleMin = { 0.05f,0.4f,1.0f };
+	particleSetting2.randomScaleMax = { 0.05f,1.5f,1.0f };
+	particleSetting2.randomizeRotate = true;
+	particleSetting2.randomRotateMin = { 0.0f,0.0f,-std::numbers::pi_v<float> };
+	particleSetting2.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
+
 	// エミッタ生成
-	particleEmitter1 = std::make_unique <ParticleEmitter>("circle", EmitterTransform1, 5, 0.5f);
-	particleEmitter2 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform2, 5, 0.5f);
+	particleEmitter1 = std::make_unique <ParticleEmitter>("circle", EmitterTransform1, 5, 0.5f, particleSetting1);
+	particleEmitter2 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform2, 3, 0.5f, particleSetting2);
 }
 
 void GameScene::Update() {

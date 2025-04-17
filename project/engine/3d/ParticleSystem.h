@@ -4,6 +4,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
+#include "Particle.h"
 
 #include <d3d12.h>
 #include <random>
@@ -22,15 +23,6 @@ struct ParticleForGPU {
 	Matrix4x4 WVP;
 	Matrix4x4 world;
 	Vector4 color;
-};
-
-// パーティクル
-struct Particle {
-	Transform transform;
-	Vector3 velocity;
-	Vector4 color;
-	float lifeTime;
-	float currentTime;
 };
 
 // パーティクルグループ
@@ -108,7 +100,7 @@ public:
 	/// <summary>
 	/// パーティクルの発生
 	/// </summary>
-	void Emit(const std::string name, const Vector3& position, uint32_t count);
+	void Emit(const std::string name, const Vector3& position, uint32_t count, Particle setting);
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -133,7 +125,7 @@ public:
 	/// <summary>
 	/// パーティクル生成
 	/// </summary>
-	Particle MakeNewParticle();
+	Particle MakeNewParticle(Particle setting);
 
 ///-------------------------------------------/// 
 /// ゲッター

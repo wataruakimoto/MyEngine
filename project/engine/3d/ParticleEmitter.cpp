@@ -2,7 +2,7 @@
 #include "ParticleSystem.h"
 #include <imgui.h>
 
-ParticleEmitter::ParticleEmitter(const std::string& name, const Transform& transform, uint32_t count, float frequency) {
+ParticleEmitter::ParticleEmitter(const std::string& name, const Transform& transform, uint32_t count, float frequency, Particle setting) {
 
 	// 名前
 	this->particleName = name;
@@ -18,6 +18,9 @@ ParticleEmitter::ParticleEmitter(const std::string& name, const Transform& trans
 
 	// 頻度用時刻
 	this->frequencyTime = 0.0f;
+
+	// 設定項目
+	this->settings = setting;
 }
 
 void ParticleEmitter::Emit() {
@@ -29,7 +32,7 @@ void ParticleEmitter::Emit() {
 	if (frequency <= frequencyTime) {
 
 		// 発生処理
-		ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count);
+		ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count, settings);
 
 		// 余計に過ぎた時間も加味して頻度計算する
 		frequencyTime -= frequency;
@@ -49,7 +52,7 @@ void ParticleEmitter::ShowImGui(const char* name) {
 
 	// ボタンを押したらパーティクル発生
 	if (ImGui::Button("Emit")) {
-		ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count);
+		ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count ,settings);
 	}
 	
 	ImGui::End();

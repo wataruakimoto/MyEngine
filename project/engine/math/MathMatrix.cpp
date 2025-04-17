@@ -239,6 +239,20 @@ Matrix4x4 MathMatrix::MakeRotateYMatrix(float radian) {
 	return rotateY;
 }
 
+Matrix4x4 MathMatrix::MakeRotateZMatrix(float radian) {
+
+	Matrix4x4 rotateZ = { 0.0f };
+
+	rotateZ.m[0][0] = cos(radian);
+	rotateZ.m[0][1] = sin(radian);
+	rotateZ.m[1][0] = -sin(radian);
+	rotateZ.m[1][1] = cos(radian);
+	rotateZ.m[2][2] = 1.0f;
+	rotateZ.m[3][3] = 1.0f;
+
+	return rotateZ;
+}
+
 Matrix4x4 MathMatrix::MakeRotateMatrix(Vector3 radian) {
 
 	Matrix4x4 rotateX = { 0.0f };
