@@ -247,19 +247,52 @@ void ParticleSystem::InitializeVertexData() {
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
 	/// === VertexResourceにデータを書き込む(4頂点) === ///
+	
+	//// 左下
+	//vertexData[0].position = { -0.5f, 0.5f, 0.0f, 1.0f };
+	//vertexData[0].texcoord = { 0.0f, 1.0f };
+	//// 左上
+	//vertexData[1].position = { -0.5f, -0.5f, 0.0f, 1.0f };
+	//vertexData[1].texcoord = { 0.0f, 0.0f };
+	//// 右下
+	//vertexData[2].position = { 0.5f, 0.5f, 0.0f, 1.0f };
+	//vertexData[2].texcoord = { 1.0f, 1.0f };
+	//// 右上
+	//vertexData[3].position = { 0.5f, -0.5f, 0.0f, 1.0f };
+	//vertexData[3].texcoord = { 1.0f, 0.0f };
 
-	// 左下
-	vertexData[0].position = { -0.5f, 0.5f, 0.0f, 1.0f };
-	vertexData[0].texcoord = { 0.0f, 1.0f };
-	// 左上
-	vertexData[1].position = { -0.5f, -0.5f, 0.0f, 1.0f };
-	vertexData[1].texcoord = { 0.0f, 0.0f };
-	// 右下
-	vertexData[2].position = { 0.5f, 0.5f, 0.0f, 1.0f };
-	vertexData[2].texcoord = { 1.0f, 1.0f };
-	// 右上
-	vertexData[3].position = { 0.5f, -0.5f, 0.0f, 1.0f };
-	vertexData[3].texcoord = { 1.0f, 0.0f };
+	// リングの設定
+	const uint32_t kRingDivide = 32; // 円の分割数
+	const float kOuterRadius = 1.0f; // 外側の半径
+	const float kInnerRadius = 0.2f; // 内側の半径
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
+
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+
+		float sin = std::sin(radianPerDivide * index);
+		float cos = std::cos(radianPerDivide * index);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float uv = float(index) / float(kRingDivide);
+		float uvNext = float(index + 1) / float(kRingDivide);
+
+		uint32_t vertexIndex = index * 4; // 頂点のインデックス
+
+		/// === VertexResourceにデータを書き込む(4頂点) === ///
+
+		// 左下
+		vertexData[0 * vertexIndex].position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f };
+		vertexData[0 * vertexIndex].texcoord = { uv, 1.0f };
+		// 左上
+		vertexData[1 * vertexIndex].position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f };
+		vertexData[1 * vertexIndex].texcoord = { uv, 0.0f };
+		// 右下
+		vertexData[2 * vertexIndex].position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f };
+		vertexData[2 * vertexIndex].texcoord = { uvNext, 1.0f };
+		// 右上
+		vertexData[3 * vertexIndex].position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f };
+		vertexData[3 * vertexIndex].texcoord = { uvNext, 0.0f };
+	}
 }
 
 void ParticleSystem::InitializeIndexData() {

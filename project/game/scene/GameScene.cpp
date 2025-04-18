@@ -20,7 +20,7 @@ void GameScene::Initialize() {
 
 	AudioManager::GetInstance()->SoundLoadWave("Resources/fanfare.wav");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
 
 	TextureManager::GetInstance()->LoadTexture("Resources/circle2.png");
 
@@ -44,7 +44,7 @@ void GameScene::Initialize() {
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(camera.get());
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "Resources/circle.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("gradationLine", "Resources/gradationLine.png");
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png");
 
 	// Transformの設定
@@ -52,19 +52,6 @@ void GameScene::Initialize() {
 	EmitterTransform2.translate = { 2.0f,2.5f,0.0f };
 
 	// パーティクルの設定
-	particleSetting1.randomizeTranslate = true;
-	particleSetting1.randomTranslateMin = { -1.0f,-1.0f,-1.0f };
-	particleSetting1.randomTranslateMax = { 1.0f,1.0f,1.0f };
-	particleSetting1.randomizeVelocity = true;
-	particleSetting1.randomVelocityMin = { -1.0f,-1.0f,-1.0f };
-	particleSetting1.randomVelocityMax = { 1.0f,1.0f,1.0f };
-	particleSetting1.randomizeColor = true;
-	particleSetting1.randomColorMin = { 0.0f,0.0f,0.0f,1.0f };
-	particleSetting1.randomColorMax = { 1.0f,1.0f,1.0f,1.0f };
-	particleSetting1.randomizeLifeTime = true;
-	particleSetting1.randomLifeTimeMin = 1.0f;
-	particleSetting1.randomLifeTimeMax = 3.0f;
-
 	particleSetting2.randomizeScale = true;
 	particleSetting2.randomScaleMin = { 0.05f,0.4f,1.0f };
 	particleSetting2.randomScaleMax = { 0.05f,1.5f,1.0f };
@@ -73,7 +60,7 @@ void GameScene::Initialize() {
 	particleSetting2.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
 
 	// エミッタ生成
-	particleEmitter1 = std::make_unique <ParticleEmitter>("circle", EmitterTransform1, 5, 0.5f, particleSetting1);
+	particleEmitter1 = std::make_unique <ParticleEmitter>("gradationLine", EmitterTransform1, 1, 1.0f, particleSetting1);
 	particleEmitter2 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform2, 3, 0.5f, particleSetting2);
 }
 
