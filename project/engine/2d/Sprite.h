@@ -10,7 +10,6 @@
 
 /// === 前方宣言 === ///
 class DirectXUtility;
-class SwapChain;
 
 // スプライト
 class Sprite {

@@ -31,20 +31,10 @@ public:
 	/// </summary>
 	void PostDraw();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
-
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
 private:
-
-	/// <summary>
-	/// コマンド関連の初期化
-	/// </summary>
-	void CommandRelatedInitialize();
 
 	/// <summary>
 	/// デスクリプタヒープ生成
@@ -60,11 +50,6 @@ private:
 	/// 深度ステンシルビュー初期化
 	/// </summary>
 	void DepthStencilViewInitialize();
-
-	/// <summary>
-	/// フェンスの初期化
-	/// </summary>
-	void FenceInitialize();
 
 	/// <summary>
 	/// ビューポート矩形の初期化
@@ -104,15 +89,6 @@ private:
 	// HRESULT
 	HRESULT hr;
 
-	// コマンドアロケータ
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
-
-	// コマンドリスト
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
-
-	// コマンドキュー
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
-
 	// レンダーテクスチャリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
 
@@ -148,15 +124,6 @@ private:
 
 	// クリアする深度
 	const float kDepthClearValue = 1.0f;
-
-	// フェンス
-	Microsoft::WRL::ComPtr <ID3D12Fence> fence = nullptr;
-
-	// フェンスの値
-	uint64_t fenceValue = 0;
-
-	// フェンスイベント
-	HANDLE fenceEvent;
 
 	// ビューポート矩形
 	D3D12_VIEWPORT viewportRect{};

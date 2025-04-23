@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <format>
+#include <thread>
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -15,11 +16,66 @@ using namespace StringUtility;
 
 void DirectXUtility::Initialize() {
 
+	// FPS固定初期化
+	InitializeFixFPS();
+
 	// デバイスの初期化
 	DeviceInitialize();
 
+	// コマンド関連の初期化
+	CommandRelatedInitialize();
+
+	// フェンスの初期化
+	FenceInitialize();
+
 	// DXCコンパイラの生成
 	DXCCompilerGenerate();
+}
+
+void DirectXUtility::PostDraw() {
+
+	// ----------グラフィックスコマンドをクローズ----------
+	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseすること
+	hr = commandList->Close();
+	assert(SUCCEEDED(hr));
+
+	// ----------GPUコマンドの実行----------
+	ID3D12CommandList* commandLists[] = { commandList.Get() };
+	commandQueue->ExecuteCommandLists(1, commandLists);
+
+	// ----------Fenceの値を更新----------
+	fenceValue++;
+
+	// ----------コマンドキューにシグナルを送る----------
+	commandQueue->Signal(fence.Get(), fenceValue);
+
+	// ----------コマンド完了待ち----------
+	// Fenceの値が指定したSignal値にたどり着いているか確認する
+	// GetCompletedValueの初期値はFence作成時に渡した初期値
+	if (fence->GetCompletedValue() < fenceValue) {
+
+		// 指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
+		fence->SetEventOnCompletion(fenceValue, fenceEvent);
+		// イベント待つ
+		WaitForSingleObject(fenceEvent, INFINITE);
+	}
+
+	// FPS固定更新
+	UpdateFixFPS();
+
+	// ----------コマンドアロケータのリセット----------
+	hr = commandAllocator->Reset();
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドリストのリセット----------
+	hr = commandList->Reset(commandAllocator.Get(), nullptr);
+	assert(SUCCEEDED(hr));
+}
+
+void DirectXUtility::Finalize() {
+
+	// 各オブジェクトの解放
+	CloseHandle(fenceEvent);
 }
 
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXUtility::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
@@ -184,6 +240,37 @@ void DirectXUtility::DeviceInitialize() {
 #endif
 }
 
+void DirectXUtility::CommandRelatedInitialize() {
+
+	// ----------コマンドアロケータ生成----------
+	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
+	// コマンドアロケーターの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドリスト生成----------
+	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
+	// コマンドリストの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+
+	// ----------コマンドキュー生成----------
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	// デバッガの機能の終了後に停止させないで警告を表示
+	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
+	// コマンドキューの生成がうまくいかなかったので起動できない
+	assert(SUCCEEDED(hr));
+}
+
+void DirectXUtility::FenceInitialize() {
+
+	// ----------フェンス生成----------
+	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
+
+	// FenceのSignalを持つためのイベントを作成する
+	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
+}
+
 void DirectXUtility::DXCCompilerGenerate() {
 
 	// ----------DXCユーティリティの生成----------
@@ -198,6 +285,36 @@ void DirectXUtility::DXCCompilerGenerate() {
 	// 現時点でincludeはしないが、includeに対応するための設定を行っておく
 	hr = dxcUtils->CreateDefaultIncludeHandler(&includeHandler);
 	assert(SUCCEEDED(hr));
+}
+
+void DirectXUtility::InitializeFixFPS() {
+
+	// 現在時間を記録する
+	reference = std::chrono::steady_clock::now();
+}
+
+void DirectXUtility::UpdateFixFPS() {
+
+	// 1/60秒ピッタリの時間
+	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
+	// 1/60秒よりわずかに短い時間
+	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
+
+	// 現在時間を取得する
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	// 前回記録からの経過時間を取得する
+	std::chrono::microseconds elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - reference);
+
+	// 1/60秒(よりわずかに短い時間)経っていない場合
+	if (elapsed < kMinCheckTime) {
+		// 1/60秒経過するまで微小なスリープを繰り返す
+		while (std::chrono::steady_clock::now() - reference < kMinTime) {
+			// 1マイクロ秒スリープ
+			std::this_thread::sleep_for(std::chrono::microseconds(1));
+		}
+	}
+	// 現在の時間を記録する
+	reference = std::chrono::steady_clock::now();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXUtility::GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {

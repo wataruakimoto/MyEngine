@@ -4,7 +4,6 @@
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
 #include "base/DirectXUtility.h"
-#include "base/SwapChain.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
 #include "camera/Camera.h"
@@ -76,19 +75,19 @@ void Object3d::Draw() {
 	if (isDraw) {
 
 		/// === 座標変換行列CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
 		/// === 平行光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
 
 		/// === 点光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
 
 		/// === スポットライトCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
 
 		/// === カメラCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {

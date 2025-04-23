@@ -3,19 +3,12 @@
 #include "DirectXUtility.h"
 
 #include <cassert>
-#include <thread>
 
 void SwapChain::Initialize(WinApp* winApp, DirectXUtility* dxUtility) {
 
 	// 引数をメンバ変数に設定
 	this->winApp = winApp;
 	this->dxUtility = dxUtility;
-
-	// FPS固定初期化
-	InitializeFixFPS();
-
-	// コマンド関連の初期化
-	CommandRelatedInitialize();
 
 	// スワップチェーンの生成
 	SwapChainGenerate();
@@ -31,9 +24,6 @@ void SwapChain::Initialize(WinApp* winApp, DirectXUtility* dxUtility) {
 
 	// 深度ステンシルビューの初期化
 	DepthStencilViewInitialize();
-
-	// フェンスの初期化
-	FenceInitialize();
 
 	// ビューポート矩形の初期化
 	ViewportRectInitialize();
@@ -60,26 +50,24 @@ void SwapChain::PreDraw() {
 	// 遷移後のResouceState
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	// TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
+	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
 
 	// ----------描画先のRTVとDSVを指定する----------
-
-	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
 	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-	commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
+	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, &dsvHandle);
 
 	// ----------画面全体の色をクリア----------
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f }; // 青っぽい色。RGBAの順
-	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+	dxUtility->GetCommandList()->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
 
 	// ----------画面全体の深度をクリア----------
-	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	dxUtility->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// ----------ビューポート領域の設定----------
-	commandList->RSSetViewports(1, &viewportRect);
+	dxUtility->GetCommandList()->RSSetViewports(1, &viewportRect);
 
 	// ----------シザー矩形の設定----------
-	commandList->RSSetScissorRects(1, &scissorRect);
+	dxUtility->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 }
 
 void SwapChain::PostDraw() {
@@ -93,73 +81,10 @@ void SwapChain::PostDraw() {
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
 	// TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &barrier);
-
-	// ----------グラフィックスコマンドをクローズ----------
-	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseすること
-	hr = commandList->Close();
-	assert(SUCCEEDED(hr));
-
-	// ----------GPUコマンドの実行----------
-	ID3D12CommandList* commandLists[] = { commandList.Get() };
-	commandQueue->ExecuteCommandLists(1, commandLists);
+	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
 
 	// ----------GPU画面の交換を通知----------
 	swapChain->Present(1, 0);
-
-	// ----------Fenceの値を更新----------
-	fenceValue++;
-
-	// ----------コマンドキューにシグナルを送る----------
-	commandQueue->Signal(fence.Get(), fenceValue);
-
-	// ----------コマンド完了待ち----------
-	// Fenceの値が指定したSignal値にたどり着いているか確認する
-	// GetCompletedValueの初期値はFence作成時に渡した初期値
-	if (fence->GetCompletedValue() < fenceValue) {
-
-		// 指定したSignalにたどり着いていないので、たどり着くまで待つようにイベントを設定する
-		fence->SetEventOnCompletion(fenceValue, fenceEvent);
-		// イベント待つ
-		WaitForSingleObject(fenceEvent, INFINITE);
-	}
-
-	// FPS固定更新
-	UpdateFixFPS();
-
-	// ----------コマンドアロケータのリセット----------
-	hr = commandAllocator->Reset();
-	assert(SUCCEEDED(hr));
-
-	// ----------コマンドリストのリセット----------
-	hr = commandList->Reset(commandAllocator.Get(), nullptr);
-	assert(SUCCEEDED(hr));
-}
-
-void SwapChain::Finalize() {
-
-	// 各オブジェクトの解放
-	CloseHandle(fenceEvent);
-}
-
-void SwapChain::CommandRelatedInitialize() {
-
-	// ----------コマンドアロケータ生成----------
-	hr = dxUtility->GetDevice()->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-	// コマンドアロケーターの生成がうまくいかなかったので起動できない
-	assert(SUCCEEDED(hr));
-
-	// ----------コマンドリスト生成----------
-	hr = dxUtility->GetDevice()->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator.Get(), nullptr, IID_PPV_ARGS(&commandList));
-	// コマンドリストの生成がうまくいかなかったので起動できない
-	assert(SUCCEEDED(hr));
-
-	// ----------コマンドキュー生成----------
-	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
-	// デバッガの機能の終了後に停止させないで警告を表示
-	hr = dxUtility->GetDevice()->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
-	// コマンドキューの生成がうまくいかなかったので起動できない
-	assert(SUCCEEDED(hr));
 }
 
 void SwapChain::SwapChainGenerate() {
@@ -175,7 +100,7 @@ void SwapChain::SwapChainGenerate() {
 
 	// ----------スワップチェーン生成----------
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	hr = dxUtility->GetDXGIFactory()->CreateSwapChainForHwnd(commandQueue.Get(), winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
+	hr = dxUtility->GetDXGIFactory()->CreateSwapChainForHwnd(dxUtility->GetCommandQueue().Get(), winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(swapChain.GetAddressOf()));
 	assert(SUCCEEDED(hr));
 }
 
@@ -275,17 +200,6 @@ void SwapChain::DepthStencilViewInitialize() {
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart());
 }
 
-void SwapChain::FenceInitialize() {
-
-	// ----------フェンス生成----------
-	hr = dxUtility->GetDevice()->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
-	assert(SUCCEEDED(hr));
-
-	// FenceのSignalを持つためのイベントを作成する
-	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	assert(fenceEvent != nullptr);
-}
-
 void SwapChain::ViewportRectInitialize() {
 
 	// ----------ビューポート矩形の設定----------
@@ -306,36 +220,6 @@ void SwapChain::ScissoringRectInitialize() {
 	scissorRect.right = WinApp::kClientWidth;
 	scissorRect.top = 0;
 	scissorRect.bottom = WinApp::kClientHeight;
-}
-
-void SwapChain::InitializeFixFPS() {
-
-	// 現在時間を記録する
-	reference = std::chrono::steady_clock::now();
-}
-
-void SwapChain::UpdateFixFPS() {
-
-	// 1/60秒ピッタリの時間
-	const std::chrono::microseconds kMinTime(uint64_t(1000000.0f / 60.0f));
-	// 1/60秒よりわずかに短い時間
-	const std::chrono::microseconds kMinCheckTime(uint64_t(1000000.0f / 65.0f));
-
-	// 現在時間を取得する
-	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-	// 前回記録からの経過時間を取得する
-	std::chrono::microseconds elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - reference);
-
-	// 1/60秒(よりわずかに短い時間)経っていない場合
-	if (elapsed < kMinCheckTime) {
-		// 1/60秒経過するまで微小なスリープを繰り返す
-		while (std::chrono::steady_clock::now() - reference < kMinTime) {
-			// 1マイクロ秒スリープ
-			std::this_thread::sleep_for(std::chrono::microseconds(1));
-		}
-	}
-	// 現在の時間を記録する
-	reference = std::chrono::steady_clock::now();
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE SwapChain::GetRTVCPUDescriptorHandle(uint32_t index) {

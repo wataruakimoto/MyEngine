@@ -7,11 +7,10 @@
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void ParticleCommon::Initialize(DirectXUtility* dxUtility, SwapChain* swapChain) {
+void ParticleCommon::Initialize(DirectXUtility* dxUtility) {
 
 	// 引数をメンバ変数に代入
 	dxUtility_ = dxUtility;
-	swapChain_ = swapChain;
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
@@ -20,16 +19,16 @@ void ParticleCommon::Initialize(DirectXUtility* dxUtility, SwapChain* swapChain)
 void ParticleCommon::SettingDrawing() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
-	swapChain_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	swapChain_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
+	dxUtility_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
-	swapChain_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
-	swapChain_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void ParticleCommon::Finalize() {

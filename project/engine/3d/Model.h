@@ -10,7 +10,6 @@
 // === 前方宣言=== ///
 class ModelCommon;
 class DirectXUtility;
-class SwapChain;
 
 /// === 3Dモデル === ///
 class Model {

@@ -33,7 +33,7 @@ void Framework::Initialize() {
 	swapChain->Initialize(winApp.get(), dxUtility.get());
 
 	// SrVマネージャ初期化
-	SrvManager::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
+	SrvManager::GetInstance()->Initialize(dxUtility.get());
 
 	// ImGuiの初期化
 	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxUtility.get(), swapChain.get());
@@ -54,18 +54,18 @@ void Framework::Initialize() {
 	ModelManager::GetInstance()->Initialize(dxUtility.get());
 
 	// スプライト共通部初期化
-	SpriteCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
+	SpriteCommon::GetInstance()->Initialize(dxUtility.get());
 
 	// 3Dオブジェクト共通部初期化
-	Object3dCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
+	Object3dCommon::GetInstance()->Initialize(dxUtility.get());
 	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
 	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
 
 	// モデル基盤初期化
-	ModelCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
+	ModelCommon::GetInstance()->Initialize(dxUtility.get());
 
 	// パーティクル基盤初期化
-	ParticleCommon::GetInstance()->Initialize(dxUtility.get(), swapChain.get());
+	ParticleCommon::GetInstance()->Initialize(dxUtility.get());
 	ParticleCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
 }
 
@@ -113,11 +113,8 @@ void Framework::Finalize() {
 	// Srvマネージャの終了
 	SrvManager::GetInstance()->Finalize();
 
-	// SwapChainの終了
-	swapChain->Finalize();
-
-	// レンダーテクスチャの終了
-	renderTexture->Finalize();
+	// DirectX機能の終了
+	dxUtility->Finalize();
 	
 	// WindowsAPIの終了処理
 	winApp->Finalize();
