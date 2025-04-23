@@ -34,15 +34,6 @@ void DirectXUtility::Initialize() {
 
 void DirectXUtility::PostDraw() {
 
-	// ----------グラフィックスコマンドをクローズ----------
-	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseすること
-	hr = commandList->Close();
-	assert(SUCCEEDED(hr));
-
-	// ----------GPUコマンドの実行----------
-	ID3D12CommandList* commandLists[] = { commandList.Get() };
-	commandQueue->ExecuteCommandLists(1, commandLists);
-
 	// ----------Fenceの値を更新----------
 	fenceValue++;
 

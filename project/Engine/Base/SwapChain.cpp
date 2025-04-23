@@ -83,6 +83,16 @@ void SwapChain::PostDraw() {
 	// TransitionBarrierを張る
 	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
 
+
+	// ----------グラフィックスコマンドをクローズ----------
+	// コマンドリストの内容を確定させる。すべてのコマンドを積んでからCloseすること
+	hr = dxUtility->GetCommandList()->Close();
+	assert(SUCCEEDED(hr));
+
+	// ----------GPUコマンドの実行----------
+	ID3D12CommandList* commandLists[] = { dxUtility->GetCommandList().Get() };
+	dxUtility->GetCommandQueue()->ExecuteCommandLists(1, commandLists);
+
 	// ----------GPU画面の交換を通知----------
 	swapChain->Present(1, 0);
 }
