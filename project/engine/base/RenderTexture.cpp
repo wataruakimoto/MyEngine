@@ -32,18 +32,18 @@ void RenderTexture::PreDraw() {
 
 	// ----------リソースバリアで書き込み可能に変更----------
 
-	// 今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextureResource.Get();
-	// 遷移前(現在)のResouceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	// 遷移後のResouceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+	//// 今回のバリアはTransition
+	//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	//// Noneにしておく
+	//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	//// バリアを張る対象のリソース。現在のバックバッファに対して行う
+	//barrier.Transition.pResource = renderTextureResource.Get();
+	//// 遷移前(現在)のResouceState
+	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	//// 遷移後のResouceState
+	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//// TransitionBarrierを張る
+	//dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
 
 	// 描画先のRTVとDSVを指定する
 	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, &dsvHandle);
@@ -64,13 +64,13 @@ void RenderTexture::PreDraw() {
 
 void RenderTexture::PostDraw() {
 
-	// ----------リソースバリアで表示状態に変更----------
-	// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
-	// 今回はRenderTargetからPresentにする
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+	//// ----------リソースバリアで表示状態に変更----------
+	//// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
+	//// 今回はRenderTargetからPresentにする
+	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	//// TransitionBarrierを張る
+	//dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
 }
 
 void RenderTexture::DescriptorHeapGenerate() {

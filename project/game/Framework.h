@@ -63,7 +63,7 @@ protected:
 	std::unique_ptr<DirectXUtility> dxUtility = nullptr;
 
 	// レンダーテクスチャのポインタ
-	//std::unique_ptr<RenderTexture> renderTexture = nullptr;
+	std::unique_ptr<RenderTexture> renderTexture = nullptr;
 
 	// スワップチェインのポインタ
 	std::unique_ptr<SwapChain> swapChain = nullptr;

@@ -25,8 +25,8 @@ void Framework::Initialize() {
 	dxUtility->Initialize();
 
 	// レンダーテクスチャ初期化
-	//renderTexture = std::make_unique <RenderTexture>();
-	//renderTexture->Initialize(dxUtility.get());
+	renderTexture = std::make_unique <RenderTexture>();
+	renderTexture->Initialize(dxUtility.get());
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
