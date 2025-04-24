@@ -9,6 +9,7 @@
 #include <d3d12.h>
 #include <random>
 #include <list>
+#include <numbers>
 #include <unordered_map>
 #include <wrl.h>
 
@@ -190,4 +191,14 @@ private:
 
 	// パーティクルグループコンテナ
 	std::unordered_map<std::string, ParticleGroup> particleGroups;
+
+///-------------------------------------------/// 
+/// リング用の変数
+///-------------------------------------------///
+
+	// リングの設定
+	const uint32_t kRingDivide = 32; // 円の分割数
+	const float kOuterRadius = 1.0f; // 外側の半径
+	const float kInnerRadius = 0.2f; // 内側の半径
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
 };

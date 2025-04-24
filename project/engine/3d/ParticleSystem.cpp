@@ -11,7 +11,6 @@
 #include "debug/Logger.h"
 
 #include <string>
-#include <numbers>
 #include <imgui.h>
 
 using namespace MathMatrix;
@@ -127,7 +126,7 @@ void ParticleSystem::Draw() {
 		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
 
 		// 描画(DrawCall)
-		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
+		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, particleGroup.numInstance, 0, 0, 0);
 	}
 }
 
@@ -232,14 +231,14 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 void ParticleSystem::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
+	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
 	// リソースの先頭アドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズ 頂点のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 4 * kRingDivide;
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -261,12 +260,6 @@ void ParticleSystem::InitializeVertexData() {
 	//vertexData[3].position = { 0.5f, -0.5f, 0.0f, 1.0f };
 	//vertexData[3].texcoord = { 1.0f, 0.0f };
 
-	// リングの設定
-	const uint32_t kRingDivide = 32; // 円の分割数
-	const float kOuterRadius = 1.0f; // 外側の半径
-	const float kInnerRadius = 0.2f; // 内側の半径
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
-
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
 
 		float sin = std::sin(radianPerDivide * index);
@@ -281,31 +274,31 @@ void ParticleSystem::InitializeVertexData() {
 		/// === VertexResourceにデータを書き込む(4頂点) === ///
 
 		// 左下
-		vertexData[0 * vertexIndex].position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f };
-		vertexData[0 * vertexIndex].texcoord = { uv, 1.0f };
+		vertexData[0 + vertexIndex].position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f };
+		vertexData[0 + vertexIndex].texcoord = { uv, 1.0f };
 		// 左上
-		vertexData[1 * vertexIndex].position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f };
-		vertexData[1 * vertexIndex].texcoord = { uv, 0.0f };
+		vertexData[1 + vertexIndex].position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f };
+		vertexData[1 + vertexIndex].texcoord = { uv, 0.0f };
 		// 右下
-		vertexData[2 * vertexIndex].position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f };
-		vertexData[2 * vertexIndex].texcoord = { uvNext, 1.0f };
+		vertexData[2 + vertexIndex].position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f };
+		vertexData[2 + vertexIndex].texcoord = { uvNext, 1.0f };
 		// 右上
-		vertexData[3 * vertexIndex].position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f };
-		vertexData[3 * vertexIndex].texcoord = { uvNext, 0.0f };
+		vertexData[3 + vertexIndex].position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f };
+		vertexData[3 + vertexIndex].texcoord = { uvNext, 0.0f };
 	}
 }
 
 void ParticleSystem::InitializeIndexData() {
 
 	/// === IndexResourceを作る === ///
-	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
+	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kRingDivide);
 
 	/// === IBVを作成する(値を設定するだけ) === ///
 
 	// リソースの先頭のアドレスから使う
 	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6;
+	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6 * kRingDivide;
 	// インデックスはuint32_tとする
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
@@ -314,12 +307,24 @@ void ParticleSystem::InitializeIndexData() {
 
 	/// === IndexResourceにデータを書き込む(6個分)=== ///
 
-	indexData[0] = 0; // 左下
-	indexData[1] = 1; // 左上
-	indexData[2] = 2; // 右下
-	indexData[3] = 1; // 左上
-	indexData[4] = 3; // 右上
-	indexData[5] = 2; // 右下
+	//indexData[0] = 0; // 左下
+	//indexData[1] = 1; // 左上
+	//indexData[2] = 2; // 右下
+	//indexData[3] = 1; // 左上
+	//indexData[4] = 3; // 右上
+	//indexData[5] = 2; // 右下
+
+	/// === IndexResourceにデータを書き込む(6個分)=== ///
+
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+
+		indexData[index * 6 + 0] = index * 4 + 0; // 左下
+		indexData[index * 6 + 1] = index * 4 + 1; // 左上
+		indexData[index * 6 + 2] = index * 4 + 2; // 右下
+		indexData[index * 6 + 3] = index * 4 + 1; // 左上
+		indexData[index * 6 + 4] = index * 4 + 3; // 右上
+		indexData[index * 6 + 5] = index * 4 + 2; // 右下
+	}
 }
 
 void ParticleSystem::InitializeMaterialData() {
