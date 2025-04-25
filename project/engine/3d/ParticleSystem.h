@@ -192,6 +192,9 @@ private:
 	// パーティクルグループコンテナ
 	std::unordered_map<std::string, ParticleGroup> particleGroups;
 
+	// ワールド行列
+	Matrix4x4 worldMatrix = {};
+
 ///-------------------------------------------/// 
 /// リング用の変数
 ///-------------------------------------------///

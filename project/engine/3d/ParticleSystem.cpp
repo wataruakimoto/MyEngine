@@ -76,8 +76,19 @@ void ParticleSystem::Update() {
 			Matrix4x4 rotateMatrix = MakeRotateMatrix(iterator->transform.rotate);
 			// Translateのみの行列
 			Matrix4x4 translateMatrix = MakeTranslateMatrix(iterator->transform.translate);
-			// WorldMatrixを計算
-			Matrix4x4 worldMatrix = scaleMatrix * rotateMatrix * billboardMatrix * translateMatrix;
+
+			// ビルボードするなら
+			if (iterator->useBillboard) {
+
+				// WorldMatrixを計算
+				worldMatrix = scaleMatrix * rotateMatrix * billboardMatrix * translateMatrix;
+			}
+			// ビルボードしないなら
+			else {
+
+				// WorldMatrixを計算
+				worldMatrix = scaleMatrix * rotateMatrix * translateMatrix;
+			}
 
 			// WVPMatrixを合成
 			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
@@ -468,6 +479,8 @@ Particle ParticleSystem::MakeNewParticle(Particle setting) {
 	}
 
 	resultParticle.currentTime = 0.0f;
+
+	resultParticle.useBillboard = setting.useBillboard;
 
 	return resultParticle;
 }

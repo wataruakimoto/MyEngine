@@ -84,10 +84,10 @@ void GameScene::Update() {
 	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	particleEmitter1->ShowImGui("particleEmitter");
+	particleEmitter1->ShowImGui("gradationLine");
 	particleEmitter1->Emit();
 
-	particleEmitter2->ShowImGui("particleEmitter2");
+	particleEmitter2->ShowImGui("circle2");
 	particleEmitter2->Emit();
 
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
