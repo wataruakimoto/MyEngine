@@ -239,6 +239,7 @@
       <Filter>Engine\3d</Filter>
     </None>
     <None Include="resources\shaders\Particle.hlsli" />
+    <None Include="Resources\shaders\CopyImage.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
@@ -255,5 +256,7 @@
     </FxCompile>
     <FxCompile Include="resources\shaders\Particle.VS.hlsl" />
     <FxCompile Include="resources\shaders\Particle.PS.hlsl" />
+    <FxCompile Include="Resources\shaders\CopyImage.VS.hlsl" />
+    <FxCompile Include="Resources\shaders\CopyImage.PS.hlsl" />
   </ItemGroup>
 </Project>
