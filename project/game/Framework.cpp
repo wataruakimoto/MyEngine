@@ -25,8 +25,12 @@ void Framework::Initialize() {
 	dxUtility->Initialize();
 
 	// レンダーテクスチャ初期化
-	renderTexture = std::make_unique <RenderTexture>();
-	renderTexture->Initialize(dxUtility.get());
+	postEffect = std::make_unique <PostEffect>();
+	postEffect->Initialize(dxUtility.get());
+
+	// ポストエフェクトパイプラインの初期化
+	postProcessingPipeline = std::make_unique <PostProcessingPipeline>();
+	postProcessingPipeline->Initialize(dxUtility.get(), postEffect.get());
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();

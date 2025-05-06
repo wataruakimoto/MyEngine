@@ -7,8 +7,8 @@
 /// === 前方宣言 === ///
 class DirectXUtility;
 
-/// === レンダーテクスチャ処理 === ///
-class RenderTexture {
+/// === ポストエフェクト処理 === ///
+class PostEffect {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -47,6 +47,11 @@ private:
 	void RenderTargetViewInitialize();
 
 	/// <summary>
+	/// シェーダーリソースビュー初期化
+	/// </summary>
+	void ShaderResourceViewInitialize();
+
+	/// <summary>
 	/// 深度ステンシルビュー初期化
 	/// </summary>
 	void DepthStencilViewInitialize();
@@ -82,12 +87,22 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth);
 
 ///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	uint32_t GetSRVIndex() const { return srvIndex; } // SRVインデックスのゲッター
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
 	// HRESULT
 	HRESULT hr;
+
+	// SRVインデックス
+	uint32_t srvIndex = 0;
 
 	// レンダーテクスチャリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;

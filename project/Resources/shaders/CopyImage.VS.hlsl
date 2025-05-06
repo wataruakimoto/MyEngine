@@ -16,12 +16,12 @@ static const float2 kTexCoords[kNumVertex] =
     { 0.0f, 2.0f }  // 左下
 };
 
-VertexShaderOutput main(int vertexID : SV_VertexID)
+VertexShaderOutput main(uint vertexId : SV_VertexID)
 {
     VertexShaderOutput output;
 
-    output.position = kPositions[vertexID];
-    output.texcoord = kTexCoords[vertexID];
+    output.position = kPositions[vertexId];
+    output.texcoord = kTexCoords[vertexId];
     
     return output;
 }

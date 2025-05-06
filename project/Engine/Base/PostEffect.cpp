@@ -1,10 +1,11 @@
-#include "RenderTexture.h"
+#include "PostEffect.h"
 #include "winApp/WinApp.h"
 #include "DirectXUtility.h"
+#include "base/SrvManager.h"
 
 using namespace Microsoft::WRL;
 
-void RenderTexture::Initialize(DirectXUtility* dxUtility) {
+void PostEffect::Initialize(DirectXUtility* dxUtility) {
 
 	// NULL検出
 	assert(dxUtility);
@@ -28,22 +29,21 @@ void RenderTexture::Initialize(DirectXUtility* dxUtility) {
 	ScissoringRectInitialize();
 }
 
-void RenderTexture::PreDraw() {
+void PostEffect::PreDraw() {
 
 	// ----------リソースバリアで書き込み可能に変更----------
-
-	//// 今回のバリアはTransition
-	//barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	//// Noneにしておく
-	//barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	//// バリアを張る対象のリソース。現在のバックバッファに対して行う
-	//barrier.Transition.pResource = renderTextureResource.Get();
-	//// 遷移前(現在)のResouceState
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-	//// 遷移後のResouceState
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//// TransitionBarrierを張る
-	//dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+	// 今回のバリアはTransition
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象のリソース。現在のバックバッファに対して行う
+	barrier.Transition.pResource = renderTextureResource.Get();
+	// 遷移前(現在)のResouceState
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// 遷移後のResouceState
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBarrierを張る
+	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
 
 	// 描画先のRTVとDSVを指定する
 	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, &dsvHandle);
@@ -62,18 +62,18 @@ void RenderTexture::PreDraw() {
 	dxUtility->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 }
 
-void RenderTexture::PostDraw() {
+void PostEffect::PostDraw() {
 
-	//// ----------リソースバリアで表示状態に変更----------
-	//// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
-	//// 今回はRenderTargetからPresentにする
-	//barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	//barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	//// TransitionBarrierを張る
-	//dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+	// ----------リソースバリアで表示状態に変更----------
+	// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
+	// 今回はRenderTargetからPresentにする
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// TransitionBarrierを張る
+	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
 }
 
-void RenderTexture::DescriptorHeapGenerate() {
+void PostEffect::DescriptorHeapGenerate() {
 
 	// RTV用のデスクリプタサイズを取得
 	rtvDescriptorSize = dxUtility->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -88,7 +88,7 @@ void RenderTexture::DescriptorHeapGenerate() {
 	dsvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false); // 数は1 シェーダで使わない
 }
 
-void RenderTexture::RenderTargetViewInitialize() {
+void PostEffect::RenderTargetViewInitialize() {
 	
 	// Resourceの生成
 	renderTextureResource = CreateRenderTextureResource(
@@ -116,7 +116,16 @@ void RenderTexture::RenderTargetViewInitialize() {
 	}
 }
 
-void RenderTexture::DepthStencilViewInitialize() {
+void PostEffect::ShaderResourceViewInitialize() {
+
+	// SRV確保
+	srvIndex = SrvManager::GetInstance()->Allocate();
+
+	// SRV作成
+	SrvManager::GetInstance()->CreateSRVforRenderTexture(srvIndex, renderTextureResource.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+}
+
+void PostEffect::DepthStencilViewInitialize() {
 
 	// Resourceの生成
 	depthStencilResource = CreateDepthStencilResource(
@@ -137,7 +146,7 @@ void RenderTexture::DepthStencilViewInitialize() {
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
 }
 
-void RenderTexture::ViewportRectInitialize() {
+void PostEffect::ViewportRectInitialize() {
 
 	// ----------ビューポート矩形の設定----------
 	// クライアント領域のサイズと一緒にして画面全体に表示
@@ -149,7 +158,7 @@ void RenderTexture::ViewportRectInitialize() {
 	viewportRect.MaxDepth = 1.0f;
 }
 
-void RenderTexture::ScissoringRectInitialize() {
+void PostEffect::ScissoringRectInitialize() {
 
 	// ----------シザリング矩形の設定----------
 	// 基本的にビューポートと同じ矩形が構成されるようにする
@@ -159,7 +168,7 @@ void RenderTexture::ScissoringRectInitialize() {
 	scissorRect.bottom = WinApp::kClientHeight;
 }
 
-ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
+ComPtr<ID3D12Resource> PostEffect::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
 
 	// Resourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -199,7 +208,7 @@ ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width
 	return resource;
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth) {
+Microsoft::WRL::ComPtr<ID3D12Resource> PostEffect::CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth) {
 	
 	// Resourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};

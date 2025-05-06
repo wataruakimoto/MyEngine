@@ -125,7 +125,8 @@
     <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
-    <ClCompile Include="engine\base\RenderTexture.cpp" />
+    <ClCompile Include="engine\base\PostEffect.cpp" />
+    <ClCompile Include="Engine\Base\PostProcessingPipeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -229,7 +230,8 @@
     <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
-    <ClInclude Include="engine\base\RenderTexture.h" />
+    <ClInclude Include="engine\base\PostEffect.h" />
+    <ClInclude Include="Engine\Base\PostProcessingPipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

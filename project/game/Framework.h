@@ -1,7 +1,8 @@
 #pragma once
 #include "winApp/WinApp.h"
 #include "base/DirectXUtility.h"
-#include "base/RenderTexture.h"
+#include "base/PostEffect.h"
+#include "base/PostProcessingPipeline.h"
 #include "base/SwapChain.h"
 #include "camera/DebugCamera.h"
 #include "scene/AbstractSceneFactory.h"
@@ -63,7 +64,10 @@ protected:
 	std::unique_ptr<DirectXUtility> dxUtility = nullptr;
 
 	// レンダーテクスチャのポインタ
-	std::unique_ptr<RenderTexture> renderTexture = nullptr;
+	std::unique_ptr<PostEffect> postEffect = nullptr;
+
+	// ポストエフェクトパイプラインのポインタ
+	std::unique_ptr<PostProcessingPipeline> postProcessingPipeline = nullptr;
 
 	// スワップチェインのポインタ
 	std::unique_ptr<SwapChain> swapChain = nullptr;
