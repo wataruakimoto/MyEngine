@@ -22,6 +22,9 @@ void PostEffect::Initialize(DirectXUtility* dxUtility) {
 	// 深度ステンシルビューの初期化
 	DepthStencilViewInitialize();
 
+	// シェーダーリソースビューの初期化
+	ShaderResourceViewInitialize();
+
 	// ビューポート矩形の初期化
 	ViewportRectInitialize();
 
@@ -31,19 +34,26 @@ void PostEffect::Initialize(DirectXUtility* dxUtility) {
 
 void PostEffect::PreDraw() {
 
-	// ----------リソースバリアで書き込み可能に変更----------
-	// 今回のバリアはTransition
-	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにしておく
-	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを張る対象のリソース。現在のバックバッファに対して行う
-	barrier.Transition.pResource = renderTextureResource.Get();
-	// 遷移前(現在)のResouceState
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// 遷移後のResouceState
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+	// バリアの状態がレンダーターゲットではなかったらバリアを張る
+	if (currentState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
+
+		// ----------リソースバリアで書き込み可能に変更----------
+		// 今回のバリアはTransition
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象のリソース。現在のバックバッファに対して行う
+		barrier.Transition.pResource = renderTextureResource.Get();
+		// 遷移前(現在)のResouceState
+		barrier.Transition.StateBefore = currentState;
+		// 遷移後のResouceState
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		// TransitionBarrierを張る
+		dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+
+		// 状態をレンダーターゲットにしておく
+		currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	}
 
 	// 描画先のRTVとDSVを指定する
 	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, &dsvHandle);
@@ -64,13 +74,26 @@ void PostEffect::PreDraw() {
 
 void PostEffect::PostDraw() {
 
-	// ----------リソースバリアで表示状態に変更----------
-	// 画面に描く処理はすべて終わり、画面に映すので、状態を遷移
-	// 今回はRenderTargetからPresentにする
-	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+	// バリアの状態がピクセルシェーダーではなかったらバリアを張る
+	if (currentState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
+
+		// ----------リソースバリアで書き込み可能に変更----------
+		// 今回のバリアはTransition
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象のリソース。現在のバックバッファに対して行う
+		barrier.Transition.pResource = renderTextureResource.Get();
+		// 遷移前(現在)のResouceState
+		barrier.Transition.StateBefore = currentState;
+		// 遷移後のResouceState
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// TransitionBarrierを張る
+		dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+
+		// 状態をピクセルシェーダーにしておく
+		currentState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	}
 }
 
 void PostEffect::DescriptorHeapGenerate() {

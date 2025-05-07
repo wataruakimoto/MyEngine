@@ -149,6 +149,9 @@ private:
 	// TrainsitionBarrierの設定
 	D3D12_RESOURCE_BARRIER barrier{};
 
+	// バリアの現在の状態
+	D3D12_RESOURCE_STATES currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
 	// DirectX12共通処理
 	DirectXUtility* dxUtility = nullptr;
 };

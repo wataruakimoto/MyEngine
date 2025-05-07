@@ -24,6 +24,9 @@ void Framework::Initialize() {
 	dxUtility = std::make_unique <DirectXUtility>();
 	dxUtility->Initialize();
 
+	// SrVマネージャ初期化
+	SrvManager::GetInstance()->Initialize(dxUtility.get());
+
 	// レンダーテクスチャ初期化
 	postEffect = std::make_unique <PostEffect>();
 	postEffect->Initialize(dxUtility.get());
@@ -35,9 +38,6 @@ void Framework::Initialize() {
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
 	swapChain->Initialize(winApp.get(), dxUtility.get());
-
-	// SrVマネージャ初期化
-	SrvManager::GetInstance()->Initialize(dxUtility.get());
 
 	// ImGuiの初期化
 	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxUtility.get(), swapChain.get());
