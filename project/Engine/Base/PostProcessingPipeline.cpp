@@ -115,14 +115,14 @@ void PostProcessingPipeline::CreateRasterizerState() {
 void PostProcessingPipeline::CreateVertexShader() {
 
 	// シェーダコンパイルを行う
-	vertexShaderBlob = dxUtility->CompileShader(L"resources/shaders/CopyImage.VS.hlsl", L"vs_6_0");
+	vertexShaderBlob = dxUtility->CompileShader(L"resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 }
 
 void PostProcessingPipeline::CreatePixelShader() {
 
 	// シェーダコンパイルを行う
-	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/CopyImage.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/Grayscale.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
