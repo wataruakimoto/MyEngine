@@ -11,7 +11,6 @@
 /// === 前方宣言 === ///
 class Camera;
 class DirectXUtility;
-class SwapChain;
 
 /// === 3Dオブジェクト === ///
 class Object3d {

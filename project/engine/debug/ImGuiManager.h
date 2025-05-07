@@ -74,5 +74,9 @@ public:
 ///-------------------------------------------///
 private:
 
+	// DirectXUtilityの借りポインタ
+	DirectXUtility* dxUtility_ = nullptr;
+
+	// SwapChainの借りポインタ
 	SwapChain* swapChain_ = nullptr;
 };

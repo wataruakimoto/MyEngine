@@ -1,26 +1,14 @@
 #pragma once
-#include "DirectXUtility.h"
 #include "math/Vector4.h"
+#include <d3d12.h>
 #include <wrl.h>
+#include <stdint.h>
 
-/// === レンダーテクスチャ処理 === ///
-class RenderTexture {
+/// === 前方宣言 === ///
+class DirectXUtility;
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
-
-	// インスタンス
-	static RenderTexture* instance;
-	// コンストラクタの隠蔽
-	RenderTexture() = default;
-	// デストラクタの隠蔽
-	~RenderTexture() = default;
-	// コピーコンストラクタの封印
-	RenderTexture(RenderTexture&) = delete;
-	// コピー代入演算子の封印
-	RenderTexture& operator=(RenderTexture&) = delete;
+/// === ポストエフェクト処理 === ///
+class PostEffect {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -39,9 +27,9 @@ public:
 	void PreDraw();
 
 	/// <summary>
-	/// 終了
+	/// 描画後処理
 	/// </summary>
-	void Finalize();
+	void PostDraw();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -49,7 +37,7 @@ public:
 private:
 
 	/// <summary>
-	/// ディスクリプタヒープ生成
+	/// デスクリプタヒープ生成
 	/// </summary>
 	void DescriptorHeapGenerate();
 
@@ -59,9 +47,24 @@ private:
 	void RenderTargetViewInitialize();
 
 	/// <summary>
+	/// シェーダーリソースビュー初期化
+	/// </summary>
+	void ShaderResourceViewInitialize();
+
+	/// <summary>
 	/// 深度ステンシルビュー初期化
 	/// </summary>
 	void DepthStencilViewInitialize();
+
+	/// <summary>
+	/// ビューポート矩形の初期化
+	/// </summary>
+	void ViewportRectInitialize();
+
+	/// <summary>
+	/// シザリング矩形の初期化
+	/// </summary>
+	void ScissoringRectInitialize();
 
 	/// <summary>
 	/// レンダーテクスチャ生成
@@ -88,15 +91,21 @@ private:
 ///-------------------------------------------///
 public:
 
-	static RenderTexture* GetInstance();
+	uint32_t GetSRVIndex() const { return srvIndex; } // SRVインデックスのゲッター
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// DirectX12共通処理
-	DirectXUtility* dxUtility = nullptr;
+	// HRESULT
+	HRESULT hr;
+
+	// SRVインデックス
+	uint32_t srvIndex = 0;
+
+	// レンダーテクスチャリソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
 
 	// RTV用デスクリプタサイズ
 	uint32_t rtvDescriptorSize;
@@ -113,6 +122,9 @@ private:
 	// クリアする色
 	const Vector4 kRenderTargetClearValue = { 1.0f, 0.0f, 0.0f, 1.0f }; // 赤に設定
 
+	// 深度バッファリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
+
 	// DSV用デスクリプタサイズ
 	uint32_t dsvDescriptorSize;
 
@@ -127,5 +139,20 @@ private:
 
 	// クリアする深度
 	const float kDepthClearValue = 1.0f;
+
+	// ビューポート矩形
+	D3D12_VIEWPORT viewportRect{};
+
+	// シザー矩形
+	D3D12_RECT scissorRect{};
+
+	// TrainsitionBarrierの設定
+	D3D12_RESOURCE_BARRIER barrier{};
+
+	// バリアの現在の状態
+	D3D12_RESOURCE_STATES currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+	// DirectX12共通処理
+	DirectXUtility* dxUtility = nullptr;
 };
 

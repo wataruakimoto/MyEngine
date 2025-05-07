@@ -1,7 +1,6 @@
 #include "ParticleSystem.h"
 #include "ParticleCommon.h"
 #include "base/DirectXUtility.h"
-#include "base/SwapChain.h"
 #include "base/SrvManager.h"
 #include "2d/TextureManager.h"
 #include "ModelManager.h"
@@ -107,25 +106,25 @@ void ParticleSystem::Update() {
 void ParticleSystem::Draw() {
 
 	// 頂点バッファビューを設定
-	ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// 参照バッファビューを設定
-	ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// 各パーティクルグループの描画
 	for (auto& [key, particleGroup] : particleGroups) {
 
 		// SRVのDescriptorTableの先頭を設定
-		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(particleGroup.textureFilePath));
+		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(particleGroup.textureFilePath));
 
 		/// === パーティクルCBufferの場所を設定 === ///
-		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
+		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
 
 		// 描画(DrawCall)
-		ParticleCommon::GetInstance()->GetSwapChain()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
+		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
 	}
 }
 

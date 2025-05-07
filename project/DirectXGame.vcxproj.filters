@@ -125,6 +125,8 @@
     <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
+    <ClCompile Include="engine\base\PostEffect.cpp" />
+    <ClCompile Include="Engine\Base\PostProcessingPipeline.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -228,6 +230,8 @@
     <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
+    <ClInclude Include="engine\base\PostEffect.h" />
+    <ClInclude Include="Engine\Base\PostProcessingPipeline.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -237,6 +241,7 @@
       <Filter>Engine\3d</Filter>
     </None>
     <None Include="resources\shaders\Particle.hlsli" />
+    <None Include="Resources\shaders\FullScreen.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
@@ -253,5 +258,9 @@
     </FxCompile>
     <FxCompile Include="resources\shaders\Particle.VS.hlsl" />
     <FxCompile Include="resources\shaders\Particle.PS.hlsl" />
+    <FxCompile Include="Resources\shaders\FullScreen.VS.hlsl" />
+    <FxCompile Include="Resources\shaders\Grayscale.PS.hlsl" />
+    <FxCompile Include="resources\shaders\FullScreen.PS.hlsl" />
+    <FxCompile Include="resources\shaders\Vignette.PS.hlsl" />
   </ItemGroup>
 </Project>
