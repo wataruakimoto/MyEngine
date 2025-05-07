@@ -1,7 +1,6 @@
 #include "Model.h"
 #include "Modelcommon.h"
 #include "base/DirectXUtility.h"
-#include "base/SwapChain.h"
 #include "math/MathMatrix.h"
 #include "2d/TextureManager.h"
 #include "3d/ModelManager.h"
@@ -30,16 +29,16 @@ void Model::Initialize(const std::string& directorypath, const std::string& file
 void Model::Draw() {
 
 	// 頂点バッファビューを設定
-	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureFilePath));
+	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureFilePath));
 
 	// 描画(DrawCall)
-	ModelCommon::GetInstance()->GetSwapChain()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
 }
 
 void Model::ShowImGui() {

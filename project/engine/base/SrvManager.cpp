@@ -16,11 +16,10 @@ SrvManager* SrvManager::GetInstance() {
 
 const uint32_t SrvManager::kMaxSRVCount = 512;
 
-void SrvManager::Initialize(DirectXUtility* dxUtility, SwapChain* swapChain) {
+void SrvManager::Initialize(DirectXUtility* dxUtility) {
 
 	//　引数をメンバ変数にコピー
 	this->dxUtility_ = dxUtility;
-	this->swapChain_ = swapChain;
 
 	// デスクリプタヒープの作成
 	descriptorHeap = dxUtility_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);
@@ -33,7 +32,7 @@ void SrvManager::PreDraw() {
 
 	//描画用のDescriptorHeapの設定
 	ID3D12DescriptorHeap* descriptorHeaps[] = { descriptorHeap.Get() };
-	swapChain_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void SrvManager::Finalize() {
@@ -128,5 +127,5 @@ void SrvManager::CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pR
 
 void SrvManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex) {
 
-	swapChain_->GetCommandList()->SetGraphicsRootDescriptorTable(rootParameterIndex, GetGPUDescriptorHandle(srvIndex));
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(rootParameterIndex, GetGPUDescriptorHandle(srvIndex));
 }

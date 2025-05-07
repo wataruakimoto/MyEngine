@@ -2,7 +2,6 @@
 
 /// === 前方宣言 === ///
 class DirectXUtility;
-class SwapChain;
 
 /// === 3Dモデル共通部=== ///
 class ModelCommon {
@@ -38,7 +37,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility, SwapChain* swapChain);
+	void Initialize(DirectXUtility* dxUtility);
 
 	/// <summary>
 	/// 終了
@@ -56,12 +55,6 @@ public:
 	/// <returns></returns>
 	DirectXUtility* GetdxUtility() const { return dxUtility_; }
 
-	/// <summary>
-	/// SwapChainのポインタを取得
-	/// </summary>
-	/// <returns></returns>
-	SwapChain* GetSwapChain() const { return swapChain_; }
-
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -69,7 +62,4 @@ private:
 
 	// DirectX基盤のポインタ
 	DirectXUtility* dxUtility_ = nullptr;
-
-	// SwapChainのポインタ
-	SwapChain* swapChain_ = nullptr;
 };

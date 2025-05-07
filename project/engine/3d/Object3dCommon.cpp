@@ -1,6 +1,5 @@
 #include "Object3dCommon.h"
 #include "base/DirectXUtility.h"
-#include "base/SwapChain.h"
 #include "base/SrvManager.h"
 #include "debug/Logger.h"
 #include "camera/DebugCamera.h"
@@ -18,11 +17,10 @@ Object3dCommon* Object3dCommon::GetInstance() {
 	return instance;
 }
 
-void Object3dCommon::Initialize(DirectXUtility* dxUtility, SwapChain* swapChain) {
+void Object3dCommon::Initialize(DirectXUtility* dxUtility) {
 
 	// 引数をメンバ変数に代入
 	dxUtility_ = dxUtility;
-	swapChain_ = swapChain;
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
@@ -36,16 +34,16 @@ void Object3dCommon::Finalize() {
 void Object3dCommon::SettingCommonDrawing() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
-	swapChain_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	swapChain_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
+	dxUtility_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
-	swapChain_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
-	swapChain_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
 void Object3dCommon::CreateRootSignature() {
