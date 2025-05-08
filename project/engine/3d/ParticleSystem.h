@@ -4,10 +4,12 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
+#include "Particle.h"
 
 #include <d3d12.h>
 #include <random>
 #include <list>
+#include <numbers>
 #include <unordered_map>
 #include <wrl.h>
 
@@ -22,15 +24,6 @@ struct ParticleForGPU {
 	Matrix4x4 WVP;
 	Matrix4x4 world;
 	Vector4 color;
-};
-
-// パーティクル
-struct Particle {
-	Transform transform;
-	Vector3 velocity;
-	Vector4 color;
-	float lifeTime;
-	float currentTime;
 };
 
 // パーティクルグループ
@@ -107,7 +100,7 @@ public:
 	/// <summary>
 	/// パーティクルの発生
 	/// </summary>
-	void Emit(const std::string name, const Vector3& position, uint32_t count);
+	void Emit(const std::string name, const Vector3& position, uint32_t count, Particle setting);
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -132,7 +125,7 @@ public:
 	/// <summary>
 	/// パーティクル生成
 	/// </summary>
-	Particle MakeNewParticle();
+	Particle MakeNewParticle(Particle setting);
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -197,4 +190,31 @@ private:
 
 	// パーティクルグループコンテナ
 	std::unordered_map<std::string, ParticleGroup> particleGroups;
+
+	// ワールド行列
+	Matrix4x4 worldMatrix = {};
+
+	// WorldViewProjection行列
+	Matrix4x4 worldViewProjectionMatrix = {};
+
+///-------------------------------------------/// 
+/// リング用の変数
+///-------------------------------------------///
+
+	// リングの設定
+	const uint32_t kRingDivide = 32; // 円の分割数
+	const float kOuterRadius = 1.0f; // 外側の半径
+	const float kInnerRadius = 0.2f; // 内側の半径
+	//const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
+
+///-------------------------------------------/// 
+/// シリンダー用の変数
+///-------------------------------------------///
+
+	// シリンダーの設定
+	const uint32_t kCylinderDivide = 32; // 円の分割数
+	const float kTopRadius = 1.0f; // 上側の半径
+	const float kBottomRadius = 1.0f; // 下側の半径
+	const float kHeight = 3.0f; // 高さ
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide); // 分割あたりのラジアン 2π/分割数
 };

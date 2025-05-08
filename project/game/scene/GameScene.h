@@ -58,4 +58,7 @@ private:
 
 	Transform EmitterTransform1 = {};
 	Transform EmitterTransform2 = {};
+
+	Particle particleSetting1 = {};
+	Particle particleSetting2 = {};
 };

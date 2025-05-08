@@ -9,6 +9,8 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 
+#include <numbers>
+
 void GameScene::Initialize() {
 
 	// カメラの初期化
@@ -18,9 +20,9 @@ void GameScene::Initialize() {
 
 	AudioManager::GetInstance()->SoundLoadWave("Resources/fanfare.wav");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/circle.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/uvChecker.png");
+	TextureManager::GetInstance()->LoadTexture("Resources/circle2.png");
 
 	// モデルの生成・初期化
 	modelMonsterBall = std::make_unique <Model>();
@@ -42,16 +44,27 @@ void GameScene::Initialize() {
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(camera.get());
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle", "Resources/circle.png");
-	ParticleSystem::GetInstance()->CreateParticleGroup("uv", "Resources/uvChecker.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("gradationLine", "Resources/gradationLine.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png");
 
 	// Transformの設定
-	EmitterTransform1.translate = { -2.0f,2.5f,0.0f };
-	EmitterTransform2.translate = { 2.0f,2.5f,0.0f };
+	EmitterTransform1.translate = { -2.5f,0.0f,0.0f };
+	EmitterTransform2.translate = { 2.5f,0.0f,0.0f };
+
+	// パーティクルの設定
+	particleSetting1.color = { 0.0f,0.0f,1.0f,1.0f };
+	particleSetting1.useBillboard = false;
+
+	particleSetting2.randomizeScale = true;
+	particleSetting2.randomScaleMin = { 0.05f,0.4f,1.0f };
+	particleSetting2.randomScaleMax = { 0.05f,1.5f,1.0f };
+	particleSetting2.randomizeRotate = true;
+	particleSetting2.randomRotateMin = { 0.0f,0.0f,-std::numbers::pi_v<float> };
+	particleSetting2.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
 
 	// エミッタ生成
-	particleEmitter1 = std::make_unique <ParticleEmitter>("circle", EmitterTransform1, 5, 0.5f);
-	particleEmitter2 = std::make_unique <ParticleEmitter>("uv", EmitterTransform2, 5, 0.5f);
+	particleEmitter1 = std::make_unique <ParticleEmitter>("gradationLine", EmitterTransform1, 1, 1.0f, particleSetting1);
+	particleEmitter2 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform2, 3, 0.5f, particleSetting2);
 }
 
 void GameScene::Update() {
@@ -74,10 +87,10 @@ void GameScene::Update() {
 	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	particleEmitter1->ShowImGui("particleEmitter");
+	particleEmitter1->ShowImGui("gradationLine");
 	particleEmitter1->Emit();
 
-	particleEmitter2->ShowImGui("particleEmitter2");
+	particleEmitter2->ShowImGui("circle2");
 	particleEmitter2->Emit();
 
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");

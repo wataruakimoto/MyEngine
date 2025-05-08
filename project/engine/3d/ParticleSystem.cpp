@@ -10,7 +10,6 @@
 #include "debug/Logger.h"
 
 #include <string>
-#include <numbers>
 #include <imgui.h>
 
 using namespace MathMatrix;
@@ -72,13 +71,26 @@ void ParticleSystem::Update() {
 
 			// Scaleのみの行列
 			Matrix4x4 scaleMatrix = MakeScaleMatrix(iterator->transform.scale);
+			// Rotateのみの行列
+			Matrix4x4 rotateMatrix = MakeRotateMatrix(iterator->transform.rotate);
 			// Translateのみの行列
 			Matrix4x4 translateMatrix = MakeTranslateMatrix(iterator->transform.translate);
-			// WorldMatrixを計算
-			Matrix4x4 worldMatrix = scaleMatrix * billboardMatrix * translateMatrix;
+
+			// ビルボードするなら
+			if (iterator->useBillboard) {
+
+				// WorldMatrixを計算
+				worldMatrix = scaleMatrix * rotateMatrix * billboardMatrix * translateMatrix;
+			}
+			// ビルボードしないなら
+			else {
+
+				// WorldMatrixを計算
+				worldMatrix = scaleMatrix * rotateMatrix * translateMatrix;
+			}
 
 			// WVPMatrixを合成
-			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+			worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 			if (particleGroup.numInstance < kNumMaxInstance) {
 
@@ -124,7 +136,9 @@ void ParticleSystem::Draw() {
 		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
 
 		// 描画(DrawCall)
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
+		//ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
+		//ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, particleGroup.numInstance, 0, 0, 0);
+		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kCylinderDivide, particleGroup.numInstance, 0, 0, 0);
 	}
 }
 
@@ -143,7 +157,9 @@ void ParticleSystem::ShowImGui(const char* name) {
 			int particleIndex = 0;
 			for (const auto& particle : particleGroup.particles) {
 				if (ImGui::TreeNode((key + " Particle " + std::to_string(particleIndex)).c_str())) {
-					ImGui::Text("Position: (%.2f, %.2f, %.2f)", particle.transform.translate.x, particle.transform.translate.y, particle.transform.translate.z);
+					ImGui::Text("Scale: (%.2f, %.2f, %.2f)", particle.transform.scale.x, particle.transform.scale.y, particle.transform.scale.z);
+					ImGui::Text("Rotate: (%.2f, %.2f, %.2f)", particle.transform.rotate.x, particle.transform.rotate.y, particle.transform.rotate.z);
+					ImGui::Text("Translate: (%.2f, %.2f, %.2f)", particle.transform.translate.x, particle.transform.translate.y, particle.transform.translate.z);
 					ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", particle.velocity.x, particle.velocity.y, particle.velocity.z);
 					ImGui::Text("Color: (%.2f, %.2f, %.2f, %.2f)", particle.color.x, particle.color.y, particle.color.z, particle.color.w);
 					ImGui::Text("LifeTime: %.2f", particle.lifeTime);
@@ -200,7 +216,7 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 	SrvManager::GetInstance()->CreateSRVforStructuredBuffer(particleGroups[name].srvIndex, particleGroups[name].particleResource.Get(), kNumMaxInstance, sizeof(ParticleForGPU));
 }
 
-void ParticleSystem::Emit(const std::string name, const Vector3& position, uint32_t count) {
+void ParticleSystem::Emit(const std::string name, const Vector3& position, uint32_t count, Particle setting) {
 
 	// 登録済みのParticleGroupかチェック
 	if (particleGroups.find(name) == particleGroups.end()) {
@@ -214,7 +230,7 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 	for (uint32_t index = 0; index < count; ++index) {
 
 		// 新しいパーティクルを作成
-		Particle particle = MakeNewParticle();
+		Particle particle = MakeNewParticle(setting);
 
 		// 位置を設定
 		particle.transform.translate = position;
@@ -227,14 +243,18 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 void ParticleSystem::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
+	//vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
+	//vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
+	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
 	// リソースの先頭アドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズ 頂点のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	//vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	//vertexBufferView.SizeInBytes = sizeof(VertexData) * 4 * kRingDivide;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 4 * kCylinderDivide;
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -242,32 +262,97 @@ void ParticleSystem::InitializeVertexData() {
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
 	/// === VertexResourceにデータを書き込む(4頂点) === ///
+	
+	//// 左下
+	//vertexData[0].position = { -0.5f, 0.5f, 0.0f, 1.0f };
+	//vertexData[0].texcoord = { 0.0f, 1.0f };
+	//// 左上
+	//vertexData[1].position = { -0.5f, -0.5f, 0.0f, 1.0f };
+	//vertexData[1].texcoord = { 0.0f, 0.0f };
+	//// 右下
+	//vertexData[2].position = { 0.5f, 0.5f, 0.0f, 1.0f };
+	//vertexData[2].texcoord = { 1.0f, 1.0f };
+	//// 右上
+	//vertexData[3].position = { 0.5f, -0.5f, 0.0f, 1.0f };
+	//vertexData[3].texcoord = { 1.0f, 0.0f };
 
-	// 左下
-	vertexData[0].position = { -0.5f, 0.5f, 0.0f, 1.0f };
-	vertexData[0].texcoord = { 0.0f, 1.0f };
-	// 左上
-	vertexData[1].position = { -0.5f, -0.5f, 0.0f, 1.0f };
-	vertexData[1].texcoord = { 0.0f, 0.0f };
-	// 右下
-	vertexData[2].position = { 0.5f, 0.5f, 0.0f, 1.0f };
-	vertexData[2].texcoord = { 1.0f, 1.0f };
-	// 右上
-	vertexData[3].position = { 0.5f, -0.5f, 0.0f, 1.0f };
-	vertexData[3].texcoord = { 1.0f, 0.0f };
+	/// === リング用の頂点データの計算 === ///
+
+	//for (uint32_t index = 0; index < kRingDivide; ++index) {
+	//
+	//	float sin = std::sin(index * radianPerDivide);
+	//	float cos = std::cos(index * radianPerDivide);
+	//	float sinNext = std::sin((index + 1) * radianPerDivide);
+	//	float cosNext = std::cos((index + 1) * radianPerDivide);
+	//	float uv = float(index) / float(kRingDivide);
+	//	float uvNext = float(index + 1) / float(kRingDivide);
+	//
+	//	uint32_t vertexIndex = index * 4; // 頂点のインデックス
+	//
+	//	/// === VertexResourceにデータを書き込む(4頂点) === ///
+	//
+	//	// 左下
+	//	vertexData[0 + vertexIndex].position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f };
+	//	vertexData[0 + vertexIndex].texcoord = { uv, 1.0f };
+	//	// 左上
+	//	vertexData[1 + vertexIndex].position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f };
+	//	vertexData[1 + vertexIndex].texcoord = { uv, 0.0f };
+	//	// 右下
+	//	vertexData[2 + vertexIndex].position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f };
+	//	vertexData[2 + vertexIndex].texcoord = { uvNext, 1.0f };
+	//	// 右上
+	//	vertexData[3 + vertexIndex].position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f };
+	//	vertexData[3 + vertexIndex].texcoord = { uvNext, 0.0f };
+	//}
+
+	/// === シリンダ用の頂点データの計算 === ///
+
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
+		float sinNext = std::sin((index + 1) * radianPerDivide);
+		float cosNext = std::cos((index + 1) * radianPerDivide);
+		float uv = float(index) / float(kCylinderDivide);
+		float uvNext = float(index + 1) / float(kCylinderDivide);
+
+		uint32_t vertexIndex = index * 4; // 頂点のインデックス
+
+		/// === VertexResourceにデータを書き込む(4頂点) === ///
+		// 左下
+		vertexData[0 + vertexIndex].position = { -sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f };
+		vertexData[0 + vertexIndex].texcoord = { uv, 0.0f };
+		vertexData[0 + vertexIndex].normal = { -sin, 0.0f, cos };
+		// 左上
+		vertexData[1 + vertexIndex].position = { -sin * kTopRadius, kHeight, cos * kTopRadius, 1.0f };
+		vertexData[1 + vertexIndex].texcoord = { uv, 1.0f };
+		vertexData[1 + vertexIndex].normal = { -sin, 0.0f, cos };
+		// 右下
+		vertexData[2 + vertexIndex].position = { -sinNext * kBottomRadius, 0.0f, cosNext * kBottomRadius, 1.0f };
+		vertexData[2 + vertexIndex].texcoord = { uvNext, 0.0f };
+		vertexData[2 + vertexIndex].normal = { -sinNext, 0.0f, cosNext };
+		// 右上
+		vertexData[3 + vertexIndex].position = { -sinNext * kTopRadius, kHeight, cosNext * kTopRadius, 1.0f };
+		vertexData[3 + vertexIndex].texcoord = { uvNext, 1.0f };
+		vertexData[3 + vertexIndex].normal = { -sinNext, 0.0f, cosNext };
+	}
 }
 
 void ParticleSystem::InitializeIndexData() {
 
 	/// === IndexResourceを作る === ///
-	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
+	//indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
+	//indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kRingDivide);
+	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kCylinderDivide);
 
 	/// === IBVを作成する(値を設定するだけ) === ///
 
 	// リソースの先頭のアドレスから使う
 	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6;
+	//indexBufferView.SizeInBytes = sizeof(uint32_t) * 6;
+	//indexBufferView.SizeInBytes = sizeof(uint32_t) * 6 * kRingDivide;
+	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6 * kCylinderDivide;
 	// インデックスはuint32_tとする
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
@@ -276,12 +361,40 @@ void ParticleSystem::InitializeIndexData() {
 
 	/// === IndexResourceにデータを書き込む(6個分)=== ///
 
-	indexData[0] = 0; // 左下
-	indexData[1] = 1; // 左上
-	indexData[2] = 2; // 右下
-	indexData[3] = 1; // 左上
-	indexData[4] = 3; // 右上
-	indexData[5] = 2; // 右下
+	//indexData[0] = 0; // 左下
+	//indexData[1] = 1; // 左上
+	//indexData[2] = 2; // 右下
+	//indexData[3] = 1; // 左上
+	//indexData[4] = 3; // 右上
+	//indexData[5] = 2; // 右下
+
+	/// === リング用の頂点データの計算 === ///
+
+	/// === IndexResourceにデータを書き込む(6個分)=== ///
+
+	//for (uint32_t index = 0; index < kRingDivide; ++index) {
+	//
+	//	indexData[index * 6 + 0] = index * 4 + 0; // 左下
+	//	indexData[index * 6 + 1] = index * 4 + 1; // 左上
+	//	indexData[index * 6 + 2] = index * 4 + 2; // 右下
+	//	indexData[index * 6 + 3] = index * 4 + 1; // 左上
+	//	indexData[index * 6 + 4] = index * 4 + 3; // 右上
+	//	indexData[index * 6 + 5] = index * 4 + 2; // 右下
+	//}
+
+	/// === シリンダ用の頂点データ計算 === ///
+
+	/// === IndexResourceにデータを書き込む(6個分)=== ///
+
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+
+		indexData[index * 6 + 0] = index * 4 + 0; // 左下
+		indexData[index * 6 + 1] = index * 4 + 1; // 左上
+		indexData[index * 6 + 2] = index * 4 + 2; // 右下
+		indexData[index * 6 + 3] = index * 4 + 1; // 左上
+		indexData[index * 6 + 4] = index * 4 + 3; // 右上
+		indexData[index * 6 + 5] = index * 4 + 2; // 右下
+	}
 }
 
 void ParticleSystem::InitializeMaterialData() {
@@ -297,30 +410,138 @@ void ParticleSystem::InitializeMaterialData() {
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }
 
-Particle ParticleSystem::MakeNewParticle() {
+Particle ParticleSystem::MakeNewParticle(Particle setting) {
 
-	std::uniform_real_distribution<float> distribution(-1.0f, 1.0f);
+	// 返す用のパーティクル
+	Particle resultParticle;
+	
+	// Scaleの設定
+	if (setting.randomizeScale) {
 
-	std::uniform_real_distribution<float> distColor(0.0f, 1.0f);
+		// X軸のスケールをランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomScaleMin.x, setting.randomScaleMax.x);
+		resultParticle.transform.scale.x = distributionX(randomEngine);
 
-	std::uniform_real_distribution<float> distTime(1.0f, 3.0f);
+		// Y軸のスケールをランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomScaleMin.y, setting.randomScaleMax.y);
+		resultParticle.transform.scale.y = distributionY(randomEngine);
 
-	Vector3 randomTranslate = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+		// Z軸のスケールをランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomScaleMin.z, setting.randomScaleMax.z);
+		resultParticle.transform.scale.z = distributionZ(randomEngine);
+	}
+	else {
 
-	Particle particle;
+		// 設定項目を引き継ぐ
+		resultParticle.transform.scale = setting.transform.scale;
+	}
 
-	particle.transform.scale = { 1.0f,1.0f,1.0f };
-	particle.transform.rotate = { 0.0f,3.14f,0.0f };
-	particle.transform.translate += randomTranslate;
+	// Rotateの設定
+	if (setting.randomizeRotate) {
 
-	particle.velocity = { distribution(randomEngine),distribution(randomEngine),distribution(randomEngine) };
+		// X軸の回転をランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomRotateMin.x, setting.randomRotateMax.x);
+		resultParticle.transform.rotate.x = distributionX(randomEngine);
 
-	particle.color = { distColor(randomEngine),distColor(randomEngine) ,distColor(randomEngine) ,1.0f };
+		// Y軸の回転をランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomRotateMin.y, setting.randomRotateMax.y);
+		resultParticle.transform.rotate.y = distributionY(randomEngine);
 
-	particle.lifeTime = distTime(randomEngine);
-	particle.currentTime = 0.0f;
+		// Z軸の回転をランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomRotateMin.z, setting.randomRotateMax.z);
+		resultParticle.transform.rotate.z = distributionZ(randomEngine);
+	}
+	else {
 
-	return particle;
+		// 設定項目を引き継ぐ
+		resultParticle.transform.rotate = setting.transform.rotate;
+	}
+
+	// Translateの設定
+	if (setting.randomizeTranslate) {
+
+		// X軸の位置をランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomTranslateMin.x, setting.randomTranslateMax.x);
+		resultParticle.transform.translate.x = distributionX(randomEngine);
+
+		// Y軸の位置をランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomTranslateMin.y, setting.randomTranslateMax.y);
+		resultParticle.transform.translate.y = distributionY(randomEngine);
+
+		// Z軸の位置をランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomTranslateMin.z, setting.randomTranslateMax.z);
+		resultParticle.transform.translate.z = distributionZ(randomEngine);
+	}
+	else {
+		
+		// 設定項目を引き継ぐ
+		resultParticle.transform.translate = setting.transform.translate;
+	}
+
+	// Velocityの設定
+	if (setting.randomizeVelocity) {
+		
+		// X軸の速度をランダムに設定
+		std::uniform_real_distribution<float> distributionX(setting.randomVelocityMin.x, setting.randomVelocityMax.x);
+		resultParticle.velocity.x = distributionX(randomEngine);
+		
+		// Y軸の速度をランダムに設定
+		std::uniform_real_distribution<float> distributionY(setting.randomVelocityMin.y, setting.randomVelocityMax.y);
+		resultParticle.velocity.y = distributionY(randomEngine);
+		
+		// Z軸の速度をランダムに設定
+		std::uniform_real_distribution<float> distributionZ(setting.randomVelocityMin.z, setting.randomVelocityMax.z);
+		resultParticle.velocity.z = distributionZ(randomEngine);
+	}
+	else {
+		
+		// 設定項目を引き継ぐ
+		resultParticle.velocity = setting.velocity;
+	}
+
+	// Colorの設定
+	if (setting.randomizeColor) {
+
+		// Rの色をランダムに設定
+		std::uniform_real_distribution<float> distributionR(setting.randomColorMin.x, setting.randomColorMax.x);
+		resultParticle.color.x = distributionR(randomEngine);
+
+		// Gの色をランダムに設定
+		std::uniform_real_distribution<float> distributionG(setting.randomColorMin.y, setting.randomColorMax.y);
+		resultParticle.color.y = distributionG(randomEngine);
+
+		// Bの色をランダムに設定
+		std::uniform_real_distribution<float> distributionB(setting.randomColorMin.z, setting.randomColorMax.z);
+		resultParticle.color.z = distributionB(randomEngine);
+
+		// Aの色をランダムに設定
+		std::uniform_real_distribution<float> distributionA(setting.randomColorMin.w, setting.randomColorMax.w);
+		resultParticle.color.w = distributionA(randomEngine);
+	}
+	else {
+		
+		// 設定項目を引き継ぐ
+		resultParticle.color = setting.color;
+	}
+
+	// LifeTimeの設定
+	if (setting.randomizeLifeTime) {
+
+		// 寿命をランダムに設定
+		std::uniform_real_distribution<float> distribution(setting.randomLifeTimeMin, setting.randomLifeTimeMax);
+		resultParticle.lifeTime = distribution(randomEngine);
+	}
+	else {
+
+		// 設定項目を引き継ぐ
+		resultParticle.lifeTime = setting.lifeTime;
+	}
+
+	resultParticle.currentTime = 0.0f;
+
+	resultParticle.useBillboard = setting.useBillboard;
+
+	return resultParticle;
 }
 
 ParticleSystem* ParticleSystem::instance = nullptr;

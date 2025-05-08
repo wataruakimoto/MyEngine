@@ -1,6 +1,6 @@
 #pragma once
-#include "math/Vector3.h"
 #include "Data/Transform.h"
+#include "Particle.h"
 
 #include <string>
 
@@ -15,7 +15,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ParticleEmitter(const std::string& name, const Transform& transform, uint32_t count, float frequency);
+	ParticleEmitter(const std::string& name, const Transform& transform, uint32_t count, float frequency, Particle setting);
 
 	/// <summary>
 	/// パーティクル発生
@@ -46,4 +46,7 @@ private:
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;
+
+	// 設定項目
+	Particle settings;
 };

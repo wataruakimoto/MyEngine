@@ -232,6 +232,7 @@
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\base\PostEffect.h" />
     <ClInclude Include="Engine\Base\PostProcessingPipeline.h" />
+    <ClInclude Include="engine\3d\Particle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
