@@ -194,6 +194,9 @@ private:
 	// ワールド行列
 	Matrix4x4 worldMatrix = {};
 
+	// WorldViewProjection行列
+	Matrix4x4 worldViewProjectionMatrix = {};
+
 ///-------------------------------------------/// 
 /// リング用の変数
 ///-------------------------------------------///
@@ -202,5 +205,16 @@ private:
 	const uint32_t kRingDivide = 32; // 円の分割数
 	const float kOuterRadius = 1.0f; // 外側の半径
 	const float kInnerRadius = 0.2f; // 内側の半径
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
+	//const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
+
+///-------------------------------------------/// 
+/// シリンダー用の変数
+///-------------------------------------------///
+
+	// シリンダーの設定
+	const uint32_t kCylinderDivide = 32; // 円の分割数
+	const float kTopRadius = 1.0f; // 上側の半径
+	const float kBottomRadius = 1.0f; // 下側の半径
+	const float kHeight = 3.0f; // 高さ
+	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide); // 分割あたりのラジアン 2π/分割数
 };

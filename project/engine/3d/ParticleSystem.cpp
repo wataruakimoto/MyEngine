@@ -90,7 +90,7 @@ void ParticleSystem::Update() {
 			}
 
 			// WVPMatrixを合成
-			Matrix4x4 worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+			worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 			if (particleGroup.numInstance < kNumMaxInstance) {
 
@@ -137,7 +137,8 @@ void ParticleSystem::Draw() {
 
 		// 描画(DrawCall)
 		//ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, particleGroup.numInstance, 0, 0, 0);
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, particleGroup.numInstance, 0, 0, 0);
+		//ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, particleGroup.numInstance, 0, 0, 0);
+		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kCylinderDivide, particleGroup.numInstance, 0, 0, 0);
 	}
 }
 
@@ -242,14 +243,18 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 void ParticleSystem::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
+	//vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
+	//vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
+	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kCylinderDivide);
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
 	// リソースの先頭アドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズ 頂点のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 4 * kRingDivide;
+	//vertexBufferView.SizeInBytes = sizeof(VertexData) * 6;
+	//vertexBufferView.SizeInBytes = sizeof(VertexData) * 4 * kRingDivide;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 4 * kCylinderDivide;
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -271,45 +276,83 @@ void ParticleSystem::InitializeVertexData() {
 	//vertexData[3].position = { 0.5f, -0.5f, 0.0f, 1.0f };
 	//vertexData[3].texcoord = { 1.0f, 0.0f };
 
-	for (uint32_t index = 0; index < kRingDivide; ++index) {
+	/// === リング用の頂点データの計算 === ///
 
-		float sin = std::sin(radianPerDivide * index);
-		float cos = std::cos(radianPerDivide * index);
+	//for (uint32_t index = 0; index < kRingDivide; ++index) {
+	//
+	//	float sin = std::sin(index * radianPerDivide);
+	//	float cos = std::cos(index * radianPerDivide);
+	//	float sinNext = std::sin((index + 1) * radianPerDivide);
+	//	float cosNext = std::cos((index + 1) * radianPerDivide);
+	//	float uv = float(index) / float(kRingDivide);
+	//	float uvNext = float(index + 1) / float(kRingDivide);
+	//
+	//	uint32_t vertexIndex = index * 4; // 頂点のインデックス
+	//
+	//	/// === VertexResourceにデータを書き込む(4頂点) === ///
+	//
+	//	// 左下
+	//	vertexData[0 + vertexIndex].position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f };
+	//	vertexData[0 + vertexIndex].texcoord = { uv, 1.0f };
+	//	// 左上
+	//	vertexData[1 + vertexIndex].position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f };
+	//	vertexData[1 + vertexIndex].texcoord = { uv, 0.0f };
+	//	// 右下
+	//	vertexData[2 + vertexIndex].position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f };
+	//	vertexData[2 + vertexIndex].texcoord = { uvNext, 1.0f };
+	//	// 右上
+	//	vertexData[3 + vertexIndex].position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f };
+	//	vertexData[3 + vertexIndex].texcoord = { uvNext, 0.0f };
+	//}
+
+	/// === シリンダ用の頂点データの計算 === ///
+
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
+
+		float sin = std::sin(index * radianPerDivide);
+		float cos = std::cos(index * radianPerDivide);
 		float sinNext = std::sin((index + 1) * radianPerDivide);
 		float cosNext = std::cos((index + 1) * radianPerDivide);
-		float uv = float(index) / float(kRingDivide);
-		float uvNext = float(index + 1) / float(kRingDivide);
+		float uv = float(index) / float(kCylinderDivide);
+		float uvNext = float(index + 1) / float(kCylinderDivide);
 
 		uint32_t vertexIndex = index * 4; // 頂点のインデックス
 
 		/// === VertexResourceにデータを書き込む(4頂点) === ///
-
 		// 左下
-		vertexData[0 + vertexIndex].position = { -sin * kInnerRadius, cos * kInnerRadius, 0.0f, 1.0f };
-		vertexData[0 + vertexIndex].texcoord = { uv, 1.0f };
+		vertexData[0 + vertexIndex].position = { -sin * kBottomRadius, 0.0f, cos * kBottomRadius, 1.0f };
+		vertexData[0 + vertexIndex].texcoord = { uv, 0.0f };
+		vertexData[0 + vertexIndex].normal = { -sin, 0.0f, cos };
 		// 左上
-		vertexData[1 + vertexIndex].position = { -sin * kOuterRadius, cos * kOuterRadius, 0.0f, 1.0f };
-		vertexData[1 + vertexIndex].texcoord = { uv, 0.0f };
+		vertexData[1 + vertexIndex].position = { -sin * kTopRadius, kHeight, cos * kTopRadius, 1.0f };
+		vertexData[1 + vertexIndex].texcoord = { uv, 1.0f };
+		vertexData[1 + vertexIndex].normal = { -sin, 0.0f, cos };
 		// 右下
-		vertexData[2 + vertexIndex].position = { -sinNext * kInnerRadius, cosNext * kInnerRadius, 0.0f, 1.0f };
-		vertexData[2 + vertexIndex].texcoord = { uvNext, 1.0f };
+		vertexData[2 + vertexIndex].position = { -sinNext * kBottomRadius, 0.0f, cosNext * kBottomRadius, 1.0f };
+		vertexData[2 + vertexIndex].texcoord = { uvNext, 0.0f };
+		vertexData[2 + vertexIndex].normal = { -sinNext, 0.0f, cosNext };
 		// 右上
-		vertexData[3 + vertexIndex].position = { -sinNext * kOuterRadius, cosNext * kOuterRadius, 0.0f, 1.0f };
-		vertexData[3 + vertexIndex].texcoord = { uvNext, 0.0f };
+		vertexData[3 + vertexIndex].position = { -sinNext * kTopRadius, kHeight, cosNext * kTopRadius, 1.0f };
+		vertexData[3 + vertexIndex].texcoord = { uvNext, 1.0f };
+		vertexData[3 + vertexIndex].normal = { -sinNext, 0.0f, cosNext };
 	}
 }
 
 void ParticleSystem::InitializeIndexData() {
 
 	/// === IndexResourceを作る === ///
-	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kRingDivide);
+	//indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
+	//indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kRingDivide);
+	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kCylinderDivide);
 
 	/// === IBVを作成する(値を設定するだけ) === ///
 
 	// リソースの先頭のアドレスから使う
 	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズはインデックス6つ分のサイズ
-	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6 * kRingDivide;
+	//indexBufferView.SizeInBytes = sizeof(uint32_t) * 6;
+	//indexBufferView.SizeInBytes = sizeof(uint32_t) * 6 * kRingDivide;
+	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6 * kCylinderDivide;
 	// インデックスはuint32_tとする
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 
@@ -325,9 +368,25 @@ void ParticleSystem::InitializeIndexData() {
 	//indexData[4] = 3; // 右上
 	//indexData[5] = 2; // 右下
 
+	/// === リング用の頂点データの計算 === ///
+
 	/// === IndexResourceにデータを書き込む(6個分)=== ///
 
-	for (uint32_t index = 0; index < kRingDivide; ++index) {
+	//for (uint32_t index = 0; index < kRingDivide; ++index) {
+	//
+	//	indexData[index * 6 + 0] = index * 4 + 0; // 左下
+	//	indexData[index * 6 + 1] = index * 4 + 1; // 左上
+	//	indexData[index * 6 + 2] = index * 4 + 2; // 右下
+	//	indexData[index * 6 + 3] = index * 4 + 1; // 左上
+	//	indexData[index * 6 + 4] = index * 4 + 3; // 右上
+	//	indexData[index * 6 + 5] = index * 4 + 2; // 右下
+	//}
+
+	/// === シリンダ用の頂点データ計算 === ///
+
+	/// === IndexResourceにデータを書き込む(6個分)=== ///
+
+	for (uint32_t index = 0; index < kCylinderDivide; ++index) {
 
 		indexData[index * 6 + 0] = index * 4 + 0; // 左下
 		indexData[index * 6 + 1] = index * 4 + 1; // 左上

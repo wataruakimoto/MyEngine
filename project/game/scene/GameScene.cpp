@@ -48,10 +48,13 @@ void GameScene::Initialize() {
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png");
 
 	// Transformの設定
-	EmitterTransform1.translate = { -2.0f,2.5f,0.0f };
-	EmitterTransform2.translate = { 2.0f,2.5f,0.0f };
+	EmitterTransform1.translate = { -2.5f,0.0f,0.0f };
+	EmitterTransform2.translate = { 2.5f,0.0f,0.0f };
 
 	// パーティクルの設定
+	particleSetting1.color = { 0.0f,0.0f,1.0f,1.0f };
+	particleSetting1.useBillboard = false;
+
 	particleSetting2.randomizeScale = true;
 	particleSetting2.randomScaleMin = { 0.05f,0.4f,1.0f };
 	particleSetting2.randomScaleMax = { 0.05f,1.5f,1.0f };
