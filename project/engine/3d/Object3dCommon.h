@@ -6,7 +6,6 @@
 /// === 前方宣言 === ///
 class Camera;
 class DirectXUtility;
-class SwapChain;
 
 /// === 3Dオブジェクト共通部 === ///
 class Object3dCommon {
@@ -42,7 +41,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility, SwapChain* swapChain);
+	void Initialize(DirectXUtility* dxUtility);
 
 	/// <summary>
 	/// 終了
@@ -122,12 +121,6 @@ public:
 	DirectXUtility* GetdxUtility() const { return dxUtility_; }
 
 	/// <summary>
-	/// SwapChainの取得
-	/// </summary>
-	/// <returns></returns>
-	SwapChain* GetSwapChain() const { return swapChain_; }
-
-	/// <summary>
 	/// デフォルトカメラのゲッター
 	/// </summary>
 	/// <returns>Camera</returns>
@@ -140,9 +133,6 @@ private:
 
 	// DirectXUtilityのポインタ
 	DirectXUtility* dxUtility_ = nullptr;
-
-	// SwapChainのポインタ
-	SwapChain* swapChain_ = nullptr;
 
 	// RootSignature
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;

@@ -3,7 +3,6 @@
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
 #include "base/DirectXUtility.h"
-#include "base/SwapChain.h"
 #include "TextureManager.h"
 #include <imgui.h>
 
@@ -96,22 +95,22 @@ void Sprite::Update() {
 void Sprite::Draw() {
 
 	/// === VertexBufferViewを設定 === ///
-	SpriteCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	/// === IndexBufferViewを設定 === ///
-	SpriteCommon::GetInstance()->GetSwapChain()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 
 	/// === 座標変換行列CBufferの場所を設定 === ///
-	SpriteCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixResource->GetGPUVirtualAddress());
+	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixResource->GetGPUVirtualAddress());
 
 	/// === マテリアルCBufferの場所を設定 === ///
-	SpriteCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
+	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	/// === SRVのDescriptorTableの先頭を設定 === ///
-	SpriteCommon::GetInstance()->GetSwapChain()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureFilePath));
+	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureFilePath));
 
 	/// === 描画(DrawCall) === ///
-	SpriteCommon::GetInstance()->GetSwapChain()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 void Sprite::ShowImGui(const char* name) {

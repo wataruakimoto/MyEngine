@@ -1,21 +1,62 @@
-#include "RenderTexture.h"
+#include "PostEffect.h"
 #include "winApp/WinApp.h"
+#include "DirectXUtility.h"
+#include "base/SrvManager.h"
 
 using namespace Microsoft::WRL;
 
-void RenderTexture::Initialize(DirectXUtility* dxUtility) {
+void PostEffect::Initialize(DirectXUtility* dxUtility) {
 
 	// NULL検出
 	assert(dxUtility);
 
 	// メンバ変数に記録
 	this->dxUtility = dxUtility;
+
+	// ディスクリプタヒープの生成
+	DescriptorHeapGenerate();
+
+	// レンダーターゲットビューの初期化
+	RenderTargetViewInitialize();
+
+	// 深度ステンシルビューの初期化
+	DepthStencilViewInitialize();
+
+	// シェーダーリソースビューの初期化
+	ShaderResourceViewInitialize();
+
+	// ビューポート矩形の初期化
+	ViewportRectInitialize();
+
+	// シザリング矩形の初期化
+	ScissoringRectInitialize();
 }
 
-void RenderTexture::PreDraw() {
+void PostEffect::PreDraw() {
 
-	// 描画先のRTVを指定
-	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, nullptr);
+	// バリアの状態がレンダーターゲットではなかったらバリアを張る
+	if (currentState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
+
+		// ----------リソースバリアで書き込み可能に変更----------
+		// 今回のバリアはTransition
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象のリソース。現在のバックバッファに対して行う
+		barrier.Transition.pResource = renderTextureResource.Get();
+		// 遷移前(現在)のResouceState
+		barrier.Transition.StateBefore = currentState;
+		// 遷移後のResouceState
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		// TransitionBarrierを張る
+		dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+
+		// 状態をレンダーターゲットにしておく
+		currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	}
+
+	// 描画先のRTVとDSVを指定する
+	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, &dsvHandle);
 
 	// 画面全体の色をクリア
 	float clearColor[] = { kRenderTargetClearValue.x, kRenderTargetClearValue.y, kRenderTargetClearValue.z, kRenderTargetClearValue.w };
@@ -25,21 +66,37 @@ void RenderTexture::PreDraw() {
 	dxUtility->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// ビューポート矩形の設定
-    D3D12_VIEWPORT viewRect = dxUtility->GetViewportRect();
-    dxUtility->GetCommandList()->RSSetViewports(1, &viewRect);
+	dxUtility->GetCommandList()->RSSetViewports(1, &viewportRect);
 
 	// シザリング矩形の設定
-	D3D12_RECT scissorRect = dxUtility->GetScissorRect();
 	dxUtility->GetCommandList()->RSSetScissorRects(1, &scissorRect);
 }
 
-void RenderTexture::Finalize() {
+void PostEffect::PostDraw() {
 
-	delete instance;
-	instance = nullptr;
+	// バリアの状態がピクセルシェーダーではなかったらバリアを張る
+	if (currentState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
+
+		// ----------リソースバリアで書き込み可能に変更----------
+		// 今回のバリアはTransition
+		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象のリソース。現在のバックバッファに対して行う
+		barrier.Transition.pResource = renderTextureResource.Get();
+		// 遷移前(現在)のResouceState
+		barrier.Transition.StateBefore = currentState;
+		// 遷移後のResouceState
+		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// TransitionBarrierを張る
+		dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+
+		// 状態をピクセルシェーダーにしておく
+		currentState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	}
 }
 
-void RenderTexture::DescriptorHeapGenerate() {
+void PostEffect::DescriptorHeapGenerate() {
 
 	// RTV用のデスクリプタサイズを取得
 	rtvDescriptorSize = dxUtility->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
@@ -54,18 +111,18 @@ void RenderTexture::DescriptorHeapGenerate() {
 	dsvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false); // 数は1 シェーダで使わない
 }
 
-void RenderTexture::RenderTargetViewInitialize() {
+void PostEffect::RenderTargetViewInitialize() {
 	
 	// Resourceの生成
-	auto renderTextureResource = CreateRenderTextureResource(
+	renderTextureResource = CreateRenderTextureResource(
 		WinApp::kClientWidth, // クライアント領域の幅
 		WinApp::kClientHeight, // クライアント領域の高さ
-		DXGI_FORMAT_R8G8B8A8_UNORM, // フォーマット
+		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, // フォーマット
 		kRenderTargetClearValue // クリアカラー
 	);
 
 	// RTV用の設定
-	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // フォーマット
+	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // フォーマット
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
 
 	// デスクリプタヒープの先頭を取得
@@ -82,10 +139,19 @@ void RenderTexture::RenderTargetViewInitialize() {
 	}
 }
 
-void RenderTexture::DepthStencilViewInitialize() {
+void PostEffect::ShaderResourceViewInitialize() {
+
+	// SRV確保
+	srvIndex = SrvManager::GetInstance()->Allocate();
+
+	// SRV作成
+	SrvManager::GetInstance()->CreateSRVforRenderTexture(srvIndex, renderTextureResource.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+}
+
+void PostEffect::DepthStencilViewInitialize() {
 
 	// Resourceの生成
-	auto depthStencilResource = CreateDepthStencilResource(
+	depthStencilResource = CreateDepthStencilResource(
 		WinApp::kClientWidth, // クライアント領域の幅
 		WinApp::kClientHeight, // クライアント領域の高さ
 		DXGI_FORMAT_D24_UNORM_S8_UINT, // フォーマット
@@ -96,17 +162,46 @@ void RenderTexture::DepthStencilViewInitialize() {
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT; // フォーマット
 	dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
 
+	// デスクリプタヒープの先頭を取得
+	dsvHandle = dsvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+
 	// DSV生成
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
 }
 
-ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
+void PostEffect::ViewportRectInitialize() {
+
+	// ----------ビューポート矩形の設定----------
+	// クライアント領域のサイズと一緒にして画面全体に表示
+	viewportRect.Width = WinApp::kClientWidth;
+	viewportRect.Height = WinApp::kClientHeight;
+	viewportRect.TopLeftX = 0;
+	viewportRect.TopLeftY = 0;
+	viewportRect.MinDepth = 0.0f;
+	viewportRect.MaxDepth = 1.0f;
+}
+
+void PostEffect::ScissoringRectInitialize() {
+
+	// ----------シザリング矩形の設定----------
+	// 基本的にビューポートと同じ矩形が構成されるようにする
+	scissorRect.left = 0;
+	scissorRect.right = WinApp::kClientWidth;
+	scissorRect.top = 0;
+	scissorRect.bottom = WinApp::kClientHeight;
+}
+
+ComPtr<ID3D12Resource> PostEffect::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
 
 	// Resourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
+	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
 	resourceDesc.Width = width; // Textureの幅
 	resourceDesc.Height = height; // Textureの高さ
+	resourceDesc.DepthOrArraySize = 1; // 2Dテクスチャの配列に合わせるが通常1
+	resourceDesc.MipLevels = 1; // mipmapの数
 	resourceDesc.Format = format; // Textureのフォーマット
+	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして使う
 
 	// Heapの設定
@@ -136,15 +231,15 @@ ComPtr<ID3D12Resource> RenderTexture::CreateRenderTextureResource(uint32_t width
 	return resource;
 }
 
-Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth) {
+Microsoft::WRL::ComPtr<ID3D12Resource> PostEffect::CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth) {
 	
 	// Resourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
 	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; // 2次元
 	resourceDesc.Width = width; // Textureの幅
 	resourceDesc.Height = height; // Textureの高さ
-	resourceDesc.MipLevels = 1; // mipmapの数	
 	resourceDesc.DepthOrArraySize = 1; // 奥行きor配列Textureの配列数
+	resourceDesc.MipLevels = 1; // mipmapの数
 	resourceDesc.Format = format; // Textureのフォーマット
 	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
 	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; // DepthStencilとして使う
@@ -171,14 +266,4 @@ Microsoft::WRL::ComPtr<ID3D12Resource> RenderTexture::CreateDepthStencilResource
 	);
 
 	return resource;
-}
-
-RenderTexture* RenderTexture::instance = nullptr;
-
-RenderTexture* RenderTexture::GetInstance() {
-	
-	if (instance == nullptr) {
-		instance = new RenderTexture();
-	}
-	return instance;
 }

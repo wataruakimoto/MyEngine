@@ -39,7 +39,6 @@ struct ParticleGroup {
 /// ===== 前方宣言 ===== ///
 class Camera;
 class DirectXUtility;
-class SwapChain;
 
 /// ===== パーティクルシステム ===== ///
 class ParticleSystem {

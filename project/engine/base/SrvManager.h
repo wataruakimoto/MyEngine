@@ -5,7 +5,6 @@
 
 /// === 前方宣言 === ///
 class DirectXUtility;
-class SwapChain;
 
 class SrvManager {
 
@@ -40,7 +39,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility, SwapChain* swapChain);
+	void Initialize(DirectXUtility* dxUtility);
 
 	/// <summary>
 	/// 描画前処理
@@ -105,9 +104,6 @@ private:
 
 	// DirectXUtilityのポインタ
 	DirectXUtility* dxUtility_ = nullptr;
-
-	// スワップチェインのポインタ
-	SwapChain* swapChain_ = nullptr;
 
 	// SRV用デスクリプタサイズ
 	uint32_t descriptorSize;

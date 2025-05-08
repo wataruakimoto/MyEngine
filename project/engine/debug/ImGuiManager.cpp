@@ -9,6 +9,7 @@
 void ImGuiManager::Initialize(WinApp* winApp, DirectXUtility* dxUtility, SwapChain* swapChain) {
 
 	// 引数をメンバ変数にコピー
+	dxUtility_ = dxUtility;
 	swapChain_ = swapChain;
 
 	// バージョンチェック
@@ -53,7 +54,7 @@ void ImGuiManager::End() {
 
 void ImGuiManager::Draw() {
 
-	ID3D12GraphicsCommandList* commandList = swapChain_->GetCommandList().Get();
+	ID3D12GraphicsCommandList* commandList = dxUtility_->GetCommandList().Get();
 
 	// デスクリプタヒープの配列をセットするコマンド
 	ID3D12DescriptorHeap* ppHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };

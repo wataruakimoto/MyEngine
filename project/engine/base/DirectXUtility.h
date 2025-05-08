@@ -6,6 +6,7 @@
 #include <dxcapi.h>
 #include <wrl.h>
 #include <string>
+#include <chrono>
 
 /// === DirectX機能 === ///
 class DirectXUtility {
@@ -19,6 +20,16 @@ public:
 	/// 初期化
 	/// </summary>
 	void Initialize();
+
+	/// <summary>
+	/// 描画後処理
+	/// </summary>
+	void PostDraw();
+
+	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
 
 	/// <summary>
 	/// デスクリプタヒープを作成する
@@ -48,9 +59,29 @@ private:
 	void DeviceInitialize();
 
 	/// <summary>
+	/// コマンド関連の初期化
+	/// </summary>
+	void CommandRelatedInitialize();
+
+	/// <summary>
+	/// フェンスの初期化
+	/// </summary>
+	void FenceInitialize();
+
+	/// <summary>
 	/// DXCコンパイラの生成
 	/// </summary>
 	void DXCCompilerGenerate();
+
+	/// <summary>
+	/// FPS固定初期化
+	/// </summary>
+	void InitializeFixFPS();
+
+	/// <summary>
+	/// FPS固定更新
+	/// </summary>
+	void UpdateFixFPS();
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -62,6 +93,18 @@ public:
 	/// </summary>
 	/// <returns>ID3D12Device</returns>
 	Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device; }
+
+	/// <summary>
+	/// コマンドリストを取得
+	/// </summary>
+	/// <returns></returns>
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() const { return commandList; }
+
+	/// <summary>
+	/// コマンドキューを取得
+	/// </summary>
+	/// <returns></returns>
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> GetCommandQueue() const { return commandQueue; }
 
 	/// <summary>
 	/// DXGIファクトリーの取得
@@ -119,6 +162,24 @@ private:
 	// デバイス
 	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 
+	// コマンドアロケータ
+	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
+
+	// コマンドリスト
+	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
+
+	// コマンドキュー
+	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
+
+	// フェンス
+	Microsoft::WRL::ComPtr <ID3D12Fence> fence = nullptr;
+
+	// フェンスの値
+	uint64_t fenceValue = 0;
+
+	// フェンスイベント
+	HANDLE fenceEvent;
+
 	// DXGIファクトリー
 	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
 
@@ -130,5 +191,8 @@ private:
 
 	// デフォルトインクルードハンドラ
 	Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
+
+	// 記録時間(FPS固定用)
+	std::chrono::steady_clock::time_point reference;
 };
 
