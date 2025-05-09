@@ -263,5 +263,7 @@
     <FxCompile Include="Resources\shaders\Grayscale.PS.hlsl" />
     <FxCompile Include="resources\shaders\FullScreen.PS.hlsl" />
     <FxCompile Include="resources\shaders\Vignette.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\LinearFilter.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\BoxFilter.PS.hlsl" />
   </ItemGroup>
 </Project>
