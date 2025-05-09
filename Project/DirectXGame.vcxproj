@@ -108,6 +108,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\3D\CylinderParticle.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="engine\3d\ParticleSystem.cpp" />
     <ClCompile Include="engine\3d\ParticleCommon.cpp" />
@@ -144,8 +145,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\Base\PostProcessingPipeline.cpp" />
+    <ClCompile Include="Engine\3D\DefaultParticle.cpp" />
+    <ClCompile Include="Engine\3D\RingParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\3D\CylinderParticle.h" />
+    <ClInclude Include="Engine\3D\BaseParticleType.h" />
     <ClInclude Include="engine\3d\Particle.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
@@ -190,6 +195,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\3d\Data\VertexData.h" />
     <ClInclude Include="engine\3d\ParticleEmitter.h" />
     <ClInclude Include="Engine\Base\PostProcessingPipeline.h" />
+    <ClInclude Include="Engine\3D\DefaultParticle.h" />
+    <ClInclude Include="Engine\3D\RingParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
