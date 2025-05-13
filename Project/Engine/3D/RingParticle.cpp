@@ -1,5 +1,7 @@
 #include "RingParticle.h"
 #include "Base/DirectXUtility.h"
+#include "Base/SrvManager.h"
+#include "2D/TextureManager.h"
 #include "ParticleCommon.h"
 #include "Math/MathMatrix.h"
 
