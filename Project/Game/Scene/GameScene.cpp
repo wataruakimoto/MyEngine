@@ -61,15 +61,20 @@ void GameScene::Initialize() {
 	particleSetting1.randomRotateMin = { 0.0f,0.0f,-std::numbers::pi_v<float> };
 	particleSetting1.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
 
-	particleSetting2.useBillboard = false;
+	particleSetting2.useLifeTime = false;
+	particleSetting2.useBillboard = true;
 
 	particleSetting3.color = { 0.0f,0.0f,1.0f,1.0f };
+	particleSetting3.useLifeTime = false;
 	particleSetting3.useBillboard = false;
 
 	// エミッタ生成
 	particleEmitter1 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform1, 3, 0.5f, particleSetting1);
 	particleEmitter2 = std::make_unique <ParticleEmitter>("ring", EmitterTransform2, 1, 1.0f, particleSetting2);
 	particleEmitter3 = std::make_unique <ParticleEmitter>("cylinder", EmitterTransform3, 1, 1.0f, particleSetting3);
+
+	particleEmitter2->Emit();
+	particleEmitter3->Emit();
 }
 
 void GameScene::Update() {
@@ -96,10 +101,8 @@ void GameScene::Update() {
 	particleEmitter1->Emit();
 
 	particleEmitter2->ShowImGui("ring");
-	particleEmitter2->Emit();
 
 	particleEmitter3->ShowImGui("cylinder");
-	particleEmitter3->Emit();
 
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
 }

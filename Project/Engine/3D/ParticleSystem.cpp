@@ -58,7 +58,10 @@ void ParticleSystem::Update() {
 
 			// 移動処理
 			iterator->transform.translate += iterator->velocity * kDeltaTime;
-			iterator->currentTime += kDeltaTime;
+
+			if (iterator->useLifeTime) {
+				iterator->currentTime += kDeltaTime;
+			}
 
 			// α値を下げる
 			float alpha = 1.0f - (iterator->currentTime / iterator->lifeTime);
@@ -262,7 +265,7 @@ Particle ParticleSystem::MakeNewParticle(Particle setting) {
 
 	// 返す用のパーティクル
 	Particle resultParticle;
-	
+
 	// Scaleの設定
 	if (setting.randomizeScale) {
 
@@ -321,28 +324,28 @@ Particle ParticleSystem::MakeNewParticle(Particle setting) {
 		resultParticle.transform.translate.z = distributionZ(randomEngine);
 	}
 	else {
-		
+
 		// 設定項目を引き継ぐ
 		resultParticle.transform.translate = setting.transform.translate;
 	}
 
 	// Velocityの設定
 	if (setting.randomizeVelocity) {
-		
+
 		// X軸の速度をランダムに設定
 		std::uniform_real_distribution<float> distributionX(setting.randomVelocityMin.x, setting.randomVelocityMax.x);
 		resultParticle.velocity.x = distributionX(randomEngine);
-		
+
 		// Y軸の速度をランダムに設定
 		std::uniform_real_distribution<float> distributionY(setting.randomVelocityMin.y, setting.randomVelocityMax.y);
 		resultParticle.velocity.y = distributionY(randomEngine);
-		
+
 		// Z軸の速度をランダムに設定
 		std::uniform_real_distribution<float> distributionZ(setting.randomVelocityMin.z, setting.randomVelocityMax.z);
 		resultParticle.velocity.z = distributionZ(randomEngine);
 	}
 	else {
-		
+
 		// 設定項目を引き継ぐ
 		resultParticle.velocity = setting.velocity;
 	}
@@ -367,7 +370,7 @@ Particle ParticleSystem::MakeNewParticle(Particle setting) {
 		resultParticle.color.w = distributionA(randomEngine);
 	}
 	else {
-		
+
 		// 設定項目を引き継ぐ
 		resultParticle.color = setting.color;
 	}
@@ -386,6 +389,8 @@ Particle ParticleSystem::MakeNewParticle(Particle setting) {
 	}
 
 	resultParticle.currentTime = 0.0f;
+
+	resultParticle.useLifeTime = setting.useLifeTime;
 
 	resultParticle.useBillboard = setting.useBillboard;
 
