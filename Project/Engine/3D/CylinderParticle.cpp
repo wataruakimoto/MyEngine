@@ -103,7 +103,19 @@ void CylinderParticle::GenerateMaterialData() {
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }
 
-void CylinderParticle::Draw() {
+void CylinderParticle::Initialize() {
+
+	// 頂点データ生成
+	GenerateVertexData();
+
+	// 参照データ生成
+	GenerateIndexData();
+
+	// マテリアルデータ生成
+	GenerateMaterialData();
+}
+
+void CylinderParticle::Draw(ParticleGroup* group) {
 
 	// 頂点バッファビューを設定
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -114,16 +126,12 @@ void CylinderParticle::Draw() {
 	// マテリアルCBufferの場所を設定
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	// 各パーティクルグループの描画
-	for (auto& [key, particleGroup] : particleGroups) {
+	// SRVのDescriptorTableの先頭を設定
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
 
-		// SRVのDescriptorTableの先頭を設定
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(particleGroup.textureFilePath));
+	/// === パーティクルCBufferの場所を設定 === ///
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
 
-		/// === パーティクルCBufferの場所を設定 === ///
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
-
-		// 描画(DrawCall)
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kCylinderDivide, particleGroup.numInstance, 0, 0, 0);
-	}
+	// 描画(DrawCall)
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kCylinderDivide, group->numInstance, 0, 0, 0);
 }

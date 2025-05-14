@@ -1,6 +1,7 @@
 #pragma once
 #include "Data/VertexData.h"
 #include "Math/Matrix4x4.h"
+#include "ParticleSystem.h"
 
 #include <d3d12.h>
 #include <stdint.h>
@@ -41,9 +42,14 @@ public:
 	virtual void GenerateMaterialData() = 0;
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	virtual void Initialize() = 0;
+
+	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void Draw() = 0;
+	virtual void Draw(ParticleGroup* group) = 0;
 
 ///-------------------------------------------/// 
 /// メンバ変数

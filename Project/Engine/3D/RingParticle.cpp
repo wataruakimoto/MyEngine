@@ -76,7 +76,7 @@ void RingParticle::GenerateIndexData() {
 	/// === IndexResourceに初期値を書き込む(6個分)=== ///
 
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
-	
+
 		indexData[index * 6 + 0] = index * 4 + 0; // 左下
 		indexData[index * 6 + 1] = index * 4 + 1; // 左上
 		indexData[index * 6 + 2] = index * 4 + 2; // 右下
@@ -99,7 +99,19 @@ void RingParticle::GenerateMaterialData() {
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }
 
-void RingParticle::Draw() {
+void RingParticle::Initialize() {
+
+	// 頂点データ生成
+	GenerateVertexData();
+
+	// 参照データ生成
+	GenerateIndexData();
+
+	// マテリアルデータ生成
+	GenerateMaterialData();
+}
+
+void RingParticle::Draw(ParticleGroup* group) {
 
 	// 頂点バッファビューを設定
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -110,16 +122,12 @@ void RingParticle::Draw() {
 	// マテリアルCBufferの場所を設定
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	// 各パーティクルグループの描画
-	for (auto& [key, particleGroup] : particleGroups) {
+	// SRVのDescriptorTableの先頭を設定
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
 
-		// SRVのDescriptorTableの先頭を設定
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(particleGroup.textureFilePath));
+	/// === パーティクルCBufferの場所を設定 === ///
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
 
-		/// === パーティクルCBufferの場所を設定 === ///
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(particleGroup.srvIndex));
-
-		// 描画(DrawCall)
-		ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, particleGroup.numInstance, 0, 0, 0);
-	}
+	// 描画(DrawCall)
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, group->numInstance, 0, 0, 0);
 }
