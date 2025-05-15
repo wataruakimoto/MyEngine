@@ -13,17 +13,23 @@
 #include <unordered_map>
 #include <wrl.h>
 
-// マテリアルデータ
-struct Material {
-	Vector4 color;
-	Matrix4x4 uvTransform;
-};
+/// ===== 前方宣言 ===== ///
+class Camera;
+class DirectXUtility;
+class BaseParticleType;
 
 // シェーダー用パーティクルデータ
 struct ParticleForGPU {
 	Matrix4x4 WVP;
 	Matrix4x4 world;
 	Vector4 color;
+};
+
+// パーティクルの種類
+enum class ParticleType {
+	DEFAULT,
+	RING,
+	CYLINDER
 };
 
 // パーティクルグループ
@@ -34,11 +40,9 @@ struct ParticleGroup {
 	Microsoft::WRL::ComPtr <ID3D12Resource> particleResource; // パーティクルリソース
 	ParticleForGPU* particleData; // パーティクルデータ
 	uint32_t numInstance = 0; // インスタンスの数
+	ParticleType particleType; // パーティクルの種類
+	BaseParticleType* particleTypeClass; // パーティクルの種類クラス
 };
-
-/// ===== 前方宣言 ===== ///
-class Camera;
-class DirectXUtility;
 
 /// ===== パーティクルシステム ===== ///
 class ParticleSystem {
@@ -95,7 +99,7 @@ public:
 	/// </summary>
 	/// <param name="name"></param>
 	/// <param name="textureFilePath"></param>
-	void CreateParticleGroup(const std::string name, const std::string textureFilePath);
+	void CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleType type);
 
 	/// <summary>
 	/// パーティクルの発生
@@ -106,21 +110,6 @@ public:
 /// クラス内関数
 ///-------------------------------------------///
 public:
-
-	/// <summary>
-	/// 頂点データ初期化
-	/// </summary>
-	void InitializeVertexData();
-
-	/// <summary>
-	/// 参照データ初期化
-	/// </summary>
-	void InitializeIndexData();
-
-	/// <summary>
-	/// マテリアルデータ初期化
-	/// </summary>
-	void InitializeMaterialData();
 
 	/// <summary>
 	/// パーティクル生成
@@ -154,25 +143,6 @@ public:
 ///-------------------------------------------///
 private:
 
-	// 頂点リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
-	// 参照リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource;
-	// マテリアルリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
-
-	// 頂点データ
-	VertexData* vertexData = nullptr;
-	// 参照データ
-	uint32_t* indexData = nullptr;
-	// マテリアルデータ
-	Material* materialData = nullptr;
-
-	// 頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-	// Index用のビュー
-	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
-
 	// カメラ
 	Camera* camera = nullptr;
 
@@ -196,25 +166,4 @@ private:
 
 	// WorldViewProjection行列
 	Matrix4x4 worldViewProjectionMatrix = {};
-
-///-------------------------------------------/// 
-/// リング用の変数
-///-------------------------------------------///
-
-	// リングの設定
-	const uint32_t kRingDivide = 32; // 円の分割数
-	const float kOuterRadius = 1.0f; // 外側の半径
-	const float kInnerRadius = 0.2f; // 内側の半径
-	//const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
-
-///-------------------------------------------/// 
-/// シリンダー用の変数
-///-------------------------------------------///
-
-	// シリンダーの設定
-	const uint32_t kCylinderDivide = 32; // 円の分割数
-	const float kTopRadius = 1.0f; // 上側の半径
-	const float kBottomRadius = 1.0f; // 下側の半径
-	const float kHeight = 3.0f; // 高さ
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide); // 分割あたりのラジアン 2π/分割数
 };

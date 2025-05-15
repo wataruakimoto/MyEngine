@@ -44,27 +44,34 @@ void GameScene::Initialize() {
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(camera.get());
-	ParticleSystem::GetInstance()->CreateParticleGroup("gradationLine", "Resources/gradationLine.png");
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png");
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::DEFAULT);
+	ParticleSystem::GetInstance()->CreateParticleGroup("ring", "Resources/gradationLine.png", ParticleType::RING);
+	ParticleSystem::GetInstance()->CreateParticleGroup("cylinder", "Resources/gradationLine.png", ParticleType::CYLINDER);
 
 	// Transformの設定
-	EmitterTransform1.translate = { -2.5f,0.0f,0.0f };
-	EmitterTransform2.translate = { 2.5f,0.0f,0.0f };
+	EmitterTransform1.translate = { 0.0f,2.0f,0.0f };
+	EmitterTransform2.translate = { -2.5f,1.0f,0.0f };
+	EmitterTransform3.translate = { 2.5f,0.0f,0.0f };
 
 	// パーティクルの設定
-	particleSetting1.color = { 0.0f,0.0f,1.0f,1.0f };
-	particleSetting1.useBillboard = false;
+	particleSetting1.randomizeScale = true;
+	particleSetting1.randomScaleMin = { 0.05f,0.4f,1.0f };
+	particleSetting1.randomScaleMax = { 0.05f,1.5f,1.0f };
+	particleSetting1.randomizeRotate = true;
+	particleSetting1.randomRotateMin = { 0.0f,0.0f,-std::numbers::pi_v<float> };
+	particleSetting1.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
 
-	particleSetting2.randomizeScale = true;
-	particleSetting2.randomScaleMin = { 0.05f,0.4f,1.0f };
-	particleSetting2.randomScaleMax = { 0.05f,1.5f,1.0f };
-	particleSetting2.randomizeRotate = true;
-	particleSetting2.randomRotateMin = { 0.0f,0.0f,-std::numbers::pi_v<float> };
-	particleSetting2.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
+	particleSetting2.useLifeTime = false;
+	particleSetting2.useBillboard = true;
+
+	particleSetting3.color = { 0.0f,0.0f,1.0f,1.0f };
+	particleSetting3.useLifeTime = false;
+	particleSetting3.useBillboard = false;
 
 	// エミッタ生成
-	particleEmitter1 = std::make_unique <ParticleEmitter>("gradationLine", EmitterTransform1, 1, 1.0f, particleSetting1);
-	particleEmitter2 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform2, 3, 0.5f, particleSetting2);
+	particleEmitter1 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform1, 3, 0.5f, particleSetting1);
+	particleEmitter2 = std::make_unique <ParticleEmitter>("ring", EmitterTransform2, 1, 1.0f, particleSetting2);
+	particleEmitter3 = std::make_unique <ParticleEmitter>("cylinder", EmitterTransform3, 1, 1.0f, particleSetting3);
 }
 
 void GameScene::Update() {
@@ -87,13 +94,17 @@ void GameScene::Update() {
 	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	particleEmitter1->ShowImGui("gradationLine");
+	particleEmitter1->ShowImGui("circle2");
 	particleEmitter1->Emit();
 
-	particleEmitter2->ShowImGui("circle2");
-	particleEmitter2->Emit();
+	particleEmitter2->ShowImGui("ring");
+
+	particleEmitter3->ShowImGui("cylinder");
 
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
+
+	// パーティクルシステムの更新
+	ParticleSystem::GetInstance()->Update();
 }
 
 void GameScene::Draw() {
@@ -105,6 +116,12 @@ void GameScene::Draw() {
 	monsterBall->Draw();
 
 	terrain->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	ParticleCommon::GetInstance()->SettingDrawing();
+
+	// パーティクルシステムの描画
+	ParticleSystem::GetInstance()->Draw();
 }
 
 void GameScene::Finalize() {

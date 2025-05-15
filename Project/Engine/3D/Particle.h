@@ -1,4 +1,5 @@
 #pragma once
+#include "Data/Transform.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 
@@ -11,6 +12,7 @@ struct Particle {
     Vector4 color = { 1.0f, 1.0f, 1.0f, 1.0f }; // デフォルトの色(白)
 	float lifeTime = 1.0f; // デフォルトの寿命(1秒)
     float currentTime = 0.0f; // 現在の時間
+	bool useLifeTime = true; // 生存時間を適応するかどうか
 	bool useBillboard = true; // ビルボードするかどうか
 
     // ランダム化フラグ

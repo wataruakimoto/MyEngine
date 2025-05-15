@@ -127,6 +127,9 @@
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
     <ClCompile Include="engine\base\PostEffect.cpp" />
     <ClCompile Include="Engine\Base\PostProcessingPipeline.cpp" />
+    <ClCompile Include="Engine\3D\DefaultParticle.cpp" />
+    <ClCompile Include="Engine\3D\RingParticle.cpp" />
+    <ClCompile Include="Engine\3D\CylinderParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -233,6 +236,10 @@
     <ClInclude Include="engine\base\PostEffect.h" />
     <ClInclude Include="Engine\Base\PostProcessingPipeline.h" />
     <ClInclude Include="engine\3d\Particle.h" />
+    <ClInclude Include="Engine\3D\BaseParticleType.h" />
+    <ClInclude Include="Engine\3D\DefaultParticle.h" />
+    <ClInclude Include="Engine\3D\RingParticle.h" />
+    <ClInclude Include="Engine\3D\CylinderParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
