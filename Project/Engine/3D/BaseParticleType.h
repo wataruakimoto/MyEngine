@@ -27,6 +27,26 @@ public:
 	virtual ~BaseParticleType() = default;
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	virtual void Initialize() = 0;
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	virtual void Update() = 0;
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	virtual void Draw(ParticleGroup* group) = 0;
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+protected:
+
+	/// <summary>
 	/// 頂点データ生成
 	/// </summary>
 	virtual void GenerateVertexData() = 0;
@@ -40,16 +60,6 @@ public:
 	/// マテリアルデータ生成
 	/// </summary>
 	virtual void GenerateMaterialData() = 0;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	virtual void Initialize() = 0;
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	virtual void Draw(ParticleGroup* group) = 0;
 
 ///-------------------------------------------/// 
 /// メンバ変数

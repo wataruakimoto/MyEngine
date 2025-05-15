@@ -10,6 +10,26 @@ class DefaultParticle : public BaseParticleType {
 public:
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize() override;
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update() override;
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw(ParticleGroup* group) override;
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
 	/// 頂点データ生成
 	/// </summary>
 	void GenerateVertexData() override;
@@ -23,16 +43,6 @@ public:
 	/// マテリアルデータ生成
 	/// </summary>
 	void GenerateMaterialData() override;
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize() override;
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw(ParticleGroup* group) override;
 
 ///-------------------------------------------/// 
 /// メンバ変数

@@ -12,6 +12,26 @@ class RingParticle : public BaseParticleType {
 public:
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize() override;
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update() override;
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw(ParticleGroup* group) override;
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
 	/// 頂点データ生成
 	/// </summary>
 	void GenerateVertexData() override;
@@ -26,16 +46,6 @@ public:
 	/// </summary>
 	void GenerateMaterialData() override;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize() override;
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw(ParticleGroup* group) override;
-
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -46,5 +56,10 @@ private:
 	const float kOuterRadius = 1.0f; // 外側の半径
 	const float kInnerRadius = 0.2f; // 内側の半径
 	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kRingDivide); // 分割あたりのラジアン 2π/分割数
-};
 
+	// Δt
+	const float kDeltaTime = 1.0f / 60.0f;
+
+	// 1秒間のUVの移動量
+	float kUVSpeed = 0.1f; // 10秒で1周
+};

@@ -109,6 +109,22 @@ void ParticleSystem::Update() {
 			// 次のイテレーターに進める
 			++iterator;
 		}
+
+		switch (particleGroup.particleType) {
+
+		case ParticleType::DEFAULT:
+		default:
+			particleGroup.particleTypeClass->Update();
+			break;
+	
+		case ParticleType::RING:
+			particleGroup.particleTypeClass->Update();
+			break;
+
+		case ParticleType::CYLINDER:
+			particleGroup.particleTypeClass->Update();
+			break;
+		}
 	}
 }
 

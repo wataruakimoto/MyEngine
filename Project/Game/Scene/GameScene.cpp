@@ -72,9 +72,6 @@ void GameScene::Initialize() {
 	particleEmitter1 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform1, 3, 0.5f, particleSetting1);
 	particleEmitter2 = std::make_unique <ParticleEmitter>("ring", EmitterTransform2, 1, 1.0f, particleSetting2);
 	particleEmitter3 = std::make_unique <ParticleEmitter>("cylinder", EmitterTransform3, 1, 1.0f, particleSetting3);
-
-	particleEmitter2->Emit();
-	particleEmitter3->Emit();
 }
 
 void GameScene::Update() {
@@ -105,6 +102,9 @@ void GameScene::Update() {
 	particleEmitter3->ShowImGui("cylinder");
 
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
+
+	// パーティクルシステムの更新
+	ParticleSystem::GetInstance()->Update();
 }
 
 void GameScene::Draw() {
@@ -116,6 +116,12 @@ void GameScene::Draw() {
 	monsterBall->Draw();
 
 	terrain->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	ParticleCommon::GetInstance()->SettingDrawing();
+
+	// パーティクルシステムの描画
+	ParticleSystem::GetInstance()->Draw();
 }
 
 void GameScene::Finalize() {

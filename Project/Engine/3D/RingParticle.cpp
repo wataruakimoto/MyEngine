@@ -7,6 +7,61 @@
 
 using namespace MathMatrix;
 
+void RingParticle::Initialize() {
+
+	// 頂点データ生成
+	GenerateVertexData();
+
+	// 参照データ生成
+	GenerateIndexData();
+
+	// マテリアルデータ生成
+	GenerateMaterialData();
+}
+
+void RingParticle::Update() {
+
+	for (uint32_t index = 0; index < kRingDivide; ++index) {
+
+		uint32_t vertexIndex = index * 4; // 頂点のインデックス
+
+		vertexData[0 + vertexIndex].texcoord.x += kDeltaTime * kUVSpeed;
+		vertexData[1 + vertexIndex].texcoord.x += kDeltaTime * kUVSpeed;
+		vertexData[2 + vertexIndex].texcoord.x += kDeltaTime * kUVSpeed;
+		vertexData[3 + vertexIndex].texcoord.x += kDeltaTime * kUVSpeed;
+
+		// すべてのtexcoordの値を0.0fから1.0fに収める
+		if (vertexData[0 + vertexIndex].texcoord.x > 1.0f) {
+
+			vertexData[0 + vertexIndex].texcoord.x -= 1.0f;
+			vertexData[1 + vertexIndex].texcoord.x -= 1.0f;
+			vertexData[2 + vertexIndex].texcoord.x -= 1.0f;
+			vertexData[3 + vertexIndex].texcoord.x -= 1.0f;
+		}
+	}
+}
+
+void RingParticle::Draw(ParticleGroup* group) {
+
+	// 頂点バッファビューを設定
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	// 参照バッファビューを設定
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+
+	// マテリアルCBufferの場所を設定
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+
+	// SRVのDescriptorTableの先頭を設定
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
+
+	/// === パーティクルCBufferの場所を設定 === ///
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
+
+	// 描画(DrawCall)
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, group->numInstance, 0, 0, 0);
+}
+
 void RingParticle::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
@@ -97,37 +152,4 @@ void RingParticle::GenerateMaterialData() {
 	/// === MaterialDataに初期値を書き込む === ///
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
-}
-
-void RingParticle::Initialize() {
-
-	// 頂点データ生成
-	GenerateVertexData();
-
-	// 参照データ生成
-	GenerateIndexData();
-
-	// マテリアルデータ生成
-	GenerateMaterialData();
-}
-
-void RingParticle::Draw(ParticleGroup* group) {
-
-	// 頂点バッファビューを設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
-
-	// 参照バッファビューを設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
-
-	// マテリアルCBufferの場所を設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-
-	// SRVのDescriptorTableの先頭を設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
-
-	/// === パーティクルCBufferの場所を設定 === ///
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
-
-	// 描画(DrawCall)
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, group->numInstance, 0, 0, 0);
 }
