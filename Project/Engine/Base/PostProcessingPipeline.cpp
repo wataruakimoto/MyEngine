@@ -122,7 +122,7 @@ void PostProcessingPipeline::CreateVertexShader() {
 void PostProcessingPipeline::CreatePixelShader() {
 
 	// シェーダコンパイルを行う
-	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/Vignette.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/BoxFilter.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
