@@ -40,9 +40,6 @@ void MyGame::Update() {
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();
 
-		// パーティクルシステムの更新
-		ParticleSystem::GetInstance()->Update();
-
 		/// === ImGui終了 === ///
 		ImGuiManager::GetInstance()->End();
 	}
@@ -55,12 +52,6 @@ void MyGame::Draw() {
 
 	// シーンマネージャの描画
 	SceneManager::GetInstance()->Draw();
-
-	/// === パーティクルの描画準備 === ///
-	ParticleCommon::GetInstance()->SettingDrawing();
-
-	// パーティクルシステムの描画
-	ParticleSystem::GetInstance()->Draw();
 
 	/// === レンダーテクスチャ描画処理 === ///
 	postEffect->PostDraw();

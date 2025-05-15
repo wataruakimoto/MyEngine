@@ -62,7 +62,7 @@ void ParticleEmitter::ShowImGui(const char* name) {
 		ImGui::TreePop();
 	}
 
-	if (ImGui::TreeNode("Particle")) {
+	if (ImGui::TreeNode("Setting")) {
 
 		// 設定項目
 		ImGui::DragFloat3("Scale", &settings.transform.scale.x, 0.01f);
@@ -71,6 +71,7 @@ void ParticleEmitter::ShowImGui(const char* name) {
 		ImGui::DragFloat3("Velocity", &settings.velocity.x, 0.01f);
 		ImGui::ColorEdit4("Color", &settings.color.x);
 		ImGui::DragFloat("LifeTime", &settings.lifeTime, 0.1f);
+		ImGui::Checkbox("UseLifeTime", &settings.useLifeTime);
 		ImGui::Checkbox("UseBillboard", &settings.useBillboard);
 
 		// ランダム
