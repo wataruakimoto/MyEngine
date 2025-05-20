@@ -3,8 +3,8 @@
 #include "input/Input.h"
 #include "2d/TextureManager.h"
 #include "3d/Object3dCommon.h"
-#include "3d/ParticleCommon.h"
-#include "3d/ParticleSystem.h"
+#include "3d/Particle/ParticleCommon.h"
+#include "3d/Particle/ParticleSystem.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
@@ -44,7 +44,7 @@ void GameScene::Initialize() {
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(camera.get());
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::DEFAULT);
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
 	ParticleSystem::GetInstance()->CreateParticleGroup("ring", "Resources/gradationLine.png", ParticleType::RING);
 	ParticleSystem::GetInstance()->CreateParticleGroup("cylinder", "Resources/gradationLine.png", ParticleType::CYLINDER);
 

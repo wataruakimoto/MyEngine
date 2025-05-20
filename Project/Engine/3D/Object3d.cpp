@@ -98,6 +98,7 @@ void Object3d::Draw() {
 
 void Object3d::ShowImGui(const char* name) {
 
+#ifdef _DEBUG
 	ImGui::Begin(name);
 
 	ImGui::Checkbox("Draw", &isDraw);
@@ -142,6 +143,7 @@ void Object3d::ShowImGui(const char* name) {
 	}
 
 	ImGui::End();
+#endif // _DEBUG
 }
 
 void Object3d::InitializeTransformationMatrixData() {

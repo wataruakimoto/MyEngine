@@ -21,9 +21,11 @@ void TitleScene::Update() {
 	sprite->ShowImGui("sprite");
 	sprite->Update();
 
+#ifdef _DEBUG
 	ImGui::Begin("Scene");
 	ImGui::Text("Push Return : Next Scene");
 	ImGui::End();
+#endif // _DEBUG
 
 	// エンターキーが押されたら
 	if (Input::GetInstance()->TriggerKey(DIK_RETURN)) {

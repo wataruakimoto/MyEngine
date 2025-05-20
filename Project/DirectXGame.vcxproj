@@ -108,10 +108,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\3D\CylinderParticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
-    <ClCompile Include="engine\3d\ParticleSystem.cpp" />
-    <ClCompile Include="engine\3d\ParticleCommon.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleSystem.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleCommon.cpp" />
     <ClCompile Include="engine\base\PostEffect.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
@@ -143,21 +143,21 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\scene\SceneManager.cpp" />
     <ClCompile Include="game\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
-    <ClCompile Include="engine\3d\ParticleEmitter.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\Base\PostProcessingPipeline.cpp" />
-    <ClCompile Include="Engine\3D\DefaultParticle.cpp" />
-    <ClCompile Include="Engine\3D\RingParticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\PlaneParticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Engine\3D\CylinderParticle.h" />
-    <ClInclude Include="Engine\3D\BaseParticleType.h" />
-    <ClInclude Include="engine\3d\Particle.h" />
+    <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
+    <ClInclude Include="Engine\3D\Particle\BaseParticleType.h" />
+    <ClInclude Include="Engine\3D\Particle\Particle.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
     <ClInclude Include="engine\3d\Data\ModelData.h" />
     <ClInclude Include="engine\3d\Data\Transform.h" />
-    <ClInclude Include="engine\3d\ParticleSystem.h" />
-    <ClInclude Include="engine\3d\ParticleCommon.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleSystem.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleCommon.h" />
     <ClInclude Include="engine\base\PostEffect.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
@@ -193,10 +193,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="game\scene\SceneFactory.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\3d\Data\VertexData.h" />
-    <ClInclude Include="engine\3d\ParticleEmitter.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\Base\PostProcessingPipeline.h" />
-    <ClInclude Include="Engine\3D\DefaultParticle.h" />
-    <ClInclude Include="Engine\3D\RingParticle.h" />
+    <ClInclude Include="Engine\3D\Particle\PlaneParticle.h" />
+    <ClInclude Include="Engine\3D\Particle\RingParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
