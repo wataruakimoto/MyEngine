@@ -2,7 +2,7 @@
 #include "BaseParticleType.h"
 
 /// === デフォルトのパーティクル === ///
-class DefaultParticle : public BaseParticleType {
+class PlaneParticle : public BaseParticleType {
 
 ///-------------------------------------------///
 /// メンバ関数

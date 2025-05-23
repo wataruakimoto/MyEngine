@@ -41,6 +41,7 @@ void ParticleEmitter::Emit() {
 
 void ParticleEmitter::ShowImGui(const char* name) {
 
+#ifdef _DEBUG
 	ImGui::Begin(name);
 
 	if (ImGui::TreeNode("Emitter")) {
@@ -123,4 +124,5 @@ void ParticleEmitter::ShowImGui(const char* name) {
 	}
 
 	ImGui::End();
+#endif // _DEBUG
 }

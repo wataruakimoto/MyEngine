@@ -60,12 +60,8 @@ void ImGuiManager::Draw() {
 	ID3D12DescriptorHeap* ppHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
 	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
 
-#ifdef _DEBUG
-
 	// 実際のcommandListのImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
-
-#endif
 }
 
 void ImGuiManager::Finalize() {

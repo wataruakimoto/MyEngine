@@ -1,7 +1,7 @@
 #include "MyGame.h"
 #include "debug/ImGuiManager.h"
-#include "3d/ParticleCommon.h"
-#include "3d/ParticleSystem.h"
+#include "3d/Particle/ParticleCommon.h"
+#include "3d/Particle/ParticleSystem.h"
 #include "scene/SceneManager.h"
 #include "scene/SceneFactory.h"
 

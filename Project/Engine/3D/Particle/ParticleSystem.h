@@ -1,6 +1,6 @@
 #pragma once
-#include "Data/VertexData.h"
-#include "Data/Transform.h"
+#include "3D/Data/VertexData.h"
+#include "3D/Data/Transform.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
@@ -27,7 +27,7 @@ struct ParticleForGPU {
 
 // パーティクルの種類
 enum class ParticleType {
-	DEFAULT,
+	PLANE,
 	RING,
 	CYLINDER
 };
