@@ -115,6 +115,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\base\PostEffect.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
+    <ClCompile Include="Engine\3D\Particle\Explosion.cpp" />
     <ClCompile Include="game\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="game\scene\BaseScene.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
@@ -161,6 +162,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\base\PostEffect.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
+    <ClInclude Include="Engine\3D\Particle\Explosion.h" />
     <ClInclude Include="game\scene\AbstractSceneFactory.h" />
     <ClInclude Include="game\scene\BaseScene.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />

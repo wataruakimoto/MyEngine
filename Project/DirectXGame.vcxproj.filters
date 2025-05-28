@@ -130,6 +130,7 @@
     <ClCompile Include="Engine\3D\Particle\PlaneParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\Explosion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -240,6 +241,7 @@
     <ClInclude Include="Engine\3D\Particle\PlaneParticle.h" />
     <ClInclude Include="Engine\3D\Particle\RingParticle.h" />
     <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
+    <ClInclude Include="Engine\3D\Particle\Explosion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

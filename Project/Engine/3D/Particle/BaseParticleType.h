@@ -1,6 +1,6 @@
 #pragma once
 #include "3D/Data/VertexData.h"
-#include "Math/Matrix4x4.h"
+#include "3D/Data/Transform.h"
 #include "ParticleSystem.h"
 
 #include <d3d12.h>
@@ -61,6 +61,11 @@ protected:
 	/// </summary>
 	virtual void GenerateMaterialData() = 0;
 
+	/// <summary>
+	/// 座標変換データ生成
+	/// </summary>
+	virtual void GenerateTransformationData() = 0;
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -89,4 +94,10 @@ protected:
 
 	// マテリアルデータ
 	Material* materialData = nullptr;
+
+	// 座標変換リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> transformationResource;
+
+	// 座標変換データ
+	TransformationData* transformationData = nullptr;
 };
