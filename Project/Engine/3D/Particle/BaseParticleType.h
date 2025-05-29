@@ -41,6 +41,11 @@ public:
 	/// </summary>
 	virtual void Draw(ParticleGroup* group) = 0;
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	virtual void ShowImGui(const char* name) = 0;
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -100,4 +105,7 @@ protected:
 
 	// 座標変換データ
 	TransformationData* transformationData = nullptr;
+
+	// 変換データ
+	Transform transform;
 };

@@ -24,6 +24,8 @@ public:
 	/// </summary>
 	void Draw(ParticleGroup* group) override;
 
+	void ShowImGui(const char* name) override;
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -47,7 +49,7 @@ private:
 	/// <summary>
 	/// 座標変換データ生成
 	/// </summary>
-	void GenerateTransformData() override;
+	void GenerateTransformationData() override;
 
 ///-------------------------------------------/// 
 /// メンバ変数
