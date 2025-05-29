@@ -29,7 +29,9 @@ struct ParticleForGPU {
 enum class ParticleType {
 	PLANE,
 	RING,
-	CYLINDER
+	CYLINDER,
+	EXPLOSION,
+	FLASH,
 };
 
 // パーティクルグループ

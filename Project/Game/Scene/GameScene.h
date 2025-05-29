@@ -64,4 +64,12 @@ private:
 	Particle particleSetting1 = {};
 	Particle particleSetting2 = {};
 	Particle particleSetting3 = {};
+
+	std::unique_ptr <ParticleEmitter> explosionEmitter = nullptr;
+	Transform explosionEmitterTransform = {}; // 初期位置とスケール
+	Particle explosionParticleSetting = {}; // パーティクルの設定
+
+	std::unique_ptr <ParticleEmitter> flashEmitter = nullptr;
+	Transform flashEmitterTransform = {}; // 初期位置とスケール
+	Particle flashParticleSetting = {}; // パーティクルの設定
 };

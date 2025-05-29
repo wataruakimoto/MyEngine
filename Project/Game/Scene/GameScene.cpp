@@ -20,10 +20,6 @@ void GameScene::Initialize() {
 
 	AudioManager::GetInstance()->SoundLoadWave("Resources/fanfare.wav");
 
-	TextureManager::GetInstance()->LoadTexture("Resources/gradationLine.png");
-
-	TextureManager::GetInstance()->LoadTexture("Resources/circle2.png");
-
 	// モデルの生成・初期化
 	modelMonsterBall = std::make_unique <Model>();
 	modelMonsterBall->Initialize("Resources/sphere", "sphere.gltf");
@@ -72,6 +68,20 @@ void GameScene::Initialize() {
 	particleEmitter1 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform1, 3, 0.5f, particleSetting1);
 	particleEmitter2 = std::make_unique <ParticleEmitter>("ring", EmitterTransform2, 1, 1.0f, particleSetting2);
 	particleEmitter3 = std::make_unique <ParticleEmitter>("cylinder", EmitterTransform3, 1, 1.0f, particleSetting3);
+
+	// パーティクルシステムの初期化
+	ParticleSystem::GetInstance()->CreateParticleGroup("explosion", "Resources/gradationLine.png", ParticleType::EXPLOSION);
+	ParticleSystem::GetInstance()->CreateParticleGroup("flash", "Resources/gradation.png", ParticleType::FLASH);
+	// 座標データの設定
+	explosionEmitterTransform.translate = { 0.0f, 0.0f, 0.0f };
+	flashEmitterTransform.translate = { 0.0f, 0.0f, 0.0f };
+	// パーティクルの設定
+	explosionParticleSetting.useBillboard = true;
+	flashParticleSetting.useBillboard = true;
+	flashParticleSetting.useLifeTime = false;
+	// パーティクルエミッタの生成
+	explosionEmitter = std::make_unique <ParticleEmitter>("explosion", explosionEmitterTransform, 1, 0.1f, explosionParticleSetting);
+	flashEmitter = std::make_unique <ParticleEmitter>("flash", flashEmitterTransform, 1, 0.1f, flashParticleSetting);
 }
 
 void GameScene::Update() {
@@ -100,6 +110,10 @@ void GameScene::Update() {
 	particleEmitter2->ShowImGui("ring");
 
 	particleEmitter3->ShowImGui("cylinder");
+
+	explosionEmitter->ShowImGui("explosion");
+
+	flashEmitter->ShowImGui("flash");
 
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
 

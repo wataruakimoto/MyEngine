@@ -3,6 +3,8 @@
 #include "PlaneParticle.h"
 #include "RingParticle.h"
 #include "CylinderParticle.h"
+#include "ExplosionParticle.h"
+#include "FlashParticle.h"
 #include "base/DirectXUtility.h"
 #include "base/SrvManager.h"
 #include "2d/TextureManager.h"
@@ -63,6 +65,12 @@ void ParticleSystem::Update() {
 				iterator->currentTime += kDeltaTime;
 			}
 
+			if (particleGroup.particleType == ParticleType::EXPLOSION) {
+
+				iterator->transform.scale.x += 0.1f;
+				iterator->transform.scale.y += 0.1f;
+			}
+
 			// α値を下げる
 			float alpha = 1.0f - (iterator->currentTime / iterator->lifeTime);
 
@@ -110,21 +118,8 @@ void ParticleSystem::Update() {
 			++iterator;
 		}
 
-		switch (particleGroup.particleType) {
-
-		case ParticleType::PLANE:
-		default:
-			particleGroup.particleTypeClass->Update();
-			break;
-	
-		case ParticleType::RING:
-			particleGroup.particleTypeClass->Update();
-			break;
-
-		case ParticleType::CYLINDER:
-			particleGroup.particleTypeClass->Update();
-			break;
-		}
+		// タイプの更新を呼び出す
+		particleGroup.particleTypeClass->Update();
 	}
 }
 
@@ -133,21 +128,8 @@ void ParticleSystem::Draw() {
 	// 各パーティクルグループの描画
 	for (auto& [key, particleGroup] : particleGroups) {
 
-		switch (particleGroup.particleType) {
-
-		case ParticleType::PLANE:
-		default:
-			particleGroup.particleTypeClass->Draw(&particleGroup);
-			break;
-
-		case ParticleType::RING:
-			particleGroup.particleTypeClass->Draw(&particleGroup);
-			break;
-
-		case ParticleType::CYLINDER:
-			particleGroup.particleTypeClass->Draw(&particleGroup);
-			break;
-		}
+		// タイプの描画を呼び出す
+		particleGroup.particleTypeClass->Draw(&particleGroup);
 	}
 }
 
@@ -249,9 +231,17 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 	case ParticleType::CYLINDER:
 		particleGroups[name].particleTypeClass = new CylinderParticle();
 		break;
+
+	case ParticleType::EXPLOSION:
+		particleGroups[name].particleTypeClass = new ExplosionParticle();
+		break;
+
+	case ParticleType::FLASH:
+		particleGroups[name].particleTypeClass = new FlashParticle();
+		break;
 	}
 
-	// パーティクルの種類を初期化
+	// 生成したタイプの初期化を呼び出す
 	particleGroups[name].particleTypeClass->Initialize();
 }
 

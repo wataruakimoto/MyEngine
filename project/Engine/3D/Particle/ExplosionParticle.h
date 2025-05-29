@@ -1,12 +1,10 @@
 #pragma once
 #include "BaseParticleType.h"
 
-#include <numbers>
+/// === 爆破エフェクト === ///
+class ExplosionParticle : public BaseParticleType {
 
-/// === リング用のパーティクル === ///
-class RingParticle : public BaseParticleType {
-
-///-------------------------------------------///
+///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
@@ -25,7 +23,7 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw(ParticleGroup* group) override;
-	
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -63,3 +61,4 @@ private:
 	// 1秒間のUVの移動量
 	float kUVSpeed = 0.1f; // 10秒で1周
 };
+

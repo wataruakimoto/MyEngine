@@ -41,11 +41,6 @@ public:
 	/// </summary>
 	virtual void Draw(ParticleGroup* group) = 0;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	virtual void ShowImGui(const char* name) = 0;
-
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -65,11 +60,6 @@ protected:
 	/// マテリアルデータ生成
 	/// </summary>
 	virtual void GenerateMaterialData() = 0;
-
-	/// <summary>
-	/// 座標変換データ生成
-	/// </summary>
-	virtual void GenerateTransformationData() = 0;
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -102,10 +92,4 @@ protected:
 
 	// 座標変換リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> transformationResource;
-
-	// 座標変換データ
-	TransformationData* transformationData = nullptr;
-
-	// 変換データ
-	Transform transform;
 };

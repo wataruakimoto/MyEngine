@@ -4,6 +4,7 @@
 #include "2D/TextureManager.h"
 #include "ParticleCommon.h"
 #include "Math/MathMatrix.h"
+#include <imgui.h>
 
 using namespace MathMatrix;
 

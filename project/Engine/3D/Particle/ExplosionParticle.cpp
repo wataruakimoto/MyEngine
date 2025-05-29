@@ -1,4 +1,4 @@
-#include "Explosion.h"
+#include "ExplosionParticle.h"
 #include "ParticleCommon.h"
 #include "Base/DirectXUtility.h"
 #include "Base/SrvManager.h"
@@ -9,7 +9,7 @@
 
 using namespace MathMatrix;
 
-void Explosion::Initialize() {
+void ExplosionParticle::Initialize() {
 
 	// 頂点データ生成
 	GenerateVertexData();
@@ -19,26 +19,12 @@ void Explosion::Initialize() {
 
 	// マテリアルデータ生成
 	GenerateMaterialData();
-
-	// 座標変換データ生成
-	GenerateTransformationData();
 }
 
-void Explosion::Update() {
-
-	/// === TransformからWorldMatrixを作る === ///
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
-
-	/// === ViewMatrixを作って単位行列を代入 === ///
-	Matrix4x4 viewMatrix = MakeIdentity4x4();
-
-	/// === ProjectionMatrixを作って平行投影行列を書き込む === ///
-	Matrix4x4 projectionMatrix = MakeOrthographicMatrix(0.0f, 0.0f, float(WinApp::kClientWidth), float(WinApp::kClientHeight), 0.0f, 100.0f);
-
-	transformationData->WVP = Multiply(worldMatrix, Multiply(viewMatrix, projectionMatrix));
+void ExplosionParticle::Update() {
 }
 
-void Explosion::Draw(ParticleGroup* group) {
+void ExplosionParticle::Draw(ParticleGroup* group) {
 
 	// 頂点バッファビューを設定
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -60,16 +46,7 @@ void Explosion::Draw(ParticleGroup* group) {
 
 }
 
-void Explosion::ShowImGui(const char* name) {
-
-	ImGui::Begin(name);
-	ImGui::DragFloat3("scale", &transform.scale.x, 0.1f);
-	ImGui::DragFloat3("rotate", &transform.rotate.x, 0.01f);
-	ImGui::DragFloat3("translate", &transform.translate.x, 0.1f);
-	ImGui::End();
-}
-
-void Explosion::GenerateVertexData() {
+void ExplosionParticle::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
 	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
@@ -116,7 +93,7 @@ void Explosion::GenerateVertexData() {
 	}
 }
 
-void Explosion::GenerateIndexData() {
+void ExplosionParticle::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
 	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kRingDivide);
@@ -148,7 +125,7 @@ void Explosion::GenerateIndexData() {
 	}
 }
 
-void Explosion::GenerateMaterialData() {
+void ExplosionParticle::GenerateMaterialData() {
 
 	/// === MaterialResourceを作る === ///
 	materialResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
@@ -159,16 +136,4 @@ void Explosion::GenerateMaterialData() {
 	/// === MaterialDataに初期値を書き込む === ///
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
-}
-
-void Explosion::GenerateTransformationData() {
-
-	/// === TransformationMatrixResourceを作る === ///
-	transformationResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(TransformationData));
-
-	/// === TransformationResourceにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる === ///
-	transformationResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationData));
-
-	/// === TransformationDataの初期値を書き込む === ///
-	transformationData->WVP = MakeIdentity4x4(); // 単位行列を書き込む
 }
