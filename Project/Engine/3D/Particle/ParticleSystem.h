@@ -32,6 +32,7 @@ enum class ParticleType {
 	CYLINDER,
 	EXPLOSION,
 	FLASH,
+	FLASH2,
 };
 
 // パーティクルグループ
@@ -116,7 +117,7 @@ public:
 	/// <summary>
 	/// パーティクル生成
 	/// </summary>
-	Particle MakeNewParticle(Particle setting);
+	Particle MakeNewParticle(Particle setting, const Vector3& position);
 
 ///-------------------------------------------/// 
 /// ゲッター

@@ -5,6 +5,7 @@
 #include "CylinderParticle.h"
 #include "ExplosionParticle.h"
 #include "FlashParticle.h"
+#include "FlashParticle2.h"
 #include "base/DirectXUtility.h"
 #include "base/SrvManager.h"
 #include "2d/TextureManager.h"
@@ -65,10 +66,23 @@ void ParticleSystem::Update() {
 				iterator->currentTime += kDeltaTime;
 			}
 
-			if (particleGroup.particleType == ParticleType::EXPLOSION || particleGroup.particleType == ParticleType::FLASH) {
+			if (particleGroup.particleType == ParticleType::EXPLOSION) {
 
-				iterator->transform.scale.x += 0.1f;
-				iterator->transform.scale.y += 0.1f;
+				//iterator->transform.scale.x += 0.1f;
+				//iterator->transform.scale.y += 0.1f;
+			}
+
+			if (particleGroup.particleType == ParticleType::FLASH2) {
+
+				if (iterator->transform.scale.x > 0.0f) {
+
+					iterator->transform.scale.x -= 0.01f;
+				}
+
+				if (iterator->transform.scale.y > 0.0f) {
+
+					iterator->transform.scale.y -= 0.1f;
+				}
 			}
 
 			// α値を下げる
@@ -239,6 +253,10 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 	case ParticleType::FLASH:
 		particleGroups[name].particleTypeClass = new FlashParticle();
 		break;
+
+	case ParticleType::FLASH2:
+		particleGroups[name].particleTypeClass = new FlashParticle2();
+		break;
 	}
 
 	// 生成したタイプの初期化を呼び出す
@@ -259,17 +277,14 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 	for (uint32_t index = 0; index < count; ++index) {
 
 		// 新しいパーティクルを作成
-		Particle particle = MakeNewParticle(setting);
-
-		// 位置を設定
-		particle.transform.translate = position;
+		Particle particle = MakeNewParticle(setting, position);
 
 		// 指定されたパーティクルグループに追加
 		particleGroups[name].particles.push_back(particle);
 	}
 }
 
-Particle ParticleSystem::MakeNewParticle(Particle setting) {
+Particle ParticleSystem::MakeNewParticle(Particle setting, const Vector3& position) {
 
 	// 返す用のパーティクル
 	Particle resultParticle;
@@ -321,20 +336,20 @@ Particle ParticleSystem::MakeNewParticle(Particle setting) {
 
 		// X軸の位置をランダムに設定
 		std::uniform_real_distribution<float> distributionX(setting.randomTranslateMin.x, setting.randomTranslateMax.x);
-		resultParticle.transform.translate.x = distributionX(randomEngine);
+		resultParticle.transform.translate.x = position.x + distributionX(randomEngine);
 
 		// Y軸の位置をランダムに設定
 		std::uniform_real_distribution<float> distributionY(setting.randomTranslateMin.y, setting.randomTranslateMax.y);
-		resultParticle.transform.translate.y = distributionY(randomEngine);
+		resultParticle.transform.translate.y = position.y + distributionY(randomEngine);
 
 		// Z軸の位置をランダムに設定
 		std::uniform_real_distribution<float> distributionZ(setting.randomTranslateMin.z, setting.randomTranslateMax.z);
-		resultParticle.transform.translate.z = distributionZ(randomEngine);
+		resultParticle.transform.translate.z = position.z + distributionZ(randomEngine);
 	}
 	else {
 
 		// 設定項目を引き継ぐ
-		resultParticle.transform.translate = setting.transform.translate;
+		resultParticle.transform.translate = position + setting.transform.translate;
 	}
 
 	// Velocityの設定

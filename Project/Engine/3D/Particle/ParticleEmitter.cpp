@@ -103,18 +103,21 @@ void ParticleEmitter::ShowImGui(const char* name) {
 				ImGui::Checkbox("Randomize", &settings.randomizeVelocity);
 				ImGui::DragFloat3("Min", &settings.randomVelocityMin.x, 0.01f);
 				ImGui::DragFloat3("Max", &settings.randomVelocityMax.x, 0.01f);
+				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNode("Color")) {
 				ImGui::Checkbox("Randomize", &settings.randomizeColor);
 				ImGui::DragFloat4("Min", &settings.randomColorMin.x, 0.01f);
 				ImGui::DragFloat4("Max", &settings.randomColorMax.x, 0.01f);
+				ImGui::TreePop();
 			}
 
 			if (ImGui::TreeNode("LifeTime")) {
 				ImGui::Checkbox("Randomize", &settings.randomizeLifeTime);
 				ImGui::DragFloat("Min", &settings.randomLifeTimeMin, 0.1f);
 				ImGui::DragFloat("Max", &settings.randomLifeTimeMax, 0.1f);
+				ImGui::TreePop();
 			}
 
 			ImGui::TreePop();

@@ -132,6 +132,7 @@
     <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\ExplosionParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\FlashParticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\FlashParticle2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -244,6 +245,7 @@
     <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
     <ClInclude Include="Engine\3D\Particle\ExplosionParticle.h" />
     <ClInclude Include="Engine\3D\Particle\FlashParticle.h" />
+    <ClInclude Include="Engine\3D\Particle\FlashParticle2.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

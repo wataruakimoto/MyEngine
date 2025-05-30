@@ -1,10 +1,9 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "3d/Model.h"
-#include "3d/Object3d.h"
 #include "3d/Particle/ParticleEmitter.h"
 #include "camera/Camera.h"
+#include <memory>
 
 /// ===== ゲームシーン ===== ///
 class GameScene : public BaseScene {
@@ -42,34 +41,18 @@ private:
 	// カメラのポインタ
 	std::unique_ptr<Camera> camera = nullptr;
 
-	// モデルのポインタ
-	std::unique_ptr <Model> modelMonsterBall = nullptr;
-
-	std::unique_ptr <Model> modelTerrain = nullptr;
-
-	// 3Dオブジェクトのポインタ
-	std::unique_ptr <Object3d> monsterBall = nullptr;
-
-	std::unique_ptr <Object3d> terrain = nullptr;
-
-	// パーティクル発生機
-	std::unique_ptr <ParticleEmitter> particleEmitter1 = nullptr;
-	std::unique_ptr <ParticleEmitter> particleEmitter2 = nullptr;
-	std::unique_ptr <ParticleEmitter> particleEmitter3 = nullptr;
-
-	Transform EmitterTransform1 = {};
-	Transform EmitterTransform2 = {};
-	Transform EmitterTransform3 = {};
-
-	Particle particleSetting1 = {};
-	Particle particleSetting2 = {};
-	Particle particleSetting3 = {};
-
+	// 爆発エフェクト
 	std::unique_ptr <ParticleEmitter> explosionEmitter = nullptr;
 	Transform explosionEmitterTransform = {}; // 初期位置とスケール
 	Particle explosionParticleSetting = {}; // パーティクルの設定
 
+	// フラッシュエフェクト
 	std::unique_ptr <ParticleEmitter> flashEmitter = nullptr;
 	Transform flashEmitterTransform = {}; // 初期位置とスケール
 	Particle flashParticleSetting = {}; // パーティクルの設定
+
+	// スモークエフェクト
+	std::unique_ptr <ParticleEmitter> smokeEmitter = nullptr;
+	Transform smokeEmitterTransform = {}; // 初期位置とスケール
+	Particle smokeParticleSetting = {}; // パーティクルの設定
 };
