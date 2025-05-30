@@ -78,7 +78,6 @@ void GameScene::Initialize() {
 	// パーティクルの設定
 	explosionParticleSetting.useBillboard = true;
 	flashParticleSetting.useBillboard = true;
-	flashParticleSetting.useLifeTime = false;
 	// パーティクルエミッタの生成
 	explosionEmitter = std::make_unique <ParticleEmitter>("explosion", explosionEmitterTransform, 1, 0.1f, explosionParticleSetting);
 	flashEmitter = std::make_unique <ParticleEmitter>("flash", flashEmitterTransform, 1, 0.1f, flashParticleSetting);

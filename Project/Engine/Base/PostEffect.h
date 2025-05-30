@@ -120,7 +120,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 
 	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 1.0f, 0.0f, 0.0f, 1.0f }; // 赤に設定
+	const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 赤に設定
 
 	// 深度バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;

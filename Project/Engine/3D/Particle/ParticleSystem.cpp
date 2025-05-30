@@ -65,7 +65,7 @@ void ParticleSystem::Update() {
 				iterator->currentTime += kDeltaTime;
 			}
 
-			if (particleGroup.particleType == ParticleType::EXPLOSION) {
+			if (particleGroup.particleType == ParticleType::EXPLOSION || particleGroup.particleType == ParticleType::FLASH) {
 
 				iterator->transform.scale.x += 0.1f;
 				iterator->transform.scale.y += 0.1f;

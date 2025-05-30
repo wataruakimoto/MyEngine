@@ -55,10 +55,16 @@ private:
 private:
 
 	// スパイクの設定
-	const uint32_t kNumSpike = 16; // スパイクの数
-	const float kMinLength = 0.5f; // 最小の長さ
-	const float kMaxLength = 2.0f; // 最大の長さ
+	const uint32_t kNumSpike = 12; // スパイクの数
+	const float kMinLength = 0.1f; // 最小の長さ
+	const float kMaxLength = 1.0f; // 最大の長さ
 	const float angleStep = 2.0f * std::numbers::pi_v<float> / float(kNumSpike); // 分割あたりのラジアン 2π/分割数
+
+	// 最初の右の座標
+	Vector2 firstRight = {};
+
+	// 一個前の左側の座標
+	Vector2 preLeft = {};
 
 	// 乱数生成器
 	std::random_device seedGenerator;

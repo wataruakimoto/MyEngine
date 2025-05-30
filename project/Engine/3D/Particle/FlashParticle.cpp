@@ -9,6 +9,9 @@ using namespace MathMatrix;
 
 void FlashParticle::Initialize() {
 
+	// 乱数生成
+	randomEngine.seed(seedGenerator());
+
 	// 頂点データ生成
 	GenerateVertexData();
 
@@ -40,13 +43,13 @@ void FlashParticle::Draw(ParticleGroup* group) {
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
 
 	// 描画(DrawCall)
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(3 * kNumSpike, group->numInstance, 0, 0, 0);
+	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6 * kNumSpike, group->numInstance, 0, 0, 0);
 }
 
 void FlashParticle::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 3 * kNumSpike);
+	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 4 * kNumSpike);
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
@@ -54,7 +57,7 @@ void FlashParticle::GenerateVertexData() {
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 
 	// 使用するリソースのサイズ 頂点のサイズ
-	vertexBufferView.SizeInBytes = sizeof(VertexData) * 3 * kNumSpike;
+	vertexBufferView.SizeInBytes = sizeof(VertexData) * 4 * kNumSpike;
 
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
@@ -69,7 +72,7 @@ void FlashParticle::GenerateVertexData() {
 void FlashParticle::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
-	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 3 * kNumSpike);
+	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6 * kNumSpike);
 
 	/// === IBVを作成する(値を設定するだけ) === ///
 
@@ -77,7 +80,7 @@ void FlashParticle::GenerateIndexData() {
 	indexBufferView.BufferLocation = indexResource->GetGPUVirtualAddress();
 
 	// 使用するリソースのサイズはインデックス3つ分のサイズ
-	indexBufferView.SizeInBytes = sizeof(uint32_t) * 3 * kNumSpike;
+	indexBufferView.SizeInBytes = sizeof(uint32_t) * 6 * kNumSpike;
 
 	// インデックスはuint32_tとする
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
@@ -85,13 +88,18 @@ void FlashParticle::GenerateIndexData() {
 	/// === IndexResourceにデータを書き込むためのアドレスを取得してindexDataに割り当てる === ///
 	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
 
-	/// === IndexResourceに初期値を書き込む(3個分)=== ///
+	/// === IndexResourceに初期値を書き込む(4個分)=== ///
 
 	for (uint32_t index = 0; index < kNumSpike; ++index) {
 
-		indexData[index * 3 + 0] = index * 3 + 0; // 上
-		indexData[index * 3 + 1] = index * 3 + 1; // 左
-		indexData[index * 3 + 2] = index * 3 + 2; // 右
+		// 右の三角形
+		indexData[index * 6 + 0] = index * 4 + 0; // 上
+		indexData[index * 6 + 1] = index * 4 + 1; // 右
+		indexData[index * 6 + 2] = index * 4 + 2; // 下
+		// 左の三角形
+		indexData[index * 6 + 3] = index * 4 + 2; // 下
+		indexData[index * 6 + 4] = index * 4 + 3; // 左
+		indexData[index * 6 + 5] = index * 4 + 0; // 上
 	}
 }
 
@@ -110,37 +118,78 @@ void FlashParticle::GenerateMaterialData() {
 
 void FlashParticle::GenerateSpike() {
 
-	// 乱数生成
-	randomEngine.seed(seedGenerator());
-
-	// ランダムな値を生成するためのエンジンを初期化
-	std::uniform_real_distribution<float> dist(kMinLength, kMaxLength);
-
 	// 分割数と同じ数行う
 	for (uint32_t index = 0; index < kNumSpike; ++index) {
-		
+
 		float angle = index * angleStep;
-		float angleNext = angle + angleStep * 0.5f;
-		float sin = std::sin(angle);
-		float cos = std::cos(angle);
-		float sinNext = std::sin(angleNext);
-		float cosNext = std::cos(angleNext);
+		float nextAngle = (index + 1) * angleStep;
 
-		float LengthL = dist(randomEngine);
-		float LengthR = dist(randomEngine);
+		// 上方向
+		std::uniform_real_distribution<float> topLengthDist(kMinLength, kMaxLength);
+		float topLength = topLengthDist(randomEngine);
 
-		uint32_t vertexIndex = index * 3; // 頂点のインデックス
+		Vector2 top = { std::cos((angle + nextAngle) * 0.5f) * topLength, std::sin((angle + nextAngle) * 0.5f) * topLength };
+
+		// 下方向
+		Vector2 center = { 0.0f, 0.0f };
+
+		// 右方向
+		Vector2 right = {};
+
+		// インデックスが0(１つ目のスパイク)の時
+		if (index == 0) {
+
+			std::uniform_real_distribution<float> rightLengthDist(kMinLength, kMaxLength);
+			float rightLength = rightLengthDist(randomEngine);
+
+			// 前の右側の座標がないので、ランダムに生成
+			right = { std::cos(angle) * rightLength, std::sin(angle) * rightLength };
+
+			// 最初の右側の座標を保存しておく
+			firstRight = right;
+		}
+		// それ以外(２個目以降のスパイク)の時
+		else {
+
+			// 前の左側側の座標を使う
+			right = preLeft;
+		}
+
+		// 左方向
+		Vector2 left = {};
+
+		// インデックスがスパイクの数-1(最後のスパイク)の時
+		if (index == kNumSpike - 1) {
+
+			// 最初の右側の座標を使う
+			left = firstRight;
+		}
+		// それ以外(最後のスパイク以外)の時
+		else {
+
+			std::uniform_real_distribution<float> leftLengthDist(kMinLength, kMaxLength);
+			float leftLength = leftLengthDist(randomEngine);
+
+			left = { std::cos(nextAngle) * leftLength, std::sin(nextAngle) * leftLength };
+
+			preLeft = left; // 今回の結果を保存しておく
+		}
 
 		/// === VertexResourceに初期値を書き込む(4頂点) === ///
 
+		uint32_t vertexIndex = index * 4; // 頂点のインデックス
+
 		// 上
-		vertexData[0 + vertexIndex].position = { 0.0f, 0.0f, 0.0f, 1.0f };
-		vertexData[0 + vertexIndex].texcoord = { 0.5f, 0.0f };
-		// 左
-		vertexData[1 + vertexIndex].position = { sin * LengthL, cos * LengthL, 0.0f, 1.0f };
-		vertexData[1 + vertexIndex].texcoord = { 0.0f, 1.0f };
+		vertexData[vertexIndex + 0].position = { top.x, top.y, 0.0f, 1.0f };
+		vertexData[vertexIndex + 0].texcoord = { 0.0f, 0.0f };
 		// 右
-		vertexData[2 + vertexIndex].position = { sinNext * LengthR, cosNext * LengthR, 0.0f, 1.0f };
-		vertexData[2 + vertexIndex].texcoord = { 1.0f, 1.0f };
+		vertexData[vertexIndex + 1].position = { right.x, right.y, 0.0f, 1.0f };
+		vertexData[vertexIndex + 1].texcoord = { 1.0f, 0.0f };
+		// 下
+		vertexData[vertexIndex + 2].position = { center.x, center.y, 0.0f, 1.0f };
+		vertexData[vertexIndex + 2].texcoord = { 1.0f, 1.0f };
+		// 左
+		vertexData[vertexIndex + 3].position = { left.x, left.y, 0.0f, 1.0f };
+		vertexData[vertexIndex + 3].texcoord = { 0.0f, 1.0f };
 	}
 }
