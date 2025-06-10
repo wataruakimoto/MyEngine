@@ -11,8 +11,10 @@ class LevelData {
 ///-------------------------------------------///
 public:
 
+	// オブジェクトデータ
 	struct ObjectData {
 		std::string fileName; // ファイル名
+		nlohmann::json objects; // オブジェクトのデータ
 		Vector3 translation; // 位置
 		Vector3 rotation; // 回転
 		Vector3 scale; // スケール
@@ -24,10 +26,10 @@ public:
 public:
 
 	/// <summary>
-	/// オブジェクトリストの取得
+	/// オブジェクトデータのリストの取得
 	/// </summary>
 	/// <returns></returns>
-	std::list<nlohmann::json>& GetObjects() { return objects; }
+	std::list<ObjectData>& GetObjects() { return objects; }
 
 
 ///-------------------------------------------/// 
@@ -35,7 +37,7 @@ public:
 ///-------------------------------------------///
 private:
 
-	// オブジェクトのリスト
-	std::list<nlohmann::json> objects;
+	// オブジェクトデータのリスト
+	std::list<ObjectData> objects;
 };
 
