@@ -48,8 +48,8 @@ void Framework::Initialize() {
 	// 入力の初期化
 	Input::GetInstance()->Initialize(winApp.get());
 
-	// デバッグカメラ初期化
-	debugCamera = std::make_unique <DebugCamera>();
+	// カメラ初期化
+	camera = std::make_unique <Camera>();
 
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxUtility.get());
@@ -63,14 +63,14 @@ void Framework::Initialize() {
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize(dxUtility.get());
 	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
-	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
+	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// モデル基盤初期化
 	ModelCommon::GetInstance()->Initialize(dxUtility.get());
 
 	// パーティクル基盤初期化
 	ParticleCommon::GetInstance()->Initialize(dxUtility.get());
-	ParticleCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
+	ParticleCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void Framework::Update() {
@@ -78,8 +78,8 @@ void Framework::Update() {
 	// 入力の更新
 	Input::GetInstance()->Update();
 
-	// デバッグカメラの更新
-	debugCamera->Update();
+	// カメラの更新
+	camera->Update();
 }
 
 void Framework::Finalize() {

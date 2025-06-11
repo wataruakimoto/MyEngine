@@ -14,7 +14,6 @@
 void GameScene::Initialize() {
 
 	// カメラの初期化
-	camera = std::make_unique <Camera>();
 	camera->SetRotate({ 0.2f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
@@ -32,7 +31,6 @@ void GameScene::Initialize() {
 	monsterBall = std::make_unique <Object3d>();
 	monsterBall->Initialize();
 	monsterBall->SetModel(modelMonsterBall.get());
-	monsterBall->SetCamera(camera.get());
 
 	modelTerrain = std::make_unique <Model>();
 	modelTerrain->Initialize("Resources/terrain", "terrain.gltf");
@@ -40,10 +38,8 @@ void GameScene::Initialize() {
 	terrain = std::make_unique <Object3d>();
 	terrain->Initialize();
 	terrain->SetModel(modelTerrain.get());
-	terrain->SetCamera(camera.get());
 
 	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->SetCamera(camera.get());
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::DEFAULT);
 	ParticleSystem::GetInstance()->CreateParticleGroup("ring", "Resources/gradationLine.png", ParticleType::RING);
 	ParticleSystem::GetInstance()->CreateParticleGroup("cylinder", "Resources/gradationLine.png", ParticleType::CYLINDER);
@@ -81,10 +77,6 @@ void GameScene::Update() {
 
 		AudioManager::GetInstance()->SoundPlayWave();
 	}
-
-	/// === カメラ更新 === ///
-	camera->ShowImGui("camera");
-	camera->Update();
 
 	/// === 3Dオブジェクト更新 === ///
 

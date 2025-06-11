@@ -38,7 +38,10 @@ void PostProcessingPipeline::Draw() {
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
 
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetDepthSRVIndex()));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
+
+	// カメラから投影行列を取得
+	Vector4 projectionInverse = postEffect->GetProjectionInverse();
 
 	/// === マテリアルCBufferの場所を設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());

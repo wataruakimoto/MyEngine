@@ -4,7 +4,7 @@
 #include "base/PostEffect.h"
 #include "base/PostProcessingPipeline.h"
 #include "base/SwapChain.h"
-#include "camera/DebugCamera.h"
+#include "camera/Camera.h"
 #include "scene/AbstractSceneFactory.h"
 
 #include <memory>
@@ -73,7 +73,7 @@ protected:
 	std::unique_ptr<SwapChain> swapChain = nullptr;
 
 	// デバッグカメラ
-	std::unique_ptr<DebugCamera> debugCamera = nullptr;
+	std::unique_ptr<Camera> camera = nullptr;
 
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
