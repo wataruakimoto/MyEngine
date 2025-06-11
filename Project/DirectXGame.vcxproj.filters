@@ -273,5 +273,6 @@
     <FxCompile Include="Resources\Shaders\BoxFilter.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\GaussianFilter.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\LuminanceBasedOutline.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\DepthBasedOutline.PS.hlsl" />
   </ItemGroup>
 </Project>

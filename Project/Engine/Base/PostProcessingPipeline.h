@@ -1,4 +1,5 @@
 #pragma once
+#include "math/Vector4.h"
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <wrl.h>
@@ -71,6 +72,20 @@ private:
 	/// </summary>
 	void CreateGraphicsPipeline();
 
+	/// <summary>
+	/// マテリアルデータ生成
+	/// </summary>
+	void GenerateMaterialData();
+
+///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
+public:
+
+	struct Material {
+		Vector4 projectionInverse; // 投影逆行列
+	};
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -108,5 +123,10 @@ private:
 
 	// GraphicsPipeline
 	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
+
+	// マテリアルリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
+	// マテリアルデータ
+	Material* materialData = nullptr;
 };
 

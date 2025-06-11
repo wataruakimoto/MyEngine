@@ -93,6 +93,8 @@ public:
 
 	uint32_t GetSRVIndex() const { return srvIndex; } // SRVインデックスのゲッター
 
+	uint32_t GetDepthSRVIndex() const { return depthSrvIndex; } // 深度用SRVインデックスのゲッター
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -121,6 +123,9 @@ private:
 
 	// クリアする色
 	const Vector4 kRenderTargetClearValue = { 1.0f, 0.0f, 0.0f, 1.0f }; // 赤に設定
+
+	// Depth用SRVインデックス
+	uint32_t depthSrvIndex = 0;
 
 	// 深度バッファリソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
