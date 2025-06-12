@@ -11,7 +11,7 @@ struct PixelShaderOutput {
 
 struct Material {
     
-    float4 projectionInverse;
+    float4x4 projectionInverse;
 };
 
 ConstantBuffer<Material> gMaterial : register(b0);
@@ -77,6 +77,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
     
     // weightが大きいほど暗く表示するようにしている。最もシンプルな合成方法
     output.color.rgb = (1.0f - weight) * gTexture.Sample(gSampler, input.texcoord).rgb;
+    //output.color.rgb = weight;
     
     return output;
 }

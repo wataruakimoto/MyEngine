@@ -151,11 +151,17 @@ private:
 	// シザー矩形
 	D3D12_RECT scissorRect{};
 
-	// TrainsitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
+	//  レンダーテクスチャ用のTrainsitionBarrier
+	D3D12_RESOURCE_BARRIER renderTextureBarrier{};
 
-	// バリアの現在の状態
-	D3D12_RESOURCE_STATES currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	// レンダーテクスチャ用のバリアの状態
+	D3D12_RESOURCE_STATES renderTextureState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+
+	// 深度ステンシル用のTrainsitionBarrier
+	D3D12_RESOURCE_BARRIER depthStencilBarrier{};
+
+	// 深度ステンシル用のバリアの状態
+	D3D12_RESOURCE_STATES depthStencilState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 
 	// DirectX12共通処理
 	DirectXUtility* dxUtility = nullptr;

@@ -2,10 +2,13 @@
 #include "base/DirectXUtility.h"
 #include "base/SrvManager.h"
 #include "base/PostEffect.h"
+#include "camera/Camera.h"
 #include "debug/Logger.h"
+#include "Math/MathMatrix.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;
+using namespace MathMatrix;
 
 void PostProcessingPipeline::Initialize(DirectXUtility* dxUtility, PostEffect* postEffect) {
 
@@ -21,6 +24,15 @@ void PostProcessingPipeline::Initialize(DirectXUtility* dxUtility, PostEffect* p
 }
 
 void PostProcessingPipeline::Draw() {
+
+	// カメラから投影行列を取得
+	Matrix4x4 projectionInverse = camera->GetProjectionMatrix();
+
+	// 逆行列に変換
+	projectionInverse = Inverse(projectionInverse);
+
+	// マテリアルデータに投影逆行列をセット
+	materialData->projectionInverse = projectionInverse;
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxUtility->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -39,9 +51,6 @@ void PostProcessingPipeline::Draw() {
 
 	/// === SRVのDescriptorTableを設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
-
-	// カメラから投影行列を取得
-	Vector4 projectionInverse = postEffect->GetProjectionInverse();
 
 	/// === マテリアルCBufferの場所を設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
@@ -233,5 +242,5 @@ void PostProcessingPipeline::GenerateMaterialData() {
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 
 	/// === MaterialDataの初期値を書き込む === ///
-	materialData->projectionInverse = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+	materialData->projectionInverse = MakeIdentity4x4(); // 単位行列を設定
 }

@@ -1,5 +1,5 @@
 #pragma once
-#include "math/Vector4.h"
+#include "math/Matrix4x4.h"
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <wrl.h>
@@ -8,6 +8,7 @@
 class DirectXUtility;
 class SrvManager;
 class PostEffect;
+class Camera;
 
 /// ===== レンダーテクスチャ用パイプライン ===== ///
 class PostProcessingPipeline {
@@ -26,6 +27,17 @@ public:
 	/// 描画設定
 	/// </summary>
 	void Draw();
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// カメラのセット
+	/// </summary>
+	/// <param name="camera"></param>
+	void SetCamera(Camera* camera) { this->camera = camera; }
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -83,7 +95,8 @@ private:
 public:
 
 	struct Material {
-		Vector4 projectionInverse; // 投影逆行列
+
+		Matrix4x4 projectionInverse; // 投影逆行列
 	};
 
 ///-------------------------------------------/// 
@@ -128,5 +141,8 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
 	// マテリアルデータ
 	Material* materialData = nullptr;
+
+	// カメラの借りポインタ
+	Camera* camera = nullptr;
 };
 
