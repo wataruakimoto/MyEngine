@@ -34,11 +34,6 @@ static const float kPrewittVerticalKernel[3][3] = {
     { 1.0f / 6.0f, 1.0f / 6.0f, 1.0f / 6.0f }
 };
 
-float Luminance(float3 v) {
-    
-    return dot(v, float3(0.2125f, 0.7154f, 0.0721f));
-}
-
 PixelShaderOutput main(VertexShaderOutput input) {
     
     PixelShaderOutput output;

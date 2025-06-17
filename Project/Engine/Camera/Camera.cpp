@@ -23,6 +23,8 @@ Camera::Camera() {
 
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
 
+	projectionMatrixInverse = Inverse(projectionMatrix);
+
 	viewProjectionMatrix = viewMatrix * projectionMatrix;
 
 	// ワールド座標をワールド行列から得る
@@ -41,6 +43,9 @@ void Camera::Update() {
 
 	// 透視投影行列を書き込む
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
+
+	// projectionMatrixの逆行列を代入
+	projectionMatrixInverse = Inverse(projectionMatrix);
 
 	// viewMatrixとprojectionMatrixを合わせる
 	viewProjectionMatrix = viewMatrix * projectionMatrix;

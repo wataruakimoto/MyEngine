@@ -25,11 +25,8 @@ void PostProcessingPipeline::Initialize(DirectXUtility* dxUtility, PostEffect* p
 
 void PostProcessingPipeline::Draw() {
 
-	// カメラから投影行列を取得
-	Matrix4x4 projectionInverse = camera->GetProjectionMatrix();
-
-	// 逆行列に変換
-	projectionInverse = Inverse(projectionInverse);
+	// カメラから投影逆行列を取得
+	Matrix4x4 projectionInverse = camera->GetProjectionMatrixInverse();
 
 	// マテリアルデータに投影逆行列をセット
 	materialData->projectionInverse = projectionInverse;
@@ -50,7 +47,7 @@ void PostProcessingPipeline::Draw() {
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
 
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetDepthSRVIndex()));
 
 	/// === マテリアルCBufferの場所を設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
@@ -74,7 +71,7 @@ void PostProcessingPipeline::CreateRootSignature() {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-	// gTexture SRV t1
+	// gDepthTexture SRV t1
 	descriptorRange[1].BaseShaderRegister = 1; // 1から始まる
 	descriptorRange[1].NumDescriptors = 1; // 数は1つ
 	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
@@ -89,7 +86,7 @@ void PostProcessingPipeline::CreateRootSignature() {
 	rootParameters[0].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // Tableの中身の配列を指定
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
 
-	// gTexture SRV t1
+	// gDepthTexture SRV t1
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[1]; // Tableの中身の配列を指定
@@ -116,7 +113,7 @@ void PostProcessingPipeline::CreateRootSignature() {
 	staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 
-	// gSampler s1
+	// gSamplerPoint s1
 	staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT; // ポイントフィルタ
 	staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
 	staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
