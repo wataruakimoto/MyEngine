@@ -1,12 +1,12 @@
 #pragma once
 
-#include "BaseScene.h"
+#include "Scene/System/BaseScene.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
 #include "3d/Particle/ParticleEmitter.h"
 
-/// ===== ゲームシーン ===== ///
-class GameScene : public BaseScene {
+/// ===== デバッグシーン ===== ///
+class DebugScene : public BaseScene {
 
 ///-------------------------------------------/// 
 /// メンバ関数

@@ -94,28 +94,22 @@
     <ClCompile Include="engine\audio\AudioManager.cpp">
       <Filter>Engine\audio</Filter>
     </ClCompile>
-    <ClCompile Include="game\MyGame.cpp">
+    <ClCompile Include="Game\Base\MyGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="game\Framework.cpp">
+    <ClCompile Include="Engine\Base\Framework.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="game\scene\BaseScene.cpp">
+    <ClCompile Include="Game\Scene\GamePlayScene\GamePlayScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="game\scene\GameScene.cpp">
+    <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="game\scene\TitleScene.cpp">
+    <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="game\scene\SceneManager.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="game\scene\AbstractSceneFactory.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="game\scene\SceneFactory.cpp">
+    <ClCompile Include="Game\Scene\System\SceneFactory.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
@@ -130,6 +124,9 @@
     <ClCompile Include="Engine\3D\Particle\PlaneParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
+    <ClCompile Include="Game\Scene\GameOverScene\GameOverScene.cpp" />
+    <ClCompile Include="Game\Scene\GameClearScene\GameClearScene.cpp" />
+    <ClCompile Include="Game\Scene\DebugScene\DebugScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -198,28 +195,28 @@
     <ClInclude Include="engine\audio\AudioManager.h">
       <Filter>Engine\audio</Filter>
     </ClInclude>
-    <ClInclude Include="game\MyGame.h">
+    <ClInclude Include="Game\Base\MyGame.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="game\Framework.h">
+    <ClInclude Include="Engine\Base\Framework.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\BaseScene.h">
+    <ClInclude Include="Game\Scene\System\BaseScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\GameScene.h">
+    <ClInclude Include="Game\Scene\GamePlayScene\GamePlayScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\TitleScene.h">
+    <ClInclude Include="Game\Scene\TitleScene\TitleScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\SceneManager.h">
+    <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\AbstractSceneFactory.h">
+    <ClInclude Include="Engine\Scene\AbstractSceneFactory.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="game\scene\SceneFactory.h">
+    <ClInclude Include="Game\Scene\System\SceneFactory.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="engine\camera\DebugCamera.h" />
@@ -240,6 +237,9 @@
     <ClInclude Include="Engine\3D\Particle\PlaneParticle.h" />
     <ClInclude Include="Engine\3D\Particle\RingParticle.h" />
     <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
+    <ClInclude Include="Game\Scene\GameOverScene\GameOverScene.h" />
+    <ClInclude Include="Game\Scene\GameClearScene\GameClearScene.h" />
+    <ClInclude Include="Game\Scene\DebugScene\DebugScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

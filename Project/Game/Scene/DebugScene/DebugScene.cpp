@@ -1,4 +1,4 @@
-#include "GameScene.h"
+#include "DebugScene.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
 #include "2d/TextureManager.h"
@@ -11,7 +11,7 @@
 
 #include <numbers>
 
-void GameScene::Initialize() {
+void DebugScene::Initialize() {
 
 	// カメラの初期化
 	camera->SetRotate({ 0.2f,0.0f,0.0f });
@@ -70,7 +70,7 @@ void GameScene::Initialize() {
 	particleEmitter3 = std::make_unique <ParticleEmitter>("cylinder", EmitterTransform3, 1, 1.0f, particleSetting3);
 }
 
-void GameScene::Update() {
+void DebugScene::Update() {
 
 	// サウンド更新
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
@@ -99,7 +99,7 @@ void GameScene::Update() {
 	ParticleSystem::GetInstance()->Update();
 }
 
-void GameScene::Draw() {
+void DebugScene::Draw() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
@@ -116,5 +116,5 @@ void GameScene::Draw() {
 	ParticleSystem::GetInstance()->Draw();
 }
 
-void GameScene::Finalize() {
+void DebugScene::Finalize() {
 }

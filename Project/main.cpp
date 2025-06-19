@@ -1,7 +1,7 @@
 #include "Windows.h"
-#include "game/Framework.h"
-#include "game/MyGame.h"
-#include "debug/D3DResourceLeakChecker.h"
+#include "Base/Framework.h"
+#include "Base/MyGame.h"
+#include "Debug/D3DResourceLeakChecker.h"
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {

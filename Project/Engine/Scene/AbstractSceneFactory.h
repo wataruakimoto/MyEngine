@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BaseScene.h"
+#include "Scene/System/BaseScene.h"
 #include <string>
 
 /// ===== 抽象シーンファクトリー ===== ///

@@ -1,8 +1,8 @@
 #pragma once
-#include "Framework.h"
+#include "Scene/System/BaseScene.h"
 
-/// === ゲーム関連 === ///
-class MyGame : public Framework {
+/// ===== ゲームクリアシーン ===== ///
+class GameClearScene : public BaseScene {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -28,4 +28,9 @@ public:
 	/// 終了
 	/// </summary>
 	void Finalize() override;
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
+private:
 };

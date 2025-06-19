@@ -1,11 +1,8 @@
 #pragma once
-#include "BaseScene.h"
-#include "2d/Sprite.h"
+#include "Scene/System/BaseScene.h"
 
-#include <memory>
-
-/// ===== タイトルシーン ===== ///
-class TitleScene : public BaseScene {
+/// ===== ゲームプレイシーン ===== ///
+class GamePlayScene : public BaseScene {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -36,7 +33,4 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
-
-	// スプライトのポインタ
-	std::unique_ptr<Sprite> sprite = nullptr;
 };

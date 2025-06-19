@@ -1,9 +1,9 @@
 #include "MyGame.h"
-#include "debug/ImGuiManager.h"
-#include "3d/Particle/ParticleCommon.h"
-#include "3d/Particle/ParticleSystem.h"
-#include "scene/SceneManager.h"
-#include "scene/SceneFactory.h"
+#include "Debug/ImGuiManager.h"
+#include "3D/Particle/ParticleCommon.h"
+#include "3D/Particle/ParticleSystem.h"
+#include "Scene/SceneManager.h"
+#include "Scene/System/SceneFactory.h"
 
 void MyGame::Initialize() {
 
@@ -18,7 +18,7 @@ void MyGame::Initialize() {
 	SceneManager::GetInstance()->SetCamera(camera.get());
 
 	// シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->ChangeScene("TITLE");
+	SceneManager::GetInstance()->ChangeScene("DEBUG");
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->Initialize();
