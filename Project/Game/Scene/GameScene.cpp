@@ -40,7 +40,7 @@ void GameScene::Initialize() {
 	terrain->SetModel(modelTerrain.get());
 
 	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::DEFAULT);
+	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
 	ParticleSystem::GetInstance()->CreateParticleGroup("ring", "Resources/gradationLine.png", ParticleType::RING);
 	ParticleSystem::GetInstance()->CreateParticleGroup("cylinder", "Resources/gradationLine.png", ParticleType::CYLINDER);
 
