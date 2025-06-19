@@ -27,6 +27,9 @@ void Framework::Initialize() {
 	// SrVマネージャ初期化
 	SrvManager::GetInstance()->Initialize(dxUtility.get());
 
+	// カメラ初期化
+	camera = std::make_unique <Camera>();
+
 	// レンダーテクスチャ初期化
 	postEffect = std::make_unique <PostEffect>();
 	postEffect->Initialize(dxUtility.get());
@@ -34,6 +37,7 @@ void Framework::Initialize() {
 	// ポストエフェクトパイプラインの初期化
 	postProcessingPipeline = std::make_unique <PostProcessingPipeline>();
 	postProcessingPipeline->Initialize(dxUtility.get(), postEffect.get());
+	postProcessingPipeline->SetCamera(camera.get());
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
@@ -48,9 +52,6 @@ void Framework::Initialize() {
 	// 入力の初期化
 	Input::GetInstance()->Initialize(winApp.get());
 
-	// デバッグカメラ初期化
-	debugCamera = std::make_unique <DebugCamera>();
-
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxUtility.get());
 
@@ -63,14 +64,14 @@ void Framework::Initialize() {
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize(dxUtility.get());
 	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
-	Object3dCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
+	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// モデル基盤初期化
 	ModelCommon::GetInstance()->Initialize(dxUtility.get());
 
 	// パーティクル基盤初期化
 	ParticleCommon::GetInstance()->Initialize(dxUtility.get());
-	ParticleCommon::GetInstance()->SetDefaultCamera(debugCamera.get());
+	ParticleCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void Framework::Update() {
@@ -78,8 +79,8 @@ void Framework::Update() {
 	// 入力の更新
 	Input::GetInstance()->Update();
 
-	// デバッグカメラの更新
-	debugCamera->Update();
+	// カメラの更新
+	camera->Update();
 }
 
 void Framework::Finalize() {

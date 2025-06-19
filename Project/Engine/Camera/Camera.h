@@ -35,6 +35,9 @@ private:
 	// プロジェクション行列
 	Matrix4x4 projectionMatrix;
 
+	// プロジェクション行列の逆行列
+	Matrix4x4 projectionMatrixInverse;
+
 	// ビュープロジェクション行列
 	Matrix4x4 viewProjectionMatrix;
 
@@ -149,6 +152,12 @@ public:
 	/// </summary>
 	/// <returns>Matrix4x4</returns>
 	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix; }
+
+	/// <summary>
+	/// プロジェクション行列の逆行列のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Matrix4x4& GetProjectionMatrixInverse() const { return projectionMatrixInverse; }
 
 	/// <summary>
 	/// ビュープロジェクション行列のゲッター

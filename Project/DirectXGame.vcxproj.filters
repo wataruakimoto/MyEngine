@@ -271,5 +271,8 @@
     <FxCompile Include="resources\shaders\FullScreen.PS.hlsl" />
     <FxCompile Include="resources\shaders\Vignette.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\BoxFilter.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\GaussianFilter.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\LuminanceBasedOutline.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\DepthBasedOutline.PS.hlsl" />
   </ItemGroup>
 </Project>

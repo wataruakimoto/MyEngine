@@ -4,7 +4,6 @@
 #include "3d/Model.h"
 #include "3d/Object3d.h"
 #include "3d/Particle/ParticleEmitter.h"
-#include "camera/Camera.h"
 
 /// ===== ゲームシーン ===== ///
 class GameScene : public BaseScene {
@@ -38,9 +37,6 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
-
-	// カメラのポインタ
-	std::unique_ptr<Camera> camera = nullptr;
 
 	// モデルのポインタ
 	std::unique_ptr <Model> modelMonsterBall = nullptr;
