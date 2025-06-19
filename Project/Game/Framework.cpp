@@ -8,7 +8,7 @@
 #include "3d/Object3dCommon.h"
 #include "3d/ModelCommon.h"
 #include "3d/ModelManager.h"
-#include "3d/ParticleCommon.h"
+#include "3d/Particle/ParticleCommon.h"
 #include "scene/SceneManager.h"
 
 void Framework::Initialize() {

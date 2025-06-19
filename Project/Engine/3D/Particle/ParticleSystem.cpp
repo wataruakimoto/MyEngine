@@ -1,12 +1,12 @@
 #include "ParticleSystem.h"
 #include "ParticleCommon.h"
-#include "DefaultParticle.h"
+#include "PlaneParticle.h"
 #include "RingParticle.h"
 #include "CylinderParticle.h"
 #include "base/DirectXUtility.h"
 #include "base/SrvManager.h"
 #include "2d/TextureManager.h"
-#include "ModelManager.h"
+#include "3D/ModelManager.h"
 #include "camera/Camera.h"
 #include "math/MathVector.h"
 #include "math/MathMatrix.h"
@@ -112,7 +112,7 @@ void ParticleSystem::Update() {
 
 		switch (particleGroup.particleType) {
 
-		case ParticleType::DEFAULT:
+		case ParticleType::PLANE:
 		default:
 			particleGroup.particleTypeClass->Update();
 			break;
@@ -135,7 +135,7 @@ void ParticleSystem::Draw() {
 
 		switch (particleGroup.particleType) {
 
-		case ParticleType::DEFAULT:
+		case ParticleType::PLANE:
 		default:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
@@ -165,6 +165,7 @@ void ParticleSystem::Finalize() {
 
 void ParticleSystem::ShowImGui(const char* name) {
 
+#ifdef _DEBUG
 	ImGui::Begin(name);
 
 	for (auto& [key, particleGroup] : particleGroups) {
@@ -188,6 +189,7 @@ void ParticleSystem::ShowImGui(const char* name) {
 	}
 
 	ImGui::End();
+#endif // _DEBUG
 }
 
 void ParticleSystem::CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleType type) {
@@ -235,9 +237,9 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 
 	// パーティクルの種類に応じたクラスを生成
 	switch (type) {
-	case ParticleType::DEFAULT:
+	case ParticleType::PLANE:
 	default:
-		particleGroups[name].particleTypeClass = new DefaultParticle();
+		particleGroups[name].particleTypeClass = new PlaneParticle();
 		break;
 
 	case ParticleType::RING:

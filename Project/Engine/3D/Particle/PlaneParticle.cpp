@@ -1,4 +1,4 @@
-#include "DefaultParticle.h"
+#include "PlaneParticle.h"
 #include "Base/DirectXUtility.h"
 #include "Base/SrvManager.h"
 #include "2D/TextureManager.h"
@@ -7,7 +7,7 @@
 
 using namespace MathMatrix;
 
-void DefaultParticle::Initialize() {
+void PlaneParticle::Initialize() {
 
 	// 頂点データ生成
 	GenerateVertexData();
@@ -19,10 +19,10 @@ void DefaultParticle::Initialize() {
 	GenerateMaterialData();
 }
 
-void DefaultParticle::Update() {
+void PlaneParticle::Update() {
 }
 
-void DefaultParticle::Draw(ParticleGroup* group) {
+void PlaneParticle::Draw(ParticleGroup* group) {
 
 	// 頂点バッファビューを設定
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -43,7 +43,7 @@ void DefaultParticle::Draw(ParticleGroup* group) {
 	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, group->numInstance, 0, 0, 0);
 }
 
-void DefaultParticle::GenerateVertexData() {
+void PlaneParticle::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
 	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
@@ -79,7 +79,7 @@ void DefaultParticle::GenerateVertexData() {
 	vertexData[3].texcoord = { 1.0f, 0.0f };
 }
 
-void DefaultParticle::GenerateIndexData() {
+void PlaneParticle::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
 	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
@@ -108,7 +108,7 @@ void DefaultParticle::GenerateIndexData() {
 	indexData[5] = 2; // 右下
 }
 
-void DefaultParticle::GenerateMaterialData() {
+void PlaneParticle::GenerateMaterialData() {
 
 	/// === MaterialResourceを作る === ///
 	materialResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
