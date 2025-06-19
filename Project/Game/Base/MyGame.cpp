@@ -18,7 +18,7 @@ void MyGame::Initialize() {
 	SceneManager::GetInstance()->SetCamera(camera.get());
 
 	// シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->ChangeScene("DEBUG");
+	SceneManager::GetInstance()->ChangeScene("PLAY");
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->Initialize();

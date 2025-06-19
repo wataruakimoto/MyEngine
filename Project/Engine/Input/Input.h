@@ -10,6 +10,10 @@
 // WindowsAPIを使うため
 #include "winApp/WinApp.h"
 
+#include <Xinput.h>
+
+#include "math/Vector2.h"
+
 // 入力
 class Input {
 
@@ -60,6 +64,11 @@ public:
 	void Finalize();
 
 	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
+	void ShowImgui();
+
+	/// <summary>
 	/// キーの押下をチェック
 	/// </summary>
 	/// <param name="keyNumber">キー番号</param>
@@ -73,7 +82,72 @@ public:
 	/// <returns>トリガーしているか</returns>
 	bool TriggerKey(BYTE keyNumber);
 
-private: // メンバ変数
+	/// <summary>
+	/// マウスカーソルの位置を取得
+	/// </summary>
+	/// <returns></returns>
+	Vector2 GetMousePosition();
+
+	/// <summary>
+	/// コントローラーの状態を取得
+	/// </summary>
+	/// <returns></returns>
+	XINPUT_STATE GetControllerState();
+
+	/// <summary>
+	/// コントローラーの押下をチェック
+	/// </summary>
+	/// <param name="button"></param>
+	/// <returns></returns>
+	bool PushButton(WORD button);
+
+	/// <summary>
+	/// コントローラーのトリガーをチェック
+	/// </summary>
+	/// <param name="button"></param>
+	/// <returns></returns>
+	bool TriggerButton(WORD button);
+
+	/// <summary>
+	/// 右スティックがデッドゾーンを超えているか
+	/// </summary>
+	/// <returns></returns>
+	bool IsRightThumbStickOutDeadZone();
+
+	/// <summary>
+	/// 左スティックがデッドゾーンを超えているか
+	/// </summary>
+	/// <returns></returns>
+	bool IsLeftThumbStickOutDeadZone();
+
+	/// <summary>
+	/// 右スティックの値を取得
+	/// </summary>
+	Vector2 GetRightThumbStick();
+
+	/// <summary>
+	/// 左スティックの値を取得
+	/// </summary>
+	Vector2 GetLeftThumbStick();
+
+	/// <summary>
+	/// 右スティックのデッドゾーンの値の設定
+	/// </summary>
+	/// <param name="deadZone"></param>
+	/// <returns></returns>
+	void SetDeadZoneR(float deadZone);
+
+	/// <summary>
+	/// 左スティックのデッドゾーンの値の設定
+	/// </summary>
+	/// <param name="deadZone"></param>
+	/// <returns></returns>
+	void SetDeadZoneL(float deadZone);
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
+private:
 	// DirectInputのインスタンス
 	ComPtr<IDirectInput8> directInput;
 	// キーボードのデバイス
@@ -84,4 +158,13 @@ private: // メンバ変数
 	BYTE keyPre[256] = {};
 	// WindowsAPI
 	WinApp* winApp_ = nullptr;
+
+	// 現在のコントローラーの状態
+	XINPUT_STATE controllerStateCurrent;
+	// 前のフレームのコントローラーの状態
+	XINPUT_STATE controllerStatePre;
+
+	// デッドゾーンの値
+	float deadZoneR = XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE; // 右の値
+	float deadZoneL = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE; // 左の値
 };
