@@ -5,7 +5,7 @@ void Skydome::Initialize() {
 
 	// モデルの生成・初期化
 	model = new Model();
-	model->Initialize("resources/sphere", "sphere.obj");
+	model->Initialize("resources/Skydome", "skydome.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = new Object3d();
@@ -16,28 +16,11 @@ void Skydome::Initialize() {
 
 void Skydome::Update() {
 
-#ifdef DEBUG_
+#ifdef _DEBUG
 
-	ImGui::Begin("Skydome");
+	object->ShowImGui("Skydome");
 
-	// 大きさ変更の確認
-	Vector3 scale = object->GetScale();
-	ImGui::DragFloat3("Scale", &scale.x, 0.1f);
-	object->SetScale(scale);
-
-	// 回転変更の確認
-	Vector3 rotate = object->GetRotate();
-	ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
-	object->SetRotate(rotate);
-
-	// 座標変更の確認
-	Vector3 translate = object->GetTranslate();
-	ImGui::DragFloat3("Translate", &translate.x, 0.1f);
-	object->SetTranslate(translate);
-
-	ImGui::End();
-
-#endif // DEBUG_
+#endif // _DEBUG
 
 	// 3Dオブジェクトの更新
 	object->Update();

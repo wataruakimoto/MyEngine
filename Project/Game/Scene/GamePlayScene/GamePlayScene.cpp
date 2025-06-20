@@ -136,14 +136,6 @@ void GamePlayScene::Update() {
 
 void GamePlayScene::Draw() {
 
-	/// === スプライトの描画準備 === ///
-	SpriteCommon::GetInstance()->SettingCommonDrawing();
-
-	// TODO: 全てのスプライト個々の描画
-
-	// 2Dレティクルの描画
-	reticle2D_->Draw();
-
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
@@ -172,6 +164,14 @@ void GamePlayScene::Draw() {
 
 	// パーティクルシステムの描画
 	ParticleSystem::GetInstance()->Draw();
+
+	/// === UIの描画準備 === ///
+	SpriteCommon::GetInstance()->SettingCommonDrawing();
+
+	// TODO: 全てのスプライト個々の描画
+
+	// 2Dレティクルの描画
+	reticle2D_->Draw();
 }
 
 void GamePlayScene::Finalize() {
