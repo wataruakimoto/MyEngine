@@ -122,7 +122,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 
 	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 1.0f, 0.0f, 0.0f, 1.0f }; // 赤に設定
+	const Vector4 kRenderTargetClearValue = { 0.5f, 0.5f, 0.5f, 0.5f }; // グレーに設定
 
 	// Depth用SRVインデックス
 	uint32_t depthSrvIndex = 0;

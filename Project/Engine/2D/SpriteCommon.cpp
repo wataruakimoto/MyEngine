@@ -127,7 +127,22 @@ void SpriteCommon::CreateInputLayout() {
 void SpriteCommon::CreateBlendState() {
 
 	// すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	// blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+
+	// アルファブレンド有効化
+	blendDesc.AlphaToCoverageEnable = FALSE;
+	blendDesc.IndependentBlendEnable = FALSE;
+	auto& rtDesc = blendDesc.RenderTarget[0];
+	rtDesc.BlendEnable = TRUE;
+	rtDesc.LogicOpEnable = FALSE;
+	rtDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	rtDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	rtDesc.BlendOp = D3D12_BLEND_OP_ADD;
+	rtDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+	rtDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+	rtDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	rtDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 }
 
 void SpriteCommon::CreateRasterizerState() {
@@ -153,9 +168,11 @@ void SpriteCommon::CreatePixelShader() {
 void SpriteCommon::CreateDepthStencilState() {
 
 	// Depthの機能を有効化する
-	depthStencilDesc.DepthEnable = true;
+	// depthStencilDesc.DepthEnable = true;
+	depthStencilDesc.DepthEnable = false;
 	// 書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	//depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
