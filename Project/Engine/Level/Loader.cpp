@@ -46,7 +46,7 @@ void Loader::LoadLevel(const std::string& filePath) {
 	/// === オブジェクトの走査 === ///
 
 	// レベルデータ格納用インスタンスを生成
-	LevelData* levelData = new LevelData();
+	levelData = new LevelData();
 
 	// "objects"の全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
@@ -97,5 +97,15 @@ void Loader::LoadLevel(const std::string& filePath) {
 		if (object.contains("children")) {
 			
 		}
+	}
+}
+
+void Loader::PlaceObject() {
+
+	// レベルデータからオブジェクトを生成、配置
+	for (auto& objectData : levelData->GetObjects()) {
+		
+		// ファイル名からモデルを検索
+
 	}
 }
