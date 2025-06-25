@@ -1,6 +1,6 @@
 #include "Loader.h"
+#include "3D/Model.h"
 #include "json.hpp"
-#include "LevelData.h"
 
 #include <fstream>
 #include <cassert>
@@ -27,9 +27,6 @@ void Loader::LoadLevel(const std::string& filePath) {
 
 	/// === ファイルチェック === ///
 
-	// JSON文字列から読み込んだデータ
-	nlohmann::json deserialized;
-
 	// ファイル読み込み
 	file >> deserialized;
 
@@ -51,52 +48,8 @@ void Loader::LoadLevel(const std::string& filePath) {
 	// "objects"の全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
 
-		// オブジェクトが正しい形式かチェック
-		assert(object.contains("type"));
-
-		// 種別を取得
-		std::string type = object["type"].get<std::string>();
-
-		/// === メッシュの読み込み === ///
-
-		// MESH
-		if (type.compare("MESH") == 0) {
-
-			// 要素追加
-			levelData->GetObjects().emplace_back(LevelData::ObjectData{});
-			// 今追加した要素の参照を得る
-			LevelData::ObjectData& objectData = levelData->GetObjects().back();
-
-			if (object.contains("file_name")) {
-				// ファイル名を取得
-				objectData.fileName = object["file_name"];
-			}
-
-			// トランスフォームのパラメータ読み込み
-			nlohmann::json& transform = object["transform"];
-
-			// 平行移動
-			objectData.translation.x = transform["translation"][0];
-			objectData.translation.y = transform["translation"][2];
-			objectData.translation.z = transform["translation"][1];
-
-			// 回転角
-			objectData.rotation.x = transform["rotation"][0];
-			objectData.rotation.y = transform["rotation"][2];
-			objectData.rotation.z = transform["rotation"][1];
-
-			// スケーリング
-			objectData.scale.x = transform["scaling"][0];
-			objectData.scale.y = transform["scaling"][2];
-			objectData.scale.z = transform["scaling"][1];
-		}
-
-		/// === ツリー構造の走査 === ///
-
-		// TODO: オブジェクト走査を再帰関数にまとめ、再帰呼出で枝を操作する
-		if (object.contains("children")) {
-			
-		}
+		// オブジェクトの解析
+		ParseObject(object);
 	}
 }
 
@@ -104,8 +57,92 @@ void Loader::PlaceObject() {
 
 	// レベルデータからオブジェクトを生成、配置
 	for (auto& objectData : levelData->GetObjects()) {
-		
-		// ファイル名からモデルを検索
 
+		// ファイル名からモデルを生成
+		Model* model = nullptr;
+		model->Initialize("Resource/Level", objectData.fileName);
+
+		// 3Dオブジェクトの生成
+		Object3d* object = new Object3d();
+		object->Initialize();
+		object->SetModel(model);
+
+		// トランスフォームの設定
+		object->SetScale(objectData.scale);			  // スケール
+		object->SetRotate(objectData.rotation);		  // 回転
+		object->SetTranslate(objectData.translation); // 位置
+
+		// リストに登録
+		objects.push_back(object);
+	}
+}
+
+void Loader::Update() {
+
+	// オブジェクトの更新
+	for (Object3d* object : objects) {
+		object->Update();
+	}
+}
+
+void Loader::Draw() {
+
+	// オブジェクトの描画
+	for (Object3d* object : objects) {
+		object->Draw();
+	}
+}
+
+void Loader::ParseObject(nlohmann::json& object) {
+
+	// オブジェクトが正しい形式かチェック
+	assert(object.contains("type"));
+
+	// 種別を取得
+	std::string type = object["type"].get<std::string>();
+
+	/// === メッシュの読み込み === ///
+
+	// MESH
+	if (type.compare("MESH") == 0) {
+
+		// 要素追加
+		levelData->GetObjects().emplace_back(LevelData::ObjectData{});
+		// 今追加した要素の参照を得る
+		LevelData::ObjectData& objectData = levelData->GetObjects().back();
+
+		if (object.contains("file_name")) {
+			// ファイル名を取得
+			objectData.fileName = object["file_name"];
+		}
+
+		// トランスフォームのパラメータ読み込み
+		nlohmann::json& transform = object["transform"];
+
+		// 平行移動
+		objectData.translation.x = transform["translation"][0];
+		objectData.translation.y = transform["translation"][2];
+		objectData.translation.z = transform["translation"][1];
+
+		// 回転角
+		objectData.rotation.x = transform["rotation"][0];
+		objectData.rotation.y = transform["rotation"][2];
+		objectData.rotation.z = transform["rotation"][1];
+
+		// スケーリング
+		objectData.scale.x = transform["scaling"][0];
+		objectData.scale.y = transform["scaling"][2];
+		objectData.scale.z = transform["scaling"][1];
+
+		//TODO:コライダーの読み込み
+	}
+
+	/// === ツリー構造の走査 === ///
+
+	// 子ノードがある場合
+	if (object.contains("children")) {
+
+		// 再帰的に呼び出して解析する
+		ParseObject(object);
 	}
 }

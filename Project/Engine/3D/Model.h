@@ -92,7 +92,7 @@ public:
 	/// <param name="shininess"></param>
 	void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
 
-	const Matrix4x4& GetRootMatrix() const { return modelData.rootNode.localMatrix; }
+	const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -100,7 +100,7 @@ public:
 private:
 
 	// objファイルのデータ
-	ModelData modelData;
+	ModelData* modelData;
 
 	// 頂点リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;

@@ -138,7 +138,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\scene\GameScene.cpp" />
     <ClCompile Include="game\Framework.cpp" />
     <ClCompile Include="Engine\Level\Loader.cpp" />
-    <ClCompile Include="Engine\Level\LevelData.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="game\MyGame.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
