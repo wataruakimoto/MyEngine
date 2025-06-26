@@ -143,6 +143,6 @@ void Loader::ParseObject(nlohmann::json& object) {
 	if (object.contains("children")) {
 
 		// 再帰的に呼び出して解析する
-		ParseObject(object);
+		//ParseObject(object);
 	}
 }
