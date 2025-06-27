@@ -86,9 +86,9 @@ MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directory
 	return materialData;
 }
 
-ModelData* ModelManager::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
+void ModelManager::LoadModelData(const std::string& directoryPath, const std::string& filename) {
 
-	// ファイルパスを作る
+	// ファイルパスを作成
 	std::string filePath = directoryPath + "/" + filename;
 
 	// ファイルが存在するか確認
@@ -99,11 +99,11 @@ ModelData* ModelManager::LoadModelFile(const std::string& directoryPath, const s
 	if (modelDatas.contains(filePath)) {
 
 		// 読み込み済みなら早期return
-		return modelDatas.at(filePath).get();
+		return;
 	}
 
 	// モデルデータを読み込む
-	std::shared_ptr<ModelData> modelData = std::make_shared<ModelData>();
+	std::unique_ptr<ModelData> modelData = std::make_unique<ModelData>();
 
 	// assimpを使ってファイルを読み込む
 	Assimp::Importer importer;
@@ -161,10 +161,23 @@ ModelData* ModelManager::LoadModelFile(const std::string& directoryPath, const s
 	modelData->rootNode = ReadNode(scene->mRootNode);
 
 	// モデルデータをmapコンテナに格納する
-	modelDatas.insert(std::make_pair(filePath, modelData));
+	modelDatas.insert(std::make_pair(filePath, std::move(modelData)));
+}
 
-	// 読み込んだモデルデータを返す
-	return modelData.get();
+ModelData* ModelManager::FindModelData(const std::string& directoryPath, const std::string& filename) {
+
+	// ファイルパスを作成
+	std::string filePath = directoryPath + "/" + filename;
+	
+	// 読み込み済みモデルを検索
+	if (modelDatas.contains(filePath)) {
+
+		// 読み込み済みなら早期return
+		return modelDatas.at(filePath).get();
+	}
+
+	// ファイル名一致なし
+	return nullptr;
 }
 
 Node ModelManager::ReadNode(aiNode* node) {

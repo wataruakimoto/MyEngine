@@ -6,6 +6,7 @@
 
 #include <d3d12.h>
 #include <wrl.h>
+#include <memory>
 
 // === 前方宣言=== ///
 class ModelCommon;
@@ -100,7 +101,7 @@ public:
 private:
 
 	// objファイルのデータ
-	ModelData* modelData;
+	ModelData* modelData = nullptr;
 
 	// 頂点リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;

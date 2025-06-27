@@ -43,5 +43,5 @@ private:
 	std::unique_ptr<Camera> camera = nullptr;
 
 	// レベルローダーのポインタ
-	std::unique_ptr<Loader> levelLoader = nullptr;
+	//std::unique_ptr<Loader> levelLoader = nullptr;
 };

@@ -9,9 +9,11 @@ void GameScene::Initialize() {
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
 	// レベルローダーの生成
-	levelLoader = std::make_unique<Loader>();
+	//levelLoader = std::make_unique<Loader>();
 	// レベルデータの読み込み
-	levelLoader->LoadLevel("Level.json");
+	//levelLoader->LoadLevel("Level.json");
+	// オブジェクトの配置
+	//levelLoader->PlaceObject();
 }
 
 void GameScene::Update() {
@@ -21,7 +23,7 @@ void GameScene::Update() {
 	camera->Update();
 
 	// レベルローダー更新
-	levelLoader->Update();
+	//levelLoader->Update();
 }
 
 void GameScene::Draw() {
@@ -30,7 +32,7 @@ void GameScene::Draw() {
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
 	// レベルローダー描画
-	levelLoader->Draw();
+	//levelLoader->Draw();
 }
 
 void GameScene::Finalize() {

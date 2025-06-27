@@ -52,7 +52,7 @@ private:
 private:
 
 	// デフォルトのディレクトリ
-	const std::string kDefaultDirectory = "Resources/Levels/";
+	const std::string kDefaultDirectory = "Resources/Levels";
 
 	// レベルデータ格納用インスタンス
 	LevelData* levelData = nullptr;

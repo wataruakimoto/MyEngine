@@ -1,5 +1,6 @@
 #include "Loader.h"
 #include "3D/Model.h"
+#include "3D/ModelManager.h"
 #include "json.hpp"
 
 #include <fstream>
@@ -10,7 +11,7 @@ void Loader::LoadLevel(const std::string& filePath) {
 	/// === 読み込み === ///
 
 	// フルパスを作る
-	std::string fullPath = kDefaultDirectory + filePath;
+	std::string fullPath = kDefaultDirectory + "/" + filePath;
 
 	// ファイルストリーム
 	std::ifstream file;
@@ -59,8 +60,8 @@ void Loader::PlaceObject() {
 	for (auto& objectData : levelData->GetObjects()) {
 
 		// ファイル名からモデルを生成
-		Model* model = nullptr;
-		model->Initialize("Resource/Level", objectData.fileName);
+		Model* model = new Model();
+		model->Initialize(kDefaultDirectory, objectData.fileName + ".obj");
 
 		// 3Dオブジェクトの生成
 		Object3d* object = new Object3d();
@@ -111,9 +112,9 @@ void Loader::ParseObject(nlohmann::json& object) {
 		// 今追加した要素の参照を得る
 		LevelData::ObjectData& objectData = levelData->GetObjects().back();
 
-		if (object.contains("file_name")) {
+		if (object.contains("name")) {
 			// ファイル名を取得
-			objectData.fileName = object["file_name"];
+			objectData.fileName = object["name"];
 		}
 
 		// トランスフォームのパラメータ読み込み
@@ -134,6 +135,9 @@ void Loader::ParseObject(nlohmann::json& object) {
 		objectData.scale.y = transform["scaling"][2];
 		objectData.scale.z = transform["scaling"][1];
 
+		// モデルの読み込み
+		ModelManager::GetInstance()->LoadModelData(kDefaultDirectory, objectData.fileName + ".obj");
+
 		//TODO:コライダーの読み込み
 	}
 
@@ -143,6 +147,9 @@ void Loader::ParseObject(nlohmann::json& object) {
 	if (object.contains("children")) {
 
 		// 再帰的に呼び出して解析する
-		//ParseObject(object);
+		for (nlohmann::json& child : object["children"]) {
+			// 子ノードの解析
+			ParseObject(child);
+		}
 	}
 }

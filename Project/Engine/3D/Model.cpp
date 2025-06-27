@@ -11,7 +11,7 @@ using namespace MathMatrix;
 void Model::Initialize(const std::string& directorypath, const std::string& filename) {
 
 	// モデル読み込み
-	modelData = ModelManager::GetInstance()->LoadModelFile(directorypath, filename);
+	modelData = ModelManager::GetInstance()->FindModelData(directorypath, filename);
 
 	// 頂点データ初期化
 	InitializeVertexData();
