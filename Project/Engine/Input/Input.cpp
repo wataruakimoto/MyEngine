@@ -75,6 +75,8 @@ void Input::Finalize() {
 
 void Input::ShowImgui() {
 
+#ifdef _DEBUG // _DEBUG
+
 	ImGui::Begin("Input");
 
 	// スティックの値を表示
@@ -88,6 +90,8 @@ void Input::ShowImgui() {
 	ImGui::SliderFloat("DeadZoneL", &deadZoneL, 0.0f, 32767.0f);
 
 	ImGui::End();
+
+#endif // _DEBUG
 }
 
 bool Input::PushKey(BYTE keyNumber) {
