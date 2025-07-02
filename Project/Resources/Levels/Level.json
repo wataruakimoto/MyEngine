@@ -3,6 +3,27 @@
     "objects": [
         {
             "type": "MESH",
+            "name": "Sphere",
+            "transform": {
+                "translation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "MESH",
             "name": "Plane",
             "transform": {
                 "translation": [
@@ -41,34 +62,11 @@
                     1.0,
                     1.0
                 ]
-            },
-            "children": [
-                {
-                    "type": "MESH",
-                    "name": "ICO2",
-                    "transform": {
-                        "translation": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ],
-                        "rotation": [
-                            0.0,
-                            -0.0,
-                            0.0
-                        ],
-                        "scaling": [
-                            1.0,
-                            1.0,
-                            1.0
-                        ]
-                    }
-                }
-            ]
+            }
         },
         {
             "type": "MESH",
-            "name": "Sphere",
+            "name": "ICO2",
             "transform": {
                 "translation": [
                     0.0,

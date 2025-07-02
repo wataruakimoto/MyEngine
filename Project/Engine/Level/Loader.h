@@ -4,6 +4,8 @@
 
 #include <string>
 #include <map>
+#include <list>
+#include <memory>
 
 ///-------------------------------------------/// 
 /// ローダー
@@ -36,6 +38,11 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui();
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -55,12 +62,15 @@ private:
 	const std::string kDefaultDirectory = "Resources/Levels";
 
 	// レベルデータ格納用インスタンス
-	LevelData* levelData = nullptr;
+	std::unique_ptr<LevelData> levelData = nullptr;
 
 	// JSON文字列から読み込んだデータ
 	nlohmann::json deserialized;
 
+	// モデルのリスト
+	std::list<std::unique_ptr<Model>> models;
+
 	// オブジェクトのリスト
-	std::list<Object3d*> objects;
+	std::list<std::unique_ptr<Object3d>> objects;
 };
 

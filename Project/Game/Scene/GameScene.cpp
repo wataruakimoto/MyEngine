@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "3D/Object3dCommon.h"
+#include "3D/ModelManager.h"
 
 void GameScene::Initialize() {
 
@@ -9,11 +10,25 @@ void GameScene::Initialize() {
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
 	// レベルローダーの生成
-	//levelLoader = std::make_unique<Loader>();
+	levelLoader = std::make_unique<Loader>();
 	// レベルデータの読み込み
-	//levelLoader->LoadLevel("Level.json");
+	levelLoader->LoadLevel("Level.json");
 	// オブジェクトの配置
-	//levelLoader->PlaceObject();
+	levelLoader->PlaceObject();
+
+	// モデルの生成
+	model = std::make_unique<Model>();
+	// モデル読み込み
+	ModelManager::GetInstance()->LoadModelData("Resources/Terrain", "Terrain.obj");
+	// モデル初期化
+	model->Initialize("Resources/Terrain", "Terrain.obj");
+	
+	// オブジェクトの生成
+	object = std::make_unique<Object3d>();
+	// オブジェクト初期化
+	object->Initialize();
+	// オブジェクトのモデル設定
+	object->SetModel(model.get());
 }
 
 void GameScene::Update() {
@@ -23,7 +38,12 @@ void GameScene::Update() {
 	camera->Update();
 
 	// レベルローダー更新
-	//levelLoader->Update();
+	levelLoader->ShowImGui();
+	levelLoader->Update();
+
+	// オブジェクトの更新
+	object->SetCamera(camera.get());
+	object->Update();
 }
 
 void GameScene::Draw() {
@@ -32,7 +52,10 @@ void GameScene::Draw() {
 	Object3dCommon::GetInstance()->SettingCommonDrawing();
 
 	// レベルローダー描画
-	//levelLoader->Draw();
+	levelLoader->Draw();
+
+	// オブジェクト描画
+	object->Draw();
 }
 
 void GameScene::Finalize() {

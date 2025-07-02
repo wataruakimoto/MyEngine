@@ -3,6 +3,8 @@
 #include "BaseScene.h"
 #include "camera/Camera.h"
 #include "Level/Loader.h"
+#include "3D/Model.h"
+#include "3D/Object3d.h"
 
 #include <memory>
 
@@ -43,5 +45,11 @@ private:
 	std::unique_ptr<Camera> camera = nullptr;
 
 	// レベルローダーのポインタ
-	//std::unique_ptr<Loader> levelLoader = nullptr;
+	std::unique_ptr<Loader> levelLoader = nullptr;
+
+	// モデル
+	std::unique_ptr<Model> model = nullptr;
+
+	// オブジェクト
+	std::unique_ptr<Object3d> object = nullptr;
 };

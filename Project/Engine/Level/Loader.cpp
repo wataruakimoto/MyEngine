@@ -44,7 +44,7 @@ void Loader::LoadLevel(const std::string& filePath) {
 	/// === オブジェクトの走査 === ///
 
 	// レベルデータ格納用インスタンスを生成
-	levelData = new LevelData();
+	levelData = std::make_unique<LevelData>();
 
 	// "objects"の全オブジェクトを走査
 	for (nlohmann::json& object : deserialized["objects"]) {
@@ -60,13 +60,19 @@ void Loader::PlaceObject() {
 	for (auto& objectData : levelData->GetObjects()) {
 
 		// ファイル名からモデルを生成
-		Model* model = new Model();
+		std::unique_ptr<Model> model = std::make_unique<Model>();
+		// モデルの読み込み
+		ModelManager::GetInstance()->LoadModelData(kDefaultDirectory, objectData.fileName + ".obj");
+		// モデルの初期化
 		model->Initialize(kDefaultDirectory, objectData.fileName + ".obj");
 
+		// リストに登録
+		models.push_back(std::move(model));
+
 		// 3Dオブジェクトの生成
-		Object3d* object = new Object3d();
+		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
 		object->Initialize();
-		object->SetModel(model);
+		object->SetModel(models.back().get());
 
 		// トランスフォームの設定
 		object->SetScale(objectData.scale);			  // スケール
@@ -74,14 +80,14 @@ void Loader::PlaceObject() {
 		object->SetTranslate(objectData.translation); // 位置
 
 		// リストに登録
-		objects.push_back(object);
+		objects.push_back(std::move(object));
 	}
 }
 
 void Loader::Update() {
 
 	// オブジェクトの更新
-	for (Object3d* object : objects) {
+	for (const auto& object : objects) {
 		object->Update();
 	}
 }
@@ -89,8 +95,16 @@ void Loader::Update() {
 void Loader::Draw() {
 
 	// オブジェクトの描画
-	for (Object3d* object : objects) {
+	for (const auto& object : objects) {
 		object->Draw();
+	}
+}
+
+void Loader::ShowImGui() {
+
+	// オブジェクトのImGui表示
+	for (const auto& object : objects) {
+		object->ShowImGui("a");
 	}
 }
 
