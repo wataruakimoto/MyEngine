@@ -1,9 +1,12 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "3d/Model.h"
-#include "3d/Object3d.h"
-#include "3d/Particle/ParticleEmitter.h"
+#include "camera/Camera.h"
+#include "Level/Loader.h"
+#include "3D/Model.h"
+#include "3D/Object3d.h"
+
+#include <memory>
 
 /// ===== ゲームシーン ===== ///
 class GameScene : public BaseScene {
@@ -38,26 +41,12 @@ public:
 ///-------------------------------------------///
 private:
 
-	// モデルのポインタ
-	std::unique_ptr <Model> modelMonsterBall = nullptr;
+	// レベルローダーのポインタ
+	std::unique_ptr<Loader> levelLoader = nullptr;
 
-	std::unique_ptr <Model> modelTerrain = nullptr;
+	// モデル
+	std::unique_ptr<Model> model = nullptr;
 
-	// 3Dオブジェクトのポインタ
-	std::unique_ptr <Object3d> monsterBall = nullptr;
-
-	std::unique_ptr <Object3d> terrain = nullptr;
-
-	// パーティクル発生機
-	std::unique_ptr <ParticleEmitter> particleEmitter1 = nullptr;
-	std::unique_ptr <ParticleEmitter> particleEmitter2 = nullptr;
-	std::unique_ptr <ParticleEmitter> particleEmitter3 = nullptr;
-
-	Transform EmitterTransform1 = {};
-	Transform EmitterTransform2 = {};
-	Transform EmitterTransform3 = {};
-
-	Particle particleSetting1 = {};
-	Particle particleSetting2 = {};
-	Particle particleSetting3 = {};
+	// オブジェクト
+	std::unique_ptr<Object3d> object = nullptr;
 };

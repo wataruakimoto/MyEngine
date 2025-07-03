@@ -63,7 +63,7 @@ void Framework::Initialize() {
 
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize(dxUtility.get());
-	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
+	// 3Dオブジェクトのデフォルトカメラにカメラをセット
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// モデル基盤初期化

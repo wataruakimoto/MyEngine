@@ -1,5 +1,6 @@
 #pragma once
 #include "3d/Model.h"
+#include "Data/ModelData.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -73,18 +74,26 @@ public:
 	/// <summary>
 	/// .mtlファイル読み込み
 	/// </summary>
-	/// <param name="directoryPath">ディレクトリーパス</param>
+	/// <param name="directoryPath">ディレクトリパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns></returns>
 	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
 
 	/// <summary>
-	/// .モデル読み込み
+	/// モデルデータ読み込み
 	/// </summary>
-	/// <param name="directoryPath">ディレクトリーパス</param>
+	/// <param name="directoryPath">ディレクトリパス</param>
 	/// <param name="filename">ファイル名</param>
 	/// <returns></returns>
-	static ModelData LoadModelFile(const std::string& directoryPath, const std::string& filename);
+	void LoadModelData(const std::string& directoryPath, const std::string& filename);
+
+	/// <summary>
+	/// モデルデータを検索
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="filename"></param>
+	/// <returns></returns>
+	ModelData* FindModelData(const std::string& directoryPath, const std::string& filename);
 
 	static Node ReadNode(aiNode* node);
 
@@ -95,4 +104,6 @@ private:
 
 	// モデルデータ
 	std::map<std::string, std::unique_ptr<Model>> models;
+
+	std::map<std::string, std::unique_ptr<ModelData>> modelDatas;
 };

@@ -11,7 +11,7 @@ using namespace MathMatrix;
 void Model::Initialize(const std::string& directorypath, const std::string& filename) {
 
 	// モデル読み込み
-	modelData = ModelManager::LoadModelFile(directorypath, filename);
+	modelData = ModelManager::GetInstance()->FindModelData(directorypath, filename);
 
 	// 頂点データ初期化
 	InitializeVertexData();
@@ -20,10 +20,10 @@ void Model::Initialize(const std::string& directorypath, const std::string& file
 	InitializeMaterialData();
 
 	// .objの参照しているテクスチャファイル読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData.material.textureFilePath);
+	TextureManager::GetInstance()->LoadTexture(modelData->material.textureFilePath);
 
 	// 読み込んだテクスチャの番号を取得し、メンバ変数に書き込む
-	modelData.material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData.material.textureFilePath);
+	modelData->material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData->material.textureFilePath);
 }
 
 void Model::Draw() {
@@ -35,10 +35,10 @@ void Model::Draw() {
 	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData.material.textureFilePath));
+	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
 
 	// 描画(DrawCall)
-	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawInstanced(UINT(modelData.vertices.size()), 1, 0, 0);
+	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), 1, 0, 0);
 }
 
 void Model::ShowImGui() {
@@ -56,14 +56,14 @@ void Model::ShowImGui() {
 void Model::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ModelCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * modelData.vertices.size());
+	vertexResource = ModelCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * modelData->vertices.size());
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
 	// リソースの先頭アドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
 	// 使用するリソースのサイズ 頂点のサイズ
-	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData.vertices.size());
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData->vertices.size());
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
 
@@ -71,7 +71,7 @@ void Model::InitializeVertexData() {
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
 
 	// 頂点データにリソースをコピー
-	std::memcpy(vertexData, modelData.vertices.data(), sizeof(VertexData) * modelData.vertices.size());
+	std::memcpy(vertexData, modelData->vertices.data(), sizeof(VertexData) * modelData->vertices.size());
 }
 
 void Model::InitializeMaterialData() {
