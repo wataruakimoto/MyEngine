@@ -71,8 +71,6 @@ void Loader::PlaceObject() {
 		object->Initialize();
 		// モデルの設定
 		object->SetModel(model.get());
-		// カメラの設定
-		object->SetCamera(camera);
 
 		// トランスフォームの設定
 		object->SetScale(objectData.scale);			  // スケール

@@ -125,6 +125,18 @@ void SrvManager::CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pR
 	dxUtility_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 }
 
+void SrvManager::CreateSRVforDepthStencil(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format) {
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+	// SRVの設定を行う
+	srvDesc.Format = format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
+	srvDesc.Texture2D.MipLevels = 1;
+	// 設定を元にSRVの生成
+	dxUtility_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+}
+
 void SrvManager::SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex) {
 
 	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(rootParameterIndex, GetGPUDescriptorHandle(srvIndex));

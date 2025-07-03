@@ -43,12 +43,14 @@ void Model::Draw() {
 
 void Model::ShowImGui() {
 
+#ifdef _DEBUG
 	if (ImGui::TreeNode("Model")) {
 		ImGui::ColorEdit4("Color", &materialData->color.x);
 		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0");
 		ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
 		ImGui::TreePop();
 	}
+#endif // _DEBUG
 }
 
 void Model::InitializeVertexData() {

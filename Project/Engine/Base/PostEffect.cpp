@@ -34,25 +34,36 @@ void PostEffect::Initialize(DirectXUtility* dxUtility) {
 
 void PostEffect::PreDraw() {
 
-	// バリアの状態がレンダーターゲットではなかったらバリアを張る
-	if (currentState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
+	/// === レンダーテクスチャ用のバリアの設定 === ///
 
-		// ----------リソースバリアで書き込み可能に変更----------
-		// 今回のバリアはTransition
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		// Noneにしておく
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		// バリアを張る対象のリソース。現在のバックバッファに対して行う
-		barrier.Transition.pResource = renderTextureResource.Get();
+	// バリアはTransition
+	renderTextureBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	renderTextureBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象はレンダーテクスチャリソース
+	renderTextureBarrier.Transition.pResource = renderTextureResource.Get();
+
+	/// === 深度ステンシル用のバリアの設定 === ///
+
+	// バリアはTransition
+	depthStencilBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	// Noneにしておく
+	depthStencilBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	// バリアを張る対象は深度ステンシルリソース
+	depthStencilBarrier.Transition.pResource = depthStencilResource.Get();
+
+	// バリアの状態がレンダーターゲットではなかったらバリアを張る
+	if (renderTextureState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
+
 		// 遷移前(現在)のResouceState
-		barrier.Transition.StateBefore = currentState;
+		renderTextureBarrier.Transition.StateBefore = renderTextureState;
 		// 遷移後のResouceState
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
 		// TransitionBarrierを張る
-		dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+		dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
 
 		// 状態をレンダーターゲットにしておく
-		currentState = D3D12_RESOURCE_STATE_RENDER_TARGET;
+		renderTextureState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	}
 
 	// 描画先のRTVとDSVを指定する
@@ -61,6 +72,20 @@ void PostEffect::PreDraw() {
 	// 画面全体の色をクリア
 	float clearColor[] = { kRenderTargetClearValue.x, kRenderTargetClearValue.y, kRenderTargetClearValue.z, kRenderTargetClearValue.w };
 	dxUtility->GetCommandList()->ClearRenderTargetView(rtvHandles[0], clearColor, 0, nullptr);
+
+	// バリアの状態が深度書き込みではなかったらバリアを張る
+	if (depthStencilState != D3D12_RESOURCE_STATE_DEPTH_WRITE) {
+	
+		// 遷移前(現在)のResouceState
+		depthStencilBarrier.Transition.StateBefore = depthStencilState;
+		// 遷移後のResouceState
+		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+		// TransitionBarrierを張る
+		dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
+
+		// 状態を深度書き込みにしておく
+		depthStencilState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
+	}
 
 	// 画面全体の震度をクリア
 	dxUtility->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -75,24 +100,31 @@ void PostEffect::PreDraw() {
 void PostEffect::PostDraw() {
 
 	// バリアの状態がピクセルシェーダーではなかったらバリアを張る
-	if (currentState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
+	if (renderTextureState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
 
-		// ----------リソースバリアで書き込み可能に変更----------
-		// 今回のバリアはTransition
-		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		// Noneにしておく
-		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-		// バリアを張る対象のリソース。現在のバックバッファに対して行う
-		barrier.Transition.pResource = renderTextureResource.Get();
 		// 遷移前(現在)のResouceState
-		barrier.Transition.StateBefore = currentState;
+		renderTextureBarrier.Transition.StateBefore = renderTextureState;
 		// 遷移後のResouceState
-		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 		// TransitionBarrierを張る
-		dxUtility->GetCommandList()->ResourceBarrier(1, &barrier);
+		dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
 
 		// 状態をピクセルシェーダーにしておく
-		currentState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		renderTextureState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+	}
+
+	// バリアの状態がピクセルシェーダーではなかったらバリアを張る
+	if (depthStencilState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
+
+		// 遷移前(現在)のResouceState
+		depthStencilBarrier.Transition.StateBefore = depthStencilState;
+		// 遷移後のResouceState
+		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// TransitionBarrierを張る
+		dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
+
+		// 状態をピクセルシェーダーにしておく
+		depthStencilState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 	}
 }
 
@@ -167,6 +199,12 @@ void PostEffect::DepthStencilViewInitialize() {
 
 	// DSV生成
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
+
+	// SRV確保
+	depthSrvIndex = SrvManager::GetInstance()->Allocate();
+
+	// SRV作成
+	SrvManager::GetInstance()->CreateSRVforDepthStencil(depthSrvIndex, depthStencilResource.Get(), DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
 }
 
 void PostEffect::ViewportRectInitialize() {

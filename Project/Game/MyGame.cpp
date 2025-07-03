@@ -1,7 +1,7 @@
 #include "MyGame.h"
 #include "debug/ImGuiManager.h"
-#include "3d/ParticleCommon.h"
-#include "3d/ParticleSystem.h"
+#include "3d/Particle/ParticleCommon.h"
+#include "3d/Particle/ParticleSystem.h"
 #include "scene/SceneManager.h"
 #include "scene/SceneFactory.h"
 
@@ -13,7 +13,10 @@ void MyGame::Initialize() {
 	// シーンファクトリーを生成
 	sceneFactory_ = std::make_unique <SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
-	
+
+	// カメラをセット
+	SceneManager::GetInstance()->SetCamera(camera.get());
+
 	// シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
 
@@ -36,6 +39,12 @@ void MyGame::Update() {
 
 		/// === ImGui開始 === ///
 		ImGuiManager::GetInstance()->Begin();
+
+		// カメラのImGui表示
+		camera->ShowImGui("Camera");
+
+		// カメラをセット
+		SceneManager::GetInstance()->SetCamera(camera.get());
 
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();

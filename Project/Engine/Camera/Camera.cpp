@@ -23,6 +23,8 @@ Camera::Camera() {
 
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
 
+	projectionMatrixInverse = Inverse(projectionMatrix);
+
 	viewProjectionMatrix = viewMatrix * projectionMatrix;
 
 	// ワールド座標をワールド行列から得る
@@ -42,6 +44,9 @@ void Camera::Update() {
 	// 透視投影行列を書き込む
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
 
+	// projectionMatrixの逆行列を代入
+	projectionMatrixInverse = Inverse(projectionMatrix);
+
 	// viewMatrixとprojectionMatrixを合わせる
 	viewProjectionMatrix = viewMatrix * projectionMatrix;
 
@@ -53,8 +58,10 @@ void Camera::Update() {
 
 void Camera::ShowImGui(const char* name) {
 
+#ifdef _DEBUG
 	ImGui::Begin(name);
 	ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
 	ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
 	ImGui::End();
+#endif // _DEBUG
 }
