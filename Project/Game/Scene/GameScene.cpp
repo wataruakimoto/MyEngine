@@ -11,6 +11,8 @@ void GameScene::Initialize() {
 
 	// レベルローダーの生成
 	levelLoader = std::make_unique<Loader>();
+	// レベルローダーのカメラの設定
+	levelLoader->SetCamera(camera.get());
 	// レベルデータの読み込み
 	levelLoader->LoadLevel("Level.json");
 	// オブジェクトの配置
@@ -29,6 +31,8 @@ void GameScene::Initialize() {
 	object->Initialize();
 	// オブジェクトのモデル設定
 	object->SetModel(model.get());
+	// オブジェクトのカメラの設定
+	object->SetCamera(camera.get());
 }
 
 void GameScene::Update() {
@@ -42,7 +46,7 @@ void GameScene::Update() {
 	levelLoader->Update();
 
 	// オブジェクトの更新
-	object->SetCamera(camera.get());
+	object->ShowImGui("terrain");
 	object->Update();
 }
 

@@ -4,12 +4,12 @@
 
 #include <string>
 #include <map>
-#include <list>
 #include <memory>
 
-///-------------------------------------------/// 
-/// ローダー
-///-------------------------------------------///
+/// === 前方宣言 === ///
+class Camera;
+
+/// === ローダー === ///
 class Loader {
 
 ///-------------------------------------------/// 
@@ -54,6 +54,17 @@ private:
 	void ParseObject(nlohmann::json& object);
 
 ///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera"></param>
+	void SetCamera(Camera* camera) { this->camera = camera; }
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
@@ -68,9 +79,12 @@ private:
 	nlohmann::json deserialized;
 
 	// モデルのリスト
-	std::list<std::unique_ptr<Model>> models;
+	std::map<std::string, std::unique_ptr<Model>> models;
 
 	// オブジェクトのリスト
-	std::list<std::unique_ptr<Object3d>> objects;
+	std::map<std::string, std::unique_ptr<Object3d>> objects;
+
+	// カメラの借りポインタ
+	Camera* camera = nullptr;
 };
 

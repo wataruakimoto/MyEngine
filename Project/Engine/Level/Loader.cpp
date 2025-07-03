@@ -66,13 +66,13 @@ void Loader::PlaceObject() {
 		// モデルの初期化
 		model->Initialize(kDefaultDirectory, objectData.fileName + ".obj");
 
-		// リストに登録
-		models.push_back(std::move(model));
-
 		// 3Dオブジェクトの生成
 		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
 		object->Initialize();
-		object->SetModel(models.back().get());
+		// モデルの設定
+		object->SetModel(model.get());
+		// カメラの設定
+		object->SetCamera(camera);
 
 		// トランスフォームの設定
 		object->SetScale(objectData.scale);			  // スケール
@@ -80,7 +80,8 @@ void Loader::PlaceObject() {
 		object->SetTranslate(objectData.translation); // 位置
 
 		// リストに登録
-		objects.push_back(std::move(object));
+		models.emplace(objectData.fileName, std::move(model));
+		objects.emplace(objectData.fileName, std::move(object));
 	}
 }
 
@@ -88,7 +89,7 @@ void Loader::Update() {
 
 	// オブジェクトの更新
 	for (const auto& object : objects) {
-		object->Update();
+		object.second->Update();
 	}
 }
 
@@ -96,7 +97,7 @@ void Loader::Draw() {
 
 	// オブジェクトの描画
 	for (const auto& object : objects) {
-		object->Draw();
+		object.second->Draw();
 	}
 }
 
@@ -104,7 +105,7 @@ void Loader::ShowImGui() {
 
 	// オブジェクトのImGui表示
 	for (const auto& object : objects) {
-		object->ShowImGui("a");
+		object.second->ShowImGui(object.first.c_str());
 	}
 }
 
