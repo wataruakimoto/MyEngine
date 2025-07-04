@@ -1,10 +1,25 @@
 #include "Skybox.hlsli"
 
 struct VertexShaderInput {
+    
     float4 position : POSITION0;
+    float3 texcoord : TEXCOORD0;
 };
 
-VertexShaderOutput main( float4 pos : POSITION ) : SV_POSITION
-{
-	return pos;
+struct Transformation {
+    
+    float4x4 WVP;
+};
+
+ConstantBuffer<Transformation> gTransformation : register(b0);
+
+VertexShaderOutput main(VertexShaderInput input) {
+    
+    VertexShaderOutput output;
+    
+    output.position = mul(input.position, gTransformation.WVP).xyww;
+    
+    output.texcoord = input.texcoord.xyz;
+    
+    return output;
 }
