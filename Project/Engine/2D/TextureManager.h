@@ -86,6 +86,7 @@ public:
 	struct TextureData {
 		DirectX::TexMetadata metaData;
 		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource; // 中間リソース
 		uint32_t srvIndex;
 		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
 		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;

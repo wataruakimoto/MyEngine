@@ -67,7 +67,8 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 
 	/// === テクスチャデータ送信 === ///
 
-	dxUtility_->UploadTextureData(textureData.resource, mipImages);
+	// テクスチャデータをGPUに送信するための中間リソースを生成
+	textureData.intermediateResource = dxUtility_->UploadTextureData(textureData.resource, mipImages);
 
 	/// === デスクリプタハンドルの計算 === ///
 
