@@ -1,10 +1,16 @@
 #pragma once
-#include "3D/Data/VertexData.h"
 #include "3D/Data/TransformationData.h"
+#include "Math/Vector2.h"
+#include "Math/Vector4.h"
+#include "3D/Data/Transform.h"
 
 #include <d3d12.h>
 #include <wrl.h>
 #include <stdint.h>
+#include <string>
+
+/// === 前方宣言 === ///
+class Camera;
 
 /// === スカイボックス === ///
 class Skybox {
@@ -17,7 +23,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(std::string directoryPath, std::string fileName);
 
 	/// <summary>
 	/// 更新
@@ -40,9 +46,19 @@ private:
 	void InitializeVertexData();
 
 	/// <summary>
+	/// インデックスデータの初期化
+	/// </summary>
+	void InitializeIndexData();
+
+	/// <summary>
 	/// 座標変換データの初期化
 	/// </summary>
 	void InitializeTransformationData();
+
+	/// <summary>
+	/// マテリアルデータの初期化
+	/// </summary>
+	void InitializeMaterialData();
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -53,6 +69,25 @@ public:
 /// セッター
 ///-------------------------------------------///
 public:
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera"></param>
+	void SetCamera(Camera* camera) { this->camera = camera; }
+
+///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
+public:
+
+	struct VertexData {
+		Vector4 position; // 頂点座標
+	};
+
+	struct Material {
+		Vector4 color; // 色
+	};
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -77,5 +112,25 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationResource;
 	// 座標変換データ
 	TransformationData* transformationData = nullptr;
+
+	// マテリアルリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource;
+	// マテリアルデータ
+	Material* materialData = nullptr;
+
+	// 頂点数 8頂点
+	uint32_t vertexCount = 8;
+
+	// インデックス数 6頂点 * 6面 = 36頂点
+	uint32_t indexCount = 36;
+
+	// ファイルパス
+	std::string filePath = "";
+
+	// 変換データ
+	Transform transform = {};
+
+	// カメラの借りポインタ
+	Camera* camera = nullptr;
 };
 

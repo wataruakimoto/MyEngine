@@ -52,7 +52,7 @@ void SkyboxCommon::CreateRootSignature() {
 	// RootParameter作成
 	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 
-	// gTransformationMatrix CBV t0
+	// gTransformation CBV t0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う

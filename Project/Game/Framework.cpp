@@ -9,6 +9,7 @@
 #include "3d/ModelCommon.h"
 #include "3d/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
+#include "3D/Skybox/SkyboxCommon.h"
 #include "scene/SceneManager.h"
 
 void Framework::Initialize() {
@@ -72,6 +73,11 @@ void Framework::Initialize() {
 	// パーティクル基盤初期化
 	ParticleCommon::GetInstance()->Initialize(dxUtility.get());
 	ParticleCommon::GetInstance()->SetDefaultCamera(camera.get());
+
+	// Skybox共通部初期化
+	SkyboxCommon::GetInstance()->Initialize(dxUtility.get());
+	// Skyboxのデフォルトカメラにカメラをセット
+	SkyboxCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void Framework::Update() {
@@ -84,6 +90,9 @@ void Framework::Update() {
 }
 
 void Framework::Finalize() {
+
+	// Skybox共通部の終了
+	SkyboxCommon::GetInstance()->Finalize();
 
 	// パーティクル基盤の終了
 	ParticleCommon::GetInstance()->Finalize();

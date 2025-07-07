@@ -1,6 +1,6 @@
 #include "GameScene.h"
-#include "3D/Object3dCommon.h"
-#include "3D/ModelManager.h"
+#include "3D/Skybox/Skybox.h"
+#include "3D/Skybox/SkyboxCommon.h"
 
 void GameScene::Initialize() {
 
@@ -8,26 +8,9 @@ void GameScene::Initialize() {
 	camera->SetRotate({ 0.2f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
-	// レベルローダーの生成
-	levelLoader = std::make_unique<Loader>();
-	// レベルデータの読み込み
-	levelLoader->LoadLevel("Level.json");
-	// オブジェクトの配置
-	levelLoader->PlaceObject();
-
-	// モデルの生成
-	model = std::make_unique<Model>();
-	// モデル読み込み
-	ModelManager::GetInstance()->LoadModelData("Resources/Terrain", "Terrain.obj");
-	// モデル初期化
-	model->Initialize("Resources/Terrain", "Terrain.obj");
-	
-	// オブジェクトの生成
-	object = std::make_unique<Object3d>();
-	// オブジェクト初期化
-	object->Initialize();
-	// オブジェクトのモデル設定
-	object->SetModel(model.get());
+	// Skyboxの初期化
+	skyBox = std::make_unique<SkyBox>();
+	skyBox->Initialize("Resources/", "");
 }
 
 void GameScene::Update() {
@@ -36,25 +19,17 @@ void GameScene::Update() {
 	camera->ShowImGui("camera");
 	camera->Update();
 
-	// レベルローダー更新
-	levelLoader->ShowImGui();
-	levelLoader->Update();
-
-	// オブジェクトの更新
-	object->ShowImGui("terrain");
-	object->Update();
+	// Skyboxの更新
+	skyBox->Update();
 }
 
 void GameScene::Draw() {
 
-	/// ===== ここから3D描画 ===== ///
-	Object3dCommon::GetInstance()->SettingCommonDrawing();
+	// スカイボックス共通部の描画設定
+	SkyboxCommon::GetInstance()->SettingDrawing();
 
-	// レベルローダー描画
-	levelLoader->Draw();
-
-	// オブジェクト描画
-	object->Draw();
+	// Skyboxの描画
+	skyBox->Draw();
 }
 
 void GameScene::Finalize() {

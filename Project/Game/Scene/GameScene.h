@@ -1,12 +1,10 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "camera/Camera.h"
-#include "Level/Loader.h"
-#include "3D/Model.h"
-#include "3D/Object3d.h"
 
 #include <memory>
+
+class SkyBox;
 
 /// ===== ゲームシーン ===== ///
 class GameScene : public BaseScene {
@@ -41,12 +39,6 @@ public:
 ///-------------------------------------------///
 private:
 
-	// レベルローダーのポインタ
-	std::unique_ptr<Loader> levelLoader = nullptr;
-
-	// モデル
-	std::unique_ptr<Model> model = nullptr;
-
-	// オブジェクト
-	std::unique_ptr<Object3d> object = nullptr;
+	// スカイボックス
+	std::unique_ptr<SkyBox> skyBox = nullptr;
 };
