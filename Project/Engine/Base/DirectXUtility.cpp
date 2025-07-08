@@ -1,10 +1,12 @@
 #include "DirectXUtility.h"
 #include "debug/Logger.h"
 #include "utility/StringUtility.h"
+#include "DirectXTex/d3dx12.h"
 
 #include <cassert>
 #include <format>
 #include <thread>
+#include <vector>
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -370,9 +372,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXUtility::CreateTextureResource(con
 
 	// 利用するHeapの設定。非常に特殊な運用。
 	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_CUSTOM; // 細かい設定を行う
-	heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK; // WriteBackポリシーでCPUアクセス可能
-	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_L0; // プロセッサの近くに配置
+	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // VRAM上に作る
 
 	// Resourceの生成
 	ComPtr <ID3D12Resource> resource = nullptr;
@@ -380,7 +380,7 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXUtility::CreateTextureResource(con
 		&heapProperties, // Heapの設定
 		D3D12_HEAP_FLAG_NONE, // Heapの特殊な設定。特になし
 		&resourceDesc, // Resourceの設定
-		D3D12_RESOURCE_STATE_GENERIC_READ, // 初回のResourceState。Textureは基本読むだけ
+		D3D12_RESOURCE_STATE_COPY_DEST, // データ転送される設定
 		nullptr, // Clear最適値。使わないのでnullptr
 		IID_PPV_ARGS(&resource) // 作成するResourceポインタへのポインタ
 	);
@@ -388,22 +388,27 @@ Microsoft::WRL::ComPtr<ID3D12Resource> DirectXUtility::CreateTextureResource(con
 	return resource;
 }
 
-void DirectXUtility::UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages) {
+[[nodiscard]] // 戻り値を破棄しない
+Microsoft::WRL::ComPtr<ID3D12Resource> DirectXUtility::UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages) {
 
-	// Meta情報を取得
-	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
-	// 全MipMapについて
-	for (size_t mipLevel = 0; mipLevel < metadata.mipLevels; ++mipLevel) {
-		// MipMapLevelを指定して各Imageを取得
-		const DirectX::Image* img = mipImages.GetImage(mipLevel, 0, 0);
-		// Textureに転送
-		HRESULT hr = texture->WriteToSubresource(
-			UINT(mipLevel),
-			nullptr,			  // 全領域へコピー
-			img->pixels,		  // 元データアドレス
-			UINT(img->rowPitch),  // 1ラインサイズ
-			UINT(img->slicePitch) // 1枚サイズ
-		);
-		assert(SUCCEEDED(hr));
-	}
+	// 読み込んだデータからDirectX12用のサブリソースの配列を作成
+	std::vector<D3D12_SUBRESOURCE_DATA> subresources;
+	DirectX::PrepareUpload(device.Get(), mipImages.GetImages(), mipImages.GetImageCount(), mipImages.GetMetadata(), subresources);
+	// サブリソースの数を基に、コピー元の中間リソースに必要なサイズを計算する
+	uint64_t intermediateSize = GetRequiredIntermediateSize(texture.Get(), 0, UINT(subresources.size()));
+	// 計算したサイズで中間リソースを作成する
+	ComPtr<ID3D12Resource> intermediateResource = CreateBufferResource(intermediateSize);
+	// 中間リソースにサブリソースのデータを書き込み、テクスチャに転送するコマンドを積む
+	UpdateSubresources(commandList.Get(), texture.Get(), intermediateResource.Get(), 0, 0, UINT(subresources.size()), subresources.data());
+
+	// テクスチャへの転送後は利用できるよう、D3D12_RESOURCE_STATE_COPY_DESTからD3D12_RESOURCE_STATE_GENERIC_READへ状態を変更する
+	D3D12_RESOURCE_BARRIER barrier{};
+	barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+	barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+	barrier.Transition.pResource = texture.Get();
+	barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_COPY_DEST;
+	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_GENERIC_READ;
+	commandList->ResourceBarrier(1, &barrier);
+	return intermediateResource;
 }

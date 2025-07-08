@@ -77,6 +77,15 @@ public:
 	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels);
 
 	/// <summary>
+	/// SRV生成(キューブマップテクスチャ用)
+	/// </summary>
+	/// <param name="srvIndex"></param>
+	/// <param name="pResource"></param>
+	/// <param name="format"></param>
+	/// <param name="mipLevels"></param>
+	void CreateSRVforTextureCube(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels);
+
+	/// <summary>
 	/// SRV生成(構造化バッファ用)
 	/// </summary>
 	/// <param name="srvIndex"></param>

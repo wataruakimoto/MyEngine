@@ -94,7 +94,7 @@
     <ClCompile Include="engine\audio\AudioManager.cpp">
       <Filter>Engine\audio</Filter>
     </ClCompile>
-    <ClCompile Include="game\MyGame.cpp">
+    <ClCompile Include="Game\MyGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="game\Framework.cpp">
@@ -131,6 +131,8 @@
     <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
     <ClCompile Include="Engine\Level\Loader.cpp" />
+    <ClCompile Include="Engine\3D\Skybox\Skybox.cpp" />
+    <ClCompile Include="Engine\3D\Skybox\SkyboxCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -243,6 +245,9 @@
     <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
     <ClInclude Include="Engine\Level\Loader.h" />
     <ClInclude Include="Engine\Level\LevelData.h" />
+    <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
+    <ClInclude Include="Engine\3D\Data\TransformationData.h" />
+    <ClInclude Include="Engine\3D\Skybox\SkyboxCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -253,6 +258,7 @@
     </None>
     <None Include="resources\shaders\Particle.hlsli" />
     <None Include="Resources\shaders\FullScreen.hlsli" />
+    <None Include="Resources\Shaders\Skybox.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
@@ -277,5 +283,7 @@
     <FxCompile Include="Resources\Shaders\GaussianFilter.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\LuminanceBasedOutline.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\DepthBasedOutline.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Skybox.VS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Skybox.PS.hlsl" />
   </ItemGroup>
 </Project>

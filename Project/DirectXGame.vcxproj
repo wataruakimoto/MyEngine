@@ -139,7 +139,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\Framework.cpp" />
     <ClCompile Include="Engine\Level\Loader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="game\MyGame.cpp" />
+    <ClCompile Include="Game\MyGame.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
     <ClCompile Include="game\scene\SceneManager.cpp" />
     <ClCompile Include="game\scene\SceneFactory.cpp" />
@@ -148,8 +148,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\PostProcessingPipeline.cpp" />
     <ClCompile Include="Engine\3D\Particle\PlaneParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
+    <ClCompile Include="Engine\3D\Skybox\Skybox.cpp" />
+    <ClCompile Include="Engine\3D\Skybox\SkyboxCommon.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\3D\Data\TransformationData.h" />
     <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
     <ClInclude Include="Engine\3D\Particle\BaseParticleType.h" />
     <ClInclude Include="Engine\3D\Particle\Particle.h" />
@@ -200,6 +203,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\RingParticle.h" />
     <ClInclude Include="Engine\Level\Loader.h" />
     <ClInclude Include="Engine\Level\LevelData.h" />
+    <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
+    <ClInclude Include="Engine\3D\Skybox\SkyboxCommon.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -213,6 +218,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="Resources\shaders\FullScreen.hlsli" />
     <None Include="resources\shaders\Object3d.hlsli" />
     <None Include="resources\shaders\Particle.hlsli" />
+    <None Include="Resources\Shaders\Skybox.hlsli" />
     <None Include="resources\shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +277,18 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Skybox.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Skybox.VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
