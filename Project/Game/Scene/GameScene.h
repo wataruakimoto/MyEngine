@@ -1,10 +1,9 @@
 #pragma once
 
 #include "BaseScene.h"
+#include "3D/Skybox/Skybox.h"
 
 #include <memory>
-
-class SkyBox;
 
 /// ===== ゲームシーン ===== ///
 class GameScene : public BaseScene {
@@ -40,5 +39,5 @@ public:
 private:
 
 	// スカイボックス
-	std::unique_ptr<SkyBox> skyBox = nullptr;
+	std::unique_ptr<Skybox> skybox = nullptr;
 };

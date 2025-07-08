@@ -35,6 +35,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	/// <param name="name"></param>
+	void ShowImGui(const char* name);
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -75,6 +81,24 @@ public:
 	/// </summary>
 	/// <param name="camera"></param>
 	void SetCamera(Camera* camera) { this->camera = camera; }
+
+	/// <summary>
+	/// 拡縮のセッター
+	/// </summary>
+	/// <param name="scale"></param>
+	void SetScale(const Vector3& scale) { transform.scale = scale; }
+
+	/// <summary>
+	/// 回転のセッター
+	/// </summary>
+	/// <param name="rotate"></param>
+	void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
+
+	/// <summary>
+	/// 平行移動のセッター
+	/// </summary>
+	/// <param name="translate"></param>
+	void SetTranslate(const Vector3& translate) { transform.translate = translate; }
 
 ///-------------------------------------------/// 
 /// 構造体

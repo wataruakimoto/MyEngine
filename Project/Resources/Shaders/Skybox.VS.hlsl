@@ -3,7 +3,6 @@
 struct VertexShaderInput {
     
     float4 position : POSITION0;
-    float3 texcoord : TEXCOORD0;
 };
 
 struct Transformation {
@@ -19,7 +18,7 @@ VertexShaderOutput main(VertexShaderInput input) {
     
     output.position = mul(input.position, gTransformation.WVP).xyww;
     
-    output.texcoord = input.texcoord.xyz;
+    output.texcoord = input.position.xyz;
     
     return output;
 }

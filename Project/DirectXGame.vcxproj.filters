@@ -94,7 +94,7 @@
     <ClCompile Include="engine\audio\AudioManager.cpp">
       <Filter>Engine\audio</Filter>
     </ClCompile>
-    <ClCompile Include="game\MyGame.cpp">
+    <ClCompile Include="Game\MyGame.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="game\Framework.cpp">

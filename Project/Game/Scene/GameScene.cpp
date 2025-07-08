@@ -1,26 +1,23 @@
 #include "GameScene.h"
-#include "3D/Skybox/Skybox.h"
 #include "3D/Skybox/SkyboxCommon.h"
 
 void GameScene::Initialize() {
 
-	// カメラの初期化
-	camera->SetRotate({ 0.2f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
-
 	// Skyboxの初期化
-	skyBox = std::make_unique<SkyBox>();
-	skyBox->Initialize("Resources/", "");
+	skybox = std::make_unique<Skybox>();
+	skybox->Initialize("Resources/", "rostock_laage_airport_4k.dds");
+	skybox->SetCamera(camera);
+	skybox->SetScale({ 100.0f, 100.0f, 100.0f }); // スカイボックスの拡縮
 }
 
 void GameScene::Update() {
 
-	/// === カメラ更新 === ///
-	camera->ShowImGui("camera");
+	// カメラの更新
 	camera->Update();
 
 	// Skyboxの更新
-	skyBox->Update();
+	skybox->ShowImGui("Skybox");
+	skybox->Update();
 }
 
 void GameScene::Draw() {
@@ -29,7 +26,7 @@ void GameScene::Draw() {
 	SkyboxCommon::GetInstance()->SettingDrawing();
 
 	// Skyboxの描画
-	skyBox->Draw();
+	skybox->Draw();
 }
 
 void GameScene::Finalize() {

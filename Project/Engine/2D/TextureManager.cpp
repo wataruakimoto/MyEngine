@@ -100,7 +100,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 
 	if (textureData.metaData.IsCubemap()) { // キューブマップテクスチャなら
 
-		SrvManager::GetInstance()->CreateSRVforTextureCube(textureData.srvIndex, textureData.resource.Get(), textureData.metaData.format, UINT(textureData.metaData.mipLevels));
+		SrvManager::GetInstance()->CreateSRVforTextureCube(textureData.srvIndex, textureData.resource.Get(), textureData.metaData.format, UINT_MAX);
 	}
 	else { // 2Dテクスチャなら
 

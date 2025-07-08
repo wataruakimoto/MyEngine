@@ -139,7 +139,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\Framework.cpp" />
     <ClCompile Include="Engine\Level\Loader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="game\MyGame.cpp" />
+    <ClCompile Include="Game\MyGame.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
     <ClCompile Include="game\scene\SceneManager.cpp" />
     <ClCompile Include="game\scene\SceneFactory.cpp" />

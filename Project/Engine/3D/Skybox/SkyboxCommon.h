@@ -142,7 +142,7 @@ private:
 
 	// InputLayout
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[1] = {};
 
 	// BlendState
 	D3D12_BLEND_DESC blendDesc{};

@@ -5,6 +5,8 @@
 #include "Math/MathMatrix.h"
 #include "camera/Camera.h"
 
+#include <imgui.h>
+
 using namespace MathMatrix;
 
 void Skybox::Initialize(std::string directoryPath, std::string fileName) {
@@ -61,6 +63,19 @@ void Skybox::Draw() {
 	SkyboxCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
 }
 
+void Skybox::ShowImGui(const char* name) {
+
+	ImGui::Begin(name);
+	// スカイボックスのファイルパスを表示
+	ImGui::Text("Skybox File: %s", filePath.c_str());
+	ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
+	ImGui::SliderAngle("Rotate X", &transform.rotate.x, -180.0f, 180.0f);
+	ImGui::SliderAngle("Rotate Y", &transform.rotate.y, -180.0f, 180.0f);
+	ImGui::SliderAngle("Rotate Z", &transform.rotate.z, -180.0f, 180.0f);
+	ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
+	ImGui::End();
+}
+
 void Skybox::InitializeVertexData() {
 
 	// 頂点リソースを作成
@@ -80,13 +95,13 @@ void Skybox::InitializeVertexData() {
 
 	/// === 頂点リソースに初期値を書き込む === ///
 
-	vertexData[0].position = Vector4(1.0f, 1.0f, 1.0f, 1.0f);    // 右上前
-	vertexData[1].position = Vector4(1.0f, 1.0f, -1.0f, 1.0f);   // 右上後
-	vertexData[2].position = Vector4(1.0f, -1.0f, 1.0f, 1.0f);   // 右下前
-	vertexData[3].position = Vector4(1.0f, -1.0f, -1.0f, 1.0f);  // 右下後
-	vertexData[4].position = Vector4(-1.0f, 1.0f, 1.0f, 1.0f);   // 左上前
-	vertexData[5].position = Vector4(-1.0f, 1.0f, -1.0f, 1.0f);  // 左上後
-	vertexData[6].position = Vector4(-1.0f, -1.0f, 1.0f, 1.0f);  // 左下前
+	vertexData[0].position = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 右上前
+	vertexData[1].position = Vector4(1.0f, 1.0f, -1.0f, 1.0f); // 右上後
+	vertexData[2].position = Vector4(1.0f, -1.0f, 1.0f, 1.0f); // 右下前
+	vertexData[3].position = Vector4(1.0f, -1.0f, -1.0f, 1.0f); // 右下後
+	vertexData[4].position = Vector4(-1.0f, 1.0f, 1.0f, 1.0f); // 左上前
+	vertexData[5].position = Vector4(-1.0f, 1.0f, -1.0f, 1.0f); // 左上後
+	vertexData[6].position = Vector4(-1.0f, -1.0f, 1.0f, 1.0f); // 左下前
 	vertexData[7].position = Vector4(-1.0f, -1.0f, -1.0f, 1.0f); // 左下後
 }
 
@@ -108,8 +123,6 @@ void Skybox::InitializeIndexData() {
 	indexResource->Map(0, nullptr, reinterpret_cast<void**>(&indexData));
 
 	/// === インデックスリソースに初期値を書き込む === ///
-
-	// 時計回りにして内向きに描画する
 
 	// 右 +X
 	indexData[0] = 0; // 右上前
@@ -134,7 +147,7 @@ void Skybox::InitializeIndexData() {
 	indexData[15] = 1; // 右上後
 	indexData[16] = 4; // 左上前
 	indexData[17] = 5; // 左上後
-	
+
 	// 下 -Y
 	indexData[18] = 2; // 右下前
 	indexData[19] = 6; // 左下前
