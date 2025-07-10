@@ -1,22 +1,19 @@
 #include "object3d.hlsli"
 
-struct Material
-{
+struct Material {
     float4 color;
     int lightingMode;
     float4x4 uvTransform;
     float shininess;
 };
 
-struct DirectionalLight
-{
+struct DirectionalLight {
     float4 color; // 色
     float3 direction; // 向き
     float intensity; // 輝度
 };
 
-struct PointLight
-{
+struct PointLight {
     float4 color; // 色
     float3 position; // 位置
     float intensity; // 輝度
@@ -24,8 +21,7 @@ struct PointLight
     float decay; // 減衰率
 };
 
-struct SpotLight
-{
+struct SpotLight {
     float4 color; // 色
     float3 position; // 位置
     float3 direction; // 向き
@@ -36,8 +32,7 @@ struct SpotLight
     float cosFalloffStart; // Falloffの開始角度
 };
 
-struct Camera
-{
+struct Camera {
     float3 worldPosition;
 };
 
@@ -52,36 +47,36 @@ ConstantBuffer<SpotLight> gSpotLight : register(b3);
 ConstantBuffer<Camera> gCamera : register(b4);
 
 Texture2D<float4> gTexture : register(t0);
+
+TextureCube<float4> gEnvironmentTexture : register(t1);
+
 SamplerState gSampler : register(s0);
 
-struct PixelShaderOutput
-{
+struct PixelShaderOutput {
     float4 color : SV_TARGET0;
 };
 
-PixelShaderOutput main(VertexShaderOutput input)
-{
+PixelShaderOutput main(VertexShaderOutput input) {
+    
     float4 transformedUV = mul(float4(input.texcoord, 0.0f, 1.0f), gMaterial.uvTransform);
     float4 textureColor = gTexture.Sample(gSampler, transformedUV.xy);
     
-    PixelShaderOutput output;
+    // 初期化
+    PixelShaderOutput output = { float4(0.0f, 0.0f, 0.0f, 1.0f) };
     
-    if (gMaterial.lightingMode == 1)
-    { // Lambertian Reflection
+    if (gMaterial.lightingMode == 1) { // Lambertian Reflection
         
         float cos = saturate(dot(normalize(input.normal), -gDirectionalLight.direction));
         output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
         
     }
-    else if (gMaterial.lightingMode == 2)
-    { // Harf Lambert
+    else if (gMaterial.lightingMode == 2) { // Harf Lambert
         
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
         float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
         output.color = gMaterial.color * textureColor * gDirectionalLight.color * cos * gDirectionalLight.intensity;
     }
-    else if (gMaterial.lightingMode == 3)
-    { // Phong Reflection Model
+    else if (gMaterial.lightingMode == 3) { // Phong Reflection Model
         
         // 拡散反射の計算
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
@@ -104,8 +99,7 @@ PixelShaderOutput main(VertexShaderOutput input)
         output.color.a = gMaterial.color.a * textureColor.a;
         
     }
-    else if (gMaterial.lightingMode == 4)
-    { // Blinn-Phong Reflection Model
+    else if (gMaterial.lightingMode == 4) { // Blinn-Phong Reflection Model
         
         // 拡散反射の計算
         float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
@@ -127,9 +121,9 @@ PixelShaderOutput main(VertexShaderOutput input)
         // アルファ値はテクスチャをそのまま
         output.color.a = gMaterial.color.a * textureColor.a;
     }
-    else if (gMaterial.lightingMode == 5)
-    {
-        /// ----- DirectionalLight ----- ///
+    else if (gMaterial.lightingMode == 5) {
+        
+        // ----- DirectionalLight ----- ///
         
         // 拡散反射の計算
         float NdotLDirectional = dot(normalize(input.normal), -gDirectionalLight.direction);
@@ -175,8 +169,8 @@ PixelShaderOutput main(VertexShaderOutput input)
         // アルファ値はテクスチャをそのまま
         output.color.a = gMaterial.color.a * textureColor.a;
     }
-    else if (gMaterial.lightingMode == 6)
-    {
+    else if (gMaterial.lightingMode == 6) {
+        
         /// ----- DirectionalLight ----- ///
         
         // 拡散反射の計算
@@ -227,8 +221,19 @@ PixelShaderOutput main(VertexShaderOutput input)
         // アルファ値はテクスチャをそのまま
         output.color.a = gMaterial.color.a * textureColor.a;
     }
-    else
-    { // Lightingしない場合
+    else if (gMaterial.lightingMode == 7) { // 環境マップ
+        
+        float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
+        float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
+        float4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
+    
+        // 環境マップの色を出力に加算
+        output.color.rgb += environmentColor.rgb;
+        
+        // アルファ値はテクスチャをそのまま
+        output.color.a = gMaterial.color.a * textureColor.a;
+    }
+    else { // Lightingしない場合
         
         output.color = gMaterial.color * textureColor;
     }

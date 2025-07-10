@@ -78,16 +78,16 @@ void Object3d::Draw() {
 		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
 		/// === 平行光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
 
 		/// === 点光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
 
 		/// === スポットライトCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
 
 		/// === カメラCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(7, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {
@@ -140,6 +140,24 @@ void Object3d::ShowImGui(const char* name) {
 
 	if (model) {
 		model->ShowImGui();
+	}
+
+	if (ImGui::TreeNode("Other")) {
+		ImGui::Text("Camera World Position: (%.2f, %.2f, %.2f)", camera->GetWorldPosition().x, camera->GetWorldPosition().y, camera->GetWorldPosition().z);
+		ImGui::Text("CameraData: (%.2f, %.2f, %.2f)", cameraData->x, cameraData->y, cameraData->z);
+
+		Vector4 pos = model->GetPosition();
+		Vector4 worldPos4;
+		worldPos4.x = pos.x * transformationMatrixData->world.m[0][0] + pos.y * transformationMatrixData->world.m[1][0] + pos.z * transformationMatrixData->world.m[2][0] + pos.w * transformationMatrixData->world.m[3][0];
+		worldPos4.y = pos.x * transformationMatrixData->world.m[0][1] + pos.y * transformationMatrixData->world.m[1][1] + pos.z * transformationMatrixData->world.m[2][1] + pos.w * transformationMatrixData->world.m[3][1];
+		worldPos4.z = pos.x * transformationMatrixData->world.m[0][2] + pos.y * transformationMatrixData->world.m[1][2] + pos.z * transformationMatrixData->world.m[2][2] + pos.w * transformationMatrixData->world.m[3][2];
+		worldPos4.w = pos.x * transformationMatrixData->world.m[0][3] + pos.y * transformationMatrixData->world.m[1][3] + pos.z * transformationMatrixData->world.m[2][3] + pos.w * transformationMatrixData->world.m[3][3];
+
+		// xyz成分だけ取り出す
+		Vector3 worldPos = { worldPos4.x, worldPos4.y, worldPos4.z };
+
+		ImGui::Text("Model Position: (%.2f, %.2f, %.2f)", worldPos.x, worldPos.y, worldPos.z);
+		ImGui::TreePop();
 	}
 
 	ImGui::End();

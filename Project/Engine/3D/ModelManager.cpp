@@ -176,7 +176,8 @@ ModelData* ModelManager::FindModelData(const std::string& directoryPath, const s
 		return modelDatas.at(filePath).get();
 	}
 
-	// ファイル名一致なし
+	// ファイル名一致なしならAssertする
+	assert(0 && "ModelData not found");
 	return nullptr;
 }
 

@@ -67,7 +67,7 @@ void Skybox::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 	// スカイボックスのファイルパスを表示
-	ImGui::Text("Skybox File: %s", filePath.c_str());
+	ImGui::Text("FilePath: %s", filePath.c_str());
 	ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
 	ImGui::SliderAngle("Rotate X", &transform.rotate.x, -180.0f, 180.0f);
 	ImGui::SliderAngle("Rotate Y", &transform.rotate.y, -180.0f, 180.0f);
