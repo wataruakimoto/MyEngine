@@ -34,8 +34,11 @@ void Model::Draw() {
 	// マテリアルCBufferの場所を設定
 	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	// SRVのDescriptorTableの先頭を設定
+	// SRVのDescriptorTableを設定
 	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
+
+	// SRVのDescriptorTableを設定
+	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(3, TextureManager::GetInstance()->GetSRVGPUHandle(environmentMapFilePath));
 
 	// 描画(DrawCall)
 	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), 1, 0, 0);
@@ -46,7 +49,7 @@ void Model::ShowImGui() {
 #ifdef _DEBUG
 	if (ImGui::TreeNode("Model")) {
 		ImGui::ColorEdit4("Color", &materialData->color.x);
-		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0");
+		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0EnvironmentMap\0");
 		ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
 		ImGui::TreePop();
 	}

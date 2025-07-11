@@ -38,7 +38,7 @@ void TitleScene::Update() {
 void TitleScene::Draw() {
 
 	/// === スプライトの描画準備 === ///
-	SpriteCommon::GetInstance()->SettingCommonDrawing();
+	SpriteCommon::GetInstance()->SettingDrawing();
 
 	//TODO: 全てのスプライト個々の描画
 	sprite->Draw();

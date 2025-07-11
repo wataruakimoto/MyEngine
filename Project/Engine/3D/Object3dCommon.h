@@ -51,7 +51,7 @@ public:
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
-	void SettingCommonDrawing();
+	void SettingDrawing();
 
 ///-------------------------------------------/// 
 /// クラス内関数

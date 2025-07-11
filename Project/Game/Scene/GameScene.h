@@ -2,6 +2,8 @@
 
 #include "BaseScene.h"
 #include "3D/Skybox/Skybox.h"
+#include "3D/Model.h"
+#include "3D/Object3d.h"
 
 #include <memory>
 
@@ -40,4 +42,10 @@ private:
 
 	// スカイボックス
 	std::unique_ptr<Skybox> skybox = nullptr;
+
+	// モデル
+	std::unique_ptr<Model> model = nullptr;
+
+	// オブジェクト
+	std::unique_ptr<Object3d> object = nullptr;
 };
