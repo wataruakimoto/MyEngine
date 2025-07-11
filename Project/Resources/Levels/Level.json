@@ -20,28 +20,30 @@
                     1.0,
                     1.0
                 ]
-            }
-        },
-        {
-            "type": "MESH",
-            "name": "Plane",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
+            },
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "Plane",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            0.0
+                        ],
+                        "scaling": [
+                            1.0,
+                            1.0,
+                            0.0
+                        ]
+                    }
+                }
+            ]
         },
         {
             "type": "MESH",
@@ -62,28 +64,30 @@
                     1.0,
                     1.0
                 ]
-            }
-        },
-        {
-            "type": "MESH",
-            "name": "ICO2",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
+            },
+            "children": [
+                {
+                    "type": "MESH",
+                    "name": "ICO2",
+                    "transform": {
+                        "translation": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ],
+                        "rotation": [
+                            0.0,
+                            -0.0,
+                            0.0
+                        ],
+                        "scaling": [
+                            1.0,
+                            1.0,
+                            1.0
+                        ]
+                    }
+                }
+            ]
         }
     ]
 }

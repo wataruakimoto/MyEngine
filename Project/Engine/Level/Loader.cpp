@@ -112,6 +112,19 @@ void Loader::ParseObject(nlohmann::json& object) {
 	// オブジェクトが正しい形式かチェック
 	assert(object.contains("type"));
 
+	if(object.contains("disabled")){
+
+		// 有効無効フラグ
+		bool disabled = object["disabled"].get<bool>();
+
+		// 無効な場合は何もしない
+		if (disabled) {
+			
+			// 配置しない(スキップする)
+			return;
+		}
+	}
+
 	// 種別を取得
 	std::string type = object["type"].get<std::string>();
 
