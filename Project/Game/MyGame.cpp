@@ -43,6 +43,9 @@ void MyGame::Update() {
 		// カメラのImGui表示
 		camera->ShowImGui("Camera");
 
+		// フィルターのImGui表示
+		filter->ShowImGui();
+
 		// カメラをセット
 		SceneManager::GetInstance()->SetCamera(camera.get());
 

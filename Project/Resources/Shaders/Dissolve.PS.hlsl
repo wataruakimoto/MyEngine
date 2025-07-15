@@ -8,14 +8,21 @@ struct PixelShaderOutput {
     float4 color : SV_TARGET0;
 };
 
+struct Config {
+    
+    float threshold; // マスクの閾値
+};
+
+ConstantBuffer<Config> gConfig : register(b0);
+
 PixelShaderOutput main(VertexShaderOutput input) {
     
     PixelShaderOutput output;
     
     float mask = gMaskTexture.Sample(gSampler, input.texcoord);
     
-    // maskの値が0.5(闘値)以下の場合はdiscardして抜く
-    if (mask <= 0.5f) {
+    // maskの値が闘値以下の場合はdiscardして抜く
+    if (mask <= gConfig.threshold) {
         discard;
     }
     

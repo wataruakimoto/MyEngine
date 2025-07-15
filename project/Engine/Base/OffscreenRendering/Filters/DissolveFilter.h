@@ -2,6 +2,8 @@
 
 #include "BaseFilter.h"
 
+#include <string>
+
 /// ===== ディゾルブフィルター ===== ///
 class DissolveFilter : public BaseFilter {
 
@@ -19,6 +21,11 @@ public:
 	/// 描画設定
 	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -65,9 +72,47 @@ private:
 	/// </summary>
 	void CreateGraphicsPipeline() override;
 
+	/// <summary>
+	/// コンフィグデータ作成
+	/// </summary>
+	void CreateConfigData();
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// maskテクスチャのファイルパスを設定する
+	/// </summary>
+	/// <param name="directoryPath"></param>
+	/// <param name="fileName"></param>
+	void SetMaskTextureFilePath(std::string directoryPath, std::string fileName);
+
+///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
+public:
+
+	struct Config {
+
+		float threshold; // 閾値
+	};
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// maskテクスチャのファイルパス
+	std::string maskTextureFilePath = "";
+
+	// マスクテクスチャのSRVインデックス
+	uint32_t maskTextureSrvIndex = 0;
+
+	// コンフィグデータ
+	Config* configData = nullptr;
+	// コンフィグのリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 };
 

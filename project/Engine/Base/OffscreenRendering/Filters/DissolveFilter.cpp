@@ -3,6 +3,9 @@
 #include "Base/SrvManager.h"
 #include "Base/OffscreenRendering/PostEffect.h"
 #include "Debug/Logger.h"
+#include "2D/TextureManager.h"
+
+#include <imgui.h>
 
 using namespace Microsoft::WRL;
 using namespace Logger;
@@ -15,6 +18,9 @@ void DissolveFilter::Initialize(DirectXUtility* dxUtility, PostEffect* postEffec
 
 	// パイプライン作成
 	CreateGraphicsPipeline();
+
+	// コンフィグデータの生成
+	CreateConfigData();
 }
 
 void DissolveFilter::Draw() {
@@ -34,8 +40,27 @@ void DissolveFilter::Draw() {
 	/// === SRVのDescriptorTableを設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
 
+	/// === SRVのDescriptorTableを設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(maskTextureSrvIndex));
+
+	/// === CBufferの設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, configResource->GetGPUVirtualAddress());
+
 	// 3頂点を1回描画する
 	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+}
+
+void DissolveFilter::ShowImGui() {
+
+#ifdef _DEBUG
+
+	ImGui::Begin("DissolveFilter");
+
+	ImGui::SliderFloat("Threshold", &configData->threshold, 0.0f, 1.0f, "%.2f");
+
+	ImGui::End();
+	
+#endif // _DEBUG
 }
 
 void DissolveFilter::CreateRootSignature() {
@@ -45,7 +70,7 @@ void DissolveFilter::CreateRootSignature() {
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	// DescriptorRangeを作成
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
 
 	// gTexture SRV t0
 	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
@@ -53,14 +78,31 @@ void DissolveFilter::CreateRootSignature() {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
+	// gMaskTexture SRV t1
+	descriptorRange[1].BaseShaderRegister = 1; // 1から始まる
+	descriptorRange[1].NumDescriptors = 1; // 数は1つ
+	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
+	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
 	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 
 	// gTexture SRV t0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // Tableの中身の配列を指定
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
+
+	// gMaskTexture SRV t1
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[1]; // Tableの中身の配列を指定
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
+
+	// gConfigData CBV b0
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // ConstantBufferを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[2].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
 
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
@@ -183,5 +225,29 @@ void DissolveFilter::CreateGraphicsPipeline() {
 	hr = dxUtility->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
+}
+
+void DissolveFilter::CreateConfigData() {
+
+	// リソースを生成
+	configResource = dxUtility->CreateBufferResource(sizeof(Config));
+
+	// リソースにデータをマッピング
+	configResource->Map(0, nullptr, reinterpret_cast<void**>(&configData));
+
+	// データの初期化
+	configData->threshold = 0.5f; // ディゾルブのしきい値
+}
+
+void DissolveFilter::SetMaskTextureFilePath(std::string directoryPath, std::string fileName) {
+
+	// マスクテクスチャのファイルパスを設定
+	maskTextureFilePath = directoryPath + "/" + fileName;
+
+	// テクスチャを読み込む
+	TextureManager::GetInstance()->LoadTexture(maskTextureFilePath);
+
+	// SRVインデックスを取得
+	maskTextureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(maskTextureFilePath);
 }
 
