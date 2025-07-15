@@ -1,8 +1,8 @@
 #pragma once
 #include "winApp/WinApp.h"
 #include "base/DirectXUtility.h"
-#include "base/PostEffect.h"
-#include "base/PostProcessingPipeline.h"
+#include "base/OffscreenRendering/PostEffect.h"
+#include "base/OffscreenRendering/PostProcessingPipeline.h"
 #include "base/SwapChain.h"
 #include "camera/Camera.h"
 #include "scene/AbstractSceneFactory.h"
