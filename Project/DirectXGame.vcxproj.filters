@@ -285,5 +285,6 @@
     <FxCompile Include="Resources\Shaders\DepthBasedOutline.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\Skybox.VS.hlsl" />
     <FxCompile Include="Resources\Shaders\Skybox.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\RadialBlur.PS.hlsl" />
   </ItemGroup>
 </Project>
