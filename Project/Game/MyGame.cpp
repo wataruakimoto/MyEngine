@@ -69,7 +69,7 @@ void MyGame::Draw() {
 	swapChain->PreDraw();
 
 	// レンダーテクスチャの描画
-	postProcessingPipeline->Draw();
+	filter->Draw();
 
 	/// === ImGui描画 === ///
 	ImGuiManager::GetInstance()->Draw();

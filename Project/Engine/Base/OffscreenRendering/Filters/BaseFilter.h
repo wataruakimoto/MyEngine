@@ -19,28 +19,22 @@ class BaseFilter {
 public:
 
 	/// <summary>
+	/// 仮想デストラクタ
+	/// </summary>
+	~BaseFilter() = default;
+
+	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility, PostEffect* postEffect);
+	virtual void Initialize(DirectXUtility* dxUtility, PostEffect* postEffect) = 0;
 
 	/// <summary>
 	/// 描画設定
 	/// </summary>
-	void Draw();
+	virtual void Draw() = 0;
 
 ///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// カメラのセット
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
-
-///-------------------------------------------/// 
-/// クラス内関数 共通処理
+/// クラス内関数
 ///-------------------------------------------///
 protected:
 
@@ -52,22 +46,22 @@ protected:
 	/// <summary>
 	/// InputLayout作成
 	/// </summary>
-	void CreateInputLayout();
+	virtual void CreateInputLayout() = 0;
 
 	/// <summary>
 	/// BlendState作成
 	/// </summary>
-	void CreateBlendState();
+	virtual void CreateBlendState() = 0;
 
 	/// <summary>
 	/// RasterizerState作成
 	/// </summary>
-	void CreateRasterizerState();
+	virtual void CreateRasterizerState() = 0;
 
 	/// <summary>
 	/// VertexShader作成
 	/// </summary>
-	void CreateVertexShader();
+	virtual void CreateVertexShader() = 0;
 
 	/// <summary>
 	/// PixelShader作成
@@ -77,37 +71,17 @@ protected:
 	/// <summary>
 	/// DepthStencilState作成
 	/// </summary>
-	void CreateDepthStencilState();
+	virtual void CreateDepthStencilState() = 0;
 
 	/// <summary>
 	/// GraphicsPipeline作成
 	/// </summary>
-	void CreateGraphicsPipeline();
-
-	/// <summary>
-	/// マテリアルデータ生成
-	/// </summary>
-	void GenerateMaterialData();
-
-	///-------------------------------------------/// 
-/// クラス内関数 共通処理
-///-------------------------------------------///
-protected:
-
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
-
-	struct Material {
-
-		Matrix4x4 projectionInverse; // 投影逆行列
-	};
+	virtual void CreateGraphicsPipeline() = 0;
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
-private:
+protected:
 
 	// DirectXUtilityのポインタ
 	DirectXUtility* dxUtility = nullptr;
@@ -141,13 +115,5 @@ private:
 
 	// GraphicsPipeline
 	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
-
-	// マテリアルリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
-	// マテリアルデータ
-	Material* materialData = nullptr;
-
-	// カメラの借りポインタ
-	Camera* camera = nullptr;
 };
 

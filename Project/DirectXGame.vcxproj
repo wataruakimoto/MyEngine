@@ -108,7 +108,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\BaseFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.cpp" />
     <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleSystem.cpp" />
@@ -116,6 +118,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffscreenRendering\PostEffect.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FullScreenFilter.cpp" />
     <ClCompile Include="game\scene\AbstractSceneFactory.cpp" />
     <ClCompile Include="game\scene\BaseScene.cpp" />
     <ClCompile Include="engine\audio\AudioManager.cpp" />
@@ -139,6 +142,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\scene\GameScene.cpp" />
     <ClCompile Include="game\Framework.cpp" />
     <ClCompile Include="Engine\Level\Loader.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\MyGame.cpp" />
     <ClCompile Include="game\scene\TitleScene.cpp" />
@@ -146,13 +152,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="game\scene\SceneFactory.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
-    <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessingPipeline.cpp" />
     <ClCompile Include="Engine\3D\Particle\PlaneParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
     <ClCompile Include="Engine\3D\Skybox\Skybox.cpp" />
     <ClCompile Include="Engine\3D\Skybox\SkyboxCommon.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\VignetteFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BaseFilter.h" />
     <ClInclude Include="Engine\3D\Data\TransformationData.h" />
     <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
@@ -167,6 +177,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\PostEffect.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FullScreenFilter.h" />
     <ClInclude Include="game\scene\AbstractSceneFactory.h" />
     <ClInclude Include="game\scene\BaseScene.h" />
     <ClInclude Include="engine\audio\AudioManager.h" />
@@ -200,13 +211,17 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\3d\Data\VertexData.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
-    <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessingPipeline.h" />
     <ClInclude Include="Engine\3D\Particle\PlaneParticle.h" />
     <ClInclude Include="Engine\3D\Particle\RingParticle.h" />
     <ClInclude Include="Engine\Level\Loader.h" />
     <ClInclude Include="Engine\Level\LevelData.h" />
     <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
     <ClInclude Include="Engine\3D\Skybox\SkyboxCommon.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\VignetteFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -224,13 +239,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <None Include="resources\shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Resources\Shaders\BoxFilter.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\BoxBlur.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DepthBasedOutline.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\DepthOutline.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -242,7 +257,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\GaussianFilter.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\GaussianBlur.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -258,7 +273,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\LuminanceBasedOutline.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\LuminanceOutline.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

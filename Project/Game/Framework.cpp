@@ -36,9 +36,8 @@ void Framework::Initialize() {
 	postEffect->Initialize(dxUtility.get());
 
 	// ポストエフェクトパイプラインの初期化
-	postProcessingPipeline = std::make_unique <PostProcessingPipeline>();
-	postProcessingPipeline->Initialize(dxUtility.get(), postEffect.get());
-	postProcessingPipeline->SetCamera(camera.get());
+	filter = std::make_unique<DissolveFilter>();
+	filter->Initialize(dxUtility.get(), postEffect.get());
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
