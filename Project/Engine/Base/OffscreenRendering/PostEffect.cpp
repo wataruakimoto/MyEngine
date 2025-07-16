@@ -1,6 +1,6 @@
 #include "PostEffect.h"
 #include "winApp/WinApp.h"
-#include "DirectXUtility.h"
+#include "Base/DirectXUtility.h"
 #include "base/SrvManager.h"
 
 using namespace Microsoft::WRL;

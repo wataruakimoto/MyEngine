@@ -43,6 +43,9 @@ void MyGame::Update() {
 		// カメラのImGui表示
 		camera->ShowImGui("Camera");
 
+		// フィルターのImGui表示
+		filter->ShowImGui();
+
 		// カメラをセット
 		SceneManager::GetInstance()->SetCamera(camera.get());
 
@@ -69,7 +72,7 @@ void MyGame::Draw() {
 	swapChain->PreDraw();
 
 	// レンダーテクスチャの描画
-	postProcessingPipeline->Draw();
+	filter->Draw();
 
 	/// === ImGui描画 === ///
 	ImGuiManager::GetInstance()->Draw();

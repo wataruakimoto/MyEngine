@@ -1,16 +1,13 @@
-#include "PostProcessingPipeline.h"
-#include "base/DirectXUtility.h"
-#include "base/SrvManager.h"
-#include "base/PostEffect.h"
-#include "camera/Camera.h"
-#include "debug/Logger.h"
-#include "Math/MathMatrix.h"
+#include "VignetteFilter.h"
+#include "Base/DirectXUtility.h"
+#include "Base/SrvManager.h"
+#include "Base/OffscreenRendering/PostEffect.h"
+#include "Debug/Logger.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;
-using namespace MathMatrix;
 
-void PostProcessingPipeline::Initialize(DirectXUtility* dxUtility, PostEffect* postEffect) {
+void VignetteFilter::Initialize(DirectXUtility* dxUtility, PostEffect* postEffect) {
 
 	// 引数をメンバ変数にコピー
 	this->dxUtility = dxUtility;
@@ -18,18 +15,9 @@ void PostProcessingPipeline::Initialize(DirectXUtility* dxUtility, PostEffect* p
 
 	// パイプライン作成
 	CreateGraphicsPipeline();
-
-	// マテリアルデータの生成
-	GenerateMaterialData();
 }
 
-void PostProcessingPipeline::Draw() {
-
-	// カメラから投影逆行列を取得
-	Matrix4x4 projectionInverse = camera->GetProjectionMatrixInverse();
-
-	// マテリアルデータに投影逆行列をセット
-	materialData->projectionInverse = projectionInverse;
+void VignetteFilter::Draw() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxUtility->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -46,24 +34,18 @@ void PostProcessingPipeline::Draw() {
 	/// === SRVのDescriptorTableを設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
 
-	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetDepthSRVIndex()));
-
-	/// === マテリアルCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
-
 	// 3頂点を1回描画する
 	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
-void PostProcessingPipeline::CreateRootSignature() {
+void VignetteFilter::CreateRootSignature() {
 
 	// RootSignatureを生成する
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	// DescriptorRangeを作成
-	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
 
 	// gTexture SRV t0
 	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
@@ -71,14 +53,8 @@ void PostProcessingPipeline::CreateRootSignature() {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
-	// gDepthTexture SRV t1
-	descriptorRange[1].BaseShaderRegister = 1; // 1から始まる
-	descriptorRange[1].NumDescriptors = 1; // 数は1つ
-	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
-	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
-
 	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
+	D3D12_ROOT_PARAMETER rootParameters[1] = {};
 
 	// gTexture SRV t0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
@@ -86,22 +62,11 @@ void PostProcessingPipeline::CreateRootSignature() {
 	rootParameters[0].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // Tableの中身の配列を指定
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
 
-	// gDepthTexture SRV t1
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[1]; // Tableの中身の配列を指定
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
-
-	// gMaterial CBV b0
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	rootParameters[2].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
-
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
 
 	// Samplerの作成
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[2] = {};
+	D3D12_STATIC_SAMPLER_DESC staticSamplers[1] = {};
 
 	// gSampler s0
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
@@ -112,16 +77,6 @@ void PostProcessingPipeline::CreateRootSignature() {
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
 	staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
 	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-
-	// gSamplerPoint s1
-	staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT; // ポイントフィルタ
-	staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
-	staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
-	staticSamplers[1].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
-	staticSamplers[1].ShaderRegister = 1; // レジスタ番号1を使う
-	staticSamplers[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 
 	descriptionRootSignature.pStaticSamplers = staticSamplers; // StaticSamplerの配列のポインタ
 	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers); // 配列の長さ
@@ -141,20 +96,20 @@ void PostProcessingPipeline::CreateRootSignature() {
 	assert(SUCCEEDED(hr));
 }
 
-void PostProcessingPipeline::CreateInputLayout() {
+void VignetteFilter::CreateInputLayout() {
 
 	// InputLayoutの設定をしない 頂点にはデータを入力しないから
 	inputLayoutDesc.pInputElementDescs = nullptr;
 	inputLayoutDesc.NumElements = 0;
 }
 
-void PostProcessingPipeline::CreateBlendState() {
+void VignetteFilter::CreateBlendState() {
 
 	// すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 }
 
-void PostProcessingPipeline::CreateRasterizerState() {
+void VignetteFilter::CreateRasterizerState() {
 
 	// 裏面(時計回り)を表示しない
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
@@ -162,27 +117,27 @@ void PostProcessingPipeline::CreateRasterizerState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }
 
-void PostProcessingPipeline::CreateVertexShader() {
+void VignetteFilter::CreateVertexShader() {
 
 	// シェーダコンパイルを行う
 	vertexShaderBlob = dxUtility->CompileShader(L"resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 }
 
-void PostProcessingPipeline::CreatePixelShader() {
+void VignetteFilter::CreatePixelShader() {
 
 	// シェーダコンパイルを行う
-	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/FullScreen.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/Vignette.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
-void PostProcessingPipeline::CreateDepthStencilState() {
+void VignetteFilter::CreateDepthStencilState() {
 
 	// 全画面に対して処理を行うので、比較や書き込みの必要がない
 	depthStencilDesc.DepthEnable = false;
 }
 
-void PostProcessingPipeline::CreateGraphicsPipeline() {
+void VignetteFilter::CreateGraphicsPipeline() {
 
 	// PSOを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -230,14 +185,3 @@ void PostProcessingPipeline::CreateGraphicsPipeline() {
 	assert(SUCCEEDED(hr));
 }
 
-void PostProcessingPipeline::GenerateMaterialData() {
-
-	/// === MaterialResourceを作る === ///
-	materialResource = dxUtility->CreateBufferResource(sizeof(Material));
-
-	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
-
-	/// === MaterialDataの初期値を書き込む === ///
-	materialData->projectionInverse = MakeIdentity4x4(); // 単位行列を設定
-}

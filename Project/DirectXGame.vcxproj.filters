@@ -125,14 +125,22 @@
     <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
-    <ClCompile Include="engine\base\PostEffect.cpp" />
-    <ClCompile Include="Engine\Base\PostProcessingPipeline.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\PostEffect.cpp" />
     <ClCompile Include="Engine\3D\Particle\PlaneParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
     <ClCompile Include="Engine\Level\Loader.cpp" />
     <ClCompile Include="Engine\3D\Skybox\Skybox.cpp" />
     <ClCompile Include="Engine\3D\Skybox\SkyboxCommon.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FullScreenFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\VignetteFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -236,8 +244,7 @@
     <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
-    <ClInclude Include="engine\base\PostEffect.h" />
-    <ClInclude Include="Engine\Base\PostProcessingPipeline.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\PostEffect.h" />
     <ClInclude Include="Engine\3D\Particle\Particle.h" />
     <ClInclude Include="Engine\3D\Particle\BaseParticleType.h" />
     <ClInclude Include="Engine\3D\Particle\PlaneParticle.h" />
@@ -248,6 +255,16 @@
     <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
     <ClInclude Include="Engine\3D\Data\TransformationData.h" />
     <ClInclude Include="Engine\3D\Skybox\SkyboxCommon.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BaseFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FullScreenFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\VignetteFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -279,11 +296,13 @@
     <FxCompile Include="Resources\shaders\Grayscale.PS.hlsl" />
     <FxCompile Include="resources\shaders\FullScreen.PS.hlsl" />
     <FxCompile Include="resources\shaders\Vignette.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\BoxFilter.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\GaussianFilter.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\LuminanceBasedOutline.PS.hlsl" />
-    <FxCompile Include="Resources\Shaders\DepthBasedOutline.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\BoxBlur.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\GaussianBlur.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\LuminanceOutline.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\DepthOutline.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\Skybox.VS.hlsl" />
     <FxCompile Include="Resources\Shaders\Skybox.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\RadialBlur.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Dissolve.PS.hlsl" />
   </ItemGroup>
 </Project>

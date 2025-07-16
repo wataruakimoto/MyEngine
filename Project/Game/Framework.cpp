@@ -35,11 +35,6 @@ void Framework::Initialize() {
 	postEffect = std::make_unique <PostEffect>();
 	postEffect->Initialize(dxUtility.get());
 
-	// ポストエフェクトパイプラインの初期化
-	postProcessingPipeline = std::make_unique <PostProcessingPipeline>();
-	postProcessingPipeline->Initialize(dxUtility.get(), postEffect.get());
-	postProcessingPipeline->SetCamera(camera.get());
-
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
 	swapChain->Initialize(winApp.get(), dxUtility.get());
@@ -55,6 +50,11 @@ void Framework::Initialize() {
 
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxUtility.get());
+
+	// ポストエフェクトパイプラインの初期化
+	filter = std::make_unique<DissolveFilter>();
+	filter->Initialize(dxUtility.get(), postEffect.get());
+	filter->SetMaskTextureFilePath("Resources", "noise0.png");
 
 	// モデルマネージャ初期化
 	ModelManager::GetInstance()->Initialize(dxUtility.get());
