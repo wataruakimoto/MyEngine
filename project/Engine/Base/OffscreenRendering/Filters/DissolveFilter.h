@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseFilter.h"
+#include "Math/Vector3.h"
 
 #include <string>
 
@@ -96,7 +97,10 @@ public:
 
 	struct Config {
 
-		float threshold; // 閾値
+		float threshold;	  // 閾値
+		Vector3 edgeColor;    // エッジの色
+		float detectionRange; // 検出範囲
+		float padding[3];      // パディング
 	};
 
 ///-------------------------------------------/// 

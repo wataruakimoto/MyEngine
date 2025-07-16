@@ -57,6 +57,8 @@ void DissolveFilter::ShowImGui() {
 	ImGui::Begin("DissolveFilter");
 
 	ImGui::SliderFloat("Threshold", &configData->threshold, 0.0f, 1.0f, "%.2f");
+	ImGui::SliderFloat("DetectionRange", &configData->detectionRange, 0.0f, 0.1f, "%.3f");
+	ImGui::ColorEdit3("EdgeColor", &configData->edgeColor.x);
 
 	ImGui::End();
 	
@@ -236,7 +238,9 @@ void DissolveFilter::CreateConfigData() {
 	configResource->Map(0, nullptr, reinterpret_cast<void**>(&configData));
 
 	// データの初期化
-	configData->threshold = 0.5f; // ディゾルブのしきい値
+	configData->threshold = 0.0f; // 閾値を0.0に設定
+	configData->detectionRange = 0.0f; // 検出範囲を0.0に設定
+	configData->edgeColor = { 0.0f,0.0f,0.0f }; // 黒に設定
 }
 
 void DissolveFilter::SetMaskTextureFilePath(std::string directoryPath, std::string fileName) {
