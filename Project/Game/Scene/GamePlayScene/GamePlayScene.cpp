@@ -137,7 +137,7 @@ void GamePlayScene::Update() {
 void GamePlayScene::Draw() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingCommonDrawing();
+	Object3dCommon::GetInstance()->SettingDrawing();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 
@@ -166,7 +166,7 @@ void GamePlayScene::Draw() {
 	ParticleSystem::GetInstance()->Draw();
 
 	/// === UIの描画準備 === ///
-	SpriteCommon::GetInstance()->SettingCommonDrawing();
+	SpriteCommon::GetInstance()->SettingDrawing();
 
 	// TODO: 全てのスプライト個々の描画
 

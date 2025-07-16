@@ -86,13 +86,27 @@ MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directory
 	return materialData;
 }
 
-ModelData ModelManager::LoadModelFile(const std::string& directoryPath, const std::string& filename) {
+void ModelManager::LoadModelData(const std::string& directoryPath, const std::string& filename) {
 
-	ModelData modelData;
+	// ファイルパスを作成
+	std::string filePath = directoryPath + "/" + filename;
+
+	// ファイルが存在するか確認
+	std::ifstream file(filePath);
+	assert(file.is_open()); // ファイルが開けなかったら止める
+
+	// 読み込み済みかモデルを検索
+	if (modelDatas.contains(filePath)) {
+
+		// 読み込み済みなら早期return
+		return;
+	}
+
+	// モデルデータを読み込む
+	std::unique_ptr<ModelData> modelData = std::make_unique<ModelData>();
 
 	// assimpを使ってファイルを読み込む
 	Assimp::Importer importer;
-	std::string filePath = directoryPath + "/" + filename;
 	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes()); // meshがないのは対応しない
 
@@ -126,7 +140,7 @@ ModelData ModelManager::LoadModelFile(const std::string& directoryPath, const st
 				vertex.position.x *= -1.0f;
 				vertex.normal.x *= -1.0f;
 
-				modelData.vertices.push_back(vertex);
+				modelData->vertices.push_back(vertex);
 			}
 		}
 	}
@@ -140,13 +154,31 @@ ModelData ModelManager::LoadModelFile(const std::string& directoryPath, const st
 
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			modelData.material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+			modelData->material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
 		}
 	}
 
-	modelData.rootNode = ReadNode(scene->mRootNode);
+	modelData->rootNode = ReadNode(scene->mRootNode);
 
-	return modelData;
+	// モデルデータをmapコンテナに格納する
+	modelDatas.insert(std::make_pair(filePath, std::move(modelData)));
+}
+
+ModelData* ModelManager::FindModelData(const std::string& directoryPath, const std::string& filename) {
+
+	// ファイルパスを作成
+	std::string filePath = directoryPath + "/" + filename;
+	
+	// 読み込み済みモデルを検索
+	if (modelDatas.contains(filePath)) {
+
+		// 読み込み済みなら早期return
+		return modelDatas.at(filePath).get();
+	}
+
+	// ファイル名一致なしならログを出す
+	Log("ModelManager::FindModelData: Model data not found for " + filePath);
+	return nullptr;
 }
 
 Node ModelManager::ReadNode(aiNode* node) {

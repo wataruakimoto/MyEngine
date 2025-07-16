@@ -1,5 +1,4 @@
 #pragma once
-#include "DirectXTex/DirectXTex.h"
 
 #include <d3d12.h>
 #include <dxgi1_6.h>
@@ -7,6 +6,8 @@
 #include <wrl.h>
 #include <string>
 #include <chrono>
+
+#include "DirectXTex/DirectXTex.h"
 
 /// === DirectX機能 === ///
 class DirectXUtility {
@@ -149,7 +150,7 @@ public:
 	/// </summary>
 	/// <param name="texture"></param>
 	/// <param name="mipImages"></param>
-	void UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
+	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 
 ///-------------------------------------------/// 
 /// メンバ変数

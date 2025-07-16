@@ -6,6 +6,7 @@
 
 #include <d3d12.h>
 #include <wrl.h>
+#include <memory>
 
 // === 前方宣言=== ///
 class ModelCommon;
@@ -92,7 +93,15 @@ public:
 	/// <param name="shininess"></param>
 	void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
 
-	const Matrix4x4& GetRootMatrix() const { return modelData.rootNode.localMatrix; }
+	const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
+
+	/// <summary>
+	/// 環境マップのファイルパスのゲッター
+	/// </summary>
+	/// <param name="filePath"></param>
+	void SetEnvironmentMapFilePath(const std::string& filePath) { environmentMapFilePath = filePath; }
+
+	const Vector4& GetPosition() const { return vertexData->position; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -100,7 +109,7 @@ public:
 private:
 
 	// objファイルのデータ
-	ModelData modelData;
+	ModelData* modelData = nullptr;
 
 	// 頂点リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> vertexResource;
@@ -116,4 +125,7 @@ private:
 
 	// マテリアルデータ
 	Material* materialData = nullptr;
+
+	// 環境マップ用のファイルパス
+	std::string environmentMapFilePath = "Resources/rostock_laage_airport_4k.dds";
 };

@@ -78,16 +78,16 @@ void Object3d::Draw() {
 		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
 		/// === 平行光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(3, directionalLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
 
 		/// === 点光源CBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(4, pointLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
 
 		/// === スポットライトCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(5, spotLightResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
 
 		/// === カメラCBufferの場所を設定 === ///
-		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
+		Object3dCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(7, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {

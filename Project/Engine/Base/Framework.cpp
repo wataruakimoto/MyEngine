@@ -9,6 +9,7 @@
 #include "3d/ModelCommon.h"
 #include "3d/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
+#include "3D/Skybox/SkyboxCommon.h"
 #include "scene/SceneManager.h"
 
 void Framework::Initialize() {
@@ -34,11 +35,6 @@ void Framework::Initialize() {
 	postEffect = std::make_unique <PostEffect>();
 	postEffect->Initialize(dxUtility.get());
 
-	// ポストエフェクトパイプラインの初期化
-	postProcessingPipeline = std::make_unique <PostProcessingPipeline>();
-	postProcessingPipeline->Initialize(dxUtility.get(), postEffect.get());
-	postProcessingPipeline->SetCamera(camera.get());
-
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
 	swapChain->Initialize(winApp.get(), dxUtility.get());
@@ -55,6 +51,11 @@ void Framework::Initialize() {
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize(dxUtility.get());
 
+	// ポストエフェクトパイプラインの初期化
+	filter = std::make_unique<DissolveFilter>();
+	filter->Initialize(dxUtility.get(), postEffect.get());
+	filter->SetMaskTextureFilePath("Resources", "noise0.png");
+
 	// モデルマネージャ初期化
 	ModelManager::GetInstance()->Initialize(dxUtility.get());
 
@@ -63,7 +64,7 @@ void Framework::Initialize() {
 
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize(dxUtility.get());
-	// 3Dオブジェクトのデフォルトカメラにデバッグカメラをセット
+	// 3Dオブジェクトのデフォルトカメラにカメラをセット
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// モデル基盤初期化
@@ -72,6 +73,11 @@ void Framework::Initialize() {
 	// パーティクル基盤初期化
 	ParticleCommon::GetInstance()->Initialize(dxUtility.get());
 	ParticleCommon::GetInstance()->SetDefaultCamera(camera.get());
+
+	// Skybox共通部初期化
+	SkyboxCommon::GetInstance()->Initialize(dxUtility.get());
+	// Skyboxのデフォルトカメラにカメラをセット
+	SkyboxCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void Framework::Update() {
@@ -84,6 +90,9 @@ void Framework::Update() {
 }
 
 void Framework::Finalize() {
+
+	// Skybox共通部の終了
+	SkyboxCommon::GetInstance()->Finalize();
 
 	// パーティクル基盤の終了
 	ParticleCommon::GetInstance()->Finalize();

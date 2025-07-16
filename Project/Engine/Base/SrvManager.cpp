@@ -98,6 +98,22 @@ void SrvManager::CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResou
 	dxUtility_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
 }
 
+void SrvManager::CreateSRVforTextureCube(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels) {
+
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
+
+	// SRVの設定を行う
+	srvDesc.Format = format;
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE; // キューブマップテクスチャ
+	srvDesc.TextureCube.MostDetailedMip = 0; // unionがTextureCubeになったが、内部パラメータの意味はtexture2Dと同じ
+	srvDesc.TextureCube.MipLevels = mipLevels;
+	srvDesc.TextureCube.ResourceMinLODClamp = 0.0f;
+
+	// 設定を元にSRVの生成
+	dxUtility_->GetDevice()->CreateShaderResourceView(pResource, &srvDesc, GetCPUDescriptorHandle(srvIndex));
+}
+
 void SrvManager::CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, uint32_t numElements, UINT structureByteStride) {
 
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};

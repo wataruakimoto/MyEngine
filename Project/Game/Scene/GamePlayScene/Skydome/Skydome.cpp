@@ -1,11 +1,15 @@
 #include "Skydome.h"
+#include "3D/ModelManager.h"
 #include <imgui.h>
 
 void Skydome::Initialize() {
 
+	// モデルの読み込み
+	ModelManager::GetInstance()->LoadModelData("Resources/Skydome", "skydome.obj");
+
 	// モデルの生成・初期化
 	model = new Model();
-	model->Initialize("resources/Skydome", "skydome.obj");
+	model->Initialize("Resources/Skydome", "skydome.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = new Object3d();

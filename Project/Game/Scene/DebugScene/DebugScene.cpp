@@ -102,7 +102,7 @@ void DebugScene::Update() {
 void DebugScene::Draw() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingCommonDrawing();
+	Object3dCommon::GetInstance()->SettingDrawing();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 	monsterBall->Draw();

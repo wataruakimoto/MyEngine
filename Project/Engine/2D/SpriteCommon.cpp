@@ -29,7 +29,7 @@ void SpriteCommon::Finalize() {
 	instance = nullptr;
 }
 
-void SpriteCommon::SettingCommonDrawing() {
+void SpriteCommon::SettingDrawing() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
