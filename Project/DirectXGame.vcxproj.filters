@@ -147,6 +147,8 @@
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Camera\RailCameraController.cpp" />
+    <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -284,6 +286,8 @@
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Camera\RailCameraController.h" />
+    <ClInclude Include="Engine\WorldTransform\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

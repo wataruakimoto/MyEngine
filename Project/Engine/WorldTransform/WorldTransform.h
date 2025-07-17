@@ -1,0 +1,77 @@
+#pragma once
+#include "Math/Vector3.h"
+#include "Math/Matrix4x4.h"
+
+#include <d3d12.h>
+#include <wrl.h>
+
+/// ===== 前方宣言 ===== ///
+class DirectXUtility;
+class Camera;
+
+/// ===== ワールド変換 ===== ///
+class WorldTransform {
+
+///-------------------------------------------/// 
+/// メンバ関数
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
+///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
+public:
+
+	// 座標変換
+	struct Transformation {
+		Matrix4x4 worldMatrix;  // ワールド行列
+		Matrix4x4 WVPMatrix;	// ワールドビュープロジェクション行列
+	};
+
+///-------------------------------------------/// 
+/// メンバ変数 (公開)
+///-------------------------------------------///
+public:
+
+	// 拡縮
+	Vector3 scale_ = { 1.0f, 1.0f, 1.0f };
+
+	// 回転
+	Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
+
+	// 平行移動
+	Vector3 translate_ = { 0.0f, 0.0f, 0.0f };
+
+	// ワールド行列
+	Matrix4x4 worldMatrix_ = {};
+
+	// 親のワールド変換クラス
+	const WorldTransform* parent_ = nullptr;
+
+///-------------------------------------------/// 
+/// メンバ変数 (非公開)
+///-------------------------------------------///
+private:
+
+	// 座標変換データ
+	Transformation transformationData_ = {};
+
+	// 座標変換リソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> transformationResource_ = nullptr;
+
+	// DirectXユーティリティの借りポインタ
+	DirectXUtility* dxUtility_ = nullptr;
+
+	// カメラの借りポインタ
+	Camera* camera_ = nullptr;
+};

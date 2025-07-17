@@ -391,10 +391,10 @@ Matrix4x4 MathMatrix::operator*(const Matrix4x4& m1, const Matrix4x4& m2) {
 //
 //	return m;
 //}
-//
-//Matrix4x4& MathMatrix::operator*=(Matrix4x4& m1, const Matrix4x4& m2) {
-//
-//	m1 = Multiply(m1, m2);
-//
-//	return m1;
-//}
+
+Matrix4x4& MathMatrix::operator*=(Matrix4x4& m1, const Matrix4x4& m2) {
+
+	m1 = Multiply(m1, m2);
+
+	return m1;
+}

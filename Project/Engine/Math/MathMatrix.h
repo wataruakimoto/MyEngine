@@ -74,5 +74,5 @@ namespace MathMatrix {
 
 	//Matrix4x4 operator*(const Matrix4x4& m);
 
-	//Matrix4x4& operator*=(Matrix4x4& m1, const Matrix4x4& m2);
+	Matrix4x4& operator*=(Matrix4x4& m1, const Matrix4x4& m2);
 };

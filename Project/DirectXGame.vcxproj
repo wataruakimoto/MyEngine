@@ -170,6 +170,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Skybox\SkyboxCommon.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\VignetteFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Camera\RailCameraController.cpp" />
+    <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\DebugScene\DebugScene.h" />
@@ -247,6 +249,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\VignetteFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Camera\RailCameraController.h" />
+    <ClInclude Include="Engine\WorldTransform\WorldTransform.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
