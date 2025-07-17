@@ -4,7 +4,6 @@
 #include "base/OffscreenRendering/PostEffect.h"
 #include "base/OffscreenRendering/Filters/DissolveFilter.h"
 #include "base/SwapChain.h"
-#include "camera/Camera.h"
 #include "scene/AbstractSceneFactory.h"
 
 #include <memory>
@@ -71,9 +70,6 @@ protected:
 
 	// スワップチェインのポインタ
 	std::unique_ptr<SwapChain> swapChain = nullptr;
-
-	// デバッグカメラ
-	std::unique_ptr<Camera> camera = nullptr;
 
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;

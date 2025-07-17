@@ -26,12 +26,6 @@ void SceneManager::Update() {
 		scene_ = nextScene_;
 		nextScene_ = nullptr;
 
-		// シーンマネージャーをセット
-		scene_->SetSceneManager(this);
-
-		// カメラをセット
-		scene_->SetCamera(camera_);
-
 		// 次のシーンを初期化
 		scene_->Initialize();
 	}

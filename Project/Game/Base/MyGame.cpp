@@ -14,9 +14,6 @@ void MyGame::Initialize() {
 	sceneFactory_ = std::make_unique <SceneFactory>();
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
 
-	// カメラをセット
-	SceneManager::GetInstance()->SetCamera(camera.get());
-
 	// シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("PLAY");
 
@@ -40,14 +37,8 @@ void MyGame::Update() {
 		/// === ImGui開始 === ///
 		ImGuiManager::GetInstance()->Begin();
 
-		// カメラのImGui表示
-		camera->ShowImGui("Camera");
-
 		// フィルターのImGui表示
 		filter->ShowImGui();
-
-		// カメラをセット
-		SceneManager::GetInstance()->SetCamera(camera.get());
 
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();

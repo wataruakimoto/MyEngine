@@ -8,6 +8,7 @@
 #include "Enemy/Enemy.h"
 #include "Reticle/Reticle3D.h"
 #include "Reticle/Reticle2D.h"
+#include "RailCamera/RailCameraController.h"
 
 #include <list>
 #include <sstream>
@@ -68,6 +69,9 @@ private:
 
 	// カメラのポインタ
 	std::unique_ptr<Camera> camera = nullptr;
+
+	// レールカメラコントローラーのポインタ
+	std::unique_ptr<RailCameraController> railCameraController_ = nullptr;
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;

@@ -1,8 +1,4 @@
 #pragma once
-#include "Camera/Camera.h"
-
-/// ===== シーンマネージャ前方宣言 ===== ///
-class SceneManager;
 
 /// ===== シーン基底 ===== ///
 class BaseScene {
@@ -36,21 +32,4 @@ public:
 	/// 終了
 	/// </summary>
 	virtual void Finalize() = 0;
-
-	virtual void SetSceneManager(SceneManager* sceneManager) { sceneManager_ = sceneManager; }
-
-	virtual void SetCamera(Camera* camera) { this->camera = camera; }
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// シーンマネージャのポインタ
-	SceneManager* sceneManager_ = nullptr;
-
-protected:
-
-	// カメラの借りポインタ
-	Camera* camera = nullptr;
 };

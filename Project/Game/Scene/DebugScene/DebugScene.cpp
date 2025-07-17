@@ -14,6 +14,8 @@
 void DebugScene::Initialize() {
 
 	// カメラの初期化
+	camera = std::make_unique <Camera>();
+	camera->Initialize();
 	camera->SetRotate({ 0.2f,0.0f,0.0f });
 	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 

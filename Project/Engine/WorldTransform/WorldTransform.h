@@ -23,9 +23,30 @@ public:
 	void Initialize();
 
 	/// <summary>
+	/// 行列の更新
+	/// </summary>
+	void UpdateMatrix();
+
+	/// <summary>
+	/// 行列の転送
+	/// </summary>
+	void TransferMatrix();
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
+
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールド行列のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 
 ///-------------------------------------------/// 
 /// 構造体
@@ -39,9 +60,9 @@ public:
 	};
 
 ///-------------------------------------------/// 
-/// メンバ変数 (公開)
+/// メンバ変数
 ///-------------------------------------------///
-public:
+private:
 
 	// 拡縮
 	Vector3 scale_ = { 1.0f, 1.0f, 1.0f };
@@ -55,13 +76,11 @@ public:
 	// ワールド行列
 	Matrix4x4 worldMatrix_ = {};
 
+	// ワールドビュープロジェクション行列
+	Matrix4x4 WVPMatrix_ = {};
+
 	// 親のワールド変換クラス
 	const WorldTransform* parent_ = nullptr;
-
-///-------------------------------------------/// 
-/// メンバ変数 (非公開)
-///-------------------------------------------///
-private:
 
 	// 座標変換データ
 	Transformation transformationData_ = {};

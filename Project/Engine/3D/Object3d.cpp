@@ -218,7 +218,12 @@ void Object3d::InitializeCameraData() {
 	cameraResource->Map(0, nullptr, reinterpret_cast<void**>(&cameraData));
 
 	/// === CameraDataの初期値を書き込む === ///
-	*cameraData = camera->GetWorldPosition();
+
+	// カメラを持っていたら
+	if (camera) {
+		// カメラのワールド座標を代入
+		*cameraData = camera->GetWorldPosition();
+	}
 }
 
 void Object3d::SetModel(const std::string& filePath) {

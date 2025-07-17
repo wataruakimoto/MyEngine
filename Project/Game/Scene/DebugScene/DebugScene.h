@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene/System/BaseScene.h"
+#include "Camera/Camera.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
 #include "3d/Particle/ParticleEmitter.h"
@@ -37,6 +38,9 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// カメラのポインタ
+	std::unique_ptr <Camera> camera = nullptr;
 
 	// モデルのポインタ
 	std::unique_ptr <Model> modelMonsterBall = nullptr;

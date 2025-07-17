@@ -7,64 +7,14 @@
 class Camera {
 
 ///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
-
-	// 変換データ
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// 位置データ
-	Transform transform;
-
-	// ワールド行列
-	Matrix4x4 worldMatrix;
-
-	// ビュー行列
-	Matrix4x4 viewMatrix;
-
-	// プロジェクション行列
-	Matrix4x4 projectionMatrix;
-
-	// プロジェクション行列の逆行列
-	Matrix4x4 projectionMatrixInverse;
-
-	// ビュープロジェクション行列
-	Matrix4x4 viewProjectionMatrix;
-
-	// ワールド座標
-	Vector3 worldPosition = {};
-
-	// 水平方向視野 (field of view)
-	float fovY;
-
-	// アスペクト比
-	float aspectRatio;
-
-	// ニアクリップ距離
-	float nearClip;
-
-	// ファークリップ距離
-	float farClip;
-
-///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// コンストラクタ
+	/// 初期化
 	/// </summary>
-	Camera();
+	void Initialize();
 
 	/// <summary>
 	/// 更新
@@ -86,13 +36,13 @@ public:
 	/// 回転のセッター
 	/// </summary>
 	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate) { this->transform.rotate = rotate; }
+	void SetRotate(const Vector3& rotate) { this->rotate = rotate; }
 
 	/// <summary>
 	/// 位置のセッター
 	/// </summary>
 	/// <param name="translate">位置</param>
-	void SetTranslate(const Vector3& translate) { this->transform.translate = translate; }
+	void SetTranslate(const Vector3& translate) { this->translate = translate; }
 
 	/// <summary>
 	/// 水平方向視野のセッター
@@ -118,6 +68,12 @@ public:
 	/// <param name="farClip">ファークリップ距離</param>
 	void SetFarClip(float farClip) { this->farClip = farClip; }
 
+	/// <summary>
+	/// ビュー行列のセッター
+	/// </summary>
+	/// <param name="viewMatrix"></param>
+	void SetViewMatrix(const Matrix4x4& viewMatrix) { this->viewMatrix = viewMatrix; }
+
 ///-------------------------------------------///
 /// ゲッター
 ///-------------------------------------------///
@@ -127,13 +83,13 @@ public:
 	/// 回転のゲッター
 	/// </summary>
 	/// <returns>Vector3</returns>
-	const Vector3& GetRotate() const { return transform.rotate; }
+	const Vector3& GetRotate() const { return rotate; }
 
 	/// <summary>
 	/// 位置のゲッター
 	/// </summary>
 	/// <returns>Vector3</returns>
-	const Vector3& GetTranslate() const { return transform.translate; }
+	const Vector3& GetTranslate() const { return translate; }
 
 	/// <summary>
 	/// ワールド行列のゲッター
@@ -169,5 +125,46 @@ public:
 	/// ワールド座標のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector3& GetWorldPosition() const { return worldPosition; }
+	const Vector3& GetWorldPosition() const;
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
+private:
+
+	// 拡縮
+	Vector3 scale = { 1.0f, 1.0f, 1.0f };
+
+	// 回転
+	Vector3 rotate = { 0.0f, 0.0f, 0.0f };
+
+	// 平行移動
+	Vector3 translate = { 0.0f, 0.0f, 0.0f };
+
+	// ワールド行列
+	Matrix4x4 worldMatrix;
+
+	// ビュー行列
+	Matrix4x4 viewMatrix;
+
+	// プロジェクション行列
+	Matrix4x4 projectionMatrix;
+
+	// プロジェクション行列の逆行列
+	Matrix4x4 projectionMatrixInverse;
+
+	// ビュープロジェクション行列
+	Matrix4x4 viewProjectionMatrix;
+
+	// 水平方向視野 (field of view)
+	float fovY;
+
+	// アスペクト比
+	float aspectRatio;
+
+	// ニアクリップ距離
+	float nearClip;
+
+	// ファークリップ距離
+	float farClip;
 };

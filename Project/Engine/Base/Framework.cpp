@@ -28,9 +28,6 @@ void Framework::Initialize() {
 	// SrVマネージャ初期化
 	SrvManager::GetInstance()->Initialize(dxUtility.get());
 
-	// カメラ初期化
-	camera = std::make_unique <Camera>();
-
 	// レンダーテクスチャ初期化
 	postEffect = std::make_unique <PostEffect>();
 	postEffect->Initialize(dxUtility.get());
@@ -64,29 +61,21 @@ void Framework::Initialize() {
 
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize(dxUtility.get());
-	// 3Dオブジェクトのデフォルトカメラにカメラをセット
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// モデル基盤初期化
 	ModelCommon::GetInstance()->Initialize(dxUtility.get());
 
 	// パーティクル基盤初期化
 	ParticleCommon::GetInstance()->Initialize(dxUtility.get());
-	ParticleCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// Skybox共通部初期化
 	SkyboxCommon::GetInstance()->Initialize(dxUtility.get());
-	// Skyboxのデフォルトカメラにカメラをセット
-	SkyboxCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void Framework::Update() {
 
 	// 入力の更新
 	Input::GetInstance()->Update();
-
-	// カメラの更新
-	camera->Update();
 }
 
 void Framework::Finalize() {

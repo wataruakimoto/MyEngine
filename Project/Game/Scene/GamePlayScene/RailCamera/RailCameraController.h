@@ -1,8 +1,6 @@
 #pragma once
 #include "WorldTransform/WorldTransform.h"
-
-/// ===== 前方宣言 ===== ///
-class Camera;
+#include "Camera/Camera.h"
 
 /// ===== レールカメラコントローラー ===== ///
 class RailCameraController {
@@ -28,9 +26,9 @@ public:
 private:
 
 	// ワールド変換
-	WorldTransform worldTransform = {};
+	WorldTransform worldTransform;
 
-	// カメラの借りポインタ
-	Camera* camera_ = nullptr;
+	// カメラのポインタ
+	Camera camera;
 };
 

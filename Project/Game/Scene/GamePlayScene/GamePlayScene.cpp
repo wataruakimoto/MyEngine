@@ -15,7 +15,16 @@ void GamePlayScene::Initialize() {
 
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
+	camera->Initialize();
 	camera->SetTranslate({ 0.0f, 0.0f, -50.0f });
+
+	// カメラを設定
+	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
+
+	// レールカメラコントローラーの生成
+	railCameraController_ = std::make_unique<RailCameraController>();
+	// レールカメラコントローラーの初期化
+	railCameraController_->Initialize();
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(camera.get());
@@ -23,9 +32,6 @@ void GamePlayScene::Initialize() {
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();
-
-	// カメラを設定
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
 	// 天球の生成&初期化
 	skydome = new Skydome();
