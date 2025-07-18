@@ -37,16 +37,79 @@ public:
 	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	/// <param name="name"></param>
+	void ShowImGui(const char* name);
+
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
 public:
 
 	/// <summary>
+	/// 拡縮のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetScale() const { return scale_; }
+
+	/// <summary>
+	/// 回転のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetRotate() const { return rotate_; }
+
+	/// <summary>
+	/// 平行移動のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector3& GetTranslate() const { return translate_; }
+
+	/// <summary>
 	/// ワールド行列のゲッター
 	/// </summary>
 	/// <returns></returns>
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 拡縮のセッター
+	/// </summary>
+	/// <param name="scale">拡縮</param>
+	void SetScale(const Vector3& scale) { scale_ = scale; }
+
+	/// <summary>
+	/// 回転のセッター
+	/// </summary>
+	/// <param name="rotate">回転</param>
+	void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
+
+	/// <summary>
+	/// 平行移動のセッター
+	/// </summary>
+	/// <param name="translate">平行移動</param>
+	void SetTranslate(const Vector3& translate) { translate_ = translate; }
+
+	/// <summary>
+	/// 親のワールド変換クラスのセッター
+	/// </summary>
+	/// <param name="parent">親のワールド変換クラス</param>
+	void SetParent(const WorldTransform* parent) { parent_ = parent; }
+
+	/// <summary>
+	/// DirectXユーティリティのセッター
+	/// </summary>
+	void SetDirectXUtility(DirectXUtility* dxUtility) { dxUtility_ = dxUtility; }
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	void SetCamera(Camera* camera) { camera_ = camera; }
 
 ///-------------------------------------------/// 
 /// 構造体

@@ -42,16 +42,16 @@ void Enemy::Initialize() {
 
 void Enemy::Update() {
 
-	transform_.rotate = object->GetRotate();
-	transform_.translate = object->GetTranslate();
+	worldTransform_.rotate = object->GetRotate();
+	worldTransform_.translate = object->GetTranslate();
 
 #ifdef _DEBUG
 
 	ImGui::Begin("Enemy");
 
-	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &transform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("Scale", &worldTransform_.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &worldTransform_.rotate.x, 0.01f);
+	ImGui::DragFloat3("Translate", &worldTransform_.translate.x, 0.1f);
 
 	ImGui::End();
 
@@ -61,18 +61,18 @@ void Enemy::Update() {
 	Vector3 playerPos = player->GetTranslate();
 
 	// プレイヤーとの方向を計算
-	Vector3 direction = playerPos - transform_.translate;
+	Vector3 direction = playerPos - worldTransform_.translate;
 	float length = Length(direction);
 	direction= { direction.x / length, direction.y / length, direction.z / length };
 
 	// 向きを変える
-	transform_.rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
+	worldTransform_.rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
 
 	// プレイヤーに向かって進む
-	transform_.translate += {direction.x* moveSpeed, direction.y* moveSpeed, direction.z* moveSpeed};
+	worldTransform_.translate += {direction.x* moveSpeed, direction.y* moveSpeed, direction.z* moveSpeed};
 
-	object->SetTranslate(transform_.translate);
-	object->SetRotate(transform_.rotate);
+	object->SetTranslate(worldTransform_.translate);
+	object->SetRotate(worldTransform_.rotate);
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -99,9 +99,9 @@ void Enemy::ShowImGui() {
 
 	ImGui::Begin("Enemy");
 
-	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &transform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &transform_.translate.x, 0.1f);
+	ImGui::DragFloat3("Scale", &worldTransform_.scale.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &worldTransform_.rotate.x, 0.01f);
+	ImGui::DragFloat3("Translate", &worldTransform_.translate.x, 0.1f);
 
 	ImGui::End();
 
@@ -117,7 +117,7 @@ void Enemy::OnCollision(Collider* other) {
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kBullet)) {
 
 		// パーティクル発生
-		EmitterTransform1.translate = transform_.translate;
+		EmitterTransform1.translate = worldTransform_.translate;
 		particleEmitter1->SetTransform(EmitterTransform1);
 		particleEmitter1->Emit();
 

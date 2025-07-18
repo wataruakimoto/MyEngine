@@ -47,13 +47,13 @@ void Player::Update() {
 		return false;
 		});
 
-	transform_.rotate = object->GetRotate();
-	transform_.translate = object->GetTranslate();
+	worldTransform_.rotate = object->GetRotate();
+	worldTransform_.translate = object->GetTranslate();
 
 	Move();
 
-	object->SetTranslate(transform_.translate);
-	object->SetRotate(transform_.rotate);
+	object->SetTranslate(worldTransform_.translate);
+	object->SetRotate(worldTransform_.rotate);
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -112,14 +112,7 @@ void Player::ShowImGui() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("Player");
-
-	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &transform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &transform_.translate.x, 0.1f);
-	ImGui::DragFloat("FireTimer", &fireTimer, 1.0f);
-
-	ImGui::End();
+	worldTransform_.ShowImGui("Player");
 
 #endif // _DEBUG
 }
@@ -136,8 +129,8 @@ void Player::Move() {
 
 		// ゲームパッド状態取得
 		if (Input::GetInstance()->IsLeftThumbStickOutDeadZone()) {
-			transform_.translate.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeed;
-			transform_.translate.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
+			worldTransform_.translate.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeed;
+			worldTransform_.translate.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
 		}
 	}
 	else {
@@ -146,22 +139,22 @@ void Player::Move() {
 
 		if (Input::GetInstance()->PushKey(DIK_W)) {
 
-			transform_.translate.y += moveSpeed;
+			worldTransform_.translate.y += moveSpeed;
 		}
 
 		if (Input::GetInstance()->PushKey(DIK_S)) {
 
-			transform_.translate.y -= moveSpeed;
+			worldTransform_.translate.y -= moveSpeed;
 		}
 
 		if (Input::GetInstance()->PushKey(DIK_A)) {
 
-			transform_.translate.x -= moveSpeed;
+			worldTransform_.translate.x -= moveSpeed;
 		}
 
 		if (Input::GetInstance()->PushKey(DIK_D)) {
 
-			transform_.translate.x += moveSpeed;
+			worldTransform_.translate.x += moveSpeed;
 		}
 	}
 }
@@ -173,11 +166,11 @@ void Player::Fire() {
 	bullet->Initialize();
 
 	// 弾の初期位置をプレイヤーの位置に設定
-	bullet->SetTranslate(transform_.translate);
+	bullet->SetTranslate(worldTransform_.translate);
 
 	// 弾の初期速度を設定
 	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-	velocity = reticle3D_->GetTranslate() - transform_.translate;
+	velocity = reticle3D_->GetTranslate() - worldTransform_.translate;
 	bullet->SetVelocity(velocity);
 
 	// 弾をリストに登録

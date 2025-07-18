@@ -1,5 +1,6 @@
 #pragma once
 #include "Collider.h"
+#include "WorldTransform/WorldTransform.h"
 
 ///-------------------------------------------/// 
 /// キャラクター基底クラス
@@ -24,8 +25,28 @@ public:
 	// 中心座標の取得
 	virtual const Vector3 GetCenterPosition() const override;
 
+	/// <summary>
+	/// ワールド変換のゲッター
+	/// </summary>
+	/// <returns></returns>
+	WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールド変換のセッター
+	/// </summary>
+	/// <param name="worldTransform"></param>
+	void SetWorldTransform(const WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
 protected:
 
-	// 変形データ
-	Transform transform_;
+	// ワールド変換
+	WorldTransform worldTransform_;
 };

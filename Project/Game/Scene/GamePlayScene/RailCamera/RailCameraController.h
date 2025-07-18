@@ -20,6 +20,11 @@ public:
 	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui();
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -28,7 +33,7 @@ private:
 	// ワールド変換
 	WorldTransform worldTransform;
 
-	// カメラのポインタ
+	// カメラ
 	Camera camera;
 };
 

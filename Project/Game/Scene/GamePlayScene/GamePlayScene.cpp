@@ -102,6 +102,9 @@ void GamePlayScene::Update() {
 	/// === カメラ更新 === ///
 	camera->Update();
 
+	// レールカメラコントローラーの更新
+	railCameraController_->Update();
+
 	// 天球更新
 	skydome->Update();
 
@@ -205,6 +208,8 @@ void GamePlayScene::ShowImGui() {
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
 
 	camera->ShowImGui("camera");
+
+	railCameraController_->ShowImGui();
 
 	player->ShowImGui();
 

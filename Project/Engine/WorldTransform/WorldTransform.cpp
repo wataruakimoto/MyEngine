@@ -3,6 +3,8 @@
 #include "Camera/Camera.h"
 #include "Math/MathMatrix.h"
 
+#include <imgui.h>
+
 using namespace MathMatrix;
 
 void WorldTransform::Initialize() {
@@ -64,4 +66,15 @@ void WorldTransform::Update() {
 
 	// 行列の転送
 	TransferMatrix();
+}
+
+void WorldTransform::ShowImGui(const char* name) {
+
+#ifdef _DEBUG
+	ImGui::Begin(name);
+	ImGui::DragFloat3("Scale", &scale_.x, 0.1f);
+	ImGui::DragFloat3("Rotate", &rotate_.x, 0.01f);
+	ImGui::DragFloat3("Translate", &translate_.x, 0.1f);
+	ImGui::End();
+#endif // _DEBUG
 }

@@ -31,9 +31,13 @@ void Bullet::Update() {
 	// 速度は向きだけもらってきたから正規化して速さをかける
 	velocity_ = Normalize(velocity_) * moveSpeed;
 
-	transform_.translate += velocity_;
+	Vector3 translate = worldTransform_.GetTranslate();
 
-	object->SetTranslate(transform_.translate);
+	translate += velocity_;
+
+	worldTransform_.SetTranslate(translate);
+
+	object->SetTranslate(worldTransform_.GetTranslate());
 
 	if (deathTimer_ <= 0) {
 
@@ -63,17 +67,7 @@ void Bullet::Finalize() {
 
 void Bullet::ShowImGui() {
 
-#ifdef _DEBUG
-
-	ImGui::Begin("Bullet");
-
-	ImGui::DragFloat3("Scale", &transform_.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &transform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &transform_.translate.x, 0.1f);
-	
-	ImGui::End();
-
-#endif // _DEBUG
+	worldTransform_.ShowImGui("Bullet");
 }
 
 void Bullet::OnCollision(Collider* other) {

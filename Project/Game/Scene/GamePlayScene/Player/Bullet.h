@@ -60,13 +60,6 @@ public:
 	/// <param name="velocity"></param>
 	void SetVelocity(Vector3 velocity) { this->velocity_ = velocity; }
 
-	/// <summary>
-	/// 位置のセッター
-	/// </summary>
-	/// <param name="translate"></param>
-	/// <returns></returns>
-	Vector3 SetTranslate(Vector3 translate) { return transform_.translate = translate; }
-
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

@@ -78,22 +78,10 @@ public:
 	std::list<Bullet*>* GetBulletList() { return &bullets; }
 
 	/// <summary>
-	/// 回転のゲッター
+	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	Vector3 GetRotate() const { return transform_.rotate; }
-
-	/// <summary>
-	/// 位置のゲッター
-	/// </summary>
-	/// <returns></returns>
-	Vector3 GetTranslate() const { return transform_.translate; }
-
-	/// <summary>
-	/// ワールド行列のゲッター
-	/// </summary>
-	/// <returns></returns>
-	Matrix4x4 GetWorldMatrix() const { return object->GetWorldMatrix(); }
+	WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 ///-------------------------------------------/// 
 /// セッター

@@ -1,6 +1,8 @@
 #include "RailCameraController.h"
 #include "Math/MathMatrix.h"
 
+#include <imgui.h>
+
 using namespace MathMatrix;
 
 void RailCameraController::Initialize() {
@@ -13,6 +15,12 @@ void RailCameraController::Initialize() {
 }
 
 void RailCameraController::Update() {
+
+	Vector3 translate = worldTransform.GetTranslate();
+
+	translate.z += 0.1f; // Z軸方向に前進
+
+	worldTransform.SetTranslate(translate);
 	
 	// ワールド変換の更新
 	worldTransform.UpdateMatrix();
@@ -25,4 +33,12 @@ void RailCameraController::Update() {
 
 	// カメラのビュー行列を設定
 	camera.SetViewMatrix(worldMatrix);
+
+	// カメラの更新
+	camera.Update();
+}
+
+void RailCameraController::ShowImGui() {
+
+	camera.ShowImGui("Rail Camera Controller");
 }

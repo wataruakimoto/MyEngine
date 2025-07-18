@@ -14,5 +14,5 @@ void Basecharacter::OnCollision(Collider* other) {
 
 const Vector3 Basecharacter::GetCenterPosition() const {
   
-	return transform_.translate;
+	return worldTransform_.GetTranslate();
 }

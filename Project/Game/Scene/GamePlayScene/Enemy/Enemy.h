@@ -62,7 +62,7 @@ public:
 	/// 位置のセッター
 	/// </summary>
 	/// <param name="translate"></param>
-	void SetTranslate(const Vector3& translate) { this->transform_.translate = translate; }
+	void SetTranslate(const Vector3& translate) { this->worldTransform_.translate = translate; }
 
 ///-------------------------------------------/// 
 /// ゲッター
