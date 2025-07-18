@@ -45,18 +45,7 @@ void Player::Update() {
 		}
 
 		return false;
-		});
-
-	worldTransform_.rotate = object->GetRotate();
-	worldTransform_.translate = object->GetTranslate();
-
-	Move();
-
-	object->SetTranslate(worldTransform_.translate);
-	object->SetRotate(worldTransform_.rotate);
-
-	// 3Dオブジェクトの更新
-	object->Update();
+	});
 
 	// 射撃
 	if (fireTimer <= 0) {
@@ -78,6 +67,17 @@ void Player::Update() {
 		bullet->ShowImGui();
 		bullet->Update();
 	}
+
+	Move();
+
+	// ワールド変換の更新
+	worldTransform_.UpdateMatrix();
+
+	object->SetTranslate(worldTransform_.GetTranslate());
+	object->SetRotate(worldTransform_.GetRotate());
+
+	// 3Dオブジェクトの更新
+	object->Update();
 }
 
 void Player::Draw() {
@@ -129,8 +129,9 @@ void Player::Move() {
 
 		// ゲームパッド状態取得
 		if (Input::GetInstance()->IsLeftThumbStickOutDeadZone()) {
-			worldTransform_.translate.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeed;
-			worldTransform_.translate.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
+			
+			velocity_.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeed;
+			velocity_.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
 		}
 	}
 	else {
@@ -139,24 +140,27 @@ void Player::Move() {
 
 		if (Input::GetInstance()->PushKey(DIK_W)) {
 
-			worldTransform_.translate.y += moveSpeed;
+			velocity_.y += moveSpeed;
 		}
 
 		if (Input::GetInstance()->PushKey(DIK_S)) {
 
-			worldTransform_.translate.y -= moveSpeed;
+			velocity_.y -= moveSpeed;
 		}
 
 		if (Input::GetInstance()->PushKey(DIK_A)) {
 
-			worldTransform_.translate.x -= moveSpeed;
+			velocity_.x -= moveSpeed;
 		}
 
 		if (Input::GetInstance()->PushKey(DIK_D)) {
 
-			worldTransform_.translate.x += moveSpeed;
+			velocity_.x += moveSpeed;
 		}
 	}
+
+	// 速度をワールド変換に加算
+	worldTransform_.AddTranslate(velocity_);
 }
 
 void Player::Fire() {
@@ -166,11 +170,11 @@ void Player::Fire() {
 	bullet->Initialize();
 
 	// 弾の初期位置をプレイヤーの位置に設定
-	bullet->SetTranslate(worldTransform_.translate);
+	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 
 	// 弾の初期速度を設定
 	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-	velocity = reticle3D_->GetTranslate() - worldTransform_.translate;
+	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_.GetTranslate();
 	bullet->SetVelocity(velocity);
 
 	// 弾をリストに登録

@@ -78,7 +78,7 @@ void Reticle2D::ShowImGui() {
 void Reticle2D::ConvertWorldToScreen() {
 
 	// 3Dレティクルの位置を取得
-	Vector3 position = reticle3D_->GetTranslate();
+	Vector3 position = reticle3D_->GetWorldTransform().GetTranslate();
 
 	// ビューポート行列
 	Matrix4x4 viewPortMatrix = MakeViewportMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 1.0f);

@@ -106,6 +106,9 @@ private:
 
 	float moveSpeed = 0.2f;
 
+	// 速度
+	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+
 	float fireTimer = 60.0f * 0.2f;
 
 	bool isDead = false;

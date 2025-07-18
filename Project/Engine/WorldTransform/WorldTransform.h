@@ -43,6 +43,12 @@ public:
 	/// <param name="name"></param>
 	void ShowImGui(const char* name);
 
+	/// <summary>
+	/// 平行移動に加算
+	/// </summary>
+	/// <param name="value"></param>
+	void AddTranslate(const Vector3& value);
+
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///

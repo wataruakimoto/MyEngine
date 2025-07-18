@@ -12,10 +12,6 @@ using namespace MathMatrix;
 
 void Reticle3D::Initialize() {
 
-	transform_.scale = { 1.0f, 1.0f, 1.0f };
-	transform_.rotate = { 0.0f, 0.0f, 0.0f };
-	transform_.translate = { 0.0f, 0.0f, 0.0f };
-
 	// モデルの生成・初期化
 	model_ = std::make_unique<Model>();
 	model_->Initialize("resources/reticle", "reticle.obj");
@@ -31,16 +27,21 @@ void Reticle3D::Update() {
 	// 自機から3Dレティクルへのオフセット(z+向き)
 	Vector3 offset = { 0.0f, 0.0f, 1.0f };
 	// 自機のワールド行列を基準にオフセットを変換
-	offset = TransformNormal(offset, player_->GetWorldMatrix());
+	offset = TransformNormal(offset, player_->GetWorldTransform().GetWorldMatrix());
 	// ベクトルの長さを整える
 	offset = Normalize(offset) * kDistancePlayerToReticle_;
+	// プレイヤーの座標を取得
+	Vector3 playerPos = player_->GetWorldTransform().GetTranslate();
+	// 位置を計算
+	Vector3 translate = playerPos + offset;
+
 	// レティクルの位置を設定
-	transform_.translate = player_->GetTranslate() + offset;
+	worldTransform_.SetTranslate(translate);
 
 	ConvertScreenToWorld();
 
 	// オブジェクトの座標を設定
-	object_->SetTranslate(transform_.translate);
+	object_->SetTranslate(worldTransform_.GetTranslate());
 	// オブジェクトの更新
 	object_->Update();
 }
@@ -54,11 +55,9 @@ void Reticle3D::Draw() {
 void Reticle3D::ShowImGui() {
 
 #ifdef _DEBUG
-	ImGui::Begin("Reticle3D");
+	
+	worldTransform_.ShowImGui("Reticle3D");
 
-	ImGui::DragFloat3("Translate", &transform_.translate.x, 0.1f);
-
-	ImGui::End();
 #endif // _DEBUG
 }
 
@@ -95,7 +94,10 @@ void Reticle3D::ConvertScreenToWorld() {
 
 	// カメラからレティクルの距離
 	const float kDistanceCameraToReticle = 100.0f;
+	
+	// 位置を計算
+	Vector3 translate = posNear + rmouseDirection * kDistanceCameraToReticle;
 
 	// レティクルの位置を計算
-	transform_.translate = posNear + rmouseDirection * kDistanceCameraToReticle;
+	worldTransform_.SetTranslate(translate);
 }

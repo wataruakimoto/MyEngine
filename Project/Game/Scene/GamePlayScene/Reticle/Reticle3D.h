@@ -2,7 +2,7 @@
 
 #include "3D/Object3d.h"
 #include "3D/Model.h"
-#include "3D/Data/Transform.h"
+#include "WorldTransform/WorldTransform.h"
 
 /// === 前方宣言 === ///
 class Player;
@@ -73,10 +73,10 @@ public:
 public:
 
 	/// <summary>
-	/// 位置のゲッター
+	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	Vector3 GetTranslate() const { return transform_.translate; }
+	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -90,7 +90,7 @@ private:
 	std::unique_ptr<Model> model_;
 
 	// 変換データ
-	Transform transform_;
+	WorldTransform worldTransform_;
 
 	// プレイヤーとレティクルの距離
 	const float kDistancePlayerToReticle_ = 50.0f;

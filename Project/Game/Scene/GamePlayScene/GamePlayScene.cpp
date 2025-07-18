@@ -307,7 +307,7 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 			// 敵の生成&初期化
 			Enemy* enemy = new Enemy();
 			enemy->Initialize();
-			enemy->SetTranslate({ x, y, z });
+			enemy->GetWorldTransform().SetTranslate({x, y, z});
 			enemies_.push_back(enemy);
 
 		} // WAITコマンド

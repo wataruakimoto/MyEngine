@@ -1,6 +1,7 @@
 #include "WorldTransform.h"
 #include "Base/DirectXUtility.h"
 #include "Camera/Camera.h"
+#include "Math/MathVector.h"
 #include "Math/MathMatrix.h"
 
 #include <imgui.h>
@@ -77,4 +78,9 @@ void WorldTransform::ShowImGui(const char* name) {
 	ImGui::DragFloat3("Translate", &translate_.x, 0.1f);
 	ImGui::End();
 #endif // _DEBUG
+}
+
+void WorldTransform::AddTranslate(const Vector3& value) {
+
+	translate_ += value;
 }

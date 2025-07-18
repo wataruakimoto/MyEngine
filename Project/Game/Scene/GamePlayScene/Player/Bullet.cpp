@@ -31,11 +31,8 @@ void Bullet::Update() {
 	// 速度は向きだけもらってきたから正規化して速さをかける
 	velocity_ = Normalize(velocity_) * moveSpeed;
 
-	Vector3 translate = worldTransform_.GetTranslate();
-
-	translate += velocity_;
-
-	worldTransform_.SetTranslate(translate);
+	// ワールド変換の平行移動に速度を加算
+	worldTransform_.AddTranslate(velocity_);
 
 	object->SetTranslate(worldTransform_.GetTranslate());
 

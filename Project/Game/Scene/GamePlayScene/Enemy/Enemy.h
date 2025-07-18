@@ -5,6 +5,7 @@
 #include "Scene/GamePlayScene/Collision/Basecharacter.h"
 #include "Scene/GamePlayScene/Collision/CollisionManager.h"
 #include "3d/Particle/ParticleEmitter.h"
+#include "3D/Data/Transform.h"
 
 /// === 前方宣言 === ///
 class Player;
@@ -57,12 +58,6 @@ public:
 	/// </summary>
 	/// <param name="player">プレイヤー</param>
 	void SetPlayer(Player* player) { this->player = player; }
-
-	/// <summary>
-	/// 位置のセッター
-	/// </summary>
-	/// <param name="translate"></param>
-	void SetTranslate(const Vector3& translate) { this->worldTransform_.translate = translate; }
 
 ///-------------------------------------------/// 
 /// ゲッター

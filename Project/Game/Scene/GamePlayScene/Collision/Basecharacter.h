@@ -29,7 +29,7 @@ public:
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	WorldTransform& GetWorldTransform() { return worldTransform_; }
+	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 ///-------------------------------------------/// 
 /// セッター

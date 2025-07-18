@@ -42,37 +42,34 @@ void Enemy::Initialize() {
 
 void Enemy::Update() {
 
-	worldTransform_.rotate = object->GetRotate();
-	worldTransform_.translate = object->GetTranslate();
-
 #ifdef _DEBUG
 
-	ImGui::Begin("Enemy");
-
-	ImGui::DragFloat3("Scale", &worldTransform_.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &worldTransform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &worldTransform_.translate.x, 0.1f);
-
-	ImGui::End();
+	worldTransform_.ShowImGui("Enemy");
 
 #endif // DEBUG_
 
 	// プレイヤーの座標を取得
-	Vector3 playerPos = player->GetTranslate();
+	Vector3 playerPos = player->GetWorldTransform().GetTranslate();
 
 	// プレイヤーとの方向を計算
-	Vector3 direction = playerPos - worldTransform_.translate;
+	Vector3 direction = playerPos - worldTransform_.GetTranslate();
 	float length = Length(direction);
 	direction= { direction.x / length, direction.y / length, direction.z / length };
 
+	// 向きを計算
+	Vector3 rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
+
 	// 向きを変える
-	worldTransform_.rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
+	worldTransform_.SetRotate(rotate);
+
+ 	// 移動速度を計算
+	Vector3 velocity = direction * moveSpeed;
 
 	// プレイヤーに向かって進む
-	worldTransform_.translate += {direction.x* moveSpeed, direction.y* moveSpeed, direction.z* moveSpeed};
+	worldTransform_.AddTranslate(velocity);
 
-	object->SetTranslate(worldTransform_.translate);
-	object->SetRotate(worldTransform_.rotate);
+	object->SetTranslate(worldTransform_.GetTranslate());
+	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -97,13 +94,7 @@ void Enemy::ShowImGui() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("Enemy");
-
-	ImGui::DragFloat3("Scale", &worldTransform_.scale.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &worldTransform_.rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &worldTransform_.translate.x, 0.1f);
-
-	ImGui::End();
+	worldTransform_.ShowImGui("Enemy");
 
 #endif // _DEBUG
 }
@@ -117,7 +108,7 @@ void Enemy::OnCollision(Collider* other) {
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kBullet)) {
 
 		// パーティクル発生
-		EmitterTransform1.translate = worldTransform_.translate;
+		EmitterTransform1.translate = worldTransform_.GetTranslate();
 		particleEmitter1->SetTransform(EmitterTransform1);
 		particleEmitter1->Emit();
 
