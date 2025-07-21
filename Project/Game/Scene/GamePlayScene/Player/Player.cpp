@@ -45,7 +45,7 @@ void Player::Update() {
 		}
 
 		return false;
-	});
+		});
 
 	// 射撃
 	if (fireTimer <= 0) {
@@ -112,7 +112,13 @@ void Player::ShowImGui() {
 
 #ifdef _DEBUG
 
-	worldTransform_.ShowImGui("Player");
+	ImGui::Begin("Player");
+
+	worldTransform_.ShowImGui();
+
+	ImGui::SliderFloat3("Velocity", &velocity_.x, -0.2f, 0.2f);
+
+	ImGui::End();
 
 #endif // _DEBUG
 }
@@ -122,41 +128,81 @@ void Player::Move() {
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState = {};
 
-	// ゲームパッドが接続されているか確認
+	// ゲームパッドが接続されている場合
 	if (XInputGetState(0, &joyState) == ERROR_SUCCESS) {
 
-		// ゲームパッドが接続されている場合
-
-		// ゲームパッド状態取得
+		// 左スティックがデッドゾーンを超えていたら
 		if (Input::GetInstance()->IsLeftThumbStickOutDeadZone()) {
+
+			velocity_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeed;
+			velocity_.y = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
+		}
+		else { // 左スティックがデッドゾーン内だったら
 			
-			velocity_.x += (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeed;
-			velocity_.y += (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
+			// 速度を0にする
+			velocity_.x = 0.0f;
+			velocity_.y = 0.0f;
 		}
 	}
-	else {
+	else { // ゲームパッドが接続されていない場合
 
-		// ゲームパッドが接続されていない場合
+		bool w = Input::GetInstance()->PushKey(DIK_W); // Wキーが押されたか確認
+		bool s = Input::GetInstance()->PushKey(DIK_S); // Sキーが押されたか確認
+		bool a = Input::GetInstance()->PushKey(DIK_A); // Aキーが押されたか確認
+		bool d = Input::GetInstance()->PushKey(DIK_D); // Dキーが押されたか確認
 
-		if (Input::GetInstance()->PushKey(DIK_W)) {
+		if (w && !s) { // Wキーだけ押された場合
 
-			velocity_.y += moveSpeed;
+			// 速度を上向きに加算
+			velocity_.y = moveSpeed;
 		}
+		else if (s && !w) { // Sキーだけ押された場合
 
-		if (Input::GetInstance()->PushKey(DIK_S)) {
-
-			velocity_.y -= moveSpeed;
+			// 速度を下向きに加算
+			velocity_.y = -moveSpeed;
 		}
+		else if (w && s) { // 同時に押されていた場合
 
-		if (Input::GetInstance()->PushKey(DIK_A)) {
-
-			velocity_.x -= moveSpeed;
+			// 速度を0にする
+			velocity_.y = 0.0f;
 		}
+		else { // WキーもSキーも押されていない場合
 
-		if (Input::GetInstance()->PushKey(DIK_D)) {
+			// 速度を0にする
+			velocity_.y = 0.0f;
 
-			velocity_.x += moveSpeed;
 		}
+		
+		if (a && !d) { // Aキーだけ押された場合
+
+			// 速度を左向きに加算
+			velocity_.x = -moveSpeed;
+		}
+		else if (d && !a) { // Dキーだけ押された場合
+
+			// 速度を右向きに加算
+			velocity_.x = moveSpeed;
+		}
+		else if (a && d) { // 同時に押されていた場合
+
+			// 速度を0にする
+			velocity_.x = 0.0f;
+		}
+		else { // AキーもDキーも押されていない場合
+
+			// 速度を0にする
+			velocity_.x = 0.0f;
+		}
+	}
+
+	// 速度の長さを計算
+	float length = Length(Vector2(velocity_.x, velocity_.y));
+
+	// 長さが速さを超えていたら
+	if (length > moveSpeed) {
+
+		// 速度を正規化して速さを掛ける
+		velocity_ = Normalize(velocity_) * moveSpeed;
 	}
 
 	// 速度をワールド変換に加算

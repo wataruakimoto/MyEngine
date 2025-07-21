@@ -64,7 +64,15 @@ void Bullet::Finalize() {
 
 void Bullet::ShowImGui() {
 
-	worldTransform_.ShowImGui("Bullet");
+#ifdef _DEBUG
+
+	ImGui::Begin("Bullet");
+
+	worldTransform_.ShowImGui();
+
+	ImGui::End();
+
+#endif // _DEBUG
 }
 
 void Bullet::OnCollision(Collider* other) {

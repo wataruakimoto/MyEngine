@@ -40,8 +40,7 @@ public:
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
-	/// <param name="name"></param>
-	void ShowImGui(const char* name);
+	void ShowImGui();
 
 	/// <summary>
 	/// 平行移動に加算

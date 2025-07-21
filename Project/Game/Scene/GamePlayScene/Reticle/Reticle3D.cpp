@@ -55,8 +55,12 @@ void Reticle3D::Draw() {
 void Reticle3D::ShowImGui() {
 
 #ifdef _DEBUG
+
+	ImGui::Begin("Reticle3D");
 	
-	worldTransform_.ShowImGui("Reticle3D");
+	worldTransform_.ShowImGui();
+
+	ImGui::End();
 
 #endif // _DEBUG
 }

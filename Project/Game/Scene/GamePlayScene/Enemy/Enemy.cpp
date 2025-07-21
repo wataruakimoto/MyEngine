@@ -37,16 +37,10 @@ void Enemy::Initialize() {
 	particleSetting1.randomRotateMin = { 0.0f,0.0f,-std::numbers::pi_v<float> };
 	particleSetting1.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
 	// エミッタ生成
-	particleEmitter1 = std::make_unique <ParticleEmitter>("circle2", EmitterTransform1, 3, 0.0f, particleSetting1);
+	particleEmitter1 = std::make_unique<ParticleEmitter>("circle2", EmitterTransform1, 3, 0.0f, particleSetting1);
 }
 
 void Enemy::Update() {
-
-#ifdef _DEBUG
-
-	worldTransform_.ShowImGui("Enemy");
-
-#endif // DEBUG_
 
 	// プレイヤーの座標を取得
 	Vector3 playerPos = player->GetWorldTransform().GetTranslate();
@@ -94,7 +88,11 @@ void Enemy::ShowImGui() {
 
 #ifdef _DEBUG
 
-	worldTransform_.ShowImGui("Enemy");
+	ImGui::Begin("Enemy");
+
+	worldTransform_.ShowImGui();
+
+	ImGui::End();
 
 #endif // _DEBUG
 }

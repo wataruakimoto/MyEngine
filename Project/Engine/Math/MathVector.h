@@ -35,6 +35,7 @@ Vector3 operator/(const Vector3& v, float s);
 Vector3& operator/=(Vector3& v, float s);
 
 // 長さ
+float Length(const Vector2& v);
 float Length(const Vector3& v);
 
 // 正規化

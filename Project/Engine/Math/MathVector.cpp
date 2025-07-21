@@ -125,6 +125,10 @@ Vector3& operator/=(Vector3& v, float s)
 	return v;
 }
 
+float Length(const Vector2& v) {
+	return sqrtf(v.x * v.x + v.y * v.y);
+}
+
 float Length(const Vector3& v) {
 	
 	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);

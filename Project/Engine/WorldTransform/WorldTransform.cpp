@@ -69,15 +69,18 @@ void WorldTransform::Update() {
 	TransferMatrix();
 }
 
-void WorldTransform::ShowImGui(const char* name) {
+void WorldTransform::ShowImGui() {
 
-#ifdef _DEBUG
-	ImGui::Begin(name);
-	ImGui::DragFloat3("Scale", &scale_.x, 0.1f);
-	ImGui::DragFloat3("Rotate", &rotate_.x, 0.01f);
-	ImGui::DragFloat3("Translate", &translate_.x, 0.1f);
-	ImGui::End();
-#endif // _DEBUG
+	// ツリーで表示
+	if (ImGui::TreeNode("WorldTransform")) {
+
+		// 各種値を表示
+		ImGui::DragFloat3("Scale", &scale_.x, 0.1f);
+		ImGui::DragFloat3("Rotate", &rotate_.x, 0.01f);
+		ImGui::DragFloat3("Translate", &translate_.x, 0.1f);
+
+		ImGui::TreePop();
+	}
 }
 
 void WorldTransform::AddTranslate(const Vector3& value) {
