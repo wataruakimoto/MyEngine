@@ -40,6 +40,7 @@ void GamePlayScene::Initialize() {
 	// プレイヤーの生成&初期化
 	player = new Player();
 	player->Initialize();
+	player->GetWorldTransform().SetParent(&railCameraController_->GetWorldTransform());
 
 	// 敵の生成
 	LoadEnemyPopData();

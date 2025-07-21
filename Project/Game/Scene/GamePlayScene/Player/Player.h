@@ -77,12 +77,6 @@ public:
 	/// <returns></returns>
 	std::list<Bullet*>* GetBulletList() { return &bullets; }
 
-	/// <summary>
-	/// ワールド変換のゲッター
-	/// </summary>
-	/// <returns></returns>
-	WorldTransform& GetWorldTransform() { return worldTransform_; }
-
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
