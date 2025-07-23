@@ -17,6 +17,21 @@ public:
 	void Initialize();
 
 	/// <summary>
+	/// ビュー行列の更新
+	/// </summary>
+	void UpdateViewMatrix();
+
+	/// <summary>
+	/// プロジェクション行列の更新
+	/// </summary>
+	void UpdateProjectionMatrix();
+
+	/// <summary>
+	/// ビュープロジェクション行列の更新
+	/// </summary>
+	void UpdateViewProjectionMatrix();
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();
@@ -26,6 +41,11 @@ public:
 	/// </summary>
 	/// <param name="name"></param>
 	void ShowImGui(const char* name);
+
+	/// <summary>
+	/// ImGuiツリー表示
+	/// </summary>
+	void ShowImGuiTree();
 
 ///-------------------------------------------///
 /// セッター

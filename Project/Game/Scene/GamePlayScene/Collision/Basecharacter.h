@@ -9,13 +9,13 @@ class Basecharacter : public Collider {
 
 public:
 
-	virtual void Initialize();
+	virtual void Initialize() = 0;
 
-	virtual void Update();
+	virtual void Update() = 0;
 
-	virtual void Draw();
+	virtual void Draw() = 0;
 
-	virtual void OnCollision([[maybe_unused]] Collider* other) override;
+	virtual void OnCollision([[maybe_unused]] Collider* other) override = 0;
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -23,13 +23,13 @@ public:
 public:
 
 	// 中心座標の取得
-	virtual const Vector3 GetCenterPosition() const override;
+	const Vector3 GetCenterPosition() const { return worldTransform_->GetTranslate(); }
 
 	/// <summary>
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	WorldTransform& GetWorldTransform() { return worldTransform_; }
+	WorldTransform& GetWorldTransform() { return *worldTransform_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -40,7 +40,7 @@ public:
 	/// ワールド変換のセッター
 	/// </summary>
 	/// <param name="worldTransform"></param>
-	void SetWorldTransform(const WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
+	void SetWorldTransform(const WorldTransform& worldTransform) { *worldTransform_ = worldTransform; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -48,5 +48,5 @@ public:
 protected:
 
 	// ワールド変換
-	WorldTransform worldTransform_;
+	WorldTransform* worldTransform_ = nullptr;
 };

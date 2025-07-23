@@ -32,9 +32,9 @@ void Bullet::Update() {
 	velocity_ = Normalize(velocity_) * moveSpeed;
 
 	// ワールド変換の平行移動に速度を加算
-	worldTransform_.AddTranslate(velocity_);
+	worldTransform_->AddTranslate(velocity_);
 
-	object->SetTranslate(worldTransform_.GetTranslate());
+	object->SetTranslate(worldTransform_->GetTranslate());
 
 	if (deathTimer_ <= 0) {
 
@@ -68,7 +68,7 @@ void Bullet::ShowImGui() {
 
 	ImGui::Begin("Bullet");
 
-	worldTransform_.ShowImGui();
+	worldTransform_->ShowImGui();
 
 	ImGui::End();
 

@@ -142,7 +142,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="Game\Scene\GameClearScene\GameClearScene.cpp" />
     <ClCompile Include="Game\Scene\GameOverScene\GameOverScene.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Collision\Basecharacter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Collision\Collider.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\Enemy.cpp" />

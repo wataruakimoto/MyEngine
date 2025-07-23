@@ -1,6 +1,5 @@
 #pragma once
 #include "Scene/System/BaseScene.h"
-#include "camera/Camera.h"
 #include "Collision/CollisionManager.h"
 
 #include "Skydome/Skydome.h"
@@ -66,9 +65,6 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
-
-	// カメラのポインタ
-	std::unique_ptr<Camera> camera = nullptr;
 
 	// レールカメラコントローラーのポインタ
 	std::unique_ptr<RailCameraController> railCameraController_ = nullptr;

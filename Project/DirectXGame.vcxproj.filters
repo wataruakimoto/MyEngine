@@ -126,7 +126,6 @@
     <ClCompile Include="Game\Scene\GameOverScene\GameOverScene.cpp" />
     <ClCompile Include="Game\Scene\GameClearScene\GameClearScene.cpp" />
     <ClCompile Include="Game\Scene\DebugScene\DebugScene.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Collision\Basecharacter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Collision\Collider.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\Enemy.cpp" />

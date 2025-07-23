@@ -5,11 +5,11 @@
 void Skydome::Initialize() {
 
 	// モデルの読み込み
-	ModelManager::GetInstance()->LoadModelData("Resources/Skydome", "skydome.obj");
+	ModelManager::GetInstance()->LoadModelData("Resources/Sphere", "sphere.obj");
 
 	// モデルの生成・初期化
 	model = new Model();
-	model->Initialize("Resources/Skydome", "skydome.obj");
+	model->Initialize("Resources/Sphere", "sphere.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = new Object3d();

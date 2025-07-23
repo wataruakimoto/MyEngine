@@ -79,6 +79,17 @@ void WorldTransform::ShowImGui() {
 		ImGui::DragFloat3("Rotate", &rotate_.x, 0.01f);
 		ImGui::DragFloat3("Translate", &translate_.x, 0.1f);
 
+		// ワールド行列を表示
+		if (ImGui::TreeNode("WorldMatrix")) {
+
+			for (int i = 0; i < 4; ++i) {
+				
+				ImGui::Text("%f, %f, %f, %f", worldMatrix_.m[i][0], worldMatrix_.m[i][1], worldMatrix_.m[i][2], worldMatrix_.m[i][3]);
+			}
+			
+			ImGui::TreePop();
+		}
+
 		ImGui::TreePop();
 	}
 }

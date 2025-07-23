@@ -13,21 +13,16 @@
 
 void GamePlayScene::Initialize() {
 
-	// カメラの初期化
-	camera = std::make_unique <Camera>();
-	camera->Initialize();
-	camera->SetTranslate({ 0.0f, 0.0f, -50.0f });
-
-	// カメラを設定
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
-
 	// レールカメラコントローラーの生成
 	railCameraController_ = std::make_unique<RailCameraController>();
 	// レールカメラコントローラーの初期化
 	railCameraController_->Initialize();
 
+	// カメラを設定
+	Object3dCommon::GetInstance()->SetDefaultCamera(&railCameraController_->GetCamera());
+
 	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->SetCamera(camera.get());
+	ParticleSystem::GetInstance()->SetCamera(&railCameraController_->GetCamera());
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
 
 	// 衝突マネージャの初期化
@@ -51,7 +46,7 @@ void GamePlayScene::Initialize() {
 	// レティクルのプレイヤー設定
 	reticle3D_->SetPlayer(player);
 	// レティクルのカメラ設定
-	reticle3D_->SetCamera(camera.get());
+	reticle3D_->SetCamera(&railCameraController_->GetCamera());
 
 	// プレイヤーにレティクルを設定
 	player->SetReticle3D(reticle3D_.get());
@@ -62,7 +57,7 @@ void GamePlayScene::Initialize() {
 	// 3Dレティクルを2Dレティクルに設定
 	reticle2D_->SetReticle3D(reticle3D_.get());
 	// カメラを2Dレティクルに設定
-	reticle2D_->SetCamera(camera.get());
+	reticle2D_->SetCamera(&railCameraController_->GetCamera());
 
 	// 3Dレティクルに2Dレティクルを設定
 	reticle3D_->SetReticle2D(reticle2D_.get());
@@ -99,9 +94,6 @@ void GamePlayScene::Update() {
 
 	// ImGuiの表示
 	ShowImGui();
-
-	/// === カメラ更新 === ///
-	camera->Update();
 
 	// レールカメラコントローラーの更新
 	railCameraController_->Update();
@@ -207,8 +199,6 @@ void GamePlayScene::ShowImGui() {
 	Input::GetInstance()->ShowImgui();
 
 	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
-
-	camera->ShowImGui("camera");
 
 	railCameraController_->ShowImGui();
 
