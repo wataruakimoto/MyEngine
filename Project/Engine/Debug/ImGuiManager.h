@@ -36,7 +36,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WinApp* winApp, DirectXUtility* dxUtility, SwapChain* swapChain);
+	void Initialize(WinApp* winApp, SwapChain* swapChain);
 
 	/// <summary>
 	/// 受付開始
@@ -74,7 +74,7 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXUtilityの借りポインタ
+	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility_ = nullptr;
 
 	// SwapChainの借りポインタ

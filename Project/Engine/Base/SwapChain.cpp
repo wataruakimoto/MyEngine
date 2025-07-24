@@ -4,11 +4,13 @@
 
 #include <cassert>
 
-void SwapChain::Initialize(WinApp* winApp, DirectXUtility* dxUtility) {
+void SwapChain::Initialize(WinApp* winApp) {
 
 	// 引数をメンバ変数に設定
 	this->winApp = winApp;
-	this->dxUtility = dxUtility;
+
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
 
 	// スワップチェーンの生成
 	SwapChainGenerate();

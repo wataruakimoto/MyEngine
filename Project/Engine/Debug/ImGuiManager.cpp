@@ -6,11 +6,13 @@
 #include "base/SwapChain.h"
 #include "base/SrvManager.h"
 
-void ImGuiManager::Initialize(WinApp* winApp, DirectXUtility* dxUtility, SwapChain* swapChain) {
+void ImGuiManager::Initialize(WinApp* winApp, SwapChain* swapChain) {
 
 	// 引数をメンバ変数にコピー
-	dxUtility_ = dxUtility;
 	swapChain_ = swapChain;
+
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
 
 	// バージョンチェック
 	IMGUI_CHECKVERSION();
@@ -29,8 +31,8 @@ void ImGuiManager::Initialize(WinApp* winApp, DirectXUtility* dxUtility, SwapCha
 
 	// DirectX12用の設定
 	ImGui_ImplDX12_Init(
-		dxUtility->GetDevice().Get(),
-		swapChain->GetBackBufferCount(),
+		dxUtility_->GetDevice().Get(),
+		swapChain_->GetBackBufferCount(),
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
 		SrvManager::GetInstance()->GetDescriptorHeap().Get(),
 		SrvManager::GetInstance()->GetCPUDescriptorHandle(srvIndex),

@@ -125,6 +125,7 @@ public:
 	struct Transformation {
 		Matrix4x4 worldMatrix;  // ワールド行列
 		Matrix4x4 WVPMatrix;	// ワールドビュープロジェクション行列
+		Matrix4x4 worldInverseTranspose; // ワールド逆転置行列
 	};
 
 ///-------------------------------------------/// 
@@ -156,7 +157,7 @@ private:
 	// 座標変換リソース
 	Microsoft::WRL::ComPtr<ID3D12Resource> transformationResource_ = nullptr;
 
-	// DirectXユーティリティの借りポインタ
+	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility_ = nullptr;
 
 	// カメラの借りポインタ

@@ -15,10 +15,10 @@ SpriteCommon* SpriteCommon::GetInstance() {
 	return instance;
 }
 
-void SpriteCommon::Initialize(DirectXUtility* dxUtility){
+void SpriteCommon::Initialize(){
 
-	// 引数をメンバ変数に代入
-	dxUtility_ = dxUtility;
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();

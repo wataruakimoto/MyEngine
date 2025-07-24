@@ -39,7 +39,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 描画前処理
@@ -119,7 +119,7 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXUtilityのポインタ
+	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility_ = nullptr;
 
 	// SRV用デスクリプタサイズ

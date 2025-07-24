@@ -1,4 +1,5 @@
 #include "Framework.h"
+#include "base/DirectXUtility.h"
 #include "base/SrvManager.h"
 #include "debug/ImGuiManager.h"
 #include "audio/AudioManager.h"
@@ -6,7 +7,6 @@
 #include "2d/TextureManager.h"
 #include "2d/SpriteCommon.h"
 #include "3d/Object3dCommon.h"
-#include "3d/ModelCommon.h"
 #include "3d/ModelManager.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3D/Skybox/SkyboxCommon.h"
@@ -22,22 +22,21 @@ void Framework::Initialize() {
 	ShowWindow(winApp->GetHwnd(), SW_SHOW);
 
 	// DirectX初期化
-	dxUtility = std::make_unique <DirectXUtility>();
-	dxUtility->Initialize();
+	DirectXUtility::GetInstance()->Initialize();
 
 	// SrVマネージャ初期化
-	SrvManager::GetInstance()->Initialize(dxUtility.get());
+	SrvManager::GetInstance()->Initialize();
 
 	// レンダーテクスチャ初期化
 	postEffect = std::make_unique <PostEffect>();
-	postEffect->Initialize(dxUtility.get());
+	postEffect->Initialize();
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
-	swapChain->Initialize(winApp.get(), dxUtility.get());
+	swapChain->Initialize(winApp.get());
 
 	// ImGuiの初期化
-	ImGuiManager::GetInstance()->Initialize(winApp.get(), dxUtility.get(), swapChain.get());
+	ImGuiManager::GetInstance()->Initialize(winApp.get(), swapChain.get());
 
 	// オーディオマネージャ初期化
 	AudioManager::GetInstance()->Initialize();
@@ -46,30 +45,26 @@ void Framework::Initialize() {
 	Input::GetInstance()->Initialize(winApp.get());
 
 	// テクスチャマネージャ初期化
-	TextureManager::GetInstance()->Initialize(dxUtility.get());
+	TextureManager::GetInstance()->Initialize();
 
 	// ポストエフェクトパイプラインの初期化
-	filter = std::make_unique<DissolveFilter>();
-	filter->Initialize(dxUtility.get(), postEffect.get());
-	filter->SetMaskTextureFilePath("Resources", "noise0.png");
+	filter = std::make_unique<FullScreenFilter>();
+	filter->Initialize(postEffect.get());
 
 	// モデルマネージャ初期化
-	ModelManager::GetInstance()->Initialize(dxUtility.get());
+	ModelManager::GetInstance()->Initialize();
 
 	// スプライト共通部初期化
-	SpriteCommon::GetInstance()->Initialize(dxUtility.get());
+	SpriteCommon::GetInstance()->Initialize();
 
 	// 3Dオブジェクト共通部初期化
-	Object3dCommon::GetInstance()->Initialize(dxUtility.get());
-
-	// モデル基盤初期化
-	ModelCommon::GetInstance()->Initialize(dxUtility.get());
+	Object3dCommon::GetInstance()->Initialize();
 
 	// パーティクル基盤初期化
-	ParticleCommon::GetInstance()->Initialize(dxUtility.get());
+	ParticleCommon::GetInstance()->Initialize();
 
 	// Skybox共通部初期化
-	SkyboxCommon::GetInstance()->Initialize(dxUtility.get());
+	SkyboxCommon::GetInstance()->Initialize();
 }
 
 void Framework::Update() {
@@ -85,9 +80,6 @@ void Framework::Finalize() {
 
 	// パーティクル基盤の終了
 	ParticleCommon::GetInstance()->Finalize();
-
-	// モデル基盤の解放
-	ModelCommon::GetInstance()->Finalize();
 
 	// 3Dオブジェクト共通部の解放
 	Object3dCommon::GetInstance()->Finalize();
@@ -117,7 +109,7 @@ void Framework::Finalize() {
 	SrvManager::GetInstance()->Finalize();
 
 	// DirectX機能の終了
-	dxUtility->Finalize();
+	DirectXUtility::GetInstance()->Finalize();
 	
 	// WindowsAPIの終了処理
 	winApp->Finalize();

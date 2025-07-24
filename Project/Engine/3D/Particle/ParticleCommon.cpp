@@ -7,10 +7,10 @@
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void ParticleCommon::Initialize(DirectXUtility* dxUtility) {
+void ParticleCommon::Initialize() {
 
-	// 引数をメンバ変数に代入
-	dxUtility_ = dxUtility;
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();

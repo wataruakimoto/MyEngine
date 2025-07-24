@@ -35,7 +35,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 描画設定
@@ -131,8 +131,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXUtilityの借りポインタ
-	DirectXUtility* dxUtility_;
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility_ = nullptr;
 
 	// デフォルトカメラの借りポインタ
 	Camera* defaultCamera_ = nullptr;

@@ -1,5 +1,4 @@
 #include "Model.h"
-#include "Modelcommon.h"
 #include "base/DirectXUtility.h"
 #include "math/MathMatrix.h"
 #include "2d/TextureManager.h"
@@ -9,6 +8,9 @@
 using namespace MathMatrix;
 
 void Model::Initialize(const std::string& directorypath, const std::string& filename) {
+
+	// DXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
 
 	// モデルデータを検索
 	modelData = ModelManager::GetInstance()->FindModelData(directorypath, filename);
@@ -42,19 +44,19 @@ void Model::Initialize(const std::string& directorypath, const std::string& file
 void Model::Draw() {
 
 	// 頂点バッファビューを設定
-	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableを設定
-	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
 
 	// SRVのDescriptorTableを設定
-	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(3, TextureManager::GetInstance()->GetSRVGPUHandle(environmentMapFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(3, TextureManager::GetInstance()->GetSRVGPUHandle(environmentMapFilePath));
 
 	// 描画(DrawCall)
-	ModelCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), 1, 0, 0);
+	dxUtility->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), 1, 0, 0);
 }
 
 void Model::ShowImGui() {
@@ -72,7 +74,7 @@ void Model::ShowImGui() {
 void Model::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ModelCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * modelData->vertices.size());
+	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * modelData->vertices.size());
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
@@ -93,7 +95,7 @@ void Model::InitializeVertexData() {
 void Model::InitializeMaterialData() {
 
 	/// === MaterialResourceを作る === ///
-	materialResource = ModelCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
+	materialResource = dxUtility->CreateBufferResource(sizeof(Material));
 
 	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));

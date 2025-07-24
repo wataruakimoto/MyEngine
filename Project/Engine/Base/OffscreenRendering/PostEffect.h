@@ -18,8 +18,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxUtility"></param>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 描画前処理
@@ -163,7 +162,7 @@ private:
 	// 深度ステンシル用のバリアの状態
 	D3D12_RESOURCE_STATES depthStencilState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 
-	// DirectX12共通処理
+	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;
 };
 

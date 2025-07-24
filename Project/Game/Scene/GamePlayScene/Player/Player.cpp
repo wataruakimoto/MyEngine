@@ -10,8 +10,9 @@
 
 void Player::Initialize() {
 
-	// 基底クラスの初期化
-	Basecharacter::Initialize();
+	// ワールド変換の初期化
+	worldTransform_ = new WorldTransform();
+	worldTransform_->Initialize();
 
 	// モデルの生成・初期化
 	model = new Model();
@@ -34,18 +35,7 @@ void Player::Initialize() {
 void Player::Update() {
 
 	// デスフラグが立った弾を削除
-	bullets.remove_if([](Bullet* bullet) {
-
-		if (bullet->IsDead()) {
-
-			bullet->Finalize();
-			delete bullet;
-
-			return true;
-		}
-
-		return false;
-		});
+	bullets.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
 
 	// 射撃
 	if (fireTimer <= 0) {
@@ -62,7 +52,7 @@ void Player::Update() {
 	}
 
 	// 弾の更新
-	for (Bullet* bullet : bullets) {
+	for (std::unique_ptr<Bullet>& bullet : bullets) {
 
 		bullet->ShowImGui();
 		bullet->Update();
@@ -86,7 +76,7 @@ void Player::Draw() {
 	object->Draw();
 
 	// 弾の描画
-	for (Bullet* bullet : bullets) {
+	for (std::unique_ptr<Bullet>& bullet : bullets) {
 
 		bullet->Draw();
 	}
@@ -95,10 +85,9 @@ void Player::Draw() {
 void Player::Finalize() {
 
 	// 残った弾の解放
-	for (Bullet* bullet : bullets) {
+	for (std::unique_ptr<Bullet>& bullet : bullets) {
 
 		bullet->Finalize();
-		delete bullet;
 	}
 
 	// 3Dオブジェクトの解放
@@ -138,7 +127,7 @@ void Player::Move() {
 			velocity_.y = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
 		}
 		else { // 左スティックがデッドゾーン内だったら
-			
+
 			// 速度を0にする
 			velocity_.x = 0.0f;
 			velocity_.y = 0.0f;
@@ -172,7 +161,7 @@ void Player::Move() {
 			velocity_.y = 0.0f;
 
 		}
-		
+
 		if (a && !d) { // Aキーだけ押された場合
 
 			// 速度を左向きに加算
@@ -212,7 +201,7 @@ void Player::Move() {
 void Player::Fire() {
 
 	// 弾の生成
-	Bullet* bullet = new Bullet();
+	std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
 	bullet->Initialize();
 
 	// 弾の初期位置をプレイヤーの位置に設定
@@ -224,7 +213,7 @@ void Player::Fire() {
 	bullet->SetVelocity(velocity);
 
 	// 弾をリストに登録
-	bullets.push_back(bullet);
+	bullets.push_back(std::move(bullet));
 }
 
 void Player::OnCollision(Collider* other) {

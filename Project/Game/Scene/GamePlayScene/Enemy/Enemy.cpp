@@ -7,8 +7,9 @@
 
 void Enemy::Initialize() {
 
-	// 基底クラスの初期化
-	Basecharacter::Initialize();
+	// ワールド変換の初期化
+	worldTransform_ = new WorldTransform();
+	worldTransform_->Initialize();
 
 	// モデルの生成・初期化
 	model = new Model();

@@ -1,10 +1,10 @@
 #include "ModelManager.h"
-#include "base/DirectXUtility.h"
 #include "Debug/Logger.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
 using namespace Logger;
 
@@ -18,7 +18,7 @@ ModelManager* ModelManager::GetInstance() {
 	return instance;
 }
 
-void ModelManager::Initialize(DirectXUtility* dxUtility) {}
+void ModelManager::Initialize() {}
 
 void ModelManager::Finalize() {
 

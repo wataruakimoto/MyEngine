@@ -29,11 +29,11 @@ void GamePlayScene::Initialize() {
 	collisionManager_ = std::make_unique<CollisionManager>();
 
 	// 天球の生成&初期化
-	skydome = new Skydome();
+	skydome = std::make_unique<Skydome>();
 	skydome->Initialize();
 
 	// プレイヤーの生成&初期化
-	player = new Player();
+	player = std::make_unique<Player>();
 	player->Initialize();
 	player->GetWorldTransform().SetParent(&railCameraController_->GetWorldTransform());
 
@@ -44,7 +44,7 @@ void GamePlayScene::Initialize() {
 	reticle3D_ = std::make_unique<Reticle3D>();
 	reticle3D_->Initialize();
 	// レティクルのプレイヤー設定
-	reticle3D_->SetPlayer(player);
+	reticle3D_->SetPlayer(player.get());
 	// レティクルのカメラ設定
 	reticle3D_->SetCamera(&railCameraController_->GetCamera());
 
@@ -66,18 +66,7 @@ void GamePlayScene::Initialize() {
 void GamePlayScene::Update() {
 
 	// デスフラグの立った敵を削除
-	enemies_.remove_if([](Enemy* enemy) {
-
-		if (enemy->IsDead()) {
-
-			enemy->Finalize();
-			delete enemy;
-
-			return true;
-		}
-
-		return false;
-		});
+	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) {return enemy->IsDead(); });
 
 	// プレイヤーが死んでいたら
 	if (player->IsDead()) {
@@ -111,10 +100,10 @@ void GamePlayScene::Update() {
 	UpdateEnemyPopCommands();
 
 	// 敵キャラの更新
-	for (Enemy* enemy : enemies_) {
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 
 		// プレイヤーを敵にセット
-		enemy->SetPlayer(player);
+		enemy->SetPlayer(player.get());
 
 		// 敵更新
 		enemy->Update();
@@ -150,7 +139,7 @@ void GamePlayScene::Draw() {
 	player->Draw();
 
 	// 敵描画
-	for (Enemy* enemy : enemies_) {
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 
 		enemy->Draw();
 	}
@@ -179,19 +168,16 @@ void GamePlayScene::Draw() {
 void GamePlayScene::Finalize() {
 
 	// 敵の解放
-	for (Enemy* enemy : enemies_) {
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 
 		enemy->Finalize();
-		delete enemy;
 	}
 
 	// プレイヤーの解放
 	player->Finalize();
-	delete player;
 
 	// 天球の解放
 	skydome->Finalize();
-	delete skydome;
 }
 
 void GamePlayScene::ShowImGui() {
@@ -204,7 +190,7 @@ void GamePlayScene::ShowImGui() {
 
 	player->ShowImGui();
 
-	for (Enemy* enemy : enemies_) {
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 		enemy->ShowImGui();
 	}
 
@@ -218,14 +204,14 @@ void GamePlayScene::CheckAllCollisions() {
 	collisionManager_->Reset();
 
 	// コライダーをリストに追加
-	collisionManager_->AddCollider(player);
+	collisionManager_->AddCollider(player.get());
 
-	for (Enemy* enemy : enemies_) {
-		collisionManager_->AddCollider(enemy);
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
+		collisionManager_->AddCollider(enemy.get());
 	}
 
-	for (Bullet* bullet : bullets_) {
-		collisionManager_->AddCollider(bullet);
+	for (std::unique_ptr<Bullet>& bullet : bullets_) {
+		collisionManager_->AddCollider(bullet.get());
 	}
 
 	// 衝突判定と応答
@@ -296,10 +282,11 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 			float z = (float)std::atof(word.c_str());
 
 			// 敵の生成&初期化
-			Enemy* enemy = new Enemy();
+			std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
 			enemy->Initialize();
-			enemy->GetWorldTransform().SetTranslate({x, y, z});
-			enemies_.push_back(enemy);
+			enemy->GetWorldTransform().SetTranslate({ x, y, z });
+			// 敵をリストに追加
+			enemies_.push_back(std::move(enemy));
 
 		} // WAITコマンド
 		else if (word.find("WAIT") == 0) {

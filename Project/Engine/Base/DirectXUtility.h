@@ -13,6 +13,23 @@
 class DirectXUtility {
 
 ///-------------------------------------------/// 
+/// シングルトン
+///-------------------------------------------///
+private:
+
+	// インスタンス
+	static DirectXUtility* instance;
+
+	// コンストラクタの隠蔽
+	DirectXUtility() = default;
+	// デストラクタの隠蔽
+	~DirectXUtility() = default;
+	// コピーコンストラクタの封印
+	DirectXUtility(DirectXUtility&) = delete;
+	// コピー代入演算子の封印
+	DirectXUtility& operator=(DirectXUtility&) = delete;
+
+///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
@@ -88,6 +105,12 @@ private:
 /// ゲッター
 ///-------------------------------------------///
 public:
+
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
+	/// <returns></returns>
+	static DirectXUtility* GetInstance();
 
 	/// <summary>
 	/// デバイスの取得

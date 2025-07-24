@@ -69,6 +69,9 @@ void DirectXUtility::Finalize() {
 
 	// 各オブジェクトの解放
 	CloseHandle(fenceEvent);
+
+	delete instance;
+	instance = nullptr;
 }
 
 Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> DirectXUtility::CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible) {
@@ -308,6 +311,16 @@ void DirectXUtility::UpdateFixFPS() {
 	}
 	// 現在の時間を記録する
 	reference = std::chrono::steady_clock::now();
+}
+
+DirectXUtility* DirectXUtility::instance = nullptr;
+
+DirectXUtility* DirectXUtility::GetInstance() {
+	
+	if (instance == nullptr) {
+		instance = new DirectXUtility;
+	}
+	return instance;
 }
 
 D3D12_CPU_DESCRIPTOR_HANDLE DirectXUtility::GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index) {

@@ -20,6 +20,9 @@ using namespace Logger;
 
 void ParticleSystem::Initialize() {
 
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
+
 	// デフォルトカメラをセット
 	this->camera = ParticleCommon::GetInstance()->GetDefaultCamera();
 
@@ -217,7 +220,7 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 	particleGroups[name].srvIndex = SrvManager::GetInstance()->Allocate();
 
 	/// === ParticleResourceを作る === ///
-	particleGroups[name].particleResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
+	particleGroups[name].particleResource = dxUtility->CreateBufferResource(sizeof(ParticleForGPU) * kNumMaxInstance);
 
 	/// === ParticleResourceにデータを書き込むためのアドレスを取得してParticleDataに割り当てる === ///
 	particleGroups[name].particleResource->Map(0, nullptr, reinterpret_cast<void**>(&particleGroups[name].particleData));

@@ -41,7 +41,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 終了
@@ -113,12 +113,6 @@ public:
 /// ゲッター
 ///-------------------------------------------///
 public:
-
-	/// <summary>
-	/// DirectXUtilityのゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXUtility* GetdxUtility() const { return dxUtility_; }
 
 	/// <summary>
 	/// デフォルトカメラのゲッター

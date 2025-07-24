@@ -16,10 +16,10 @@ SrvManager* SrvManager::GetInstance() {
 
 const uint32_t SrvManager::kMaxSRVCount = 512;
 
-void SrvManager::Initialize(DirectXUtility* dxUtility) {
+void SrvManager::Initialize() {
 
-	//　引数をメンバ変数にコピー
-	this->dxUtility_ = dxUtility;
+	// DirectXUtilityのインスタンスを取得
+	this->dxUtility_ = DirectXUtility::GetInstance();
 
 	// デスクリプタヒープの作成
 	descriptorHeap = dxUtility_->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, kMaxSRVCount, true);

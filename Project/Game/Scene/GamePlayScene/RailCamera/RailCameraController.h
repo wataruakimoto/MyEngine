@@ -34,7 +34,7 @@ public:
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	WorldTransform& GetWorldTransform() const { return *worldTransform; }
+	const WorldTransform& GetWorldTransform() const { return worldTransform; }
 
 	/// <summary>
 	/// カメラのゲッター
@@ -48,7 +48,7 @@ public:
 private:
 
 	// ワールド変換
-	WorldTransform* worldTransform;
+	WorldTransform worldTransform;
 
 	// カメラ
 	Camera* camera;

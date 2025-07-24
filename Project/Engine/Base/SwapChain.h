@@ -19,7 +19,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(WinApp* winApp, DirectXUtility* dxUtility);
+	void Initialize(WinApp* winApp);
 
 	/// <summary>
 	/// 描画前
@@ -161,7 +161,7 @@ private:
 	// WinAppの借りポインタ
 	WinApp* winApp = nullptr;
 
-	// DirectXUtilityの借りポインタ
+	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;
 };
 

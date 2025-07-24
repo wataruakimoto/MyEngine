@@ -260,4 +260,7 @@ private:
 
 	// テクスチャ切り出しサイズ
 	Vector2 textureSize = { 0.0f,0.0f };
+
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility = nullptr;
 };

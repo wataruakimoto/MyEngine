@@ -3,6 +3,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
+#include "WorldTransform/WorldTransform.h"
 
 #include <fstream>
 #include <vector>
@@ -57,13 +58,6 @@ public:
 		float cosFalloffStart; // Falloffの開始角度
 	};
 
-	// 変換データ
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-
 ///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
@@ -84,6 +78,8 @@ public:
 	/// </summary>
 	void Draw();
 
+	void Draw(WorldTransform worldTransform);
+
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
@@ -94,11 +90,6 @@ public:
 /// クラス内関数
 ///-------------------------------------------///
 private:
-
-	/// <summary>
-	/// 座標変換行列データ初期化
-	/// </summary>
-	void InitializeTransformationMatrixData();
 
 	/// <summary>
 	/// 平行光源データ初期化
@@ -129,19 +120,19 @@ public:
 	/// 大きさのセッター
 	/// </summary>
 	/// <param name="scale">大きさ</param>
-	void SetScale(const Vector3& scale) { this->transform.scale = scale; }
+	void SetScale(const Vector3& scale) { this->worldTransform.SetScale(scale); }
 
 	/// <summary>
 	/// 回転のセッター
 	/// </summary>
 	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate) { this->transform.rotate = rotate; }
+	void SetRotate(const Vector3& rotate) { this->worldTransform.SetRotate(rotate); }
 
 	/// <summary>
 	/// 位置のセッター
 	/// </summary>
 	/// <param name="translate">位置</param>
-	void SetTranslate(const Vector3& translate) { this->transform.translate = translate; }
+	void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
 
 	/// <summary>
 	/// モデルのセッター
@@ -188,19 +179,19 @@ public:
 	/// 大きさのゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector3& GetScale() const { return transform.scale; }
+	const Vector3& GetScale() const { return worldTransform.GetScale(); }
 
 	/// <summary>
 	/// 回転のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector3& GetRotate() const { return transform.rotate; }
+	const Vector3& GetRotate() const { return worldTransform.GetRotate(); }
 
 	/// <summary>
 	/// 位置のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector3& GetTranslate() const { return transform.translate; }
+	const Vector3& GetTranslate() const { return worldTransform.GetTranslate(); }
 
 	/// <summary>
 	/// 色のゲッター
@@ -224,15 +215,13 @@ public:
 	/// ワールド行列のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Matrix4x4& GetWorldMatrix() const { return transformationMatrixData->world; }
+	const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// 座標変換行列リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
 	// 平行光源リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
 	// 点光源リソース
@@ -242,8 +231,6 @@ private:
 	// カメラリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
-	// 座標変換行列データ
-	TransformationMatrix* transformationMatrixData = nullptr;
 	// 平行光源データ
 	DirectionalLight* directionalLightData = nullptr;
 	// 点光源データ
@@ -253,13 +240,17 @@ private:
 	// カメラデータ
 	Vector3* cameraData;
 
-	Transform transform;
-
 	// モデル
 	Model* model = nullptr;
+
+	// ワールド変換
+	WorldTransform worldTransform;
 
 	// カメラ
 	Camera* camera = nullptr;
 
 	bool isDraw = true;
+
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility = nullptr;
 };

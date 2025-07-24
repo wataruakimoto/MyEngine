@@ -1,8 +1,7 @@
 #pragma once
 #include "winApp/WinApp.h"
-#include "base/DirectXUtility.h"
 #include "base/OffscreenRendering/PostEffect.h"
-#include "base/OffscreenRendering/Filters/DissolveFilter.h"
+#include "base/OffscreenRendering/Filters/FullScreenFilter.h"
 #include "base/SwapChain.h"
 #include "scene/AbstractSceneFactory.h"
 
@@ -59,14 +58,11 @@ protected:
 	// WindowsAPIのポインタ
 	std::unique_ptr<WinApp> winApp = nullptr;
 
-	// DirectX基盤のポインタ
-	std::unique_ptr<DirectXUtility> dxUtility = nullptr;
-
 	// レンダーテクスチャのポインタ
 	std::unique_ptr<PostEffect> postEffect = nullptr;
 
 	// ポストエフェクトパイプラインのポインタ
-	std::unique_ptr<DissolveFilter> filter = nullptr;
+	std::unique_ptr<FullScreenFilter> filter = nullptr;
 
 	// スワップチェインのポインタ
 	std::unique_ptr<SwapChain> swapChain = nullptr;

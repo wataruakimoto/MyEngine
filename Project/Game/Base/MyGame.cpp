@@ -1,4 +1,5 @@
 #include "MyGame.h"
+#include "Base/DirectXUtility.h"
 #include "Debug/ImGuiManager.h"
 #include "3D/Particle/ParticleCommon.h"
 #include "3D/Particle/ParticleSystem.h"
@@ -72,7 +73,7 @@ void MyGame::Draw() {
 	swapChain->PostDraw();
 
 	/// === DirectX描画処理 === ///
-	dxUtility->PostDraw();
+	DirectXUtility::GetInstance()->PostDraw();
 }
 
 void MyGame::Finalize() {

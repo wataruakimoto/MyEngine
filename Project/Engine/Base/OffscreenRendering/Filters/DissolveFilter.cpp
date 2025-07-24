@@ -10,11 +10,13 @@
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void DissolveFilter::Initialize(DirectXUtility* dxUtility, PostEffect* postEffect) {
+void DissolveFilter::Initialize(PostEffect* postEffect) {
 
 	// 引数をメンバ変数にコピー
-	this->dxUtility = dxUtility;
 	this->postEffect = postEffect;
+
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
 
 	// パイプライン作成
 	CreateGraphicsPipeline();

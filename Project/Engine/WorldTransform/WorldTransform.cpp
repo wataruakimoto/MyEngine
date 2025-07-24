@@ -10,15 +10,19 @@ using namespace MathMatrix;
 
 void WorldTransform::Initialize() {
 
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
+
 	// リソース作成
-	//transformationResource_ = dxUtility_->CreateBufferResource(sizeof(Transformation));
+	transformationResource_ = dxUtility_->CreateBufferResource(sizeof(Transformation));
 
 	// リソースにデータを書き込むためのアドレスを取得、割り当てする
-	//transformationResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationData_));
+	transformationResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationData_));
 
 	// 座標変換データの初期化
 	transformationData_.worldMatrix = MakeIdentity4x4(); // 単位行列を書き込む
 	transformationData_.WVPMatrix = MakeIdentity4x4(); // 単位行列を書き込む
+	transformationData_.worldInverseTranspose = MakeIdentity4x4(); // 単位行列を書き込む
 }
 
 void WorldTransform::UpdateMatrix() {
@@ -41,7 +45,6 @@ void WorldTransform::UpdateMatrix() {
 
 		// ワールド行列とビュープロジェクション行列を掛け合わせてWVP行列を作成
 		WVPMatrix_ = worldMatrix_ * viewProjectionMatrix;
-
 	}
 	else {
 
@@ -55,9 +58,10 @@ void WorldTransform::TransferMatrix() {
 	// 座標変換データに書き込む
 	transformationData_.worldMatrix = worldMatrix_;
 	transformationData_.WVPMatrix = WVPMatrix_;
+	transformationData_.worldInverseTranspose = Inverse(worldMatrix_);
 
 	// コマンドリストにリソースを転送
-	dxUtility_->GetCommandList()->SetComputeRootShaderResourceView(1, transformationResource_->GetGPUVirtualAddress());
+	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationResource_->GetGPUVirtualAddress());
 }
 
 void WorldTransform::Update() {

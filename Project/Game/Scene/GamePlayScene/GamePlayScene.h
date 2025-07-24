@@ -73,16 +73,16 @@ private:
 	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
 
 	// 天球のポインタ
-	Skydome* skydome = nullptr;
+	std::unique_ptr<Skydome> skydome = nullptr;
 
 	// プレイヤーのポインタ
-	Player* player = nullptr;
+	std::unique_ptr<Player> player = nullptr;
 
 	// 敵のリスト
-	std::list<Enemy*> enemies_;
+	std::list<std::unique_ptr<Enemy>> enemies_;
 
 	// 弾のリスト
-	std::list<Bullet*> bullets_;
+	std::list<std::unique_ptr<Bullet>> bullets_;
 
 	// 3Dレティクルのポインタ
 	std::unique_ptr<Reticle3D> reticle3D_ = nullptr;

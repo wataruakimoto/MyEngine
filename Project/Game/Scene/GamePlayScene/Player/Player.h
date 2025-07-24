@@ -74,8 +74,7 @@ public:
 	/// <summary>
 	/// 弾リストのゲッター
 	/// </summary>
-	/// <returns></returns>
-	std::list<Bullet*>* GetBulletList() { return &bullets; }
+	std::list<std::unique_ptr<Bullet>>& GetBullets() { return bullets; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -96,7 +95,7 @@ private:
 	Object3d* object = nullptr;
 
 	// 弾リストのポインタ
-	std::list <Bullet*> bullets;
+	std::list<std::unique_ptr<Bullet>> bullets;
 
 	float moveSpeed = 0.2f;
 
@@ -112,5 +111,5 @@ private:
 
 public:
 	// 弾リストを作成
-	const std::list<Bullet*>& GetBullets() const { return bullets; }
+	const std::list<std::unique_ptr<Bullet>>& GetBullets() const { return bullets; }
 };
