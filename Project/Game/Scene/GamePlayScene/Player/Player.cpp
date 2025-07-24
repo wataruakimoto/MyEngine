@@ -11,8 +11,7 @@
 void Player::Initialize() {
 
 	// ワールド変換の初期化
-	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize();
+	worldTransform_.Initialize();
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -51,10 +50,10 @@ void Player::Update() {
 	Move();
 
 	// ワールド変換の更新
-	worldTransform_->UpdateMatrix();
+	worldTransform_.UpdateMatrix();
 
-	object->SetTranslate(worldTransform_->GetTranslate());
-	object->SetRotate(worldTransform_->GetRotate());
+	object->SetTranslate(worldTransform_.GetTranslate());
+	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -75,7 +74,7 @@ void Player::ShowImGui() {
 
 	ImGui::Begin("Player");
 
-	worldTransform_->ShowImGui();
+	worldTransform_.ShowImGui();
 
 	ImGui::SliderFloat3("Velocity", &velocity_.x, -0.2f, 0.2f);
 
@@ -167,7 +166,7 @@ void Player::Move() {
 	}
 
 	// 速度をワールド変換に加算
-	worldTransform_->AddTranslate(velocity_);
+	worldTransform_.AddTranslate(velocity_);
 }
 
 void Player::Fire() {
@@ -177,11 +176,11 @@ void Player::Fire() {
 	bullet->Initialize();
 
 	// 弾の初期位置をプレイヤーの位置に設定
-	bullet->GetWorldTransform().SetTranslate(worldTransform_->GetTranslate());
+	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 
 	// 弾の初期速度を設定
 	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_->GetTranslate();
+	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_.GetTranslate();
 	bullet->SetVelocity(velocity);
 
 	// ゲームプレイシーンの弾をリストに登録

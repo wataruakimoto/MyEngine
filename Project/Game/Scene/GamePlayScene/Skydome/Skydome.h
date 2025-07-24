@@ -3,6 +3,8 @@
 #include "3d/Model.h"
 #include "3d/Object3d.h"
 
+#include <memory>
+
 /// ===== 天球 ===== ///
 class Skydome {
 
@@ -34,8 +36,8 @@ public:
 private:
 
 	// モデルのポインタ
-	Model* model = nullptr;
+	std::unique_ptr<Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	Object3d* object = nullptr;
+	std::unique_ptr<Object3d> object = nullptr;
 };

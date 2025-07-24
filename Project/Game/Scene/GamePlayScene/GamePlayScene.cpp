@@ -100,7 +100,6 @@ void GamePlayScene::Update() {
 	// 弾の更新
 	for (std::unique_ptr<Bullet>& bullet : bullets_) {
 
-		bullet->ShowImGui();
 		bullet->Update();
 	}
 

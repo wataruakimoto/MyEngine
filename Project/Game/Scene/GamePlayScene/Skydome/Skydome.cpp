@@ -8,13 +8,13 @@ void Skydome::Initialize() {
 	ModelManager::GetInstance()->LoadModelData("Resources/Sphere", "sphere.obj");
 
 	// モデルの生成・初期化
-	model = new Model();
+	model = std::make_unique<Model>();
 	model->Initialize("Resources/Sphere", "sphere.obj");
 
 	// 3Dオブジェクトの生成・初期化
-	object = new Object3d();
+	object = std::make_unique<Object3d>();
 	object->Initialize();
-	object->SetModel(model);
+	object->SetModel(model.get());
 	object->SetScale({ 500.0f, 500.0f, 500.0f });
 }
 
@@ -37,10 +37,4 @@ void Skydome::Draw() {
 }
 
 void Skydome::Finalize() {
-
-	// 3Dオブジェクトの解放
-	delete object;
-
-	// モデルの解放
-	delete model;
 }

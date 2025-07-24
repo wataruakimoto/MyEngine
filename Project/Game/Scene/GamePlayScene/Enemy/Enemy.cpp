@@ -8,8 +8,7 @@
 void Enemy::Initialize() {
 
 	// ワールド変換の初期化
-	worldTransform_ = new WorldTransform();
-	worldTransform_->Initialize();
+	worldTransform_.Initialize();
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -47,7 +46,7 @@ void Enemy::Update() {
 	Vector3 playerPos = player->GetWorldTransform().GetTranslate();
 
 	// プレイヤーとの方向を計算
-	Vector3 direction = playerPos - worldTransform_->GetTranslate();
+	Vector3 direction = playerPos - worldTransform_.GetTranslate();
 	float length = Length(direction);
 	direction= { direction.x / length, direction.y / length, direction.z / length };
 
@@ -55,16 +54,16 @@ void Enemy::Update() {
 	Vector3 rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
 
 	// 向きを変える
-	worldTransform_->SetRotate(rotate);
+	worldTransform_.SetRotate(rotate);
 
  	// 移動速度を計算
 	Vector3 velocity = direction * moveSpeed;
 
 	// プレイヤーに向かって進む
-	worldTransform_->AddTranslate(velocity);
+	worldTransform_.AddTranslate(velocity);
 
-	object->SetTranslate(worldTransform_->GetTranslate());
-	object->SetRotate(worldTransform_->GetRotate());
+	object->SetTranslate(worldTransform_.GetTranslate());
+	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -85,7 +84,7 @@ void Enemy::ShowImGui() {
 
 	ImGui::Begin("Enemy");
 
-	worldTransform_->ShowImGui();
+	worldTransform_.ShowImGui();
 
 	ImGui::End();
 
@@ -101,7 +100,7 @@ void Enemy::OnCollision(Collider* other) {
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kBullet)) {
 
 		// パーティクル発生
-		EmitterTransform1.translate = worldTransform_->GetTranslate();
+		EmitterTransform1.translate = worldTransform_.GetTranslate();
 		particleEmitter1->SetTransform(EmitterTransform1);
 		particleEmitter1->Emit();
 
