@@ -4,6 +4,8 @@
 #include "3D/Model.h"
 #include "WorldTransform/WorldTransform.h"
 
+#include <memory>
+
 /// === 前方宣言 === ///
 class Player;
 class Camera;

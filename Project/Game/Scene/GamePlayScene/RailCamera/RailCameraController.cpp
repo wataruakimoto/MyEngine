@@ -12,7 +12,7 @@ void RailCameraController::Initialize() {
 	worldTransform.SetTranslate({ 0.0f, 0.0f, -50.0f });
 
 	// カメラの初期化
-	camera = new Camera();
+	camera = std::make_unique<Camera>();
 	camera->Initialize();
 }
 

@@ -1,6 +1,6 @@
 #include "Player.h"
 #include "input/input.h"
-#include "2d/TextureManager.h"
+#include "Scene/GamePlayScene/GamePlayScene.h"
 #include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
 #include "Scene/GamePlayScene/Reticle/Reticle3D.h"
 #include "Math/MathVector.h"
@@ -15,13 +15,13 @@ void Player::Initialize() {
 	worldTransform_->Initialize();
 
 	// モデルの生成・初期化
-	model = new Model();
+	model = std::make_unique<Model>();
 	model->Initialize("resources/player", "player.obj");
 
 	// 3Dオブジェクトの生成・初期化
-	object = new Object3d();
+	object = std::make_unique<Object3d>();
 	object->Initialize();
-	object->SetModel(model);
+	object->SetModel(model.get());
 	object->SetScale({ 1.0f, 1.0f, 1.0f });
 
 	isDead = false;
@@ -33,9 +33,6 @@ void Player::Initialize() {
 }
 
 void Player::Update() {
-
-	// デスフラグが立った弾を削除
-	bullets.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
 
 	// 射撃
 	if (fireTimer <= 0) {
@@ -49,13 +46,6 @@ void Player::Update() {
 	else {
 
 		fireTimer--;
-	}
-
-	// 弾の更新
-	for (std::unique_ptr<Bullet>& bullet : bullets) {
-
-		bullet->ShowImGui();
-		bullet->Update();
 	}
 
 	Move();
@@ -74,27 +64,9 @@ void Player::Draw() {
 
 	// 3Dオブジェクトの描画
 	object->Draw();
-
-	// 弾の描画
-	for (std::unique_ptr<Bullet>& bullet : bullets) {
-
-		bullet->Draw();
-	}
 }
 
 void Player::Finalize() {
-
-	// 残った弾の解放
-	for (std::unique_ptr<Bullet>& bullet : bullets) {
-
-		bullet->Finalize();
-	}
-
-	// 3Dオブジェクトの解放
-	delete object;
-
-	// モデルの解放
-	delete model;
 }
 
 void Player::ShowImGui() {
@@ -200,7 +172,7 @@ void Player::Move() {
 
 void Player::Fire() {
 
-	// 弾の生成
+	// 弾の生成&初期化
 	std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
 	bullet->Initialize();
 
@@ -212,8 +184,8 @@ void Player::Fire() {
 	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_->GetTranslate();
 	bullet->SetVelocity(velocity);
 
-	// 弾をリストに登録
-	bullets.push_back(std::move(bullet));
+	// ゲームプレイシーンの弾をリストに登録
+	gamePlayScene_->AddBullet(std::move(bullet));
 }
 
 void Player::OnCollision(Collider* other) {

@@ -8,8 +8,10 @@
 #include "Scene/GamePlayScene/Collision/CollisionManager.h"
 
 #include <list>
+#include <memory>
 
 /// === 前方宣言 === ///
+class GamePlayScene;
 class Reticle3D;
 
 /// ===== プレイヤー ===== ///
@@ -71,16 +73,21 @@ public:
 	/// <returns></returns>
 	bool IsDead() { return isDead; }
 
-	/// <summary>
-	/// 弾リストのゲッター
-	/// </summary>
-	std::list<std::unique_ptr<Bullet>>& GetBullets() { return bullets; }
-
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
 public:
 
+	/// <summary>
+	/// ゲームプレイシーンのセッター
+	/// </summary>
+	/// <param name="scene"></param>
+	void SetGamePlayScene(GamePlayScene* scene) { this->gamePlayScene_ = scene; }
+
+	/// <summary>
+	/// 3Dレティクルのセッター
+	/// </summary>
+	/// <param name="reticle"></param>
 	void SetReticle3D(Reticle3D* reticle) { this->reticle3D_ = reticle; }
 
 ///-------------------------------------------/// 
@@ -89,13 +96,10 @@ public:
 private:
 
 	// モデルのポインタ
-	Model* model = nullptr;
+	std::unique_ptr<Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	Object3d* object = nullptr;
-
-	// 弾リストのポインタ
-	std::list<std::unique_ptr<Bullet>> bullets;
+	std::unique_ptr<Object3d> object = nullptr;
 
 	float moveSpeed = 0.2f;
 
@@ -106,10 +110,9 @@ private:
 
 	bool isDead = false;
 
+	// ゲームプレイシーンの借りポインタ
+	GamePlayScene* gamePlayScene_ = nullptr;
+
 	// 3Dレティクルの借りポインタ
 	Reticle3D* reticle3D_ = nullptr;
-
-public:
-	// 弾リストを作成
-	const std::list<std::unique_ptr<Bullet>>& GetBullets() const { return bullets; }
 };

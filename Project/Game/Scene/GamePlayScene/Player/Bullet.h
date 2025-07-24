@@ -5,6 +5,8 @@
 #include "Scene/GamePlayScene/Collision/Basecharacter.h"
 #include "Scene/GamePlayScene/Collision/CollisionManager.h"
 
+#include <memory>
+
 /// ===== 弾 ===== ///
 class Bullet : public Basecharacter {
 
@@ -66,10 +68,10 @@ public:
 private:
 
 	// モデルのポインタ
-	Model* model = nullptr;
+	std::unique_ptr<Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	Object3d* object = nullptr;
+	std::unique_ptr<Object3d> object = nullptr;
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };

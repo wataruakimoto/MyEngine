@@ -7,6 +7,8 @@
 #include "3d/Particle/ParticleEmitter.h"
 #include "3D/Data/Transform.h"
 
+#include <memory>
+
 /// === 前方宣言 === ///
 class Player;
 
@@ -76,10 +78,10 @@ public:
 private:
 
 	// モデルのポインタ
-	Model* model = nullptr;
+	std::unique_ptr<Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	Object3d* object = nullptr;
+	std::unique_ptr<Object3d> object = nullptr;
 
 	// プレイヤーの借りポインタ
 	Player* player = nullptr;

@@ -61,6 +61,12 @@ public:
 	/// </summary>
 	void UpdateEnemyPopCommands();
 
+	/// <summary>
+	/// 弾の追加
+	/// </summary>
+	/// <param name="bullet"></param>
+	void AddBullet(std::unique_ptr<Bullet> bullet);
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

@@ -2,6 +2,8 @@
 #include "WorldTransform/WorldTransform.h"
 #include "Camera/Camera.h"
 
+#include <memory>
+
 /// ===== レールカメラコントローラー ===== ///
 class RailCameraController {
 
@@ -51,6 +53,6 @@ private:
 	WorldTransform worldTransform;
 
 	// カメラ
-	Camera* camera;
+	std::unique_ptr<Camera> camera = nullptr;
 };
 

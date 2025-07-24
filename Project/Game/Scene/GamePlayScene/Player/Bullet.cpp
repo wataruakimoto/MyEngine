@@ -10,13 +10,13 @@ void Bullet::Initialize() {
 	worldTransform_->Initialize();
 
 	// モデルの生成・初期化
-	model = new Model();
+	model = std::make_unique<Model>();
 	model->Initialize("resources/bullet", "bullet.obj");
 
 	// 3Dオブジェクトの生成・初期化
-	object = new Object3d();
+	object = std::make_unique<Object3d>();
 	object->Initialize();
-	object->SetModel(model);
+	object->SetModel(model.get());
 	object->SetScale({ 0.5f, 0.5f, 0.5f });
 
 	isDead = false;
@@ -55,12 +55,6 @@ void Bullet::Draw() {
 };
 
 void Bullet::Finalize() {
-
-	// 3Dオブジェクトの解放
-	delete object;
-
-	// モデルの解放
-	delete model;
 }
 
 void Bullet::ShowImGui() {

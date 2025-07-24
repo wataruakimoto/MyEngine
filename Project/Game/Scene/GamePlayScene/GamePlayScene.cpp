@@ -36,6 +36,7 @@ void GamePlayScene::Initialize() {
 	player = std::make_unique<Player>();
 	player->Initialize();
 	player->GetWorldTransform().SetParent(&railCameraController_->GetWorldTransform());
+	player->SetGamePlayScene(this);
 
 	// 敵の生成
 	LoadEnemyPopData();
@@ -68,6 +69,9 @@ void GamePlayScene::Update() {
 	// デスフラグの立った敵を削除
 	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) {return enemy->IsDead(); });
 
+	// デスフラグが立った弾を削除
+	bullets_.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
+
 	// プレイヤーが死んでいたら
 	if (player->IsDead()) {
 
@@ -93,8 +97,12 @@ void GamePlayScene::Update() {
 	// プレイヤー更新
 	player->Update();
 
-	// 弾のリストを受け取る
-	bullets_ = player->GetBullets();
+	// 弾の更新
+	for (std::unique_ptr<Bullet>& bullet : bullets_) {
+
+		bullet->ShowImGui();
+		bullet->Update();
+	}
 
 	// 敵発生コマンドの更新
 	UpdateEnemyPopCommands();
@@ -137,6 +145,12 @@ void GamePlayScene::Draw() {
 
 	// プレイヤー描画
 	player->Draw();
+
+	// 弾の描画
+	for (std::unique_ptr<Bullet>& bullet : bullets_) {
+
+		bullet->Draw();
+	}
 
 	// 敵描画
 	for (std::unique_ptr<Enemy>& enemy : enemies_) {
@@ -190,9 +204,9 @@ void GamePlayScene::ShowImGui() {
 
 	player->ShowImGui();
 
-	for (std::unique_ptr<Enemy>& enemy : enemies_) {
-		enemy->ShowImGui();
-	}
+	for (std::unique_ptr<Enemy>& enemy : enemies_) { enemy->ShowImGui(); }
+
+	for (std::unique_ptr<Bullet>& bullet : bullets_) { bullet->ShowImGui(); }
 
 	reticle3D_->ShowImGui();
 	reticle2D_->ShowImGui();
@@ -304,4 +318,10 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 			break;
 		}
 	}
+}
+
+void GamePlayScene::AddBullet(std::unique_ptr<Bullet> bullet) {
+
+	// 弾をリストに登録
+	bullets_.push_back(std::move(bullet));
 }
