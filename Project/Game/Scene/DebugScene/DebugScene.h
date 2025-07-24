@@ -34,6 +34,11 @@ public:
 	/// </summary>
 	void Finalize() override;
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

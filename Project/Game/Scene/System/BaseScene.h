@@ -32,4 +32,9 @@ public:
 	/// 終了
 	/// </summary>
 	virtual void Finalize() = 0;
+
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	virtual void ShowImGui() = 0;
 };

@@ -62,7 +62,7 @@ void Player::Update() {
 void Player::Draw() {
 
 	// 3Dオブジェクトの描画
-	object->Draw();
+	object->Draw(worldTransform_);
 }
 
 void Player::Finalize() {
@@ -77,6 +77,10 @@ void Player::ShowImGui() {
 	worldTransform_.ShowImGui();
 
 	ImGui::SliderFloat3("Velocity", &velocity_.x, -0.2f, 0.2f);
+
+	object->ShowImGui();
+
+	model->ShowImGui();
 
 	ImGui::End();
 

@@ -11,3 +11,6 @@ void GameOverScene::Draw() {
 
 void GameOverScene::Finalize() {
 }
+
+void GameOverScene::ShowImGui() {
+}

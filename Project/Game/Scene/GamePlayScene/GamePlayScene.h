@@ -44,7 +44,7 @@ public:
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
-	void ShowImGui();
+	void ShowImGui() override;
 
 	/// <summary>
 	/// 衝突判定と応答

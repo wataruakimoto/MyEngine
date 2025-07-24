@@ -22,7 +22,13 @@ void Skydome::Update() {
 
 #ifdef _DEBUG
 
-	object->ShowImGui("Skydome");
+	ImGui::Begin("Skydome");
+
+	object->ShowImGui();
+
+	model->ShowImGui();
+
+	ImGui::End();
 
 #endif // _DEBUG
 

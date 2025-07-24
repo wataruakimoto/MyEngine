@@ -85,9 +85,6 @@ void GamePlayScene::Update() {
 		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 
-	// ImGuiの表示
-	ShowImGui();
-
 	// レールカメラコントローラーの更新
 	railCameraController_->Update();
 
@@ -140,7 +137,7 @@ void GamePlayScene::Draw() {
 	//TODO: 全ての3Dオブジェクト個々の描画
 
 	// 天球描画
-	skydome->Draw();
+	//skydome->Draw();
 
 	// プレイヤー描画
 	player->Draw();
@@ -148,26 +145,26 @@ void GamePlayScene::Draw() {
 	// 弾の描画
 	for (std::unique_ptr<Bullet>& bullet : bullets_) {
 
-		bullet->Draw();
+		//bullet->Draw();
 	}
 
 	// 敵描画
 	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 
-		enemy->Draw();
+		//enemy->Draw();
 	}
 
 	// 3Dレティクルの描画
-	reticle3D_->Draw();
+	//reticle3D_->Draw();
 
 	// 衝突マネージャの描画
-	collisionManager_->Draw();
+	//collisionManager_->Draw();
 
 	/// === パーティクルの描画準備 === ///
 	ParticleCommon::GetInstance()->SettingDrawing();
 
 	// パーティクルシステムの描画
-	ParticleSystem::GetInstance()->Draw();
+	//ParticleSystem::GetInstance()->Draw();
 
 	/// === UIの描画準備 === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
@@ -175,7 +172,7 @@ void GamePlayScene::Draw() {
 	// TODO: 全てのスプライト個々の描画
 
 	// 2Dレティクルの描画
-	reticle2D_->Draw();
+	//reticle2D_->Draw();
 }
 
 void GamePlayScene::Finalize() {

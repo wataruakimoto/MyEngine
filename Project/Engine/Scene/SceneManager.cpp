@@ -32,6 +32,9 @@ void SceneManager::Update() {
 
 	// 実行中のシーンを更新
 	scene_->Update();
+
+	// ImGuiの表示
+	scene_->ShowImGui();
 }
 
 void SceneManager::Draw() {

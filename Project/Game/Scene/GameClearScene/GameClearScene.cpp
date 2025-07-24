@@ -11,3 +11,6 @@ void GameClearScene::Draw() {
 
 void GameClearScene::Finalize() {
 }
+
+void GameClearScene::ShowImGui() {
+}

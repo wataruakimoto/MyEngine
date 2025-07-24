@@ -10,6 +10,7 @@
 #include "math/Vector4.h"
 
 #include <numbers>
+#include <imgui.h>
 
 void DebugScene::Initialize() {
 
@@ -82,20 +83,11 @@ void DebugScene::Update() {
 
 	/// === 3Dオブジェクト更新 === ///
 
-	monsterBall->ShowImGui("monsterBall");
 	monsterBall->Update();
 
-	terrain->ShowImGui("terrain");
 	terrain->Update();
 
-	particleEmitter1->ShowImGui("circle2");
 	particleEmitter1->Emit();
-
-	particleEmitter2->ShowImGui("ring");
-
-	particleEmitter3->ShowImGui("cylinder");
-
-	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
 
 	// パーティクルシステムの更新
 	ParticleSystem::GetInstance()->Update();
@@ -119,4 +111,27 @@ void DebugScene::Draw() {
 }
 
 void DebugScene::Finalize() {
+}
+
+void DebugScene::ShowImGui() {
+
+	ImGui::Begin("monsterBall");
+
+	monsterBall->ShowImGui();
+
+	ImGui::End();
+
+	ImGui::Begin("terrain");
+
+	terrain->ShowImGui();
+
+	ImGui::End();
+
+	particleEmitter1->ShowImGui("circle2");
+
+	particleEmitter2->ShowImGui("ring");
+
+	particleEmitter3->ShowImGui("cylinder");
+
+	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
 }

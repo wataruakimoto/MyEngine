@@ -99,49 +99,44 @@ void Object3d::Draw(WorldTransform worldTransform) {
 	}
 }
 
-void Object3d::ShowImGui(const char* name) {
+void Object3d::ShowImGui() {
 
-#ifdef _DEBUG
-	ImGui::Begin(name);
+	if (ImGui::TreeNode("Object3d")) {
 
-	ImGui::Checkbox("Draw", &isDraw);
+		ImGui::Checkbox("Draw", &isDraw);
 
-	worldTransform.ShowImGui();
+		worldTransform.ShowImGui();
 
-	if (ImGui::TreeNode("DirectionalLight")) {
-		ImGui::ColorEdit4("Color", &directionalLightData->color.x); // 色
-		ImGui::DragFloat3("Direction", &directionalLightData->direction.x, 0.01f); // 向き
-		ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f); // 輝度
+		if (ImGui::TreeNode("DirectionalLight")) {
+			ImGui::ColorEdit4("Color", &directionalLightData->color.x); // 色
+			ImGui::DragFloat3("Direction", &directionalLightData->direction.x, 0.01f); // 向き
+			ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f); // 輝度
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("PointLight")) {
+			ImGui::ColorEdit4("Color", &pointLightData->color.x); // 色
+			ImGui::DragFloat3("Position", &pointLightData->position.x, 0.01f); // 位置
+			ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f); // 輝度
+			ImGui::DragFloat("Distance", &pointLightData->distance, 0.01f); // 最大距離
+			ImGui::DragFloat("Decay", &pointLightData->decay, 0.01f); // 減衰率
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("SpotLight")) {
+			ImGui::ColorEdit4("Color", &spotLightData->color.x); // 色
+			ImGui::DragFloat3("Position", &spotLightData->position.x, 0.01f); // 位置
+			ImGui::DragFloat3("Direction", &spotLightData->direction.x, 0.01f); // 向き
+			ImGui::DragFloat("Intensity", &spotLightData->intensity, 0.01f); // 輝度
+			ImGui::DragFloat("Distance", &spotLightData->distance, 0.01f); // 最大距離
+			ImGui::DragFloat("Decay", &spotLightData->decay, 0.01f); // 減衰率
+			ImGui::DragFloat("CosAngle", &spotLightData->cosAngle, 0.01f); // 余弦
+			ImGui::DragFloat("CosFalloffStart", &spotLightData->cosFalloffStart, 0.01f); // Falloff開始角度
+			ImGui::TreePop();
+		}
+
 		ImGui::TreePop();
 	}
-
-	if (ImGui::TreeNode("PointLight")) {
-		ImGui::ColorEdit4("Color", &pointLightData->color.x); // 色
-		ImGui::DragFloat3("Position", &pointLightData->position.x, 0.01f); // 位置
-		ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f); // 輝度
-		ImGui::DragFloat("Distance", &pointLightData->distance, 0.01f); // 最大距離
-		ImGui::DragFloat("Decay", &pointLightData->decay, 0.01f); // 減衰率
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("SpotLight")) {
-		ImGui::ColorEdit4("Color", &spotLightData->color.x); // 色
-		ImGui::DragFloat3("Position", &spotLightData->position.x, 0.01f); // 位置
-		ImGui::DragFloat3("Direction", &spotLightData->direction.x, 0.01f); // 向き
-		ImGui::DragFloat("Intensity", &spotLightData->intensity, 0.01f); // 輝度
-		ImGui::DragFloat("Distance", &spotLightData->distance, 0.01f); // 最大距離
-		ImGui::DragFloat("Decay", &spotLightData->decay, 0.01f); // 減衰率
-		ImGui::DragFloat("CosAngle", &spotLightData->cosAngle, 0.01f); // 余弦
-		ImGui::DragFloat("CosFalloffStart", &spotLightData->cosFalloffStart, 0.01f); // Falloff開始角度
-		ImGui::TreePop();
-	}
-
-	if (model) {
-		model->ShowImGui();
-	}
-
-	ImGui::End();
-#endif // _DEBUG
 }
 
 void Object3d::InitializeDirectionalLightData() {
