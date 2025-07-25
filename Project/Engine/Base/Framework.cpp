@@ -48,7 +48,7 @@ void Framework::Initialize() {
 	TextureManager::GetInstance()->Initialize();
 
 	// ポストエフェクトパイプラインの初期化
-	filter = std::make_unique<FullScreenFilter>();
+	filter = std::make_unique<RandomFilter>();
 	filter->Initialize(postEffect.get());
 
 	// モデルマネージャ初期化

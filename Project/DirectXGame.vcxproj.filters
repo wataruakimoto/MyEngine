@@ -145,6 +145,7 @@
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\RailCamera\RailCameraController.cpp" />
     <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -281,6 +282,7 @@
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\RailCamera\RailCameraController.h" />
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
@@ -320,5 +322,6 @@
     <FxCompile Include="Resources\Shaders\Skybox.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\RadialBlur.PS.hlsl" />
     <FxCompile Include="Resources\Shaders\Dissolve.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Random.PS.hlsl" />
   </ItemGroup>
 </Project>
