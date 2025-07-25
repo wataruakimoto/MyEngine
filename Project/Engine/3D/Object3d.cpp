@@ -77,10 +77,13 @@ void Object3d::Draw() {
 
 void Object3d::Draw(WorldTransform worldTransform) {
 
+	// 引数のワールド変換をメンバのワールド変換に上書き
+	this->worldTransform = worldTransform;
+
 	if (isDraw) {
 		
-		// 引数のワールド変換の行列の転送
-		worldTransform.TransferMatrix();
+		// ワールド変換の行列の転送
+		this->worldTransform.TransferMatrix();
 
 		/// === 平行光源CBufferの場所を設定 === ///
 		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());

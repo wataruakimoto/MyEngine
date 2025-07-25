@@ -51,14 +51,14 @@ void WorldTransform::UpdateMatrix() {
 		// WVP行列はワールド行列と同じにしておく
 		WVPMatrix_ = worldMatrix_;
 	}
-}
-
-void WorldTransform::TransferMatrix() {
 
 	// 座標変換データに書き込む
 	transformationData_.worldMatrix = worldMatrix_;
 	transformationData_.WVPMatrix = WVPMatrix_;
 	transformationData_.worldInverseTranspose = Inverse(worldMatrix_);
+}
+
+void WorldTransform::TransferMatrix() {
 
 	// コマンドリストにリソースを転送
 	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationResource_->GetGPUVirtualAddress());
