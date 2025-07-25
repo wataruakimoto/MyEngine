@@ -127,5 +127,8 @@ private:
 	Material* materialData = nullptr;
 
 	// 環境マップ用のファイルパス
-	std::string environmentMapFilePath = "";
+	std::string environmentMapFilePath = "Resources/rostock_laage_airport_4k.dds";
+
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility = nullptr;
 };

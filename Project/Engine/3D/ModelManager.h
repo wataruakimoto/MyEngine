@@ -10,9 +10,6 @@
 #include <map>
 #include <memory>
 
-/// === 前方宣言 === ///
-class DirectXUtility;
-
 /// === モデルマネージャー === ///
 class ModelManager {
 
@@ -50,8 +47,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="dxUtility">DirectX基盤</param>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 終了

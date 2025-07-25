@@ -5,13 +5,10 @@
 
 using namespace Microsoft::WRL;
 
-void PostEffect::Initialize(DirectXUtility* dxUtility) {
+void PostEffect::Initialize() {
 
-	// NULL検出
-	assert(dxUtility);
-
-	// メンバ変数に記録
-	this->dxUtility = dxUtility;
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
 
 	// ディスクリプタヒープの生成
 	DescriptorHeapGenerate();

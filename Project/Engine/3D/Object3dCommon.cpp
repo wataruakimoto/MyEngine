@@ -17,10 +17,10 @@ Object3dCommon* Object3dCommon::GetInstance() {
 	return instance;
 }
 
-void Object3dCommon::Initialize(DirectXUtility* dxUtility) {
+void Object3dCommon::Initialize() {
 
-	// 引数をメンバ変数に代入
-	dxUtility_ = dxUtility;
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();

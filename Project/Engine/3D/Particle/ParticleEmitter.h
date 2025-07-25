@@ -24,6 +24,8 @@ public:
 
 	void ShowImGui(const char* name);
 
+	void SetTransform(const Transform& transform) { this->transform = transform; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

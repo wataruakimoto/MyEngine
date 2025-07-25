@@ -14,7 +14,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility, PostEffect* postEffect) override;
+	void Initialize(PostEffect* postEffect) override;
 
 	/// <summary>
 	/// 描画設定

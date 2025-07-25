@@ -1,6 +1,7 @@
 #include "MathVector.h"
 #define _USE_MATH_DEFINES
 #include <cmath>
+#include <cassert>
 
 Vector2 Add(const Vector2& v1, const Vector2& v2) {
 
@@ -124,6 +125,15 @@ Vector3& operator/=(Vector3& v, float s)
 	return v;
 }
 
+float Length(const Vector2& v) {
+	return sqrtf(v.x * v.x + v.y * v.y);
+}
+
+float Length(const Vector3& v) {
+	
+	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
 Vector3 Normalize(const Vector3& v) {
 
 	float length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -131,6 +141,27 @@ Vector3 Normalize(const Vector3& v) {
 	if (length == 0) { return Vector3(0.0f, 0.0f, 0.0f);}
     
 	return Vector3(v.x / length, v.y / length, v.z / length);
+}
+
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix) {
+
+	// w = 1 がデカルト座標系であるので(x,y,z,1)のベクトルとしてmatrixとの積をとる
+	Vector3 resultTransform = {};
+
+	resultTransform.x = vector.x * matrix.m[0][0] + vector.y * matrix.m[1][0] + vector.z * matrix.m[2][0] + 1.0f * matrix.m[3][0];
+	resultTransform.y = vector.x * matrix.m[0][1] + vector.y * matrix.m[1][1] + vector.z * matrix.m[2][1] + 1.0f * matrix.m[3][1];
+	resultTransform.z = vector.x * matrix.m[0][2] + vector.y * matrix.m[1][2] + vector.z * matrix.m[2][2] + 1.0f * matrix.m[3][2];
+	float w = vector.x * matrix.m[0][3] + vector.y * matrix.m[1][3] + vector.z * matrix.m[2][3] + 1.0f * matrix.m[3][3];
+
+	// ベクトルに対して基本的な操作を行う行列でwが0になることはありえない
+	assert(w != 0.0f);
+
+	// w = 1 がデカルト座標系であるので、w除算することで同次座標をデカルト座標に戻す
+	resultTransform.x /= w;
+	resultTransform.y /= w;
+	resultTransform.z /= w;
+
+	return resultTransform;
 }
 
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m) {

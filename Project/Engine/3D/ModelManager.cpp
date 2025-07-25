@@ -1,10 +1,10 @@
 #include "ModelManager.h"
-#include "base/DirectXUtility.h"
 #include "Debug/Logger.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
 using namespace Logger;
 
@@ -18,7 +18,7 @@ ModelManager* ModelManager::GetInstance() {
 	return instance;
 }
 
-void ModelManager::Initialize(DirectXUtility* dxUtility) {}
+void ModelManager::Initialize() {}
 
 void ModelManager::Finalize() {
 
@@ -176,8 +176,8 @@ ModelData* ModelManager::FindModelData(const std::string& directoryPath, const s
 		return modelDatas.at(filePath).get();
 	}
 
-	// ファイル名一致なしならAssertする
-	assert(0 && "ModelData not found");
+	// ファイル名一致なしならログを出す
+	Log("ModelManager::FindModelData: Model data not found for " + filePath);
 	return nullptr;
 }
 

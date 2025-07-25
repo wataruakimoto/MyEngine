@@ -6,10 +6,10 @@
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void SkyboxCommon::Initialize(DirectXUtility* dxUtility) {
+void SkyboxCommon::Initialize() {
 
-	// 引数をメンバ変数に代入
-	dxUtility_ = dxUtility;
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();

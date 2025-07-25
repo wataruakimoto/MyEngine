@@ -26,7 +26,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	virtual void Initialize(DirectXUtility* dxUtility, PostEffect* postEffect) = 0;
+	virtual void Initialize(PostEffect* postEffect) = 0;
 
 	/// <summary>
 	/// 描画設定
@@ -88,7 +88,7 @@ protected:
 ///-------------------------------------------///
 protected:
 
-	// DirectXUtilityのポインタ
+	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;
 
 	// PostEffectのポインタ
