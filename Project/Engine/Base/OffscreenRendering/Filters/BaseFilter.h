@@ -3,6 +3,7 @@
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <wrl.h>
+#include <cstdint>
 
 /// ===== 前方宣言 ===== ///
 class DirectXUtility;
@@ -21,12 +22,12 @@ public:
 	/// <summary>
 	/// 仮想デストラクタ
 	/// </summary>
-	~BaseFilter() = default;
+	virtual ~BaseFilter() = default;
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	virtual void Initialize(PostEffect* postEffect) = 0;
+	virtual void Initialize() = 0;
 
 	/// <summary>
 	/// 描画設定
@@ -84,15 +85,40 @@ protected:
 	virtual void CreateGraphicsPipeline() = 0;
 
 ///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 有効化フラグのゲッター
+	/// </summary>
+	/// <returns></returns>
+	bool GetIsActive() const { return isActive; }
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// SRVインデックスのセッター
+	/// </summary>
+	/// <param name="srvIndex"></param>
+	void SetSrvIndex(uint32_t& srvIndex) { this->srvIndex = srvIndex; }
+
+	/// <summary>
+	/// 有効化フラグのセッター
+	/// </summary>
+	/// <param name="isActive"></param>
+	void SetIsActive(bool isActive) { this->isActive = isActive; }
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 protected:
 
 	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;
-
-	// PostEffectのポインタ
-	PostEffect* postEffect = nullptr;
 
 	// HRESULT
 	HRESULT hr;
@@ -120,5 +146,11 @@ protected:
 
 	// GraphicsPipeline
 	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
+
+	// 有効化フラグ
+	bool isActive = false;
+
+	// SRVインデックス
+	uint32_t srvIndex = 0;
 };
 

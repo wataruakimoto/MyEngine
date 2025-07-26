@@ -91,6 +91,11 @@ public:
 private:
 
 	/// <summary>
+	/// 座標変換行列データ初期化
+	/// </summary>
+	void InitializeTransformationMatrixData();
+
+	/// <summary>
 	/// 平行光源データ初期化
 	/// </summary>
 	void InitializeDirectionalLightData();
@@ -221,6 +226,8 @@ public:
 ///-------------------------------------------///
 private:
 
+	// 座標変換行列リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
 	// 平行光源リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
 	// 点光源リソース
@@ -230,6 +237,8 @@ private:
 	// カメラリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
+	// 座標変換行列データ
+	TransformationMatrix* transformationMatrixData = nullptr;
 	// 平行光源データ
 	DirectionalLight* directionalLightData = nullptr;
 	// 点光源データ

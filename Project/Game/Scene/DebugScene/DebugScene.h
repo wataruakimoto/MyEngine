@@ -48,25 +48,8 @@ private:
 	std::unique_ptr <Camera> camera = nullptr;
 
 	// モデルのポインタ
-	std::unique_ptr <Model> modelMonsterBall = nullptr;
-
 	std::unique_ptr <Model> modelTerrain = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	std::unique_ptr <Object3d> monsterBall = nullptr;
-
 	std::unique_ptr <Object3d> terrain = nullptr;
-
-	// パーティクル発生機
-	std::unique_ptr <ParticleEmitter> particleEmitter1 = nullptr;
-	std::unique_ptr <ParticleEmitter> particleEmitter2 = nullptr;
-	std::unique_ptr <ParticleEmitter> particleEmitter3 = nullptr;
-
-	Transform EmitterTransform1 = {};
-	Transform EmitterTransform2 = {};
-	Transform EmitterTransform3 = {};
-
-	Particle particleSetting1 = {};
-	Particle particleSetting2 = {};
-	Particle particleSetting3 = {};
 };

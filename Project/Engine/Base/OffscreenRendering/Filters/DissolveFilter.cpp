@@ -10,10 +10,7 @@
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void DissolveFilter::Initialize(PostEffect* postEffect) {
-
-	// 引数をメンバ変数にコピー
-	this->postEffect = postEffect;
+void DissolveFilter::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
@@ -40,7 +37,7 @@ void DissolveFilter::Draw() {
 	dxUtility->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 
 	/// === SRVのDescriptorTableを設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(maskTextureSrvIndex));
@@ -56,13 +53,18 @@ void DissolveFilter::ShowImGui() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("DissolveFilter");
+	if (ImGui::TreeNode("DissolveFilter")) {
 
-	ImGui::SliderFloat("Threshold", &configData->threshold, 0.0f, 1.0f, "%.2f");
-	ImGui::SliderFloat("DetectionRange", &configData->detectionRange, 0.0f, 0.1f, "%.3f");
-	ImGui::ColorEdit3("EdgeColor", &configData->edgeColor.x);
+		// 有効化フラグのチェックボックス
+		ImGui::Checkbox("IsActive", &isActive);
 
-	ImGui::End();
+		ImGui::SliderFloat("Threshold", &configData->threshold, 0.0f, 1.0f, "%.2f");
+		ImGui::SliderFloat("DetectionRange", &configData->detectionRange, 0.0f, 0.1f, "%.3f");
+		ImGui::ColorEdit3("EdgeColor", &configData->edgeColor.x);
+
+		// ImGuiのツリーを閉じる
+		ImGui::TreePop();
+	}
 	
 #endif // _DEBUG
 }

@@ -14,12 +14,17 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(PostEffect* postEffect) override;
+	void Initialize() override;
 
 	/// <summary>
 	/// 描画設定
 	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -77,10 +82,16 @@ private:
 public:
 
 	/// <summary>
-	/// カメラのセット
+	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
 	void SetCamera(Camera* camera) { this->camera = camera; }
+
+	/// <summary>
+	/// 深度用SRVインデックスのセッター
+	/// </summary>
+	/// <param name="index"></param>
+	void SetDepthSrvIndex(uint32_t index) { depthSrvIndex = index; }
 
 ///-------------------------------------------/// 
 /// 構造体
@@ -104,5 +115,8 @@ private:
 
 	// カメラの借りポインタ
 	Camera* camera = nullptr;
+	
+	// 深度用SRVインデックス
+	uint32_t depthSrvIndex = 0;
 };
 

@@ -13,12 +13,17 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(PostEffect* postEffect) override;
+	void Initialize() override;
 
 	/// <summary>
 	/// 描画設定
 	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
 
 ///-------------------------------------------/// 
 /// クラス内関数

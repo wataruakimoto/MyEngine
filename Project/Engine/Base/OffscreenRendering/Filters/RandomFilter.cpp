@@ -4,13 +4,12 @@
 #include "Base/OffscreenRendering/PostEffect.h"
 #include "Debug/Logger.h"
 
+#include <imgui.h>
+
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void RandomFilter::Initialize(PostEffect* postEffect) {
-
-	// 引数をメンバ変数にコピー
-	this->postEffect = postEffect;
+void RandomFilter::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
@@ -39,7 +38,7 @@ void RandomFilter::Draw() {
 	dxUtility->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 
 	/// === CBufferの設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, configResource->GetGPUVirtualAddress());
@@ -49,6 +48,14 @@ void RandomFilter::Draw() {
 }
 
 void RandomFilter::ShowImGui() {
+
+	if (ImGui::TreeNode("RandomFilter")) {
+
+		// 有効化フラグのチェックボックス
+		ImGui::Checkbox("IsActive", &isActive);
+		// ImGuiのツリーを閉じる
+		ImGui::TreePop();
+	}
 }
 
 void RandomFilter::CreateRootSignature() {
