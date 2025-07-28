@@ -65,7 +65,7 @@ void Enemy::Update() {
 	object->SetTranslate(worldTransform_.GetTranslate());
 	object->SetRotate(worldTransform_.GetRotate());
 
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -74,7 +74,7 @@ void Enemy::Update() {
 void Enemy::Draw() {
 
 	// 3Dオブジェクトの描画
-	object->Draw(worldTransform_);
+	object->Draw();
 }
 
 void Enemy::Finalize() {

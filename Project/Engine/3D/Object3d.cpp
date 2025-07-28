@@ -17,14 +17,14 @@ using namespace MathMatrix;
 
 void Object3d::Initialize() {
 
+	// Transform変数を作る
+	transform = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
 	// デフォルトカメラをセット
 	this->camera = Object3dCommon::GetInstance()->GetDefaultCamera();
-
-	// ワールド変換の初期化
-	worldTransform.Initialize();
 
 	InitializeTransformationMatrixData();
 
@@ -39,11 +39,8 @@ void Object3d::Initialize() {
 
 void Object3d::Update() {
 
-	// ワールド変換の行列の更新
-	worldTransform.UpdateMatrix();
-
 	/// === TransformからWorldMatrixを作る === ///
-	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
+	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
 
 	// WVP
 	Matrix4x4 worldViewProjectionMatrix;
@@ -103,40 +100,11 @@ void Object3d::Draw() {
 	}
 }
 
-void Object3d::Draw(WorldTransform worldTransform) {
-
-	// 引数のワールド変換をメンバのワールド変換に上書き
-	this->worldTransform = worldTransform;
-
-	if (isDraw) {
-		
-		// ワールド変換の行列の転送
-		this->worldTransform.TransferMatrix();
-
-		/// === 平行光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
-		/// === 点光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
-		/// === スポットライトCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
-		/// === カメラCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(7, cameraResource->GetGPUVirtualAddress());
-
-		// 3Dモデルが割り当てられていれば描画する
-		if (model) {
-
-			model->Draw();
-		}
-	}
-}
-
 void Object3d::ShowImGui() {
 
 	if (ImGui::TreeNode("Object3d")) {
 
 		ImGui::Checkbox("Draw", &isDraw);
-
-		worldTransform.ShowImGui();
 
 		if (ImGui::TreeNode("DirectionalLight")) {
 			ImGui::ColorEdit4("Color", &directionalLightData->color.x); // 色

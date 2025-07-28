@@ -1,6 +1,8 @@
 #include "DebugScene.h"
 #include "3d/Object3dCommon.h"
 #include "Base/OffscreenRendering/FilterManager.h"
+#include "Input/Input.h"
+#include "Scene/SceneManager.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
 #include "math/Vector4.h"
@@ -29,6 +31,12 @@ void DebugScene::Initialize() {
 }
 
 void DebugScene::Update() {
+
+	if (Input::GetInstance()->TriggerKey(DIK_1)) {
+
+		// シーンの切り替え
+		SceneManager::GetInstance()->ChangeScene("PLAY");
+	}
 
 	// カメラの更新
 	camera->Update();

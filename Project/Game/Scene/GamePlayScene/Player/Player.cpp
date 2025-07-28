@@ -50,7 +50,7 @@ void Player::Update() {
 	Move();
 
 	// ワールド変換の更新
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	object->SetTranslate(worldTransform_.GetTranslate());
 	object->SetRotate(worldTransform_.GetRotate());
@@ -62,7 +62,7 @@ void Player::Update() {
 void Player::Draw() {
 
 	// 3Dオブジェクトの描画
-	object->Draw(worldTransform_);
+	object->Draw();
 }
 
 void Player::Finalize() {
