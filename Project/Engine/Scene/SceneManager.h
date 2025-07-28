@@ -2,7 +2,6 @@
 
 #include "Scene/System/BaseScene.h"
 #include "AbstractSceneFactory.h"
-#include "Camera/Camera.h"
 
 /// ===== シーン管理 ===== ///
 class SceneManager {
@@ -57,12 +56,6 @@ public:
 	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
 
 	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { camera_ = camera; }
-
-	/// <summary>
 	/// シーンを変更
 	/// </summary>
 	/// <param name="sceneName">シーン名</param>
@@ -81,7 +74,4 @@ private:
 
 	// シーンファクトリー
 	AbstractSceneFactory* sceneFactory_ = nullptr;
-
-	// カメラ
-	Camera* camera_ = nullptr;
 };

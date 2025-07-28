@@ -26,6 +26,8 @@ void Object3d::Initialize() {
 	// ワールド変換の初期化
 	worldTransform.Initialize();
 
+	InitializeTransformationMatrixData();
+
 	InitializeDirectionalLightData();
 
 	InitializePointLightData();
@@ -40,6 +42,32 @@ void Object3d::Update() {
 	// ワールド変換の行列の更新
 	worldTransform.UpdateMatrix();
 
+	/// === TransformからWorldMatrixを作る === ///
+	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
+
+	// WVP
+	Matrix4x4 worldViewProjectionMatrix;
+
+	// カメラがあればviewProjectionをもらってWVPの計算を行う
+	if (camera) {
+
+		const Matrix4x4& viewProjectionMatrix = camera->GetViewProjectionMatrix();
+		worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
+
+		// カメラのワールド座標を代入
+		*cameraData = camera->GetWorldPosition();
+
+		// カメラがなければworldMatrixを代入
+	}
+	else {
+
+		worldViewProjectionMatrix = worldMatrix;
+	}
+
+	transformationMatrixData->WVP = model->GetRootMatrix() * worldViewProjectionMatrix;
+	transformationMatrixData->world = model->GetRootMatrix() * worldMatrix;
+	transformationMatrixData->worldInverseTranspose = Inverse(model->GetRootMatrix() * worldMatrix);
+
 	directionalLightData->direction = Normalize(directionalLightData->direction);
 	spotLightData->direction = Normalize(spotLightData->direction);
 
@@ -53,8 +81,8 @@ void Object3d::Draw() {
 
 	if (isDraw) {
 
-		// ワールド変換の行列の転送
-		worldTransform.TransferMatrix();
+		/// === 座標変換行列CBufferの場所を設定 === ///
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
 
 		/// === 平行光源CBufferの場所を設定 === ///
 		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
@@ -140,6 +168,20 @@ void Object3d::ShowImGui() {
 
 		ImGui::TreePop();
 	}
+}
+
+void Object3d::InitializeTransformationMatrixData() {
+
+	/// === TransformationMatrixResourceを作る === ///
+	transformationMatrixResource = dxUtility->CreateBufferResource(sizeof(TransformationMatrix));
+
+	/// === TransformationMatrixResourceにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる === ///
+	transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
+
+	/// === TransformationMatrixDataの初期値を書き込む === ///
+	transformationMatrixData->WVP = MakeIdentity4x4(); // 単位行列を書き込む
+	transformationMatrixData->world = MakeIdentity4x4(); // 単位行列を書き込む
+	transformationMatrixData->worldInverseTranspose = MakeIdentity4x4(); // 単位行列を書き込む
 }
 
 void Object3d::InitializeDirectionalLightData() {

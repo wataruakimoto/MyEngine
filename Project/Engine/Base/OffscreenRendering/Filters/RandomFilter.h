@@ -1,10 +1,8 @@
 #pragma once
-
 #include "BaseFilter.h"
-#include "Math/Matrix4x4.h"
 
-/// ===== 深度アウトラインフィルター ===== ///
-class DepthOutlineFilter : public BaseFilter {
+/// ===== ランダムフィルター ===== ///
+class RandomFilter : public BaseFilter {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -72,35 +70,18 @@ private:
 	void CreateGraphicsPipeline() override;
 
 	/// <summary>
-	/// マテリアルデータ生成
+	/// コンフィグデータ作成
 	/// </summary>
-	void GenerateMaterialData();
-
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
-
-	/// <summary>
-	/// 深度用SRVインデックスのセッター
-	/// </summary>
-	/// <param name="index"></param>
-	void SetDepthSrvIndex(uint32_t index) { depthSrvIndex = index; }
+	void CreateConfigData();
 
 ///-------------------------------------------/// 
 /// 構造体
 ///-------------------------------------------///
 public:
 
-	struct Material {
+	struct Config {
 
-		Matrix4x4 projectionInverse; // 投影逆行列
+		float time; // 時間
 	};
 
 ///-------------------------------------------/// 
@@ -108,15 +89,10 @@ public:
 ///-------------------------------------------///
 private:
 
-	// マテリアルリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
-	// マテリアルデータ
-	Material* materialData = nullptr;
+	// コンフィグデータ
+	Config* configData = nullptr;
 
-	// カメラの借りポインタ
-	Camera* camera = nullptr;
-	
-	// 深度用SRVインデックス
-	uint32_t depthSrvIndex = 0;
+	// コンフィグのリソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 };
 

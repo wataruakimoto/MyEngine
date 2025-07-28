@@ -1,4 +1,4 @@
-#include "GrayscaleFilter.h"
+#include "RandomFilter.h"
 #include "Base/DirectXUtility.h"
 #include "Base/SrvManager.h"
 #include "Base/OffscreenRendering/PostEffect.h"
@@ -9,16 +9,21 @@
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void GrayscaleFilter::Initialize() {
+void RandomFilter::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
 	// パイプライン作成
 	CreateGraphicsPipeline();
+
+	// コンフィグデータの生成
+	CreateConfigData();
 }
 
-void GrayscaleFilter::Draw() {
+void RandomFilter::Draw() {
+
+	configData->time += 0.016f; // 時間の更新
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxUtility->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -35,13 +40,16 @@ void GrayscaleFilter::Draw() {
 	/// === SRVのDescriptorTableを設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 
+	/// === CBufferの設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, configResource->GetGPUVirtualAddress());
+
 	// 3頂点を1回描画する
 	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
-void GrayscaleFilter::ShowImGui() {
+void RandomFilter::ShowImGui() {
 
-	if (ImGui::TreeNode("GrayscaleFilter")) {
+	if (ImGui::TreeNode("RandomFilter")) {
 
 		// 有効化フラグのチェックボックス
 		ImGui::Checkbox("IsActive", &isActive);
@@ -50,7 +58,7 @@ void GrayscaleFilter::ShowImGui() {
 	}
 }
 
-void GrayscaleFilter::CreateRootSignature() {
+void RandomFilter::CreateRootSignature() {
 
 	// RootSignatureを生成する
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -66,13 +74,18 @@ void GrayscaleFilter::CreateRootSignature() {
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
 	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	D3D12_ROOT_PARAMETER rootParameters[2] = {};
 
 	// gTexture SRV t0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // Tableの中身の配列を指定
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
+
+	// gConfigData CBV b0
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // ConstantBufferを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[1].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
 
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
@@ -108,20 +121,20 @@ void GrayscaleFilter::CreateRootSignature() {
 	assert(SUCCEEDED(hr));
 }
 
-void GrayscaleFilter::CreateInputLayout() {
+void RandomFilter::CreateInputLayout() {
 
 	// InputLayoutの設定をしない 頂点にはデータを入力しないから
 	inputLayoutDesc.pInputElementDescs = nullptr;
 	inputLayoutDesc.NumElements = 0;
 }
 
-void GrayscaleFilter::CreateBlendState() {
+void RandomFilter::CreateBlendState() {
 
 	// すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 }
 
-void GrayscaleFilter::CreateRasterizerState() {
+void RandomFilter::CreateRasterizerState() {
 
 	// 裏面(時計回り)を表示しない
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
@@ -129,27 +142,27 @@ void GrayscaleFilter::CreateRasterizerState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }
 
-void GrayscaleFilter::CreateVertexShader() {
+void RandomFilter::CreateVertexShader() {
 
 	// シェーダコンパイルを行う
 	vertexShaderBlob = dxUtility->CompileShader(L"resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 }
 
-void GrayscaleFilter::CreatePixelShader() {
+void RandomFilter::CreatePixelShader() {
 
 	// シェーダコンパイルを行う
-	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/Grayscale.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/Random.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
-void GrayscaleFilter::CreateDepthStencilState() {
+void RandomFilter::CreateDepthStencilState() {
 
 	// 全画面に対して処理を行うので、比較や書き込みの必要がない
 	depthStencilDesc.DepthEnable = false;
 }
 
-void GrayscaleFilter::CreateGraphicsPipeline() {
+void RandomFilter::CreateGraphicsPipeline() {
 
 	// PSOを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -197,3 +210,14 @@ void GrayscaleFilter::CreateGraphicsPipeline() {
 	assert(SUCCEEDED(hr));
 }
 
+void RandomFilter::CreateConfigData() {
+
+	// リソースを生成
+	configResource = dxUtility->CreateBufferResource(sizeof(Config));
+
+	// リソースにデータをマッピング
+	configResource->Map(0, nullptr, reinterpret_cast<void**>(&configData));
+
+	// データの初期化
+	configData->time = 0.0f; // 時間を0.0fに設定
+}

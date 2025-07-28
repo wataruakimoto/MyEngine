@@ -1,6 +1,7 @@
 #include "Framework.h"
 #include "base/DirectXUtility.h"
 #include "base/SrvManager.h"
+#include "Base/OffscreenRendering/FilterManager.h"
 #include "debug/ImGuiManager.h"
 #include "audio/AudioManager.h"
 #include "input/Input.h"
@@ -27,17 +28,6 @@ void Framework::Initialize() {
 	// SrVマネージャ初期化
 	SrvManager::GetInstance()->Initialize();
 
-	// レンダーテクスチャ初期化
-	postEffect = std::make_unique <PostEffect>();
-	postEffect->Initialize();
-
-	// スワップチェイン初期化
-	swapChain = std::make_unique <SwapChain>();
-	swapChain->Initialize(winApp.get());
-
-	// ImGuiの初期化
-	ImGuiManager::GetInstance()->Initialize(winApp.get(), swapChain.get());
-
 	// オーディオマネージャ初期化
 	AudioManager::GetInstance()->Initialize();
 
@@ -46,10 +36,6 @@ void Framework::Initialize() {
 
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize();
-
-	// ポストエフェクトパイプラインの初期化
-	filter = std::make_unique<FullScreenFilter>();
-	filter->Initialize(postEffect.get());
 
 	// モデルマネージャ初期化
 	ModelManager::GetInstance()->Initialize();
@@ -65,6 +51,21 @@ void Framework::Initialize() {
 
 	// Skybox共通部初期化
 	SkyboxCommon::GetInstance()->Initialize();
+
+	// レンダーテクスチャ初期化
+	postEffect = std::make_unique <PostEffect>();
+	postEffect->Initialize();
+
+	// フィルターマネージャ初期化
+	FilterManager::GetInstance()->SetPostEffect(postEffect.get());
+	FilterManager::GetInstance()->Initialize();
+
+	// スワップチェイン初期化
+	swapChain = std::make_unique <SwapChain>();
+	swapChain->Initialize(winApp.get());
+
+	// ImGuiの初期化
+	ImGuiManager::GetInstance()->Initialize(winApp.get(), swapChain.get());
 }
 
 void Framework::Update() {
@@ -74,6 +75,15 @@ void Framework::Update() {
 }
 
 void Framework::Finalize() {
+
+	// シーンマネージャ終了
+	SceneManager::GetInstance()->Finalize();
+
+	// フィルターマネージャの終了
+	FilterManager::GetInstance()->Finalize();
+
+	// ImGuiの終了
+	ImGuiManager::GetInstance()->Finalize();
 
 	// Skybox共通部の終了
 	SkyboxCommon::GetInstance()->Finalize();
@@ -98,12 +108,6 @@ void Framework::Finalize() {
 
 	// オーディオマネージャ終了
 	AudioManager::GetInstance()->Finalize();
-
-	// シーンマネージャ終了
-	SceneManager::GetInstance()->Finalize();
-
-	// ImGuiの終了
-	ImGuiManager::GetInstance()->Finalize();
 
 	// Srvマネージャの終了
 	SrvManager::GetInstance()->Finalize();

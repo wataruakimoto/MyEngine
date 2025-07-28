@@ -2,18 +2,18 @@
 #include "Base/DirectXUtility.h"
 #include "Base/SrvManager.h"
 #include "Base/OffscreenRendering/PostEffect.h"
+#include "Base/OffscreenRendering/FilterManager.h"
 #include "Debug/Logger.h"
 #include "camera/Camera.h"
 #include "Math/MathMatrix.h"
+
+#include <imgui.h>
 
 using namespace Microsoft::WRL;
 using namespace Logger;
 using namespace MathMatrix;
 
-void DepthOutlineFilter::Initialize(PostEffect* postEffect) {
-
-	// 引数をメンバ変数にコピー
-	this->postEffect = postEffect;
+void DepthOutlineFilter::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
@@ -46,16 +46,26 @@ void DepthOutlineFilter::Draw() {
 	materialData->projectionInverse = projectionInverse;
 
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
-
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetDepthSRVIndex()));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(depthSrvIndex));
 
 	/// === マテリアルCBufferの場所を設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
 
 	// 3頂点を1回描画する
 	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+}
+
+void DepthOutlineFilter::ShowImGui() {
+
+	if (ImGui::TreeNode("DepthOutlineFilter")) {
+
+		// 有効化フラグのチェックボックス
+		ImGui::Checkbox("IsActive", &isActive);
+		// ImGuiのツリーを閉じる
+		ImGui::TreePop();
+	}
 }
 
 void DepthOutlineFilter::CreateRootSignature() {

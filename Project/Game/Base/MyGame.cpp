@@ -1,5 +1,6 @@
 #include "MyGame.h"
 #include "Base/DirectXUtility.h"
+#include "Base/OffscreenRendering/FilterManager.h"
 #include "Debug/ImGuiManager.h"
 #include "3D/Particle/ParticleCommon.h"
 #include "3D/Particle/ParticleSystem.h"
@@ -16,7 +17,7 @@ void MyGame::Initialize() {
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
 
 	// シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->ChangeScene("PLAY");
+	SceneManager::GetInstance()->ChangeScene("DEBUG");
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->Initialize();
@@ -38,8 +39,8 @@ void MyGame::Update() {
 		/// === ImGui開始 === ///
 		ImGuiManager::GetInstance()->Begin();
 
-		// フィルターのImGui表示
-		filter->ShowImGui();
+		// フィルターマネージャのImGui表示
+		FilterManager::GetInstance()->ShowImGui();
 
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();
@@ -63,8 +64,8 @@ void MyGame::Draw() {
 	/// === スワップチェイン描画開始 === ///
 	swapChain->PreDraw();
 
-	// レンダーテクスチャの描画
-	filter->Draw();
+	// フィルターマネージャの描画
+	FilterManager::GetInstance()->Draw();
 
 	/// === ImGui描画 === ///
 	ImGuiManager::GetInstance()->Draw();

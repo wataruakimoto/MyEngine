@@ -12,7 +12,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(PostEffect* postEffect) override;
+	void Initialize() override;
 
 	/// <summary>
 	/// 描画設定

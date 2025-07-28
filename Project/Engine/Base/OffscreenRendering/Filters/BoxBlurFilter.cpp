@@ -4,13 +4,12 @@
 #include "Base/OffscreenRendering/PostEffect.h"
 #include "Debug/Logger.h"
 
+#include <imgui.h>
+
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void BoxBlurFilter::Initialize(PostEffect* postEffect) {
-
-	// 引数をメンバ変数にコピー
-	this->postEffect = postEffect;
+void BoxBlurFilter::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
@@ -34,10 +33,21 @@ void BoxBlurFilter::Draw() {
 	dxUtility->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(postEffect->GetSRVIndex()));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 
 	// 3頂点を1回描画する
 	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+}
+
+void BoxBlurFilter::ShowImGui() {
+
+	if(ImGui::TreeNode("BoxBlurFilter")) {
+
+		// 有効化フラグのチェックボックス
+		ImGui::Checkbox("IsActive", &isActive);
+		// ImGuiのツリーを閉じる
+		ImGui::TreePop();
+	}
 }
 
 void BoxBlurFilter::CreateRootSignature() {
