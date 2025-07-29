@@ -7,12 +7,12 @@
 #include <cassert>
 #include <imgui.h>
 
-void Loader::LoadLevel(const std::string& filePath) {
+void Loader::LoadLevel(const std::string& fileName) {
 
 	/// === 読み込み === ///
 
 	// フルパスを作る
-	std::string fullPath = kDefaultDirectory + "/" + filePath;
+	std::string fullPath = kDefaultDirectory + "/" + fileName;
 
 	// ファイルストリーム
 	std::ifstream file;
@@ -114,6 +114,8 @@ void Loader::ShowImGui() {
 			ImGui::TreePop();
 		}
 	}
+
+	ImGui::End();
 }
 
 void Loader::ParseObject(nlohmann::json& object) {

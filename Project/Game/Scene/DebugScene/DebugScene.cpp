@@ -26,6 +26,13 @@ void DebugScene::Initialize() {
 	terrain = std::make_unique <Object3d>();
 	terrain->Initialize();
 	terrain->SetModel(modelTerrain.get());
+
+	// レベルローダーの初期化
+	levelLoader = std::make_unique<Loader>();
+	// レベルデータの読み込み
+	levelLoader->LoadLevel("level.json");
+	// オブジェクトの配置
+	levelLoader->PlaceObject();
 }
 
 void DebugScene::Update() {
@@ -35,6 +42,9 @@ void DebugScene::Update() {
 
 	// terrainの更新
 	terrain->Update();
+
+	// レベルローダーの更新
+	levelLoader->Update();
 }
 
 void DebugScene::Draw() {
@@ -45,6 +55,9 @@ void DebugScene::Draw() {
 	//TODO: 全ての3Dオブジェクト個々の描画
 
 	terrain->Draw();
+
+	// レベルローダーの描画
+	levelLoader->Draw();
 }
 
 void DebugScene::Finalize() {
@@ -54,17 +67,20 @@ void DebugScene::ShowImGui() {
 
 #ifdef _DEBUG
 
-	//ImGui::Begin("terrain");
-	//
-	//terrain->ShowImGui();
-	//
-	//ImGui::End();
+	ImGui::Begin("terrain");
+	
+	terrain->ShowImGui();
+	
+	ImGui::End();
 
 	ImGui::Begin("Camera");
 
 	camera->ShowImGuiTree();
 
 	ImGui::End();
+
+	// レベルローダーのImGui表示
+	levelLoader->ShowImGui();
 
 #endif // _DEBUG
 }

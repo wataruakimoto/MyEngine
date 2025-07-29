@@ -4,7 +4,7 @@
 #include "Camera/Camera.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
-#include "3d/Particle/ParticleEmitter.h"
+#include "Level/Loader.h"
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {
@@ -52,4 +52,7 @@ private:
 
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr <Object3d> terrain = nullptr;
+
+	// レベルローダーのポインタ
+	std::unique_ptr<Loader> levelLoader = nullptr;
 };

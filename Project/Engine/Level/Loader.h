@@ -18,7 +18,7 @@ public:
 	/// レベルデータファイルの読み込み
 	/// </summary>
 	/// <param name="filePath"></param>
-	void LoadLevel(const std::string& filePath);
+	void LoadLevel(const std::string& fileName);
 
 	/// <summary>
 	/// オブジェクトの配置
