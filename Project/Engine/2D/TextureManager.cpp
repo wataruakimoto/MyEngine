@@ -15,10 +15,10 @@ TextureManager* TextureManager::GetInstance() {
 	return instance;
 }
 
-void TextureManager::Initialize(DirectXUtility* dxUtility) {
+void TextureManager::Initialize() {
 
-	// 引数をメンバ変数に代入
-	dxUtility_ = dxUtility;
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
 
 	// SRVの数と同数
 	textureDatas.reserve(SrvManager::kMaxSRVCount);

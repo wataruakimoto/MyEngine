@@ -34,8 +34,15 @@ Vector3& operator*=(Vector3& v, float s);
 Vector3 operator/(const Vector3& v, float s);
 Vector3& operator/=(Vector3& v, float s);
 
+// 長さ
+float Length(const Vector2& v);
+float Length(const Vector3& v);
+
 // 正規化
 Vector3 Normalize(const Vector3& v);
+
+// 座標変換
+Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
 
 // ベクトル変換
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);

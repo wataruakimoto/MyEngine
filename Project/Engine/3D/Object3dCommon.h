@@ -41,7 +41,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 終了
@@ -51,7 +51,7 @@ public:
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
-	void SettingCommonDrawing();
+	void SettingDrawing();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -113,12 +113,6 @@ public:
 /// ゲッター
 ///-------------------------------------------///
 public:
-
-	/// <summary>
-	/// DirectXUtilityのゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXUtility* GetdxUtility() const { return dxUtility_; }
 
 	/// <summary>
 	/// デフォルトカメラのゲッター

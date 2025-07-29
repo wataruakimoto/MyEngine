@@ -9,6 +9,9 @@ using namespace MathMatrix;
 
 void PlaneParticle::Initialize() {
 
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
+
 	// 頂点データ生成
 	GenerateVertexData();
 
@@ -25,28 +28,28 @@ void PlaneParticle::Update() {
 void PlaneParticle::Draw(ParticleGroup* group) {
 
 	// 頂点バッファビューを設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// 参照バッファビューを設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	dxUtility->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
 
 	/// === パーティクルCBufferの場所を設定 === ///
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
 
 	// 描画(DrawCall)
-	ParticleCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, group->numInstance, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(6, group->numInstance, 0, 0, 0);
 }
 
 void PlaneParticle::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
+	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * 6);
 
 
 	/// === VBVを作成する(値を設定するだけ) === ///
@@ -82,7 +85,7 @@ void PlaneParticle::GenerateVertexData() {
 void PlaneParticle::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
-	indexResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
+	indexResource = dxUtility->CreateBufferResource(sizeof(uint32_t) * 6);
 
 	/// === IBVを作成する(値を設定するだけ) === ///
 
@@ -111,7 +114,7 @@ void PlaneParticle::GenerateIndexData() {
 void PlaneParticle::GenerateMaterialData() {
 
 	/// === MaterialResourceを作る === ///
-	materialResource = ParticleCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
+	materialResource = dxUtility->CreateBufferResource(sizeof(Material));
 
 	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));

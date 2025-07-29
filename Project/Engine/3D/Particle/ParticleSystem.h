@@ -166,4 +166,7 @@ private:
 
 	// WorldViewProjection行列
 	Matrix4x4 worldViewProjectionMatrix = {};
+
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility = nullptr;
 };

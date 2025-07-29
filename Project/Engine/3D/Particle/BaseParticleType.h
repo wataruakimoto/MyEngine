@@ -13,6 +13,9 @@ struct Material {
 	Matrix4x4 uvTransform;
 };
 
+/// === 前方宣言 === ///
+class DirectXUtility;
+
 /// === パーティクルタイプの基底クラス === ///
 class BaseParticleType {
 
@@ -89,4 +92,7 @@ protected:
 
 	// マテリアルデータ
 	Material* materialData = nullptr;
+
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility = nullptr;
 };

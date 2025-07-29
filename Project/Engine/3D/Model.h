@@ -95,6 +95,14 @@ public:
 
 	const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
 
+	/// <summary>
+	/// 環境マップのファイルパスのゲッター
+	/// </summary>
+	/// <param name="filePath"></param>
+	void SetEnvironmentMapFilePath(const std::string& filePath) { environmentMapFilePath = filePath; }
+
+	const Vector4& GetPosition() const { return vertexData->position; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -117,4 +125,10 @@ private:
 
 	// マテリアルデータ
 	Material* materialData = nullptr;
+
+	// 環境マップ用のファイルパス
+	std::string environmentMapFilePath = "Resources/rostock_laage_airport_4k.dds";
+
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility = nullptr;
 };

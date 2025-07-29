@@ -43,7 +43,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 終了
@@ -97,8 +97,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXのポインタ
-	DirectXUtility* dxUtility_;
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility_ = nullptr;
 
 	// テクスチャデータ
 	std::unordered_map<std::string,TextureData> textureDatas;

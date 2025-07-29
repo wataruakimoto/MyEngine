@@ -40,7 +40,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 終了
@@ -50,7 +50,7 @@ public:
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
-	void SettingCommonDrawing();
+	void SettingDrawing();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -98,23 +98,12 @@ private:
 	void CreateGraphicsPipeline();
 
 ///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// DirectXUtilityのゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXUtility* GetdxUtility() const { return dxUtility_; }
-
-///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 	
-	// DirectXUtilityの借りポインタ
-	DirectXUtility* dxUtility_;
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility_ = nullptr;
 
 	// RootSignature
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;

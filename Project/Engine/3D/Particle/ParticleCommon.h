@@ -34,7 +34,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(DirectXUtility* dxUtility);
+	void Initialize();
 
 	/// <summary>
 	/// 描画設定
@@ -103,12 +103,6 @@ public:
 	static ParticleCommon* GetInstance();
 
 	/// <summary>
-	/// DirectXUtilityのゲッター
-	/// </summary>
-	/// <returns></returns>
-	DirectXUtility* GetdxUtility() const { return dxUtility_; }
-
-	/// <summary>
 	/// デフォルトカメラのゲッター
 	/// </summary>
 	/// <returns>Camera</returns>
@@ -130,8 +124,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXUtilityのポインタ
-	DirectXUtility* dxUtility_;
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility_ = nullptr;
 
 	// RootSignature
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;

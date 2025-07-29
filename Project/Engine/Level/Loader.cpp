@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <cassert>
+#include <imgui.h>
 
 void Loader::LoadLevel(const std::string& filePath) {
 
@@ -101,9 +102,17 @@ void Loader::Draw() {
 
 void Loader::ShowImGui() {
 
+	ImGui::Begin("Level");
+
 	// オブジェクトのImGui表示
 	for (const auto& object : objects) {
-		object.second->ShowImGui(object.first.c_str());
+
+		if(ImGui::TreeNode(object.first.c_str())) {
+			// オブジェクトのImGui表示
+			object.second->ShowImGui();
+			models[object.first]->ShowImGui();
+			ImGui::TreePop();
+		}
 	}
 }
 

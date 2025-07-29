@@ -10,6 +10,9 @@ using namespace MathMatrix;
 
 void Sprite::Initialize(std::string textureFilePath) {
 
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
+
 	this->textureFilePath = textureFilePath;
 
 	InitializeVertexData();
@@ -95,22 +98,22 @@ void Sprite::Update() {
 void Sprite::Draw() {
 
 	/// === VertexBufferViewを設定 === ///
-	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	/// === IndexBufferViewを設定 === ///
-	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	dxUtility->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 
 	/// === 座標変換行列CBufferの場所を設定 === ///
-	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixResource->GetGPUVirtualAddress());
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixResource->GetGPUVirtualAddress());
 
 	/// === マテリアルCBufferの場所を設定 === ///
-	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	/// === SRVのDescriptorTableの先頭を設定 === ///
-	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureFilePath));
 
 	/// === 描画(DrawCall) === ///
-	SpriteCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 void Sprite::ShowImGui(const char* name) {
@@ -142,10 +145,10 @@ void Sprite::ShowImGui(const char* name) {
 void Sprite::InitializeVertexData() {
 
 	/// === VertexResourceを作る === ///
-	vertexResource = SpriteCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * 6);
+	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * 6);
 
 	/// === IndexResourceを作る === ///
-	indexResource = SpriteCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * 6);
+	indexResource = dxUtility->CreateBufferResource(sizeof(uint32_t) * 6);
 
 	/// === VBVを作成する(値を設定するだけ) === ///
 
@@ -175,7 +178,7 @@ void Sprite::InitializeVertexData() {
 void Sprite::InitializeTransformationMatrixData() {
 
 	/// === TransformationMatrixResourceを作る === ///
-	transformationMatrixResource = SpriteCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(TransformationMatrix));
+	transformationMatrixResource = dxUtility->CreateBufferResource(sizeof(TransformationMatrix));
 
 	/// === TransformationMatrixResourceにデータを書き込むためのアドレスを取得してtransformationMatrixDataに割り当てる === ///
 	transformationMatrixResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationMatrixData));
@@ -187,7 +190,7 @@ void Sprite::InitializeTransformationMatrixData() {
 void Sprite::InitializeMaterialData() {
 
 	/// === MaterialResourceを作る === ///
-	materialResource = SpriteCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
+	materialResource = dxUtility->CreateBufferResource(sizeof(Material));
 
 	/// === MaterialResourceにデータを書き込むためのアドレスを取得してmaterialDataに割り当てる === ///
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
