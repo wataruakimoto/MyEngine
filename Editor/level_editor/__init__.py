@@ -29,6 +29,7 @@ from .file_name import OBJECT_PT_file_name
 from .collider import OBJECT_PT_collider
 from .disabled import MYADDON_OT_add_disabled
 from .disabled import OBJECT_PT_set_export_disabled
+from .spawn import MYADDON_OT_load_symbol
 
 # メニュー項目描画
 def draw_menu_manual(self, context):
@@ -179,4 +180,5 @@ classes = (
     OBJECT_PT_collider,
     MYADDON_OT_add_disabled,
     OBJECT_PT_set_export_disabled,
+    MYADDON_OT_load_symbol,
 )
