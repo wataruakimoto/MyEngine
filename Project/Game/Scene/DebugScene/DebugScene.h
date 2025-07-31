@@ -2,8 +2,6 @@
 
 #include "Scene/System/BaseScene.h"
 #include "Camera/Camera.h"
-#include "3d/Model.h"
-#include "3d/Object3d.h"
 #include "Level/Loader.h"
 
 /// ===== デバッグシーン ===== ///
@@ -46,12 +44,6 @@ private:
 
 	// カメラのポインタ
 	std::unique_ptr <Camera> camera = nullptr;
-
-	// モデルのポインタ
-	std::unique_ptr <Model> modelTerrain = nullptr;
-
-	// 3Dオブジェクトのポインタ
-	std::unique_ptr <Object3d> terrain = nullptr;
 
 	// レベルローダーのポインタ
 	std::unique_ptr<Loader> levelLoader = nullptr;
