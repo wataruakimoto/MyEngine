@@ -84,6 +84,33 @@ void Loader::PlaceObject() {
 	}
 }
 
+void Loader::PlacePlayer() {
+
+	for (auto& playerData : levelData->GetPlayers()) {
+
+		// モデルを生成
+		std::unique_ptr<Model> model = std::make_unique<Model>();
+		// モデルの読み込み
+		ModelManager::GetInstance()->LoadModelData("Resources/Player", "player.obj");
+		// モデルの初期化
+		model->Initialize("Resources/Player", "player.obj");
+
+		// 3Dオブジェクトの生成
+		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
+		object->Initialize();
+		// モデルの設定
+		object->SetModel(model.get());
+
+		// トランスフォームの設定
+		object->SetRotate(playerData.rotation); // 回転
+		object->SetTranslate(playerData.translation); // 位置
+
+		// リストに登録
+		objects.emplace("Player", std::move(object));
+		models.emplace("Player", std::move(model));
+	}
+}
+
 void Loader::Update() {
 
 	// オブジェクトの更新
@@ -176,6 +203,26 @@ void Loader::ParseObject(nlohmann::json& object) {
 		ModelManager::GetInstance()->LoadModelData(kDefaultDirectory, objectData.fileName + ".obj");
 
 		//TODO:コライダーの読み込み
+	}
+	else if (type.compare("PlayerSpawn") == 0) {
+
+		// 要素追加
+		levelData->GetPlayers().emplace_back(LevelData::PlayerSpawnData{});
+		// 今追加した要素の参照を得る
+		LevelData::PlayerSpawnData& playerData = levelData->GetPlayers().back();
+
+		// トランスフォームのパラメータ読み込み
+		nlohmann::json& transform = object["transform"];
+
+		// 平行移動
+		playerData.translation.x = transform["translation"][0];
+		playerData.translation.y = transform["translation"][2];
+		playerData.translation.z = transform["translation"][1];
+
+		// 回転角
+		playerData.rotation.x = transform["rotation"][0];
+		playerData.rotation.y = transform["rotation"][2];
+		playerData.rotation.z = transform["rotation"][1];
 	}
 
 	/// === ツリー構造の走査 === ///

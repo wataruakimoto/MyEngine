@@ -12,6 +12,12 @@ class LevelData {
 ///-------------------------------------------///
 public:
 
+	// 自キャラの生成データ
+	struct PlayerSpawnData {
+		Vector3 translation; // 位置
+		Vector3 rotation; // 回転
+	};
+
 	// オブジェクトデータ
 	struct ObjectData {
 		std::string fileName; // ファイル名
@@ -32,6 +38,11 @@ public:
 	/// <returns></returns>
 	std::list<ObjectData>& GetObjects() { return objects; }
 
+	/// <summary>
+	/// 自キャラのリストの取得
+	/// </summary>
+	/// <returns></returns>
+	std::list<PlayerSpawnData>& GetPlayers() { return players; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -40,5 +51,8 @@ private:
 
 	// オブジェクトデータのリスト
 	std::list<ObjectData> objects;
+
+	// 自キャラのリスト
+	std::list<PlayerSpawnData> players;
 };
 

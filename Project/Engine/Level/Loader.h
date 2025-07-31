@@ -26,6 +26,11 @@ public:
 	void PlaceObject();
 
 	/// <summary>
+	/// 自機の配置
+	/// </summary>
+	void PlacePlayer();
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();

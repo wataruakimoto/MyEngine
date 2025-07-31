@@ -20,28 +20,20 @@ void DebugScene::Initialize() {
 
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
-	modelTerrain = std::make_unique <Model>();
-	modelTerrain->Initialize("Resources/terrain", "terrain.gltf");
-
-	terrain = std::make_unique <Object3d>();
-	terrain->Initialize();
-	terrain->SetModel(modelTerrain.get());
-
 	// レベルローダーの初期化
 	levelLoader = std::make_unique<Loader>();
 	// レベルデータの読み込み
 	levelLoader->LoadLevel("level.json");
 	// オブジェクトの配置
 	levelLoader->PlaceObject();
+	// 自機の配置
+	levelLoader->PlacePlayer();
 }
 
 void DebugScene::Update() {
 
 	// カメラの更新
 	camera->Update();
-
-	// terrainの更新
-	terrain->Update();
 
 	// レベルローダーの更新
 	levelLoader->Update();
@@ -54,8 +46,6 @@ void DebugScene::Draw() {
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 
-	terrain->Draw();
-
 	// レベルローダーの描画
 	levelLoader->Draw();
 }
@@ -66,12 +56,6 @@ void DebugScene::Finalize() {
 void DebugScene::ShowImGui() {
 
 #ifdef _DEBUG
-
-	ImGui::Begin("terrain");
-	
-	terrain->ShowImGui();
-	
-	ImGui::End();
 
 	ImGui::Begin("Camera");
 

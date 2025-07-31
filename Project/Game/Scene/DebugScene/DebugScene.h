@@ -47,12 +47,6 @@ private:
 	// カメラのポインタ
 	std::unique_ptr <Camera> camera = nullptr;
 
-	// モデルのポインタ
-	std::unique_ptr <Model> modelTerrain = nullptr;
-
-	// 3Dオブジェクトのポインタ
-	std::unique_ptr <Object3d> terrain = nullptr;
-
 	// レベルローダーのポインタ
 	std::unique_ptr<Loader> levelLoader = nullptr;
 };
