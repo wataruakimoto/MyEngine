@@ -12,7 +12,7 @@ using namespace MathMatrix;
 void Skybox::Initialize(std::string directoryPath, std::string fileName) {
 
 	// 引数からファイルパスを作成
-	filePath = directoryPath + fileName;
+	filePath = directoryPath + "/" + fileName;
 
 	// テクスチャを読み込む
 	TextureManager::GetInstance()->LoadTexture(filePath);

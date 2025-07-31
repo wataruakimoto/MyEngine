@@ -4,7 +4,7 @@
 #include "Camera/Camera.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
-#include "3d/Particle/ParticleEmitter.h"
+#include "3D/Skybox/Skybox.h"
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {
@@ -48,8 +48,11 @@ private:
 	std::unique_ptr <Camera> camera = nullptr;
 
 	// モデルのポインタ
-	std::unique_ptr <Model> modelTerrain = nullptr;
+	std::unique_ptr <Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	std::unique_ptr <Object3d> terrain = nullptr;
+	std::unique_ptr <Object3d> object = nullptr;
+
+	// Skyboxのポインタ
+	std::unique_ptr <Skybox> skybox = nullptr;
 };
