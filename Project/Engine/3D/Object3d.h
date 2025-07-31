@@ -58,6 +58,11 @@ public:
 		float cosFalloffStart; // Falloffの開始角度
 	};
 
+	// 環境データ
+	struct Environment {
+		float intensity; // 環境光の輝度
+	};
+
 ///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
@@ -109,6 +114,11 @@ private:
 	/// スポットライトデータ初期化
 	/// </summary>
 	void InitializeSpotLightData();
+
+	/// <summary>
+	/// 環境データ初期化
+	/// </summary>
+	void InitializeEnvironmentData();
 
 	/// <summary>
 	/// カメラデータ初期化
@@ -234,6 +244,8 @@ private:
 	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
 	// スポットライトリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
+	// 環境リソース
+	Microsoft::WRL::ComPtr <ID3D12Resource> environmentResource;
 	// カメラリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
 
@@ -245,6 +257,8 @@ private:
 	PointLight* pointLightData = nullptr;
 	// スポットライトデータ
 	SpotLight* spotLightData = nullptr;
+	// 環境データ
+	Environment* environmentData = nullptr;
 	// カメラデータ
 	Vector3* cameraData;
 

@@ -75,7 +75,7 @@ void DebugScene::ShowImGui() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("terrain");
+	ImGui::Begin("Sphere");
 	
 	object->ShowImGui();
 
