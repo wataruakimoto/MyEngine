@@ -3,7 +3,7 @@
     "objects": [
         {
             "type": "MESH",
-            "name": "Plane",
+            "name": "Cube",
             "transform": {
                 "translation": [
                     0.0,
@@ -20,15 +20,14 @@
                     1.0,
                     1.0
                 ]
-            },
-            "disabled": true
+            }
         },
         {
-            "type": "MESH",
-            "name": "Sphere",
+            "type": "PlayerSpawn",
+            "name": "PlayerSpawn",
             "transform": {
                 "translation": [
-                    0.0,
+                    4.0,
                     0.0,
                     0.0
                 ],

@@ -19,6 +19,11 @@ class MYADDON_OT_load_symbol(bpy.types.Operator):
 
         print("出現ポイントのシンボルを読み込みます")
 
+        #重複ロード禁止
+        spawn_object = bpy.data.objects.get(MYADDON_OT_load_symbol.prototype_object_name)
+        if spawn_object is not None:
+            return {'CANCELLED'}
+
         #スクリプトが配置されているディレクトリの名前を取得する
         addon_directory = os.path.dirname(__file__)
         
@@ -30,17 +35,23 @@ class MYADDON_OT_load_symbol(bpy.types.Operator):
 
         #オブジェクトをインポート
         bpy.ops.wm.obj_import('EXEC_DEFAULT', filepath = full_path,
-            display_type = 'THUMBNAIL', forword_axis = 'Z', up_axis = 'Z')
+            display_type = 'THUMBNAIL', forward_axis = 'Z', up_axis = 'Y')
         
         #回転を適用
         bpy.ops.object.transform_apply(location = False, rotation = True,
             scale = False, properties = False, isolate_users = False)
         
         #アクティブなオブジェクトを取得
+        object = bpy.context.active_object
+
+        #オブジェクト名を変更
         object.name = MYADDON_OT_load_symbol.prototype_object_name
 
         #オブジェクトの種類を設定
         object["type"] = MYADDON_OT_load_symbol.object_name
+
+        #メモリ上にはおいておくがシーンから外す
+        bpy.context.collection.objects.unlink(object)
 
         #オペレータの命令終了を通知
         return {'FINISHED'}
