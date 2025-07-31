@@ -68,7 +68,7 @@ void Object3dCommon::CreateRootSignature() {
 	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
 	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[8] = {};
+	D3D12_ROOT_PARAMETER rootParameters[9] = {};
 
 	// gMaterial CBV b0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
@@ -107,10 +107,15 @@ void Object3dCommon::CreateRootSignature() {
 	rootParameters[6].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[6].Descriptor.ShaderRegister = 3; // レジスタ番号3を使う
 
-	// gCamera CBV b4
+	// gSpotLight CBV b4
 	rootParameters[7].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[7].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	rootParameters[7].Descriptor.ShaderRegister = 4; // レジスタ番号4を使う
+	rootParameters[7].Descriptor.ShaderRegister = 4; // レジスタ番号3を使う
+
+	// gCamera CBV b5
+	rootParameters[8].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
+	rootParameters[8].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[8].Descriptor.ShaderRegister = 5; // レジスタ番号4を使う
 
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
