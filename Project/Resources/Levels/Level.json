@@ -2,48 +2,6 @@
     "name": "scene",
     "objects": [
         {
-            "type": "MESH",
-            "name": "Plane",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "type": "MESH",
-            "name": "Sphere",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
             "type": "PlayerSpawn",
             "name": "PlayerSpawn",
             "transform": {
@@ -65,13 +23,13 @@
             }
         },
         {
-            "type": "PlayerSpawn",
-            "name": "PlayerSpawn.001",
+            "type": "MESH",
+            "name": "Plane",
             "transform": {
                 "translation": [
-                    -6.0,
-                    6.0,
-                    1.0
+                    0.0,
+                    0.0,
+                    0.0
                 ],
                 "rotation": [
                     0.0,
