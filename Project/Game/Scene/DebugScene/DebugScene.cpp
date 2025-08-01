@@ -1,12 +1,7 @@
 #include "DebugScene.h"
 #include "3d/Object3dCommon.h"
-#include "3D/Skybox/SkyboxCommon.h"
 #include "Base/OffscreenRendering/FilterManager.h"
-#include "math/Vector2.h"
-#include "math/Vector3.h"
-#include "math/Vector4.h"
 
-#include <numbers>
 #include <imgui.h>
 
 void DebugScene::Initialize() {
@@ -43,12 +38,6 @@ void DebugScene::Update() {
 }
 
 void DebugScene::Draw() {
-
-	/// === Skyboxの描画準備 === ///
-	SkyboxCommon::GetInstance()->SettingDrawing();
-
-	// Skyboxの描画
-	skybox->Draw();
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawing();
