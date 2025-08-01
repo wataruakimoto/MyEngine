@@ -28,6 +28,8 @@ void DebugScene::Initialize() {
 	levelLoader->PlaceObject();
 	// 自機の配置
 	levelLoader->PlacePlayer();
+	// 敵の配置
+	levelLoader->PlaceEnemy();
 }
 
 void DebugScene::Update() {

@@ -31,6 +31,11 @@ public:
 	void PlacePlayer();
 
 	/// <summary>
+	/// 敵の配置
+	/// </summary>
+	void PlaceEnemy();
+
+	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update();

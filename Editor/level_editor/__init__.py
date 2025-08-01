@@ -30,6 +30,9 @@ from .collider import OBJECT_PT_collider
 from .disabled import MYADDON_OT_add_disabled
 from .disabled import OBJECT_PT_set_export_disabled
 from .spawn import MYADDON_OT_load_symbol
+from .spawn import MYADDON_OT_generate_symbol
+from .spawn import MYADDON_OT_generate_player_symbol
+from .spawn import MYADDON_OT_generate_enemy_symbol
 
 # メニュー項目描画
 def draw_menu_manual(self, context):
@@ -181,4 +184,7 @@ classes = (
     MYADDON_OT_add_disabled,
     OBJECT_PT_set_export_disabled,
     MYADDON_OT_load_symbol,
+    MYADDON_OT_generate_symbol,
+    MYADDON_OT_generate_player_symbol,
+    MYADDON_OT_generate_enemy_symbol,
 )
