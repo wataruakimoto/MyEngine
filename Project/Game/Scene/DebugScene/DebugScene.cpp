@@ -1,5 +1,6 @@
 #include "DebugScene.h"
 #include "3d/Object3dCommon.h"
+#include "3D/Skybox/SkyboxCommon.h"
 #include "Base/OffscreenRendering/FilterManager.h"
 #include "math/Vector2.h"
 #include "math/Vector3.h"
@@ -14,7 +15,7 @@ void DebugScene::Initialize() {
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
 	camera->SetRotate({ 0.25f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,7.5f,-25.0f });
+	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
 
 	FilterManager::GetInstance()->SetCamera(camera.get());
 
@@ -42,6 +43,12 @@ void DebugScene::Update() {
 }
 
 void DebugScene::Draw() {
+
+	/// === Skyboxの描画準備 === ///
+	SkyboxCommon::GetInstance()->SettingDrawing();
+
+	// Skyboxの描画
+	skybox->Draw();
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawing();

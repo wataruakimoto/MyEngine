@@ -32,6 +32,10 @@ struct SpotLight {
     float cosFalloffStart; // Falloffの開始角度
 };
 
+struct Environment {
+    float intensity; // 環境光の強度
+};
+
 struct Camera {
     float3 worldPosition;
 };
@@ -44,7 +48,9 @@ ConstantBuffer<PointLight> gPointLight : register(b2);
 
 ConstantBuffer<SpotLight> gSpotLight : register(b3);
 
-ConstantBuffer<Camera> gCamera : register(b4);
+ConstantBuffer<Environment> gEnvironment : register(b4);
+
+ConstantBuffer<Camera> gCamera : register(b5);
 
 Texture2D<float4> gTexture : register(t0);
 
@@ -226,9 +232,12 @@ PixelShaderOutput main(VertexShaderOutput input) {
         float3 cameraToPosition = normalize(input.worldPosition - gCamera.worldPosition);
         float3 reflectedVector = reflect(cameraToPosition, normalize(input.normal));
         float4 environmentColor = gEnvironmentTexture.Sample(gSampler, reflectedVector);
-    
-        // 環境マップの色を出力に加算
-        output.color.rgb += environmentColor.rgb;
+        
+        // 環境マップに輝度を乗算
+        environmentColor.rgb *= gEnvironment.intensity;
+        
+        // 出力色の計算
+        output.color.rgb = textureColor.rgb * gMaterial.color.rgb * environmentColor.rgb;
         
         // アルファ値はテクスチャをそのまま
         output.color.a = gMaterial.color.a * textureColor.a;

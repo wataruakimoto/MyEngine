@@ -34,6 +34,8 @@ void Object3d::Initialize() {
 
 	InitializeSpotLightData();
 
+	InitializeEnvironmentData();
+
 	InitializeCameraData();
 }
 
@@ -92,9 +94,12 @@ void Object3d::Draw() {
 
 		/// === スポットライトCBufferの場所を設定 === ///
 		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
+		
+		/// === 環境CBufferの場所を設定 === ///
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(7, environmentResource->GetGPUVirtualAddress());
 
 		/// === カメラCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(7, cameraResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(8, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {
@@ -119,8 +124,10 @@ void Object3d::Draw(WorldTransform worldTransform) {
 		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
 		/// === スポットライトCBufferの場所を設定 === ///
 		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
+		/// === 環境CBufferの場所を設定 === ///
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(7, environmentResource->GetGPUVirtualAddress());
 		/// === カメラCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(7, cameraResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(8, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {
@@ -163,6 +170,11 @@ void Object3d::ShowImGui() {
 			ImGui::DragFloat("Decay", &spotLightData->decay, 0.01f); // 減衰率
 			ImGui::DragFloat("CosAngle", &spotLightData->cosAngle, 0.01f); // 余弦
 			ImGui::DragFloat("CosFalloffStart", &spotLightData->cosFalloffStart, 0.01f); // Falloff開始角度
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Environment")) {
+			ImGui::SliderFloat("Intensity", &environmentData->intensity, 0.0f, 1.0f); // 環境光の輝度
 			ImGui::TreePop();
 		}
 
@@ -231,6 +243,18 @@ void Object3d::InitializeSpotLightData() {
 	spotLightData->decay = 2.0f; // 減衰あり
 	spotLightData->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f); // π/3
 	spotLightData->cosFalloffStart = spotLightData->cosAngle + 0.01f; // cosAngleよりちょっと大きい
+}
+
+void Object3d::InitializeEnvironmentData() {
+
+	/// === EnvironmentResourceを作る === ///
+	environmentResource = dxUtility->CreateBufferResource(sizeof(Environment));
+
+	/// === EnvironmentResourceにデータを書き込むためのアドレスを取得してEnvironmentDataに割り当てる === ///
+	environmentResource->Map(0, nullptr, reinterpret_cast<void**>(&environmentData));
+
+	/// === EnvironmentDataの初期値を書き込む === ///
+	environmentData->intensity = 1.0f; // 環境光の輝度は最大
 }
 
 void Object3d::InitializeCameraData() {

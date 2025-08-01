@@ -2,8 +2,6 @@
 
 #include "Scene/System/BaseScene.h"
 #include "Camera/Camera.h"
-#include "3d/Model.h"
-#include "3d/Object3d.h"
 #include "Level/Loader.h"
 
 /// ===== デバッグシーン ===== ///
