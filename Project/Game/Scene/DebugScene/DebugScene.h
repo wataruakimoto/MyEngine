@@ -2,9 +2,7 @@
 
 #include "Scene/System/BaseScene.h"
 #include "Camera/Camera.h"
-#include "3d/Model.h"
-#include "3d/Object3d.h"
-#include "3D/Skybox/Skybox.h"
+#include "Level/Loader.h"
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {
@@ -47,12 +45,6 @@ private:
 	// カメラのポインタ
 	std::unique_ptr <Camera> camera = nullptr;
 
-	// モデルのポインタ
-	std::unique_ptr <Model> model = nullptr;
-
-	// 3Dオブジェクトのポインタ
-	std::unique_ptr <Object3d> object = nullptr;
-
-	// Skyboxのポインタ
-	std::unique_ptr <Skybox> skybox = nullptr;
+	// レベルローダーのポインタ
+	std::unique_ptr<Loader> levelLoader = nullptr;
 };

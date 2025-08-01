@@ -18,12 +18,22 @@ public:
 	/// レベルデータファイルの読み込み
 	/// </summary>
 	/// <param name="filePath"></param>
-	void LoadLevel(const std::string& filePath);
+	void LoadLevel(const std::string& fileName);
 
 	/// <summary>
 	/// オブジェクトの配置
 	/// </summary>
 	void PlaceObject();
+
+	/// <summary>
+	/// 自機の配置
+	/// </summary>
+	void PlacePlayer();
+
+	/// <summary>
+	/// 敵の配置
+	/// </summary>
+	void PlaceEnemy();
 
 	/// <summary>
 	/// 更新

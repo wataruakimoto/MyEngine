@@ -5,14 +5,16 @@
 
 #include <fstream>
 #include <cassert>
+#include <cmath>
+#include <numbers>
 #include <imgui.h>
 
-void Loader::LoadLevel(const std::string& filePath) {
+void Loader::LoadLevel(const std::string& fileName) {
 
 	/// === 読み込み === ///
 
 	// フルパスを作る
-	std::string fullPath = kDefaultDirectory + "/" + filePath;
+	std::string fullPath = kDefaultDirectory + "/" + fileName;
 
 	// ファイルストリーム
 	std::ifstream file;
@@ -84,6 +86,72 @@ void Loader::PlaceObject() {
 	}
 }
 
+void Loader::PlacePlayer() {
+
+	int index = 0;
+
+	for (auto& playerData : levelData->GetPlayers()) {
+
+		// モデルを生成
+		std::unique_ptr<Model> model = std::make_unique<Model>();
+		// モデルの読み込み
+		ModelManager::GetInstance()->LoadModelData("Resources/Player", "player.obj");
+		// モデルの初期化
+		model->Initialize("Resources/Player", "player.obj");
+
+		// 3Dオブジェクトの生成
+		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
+		object->Initialize();
+
+		// モデルの設定
+		object->SetModel(model.get());
+
+		// トランスフォームの設定
+		object->SetRotate(playerData.rotation); // 回転
+		object->SetTranslate(playerData.translation); // 位置
+
+		// インデックスを設定
+		playerData.index = ++index;
+
+		// リストに登録
+		objects.emplace("Player" + std::to_string(playerData.index), std::move(object));
+		models.emplace("Player" + std::to_string(playerData.index), std::move(model));
+	}
+}
+
+void Loader::PlaceEnemy() {
+
+	int index = 0;
+
+	for (auto& enemyData : levelData->GetEnemies()) {
+
+		// モデルを生成
+		std::unique_ptr<Model> model = std::make_unique<Model>();
+		// モデルの読み込み
+		ModelManager::GetInstance()->LoadModelData("Resources/Enemy", "enemy.obj");
+		// モデルの初期化
+		model->Initialize("Resources/Enemy", "enemy.obj");
+
+		// 3Dオブジェクトの生成
+		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
+		object->Initialize();
+
+		// モデルの設定
+		object->SetModel(model.get());
+
+		// トランスフォームの設定
+		object->SetRotate(enemyData.rotation); // 回転
+		object->SetTranslate(enemyData.translation); // 位置
+
+		// インデックスを設定
+		enemyData.index = ++index;
+
+		// リストに登録
+		models.emplace("Enemy" + std::to_string(enemyData.index), std::move(model));
+		objects.emplace("Enemy" + std::to_string(enemyData.index), std::move(object));
+	}
+}
+
 void Loader::Update() {
 
 	// オブジェクトの更新
@@ -114,12 +182,27 @@ void Loader::ShowImGui() {
 			ImGui::TreePop();
 		}
 	}
+
+	ImGui::End();
 }
 
 void Loader::ParseObject(nlohmann::json& object) {
 
 	// オブジェクトが正しい形式かチェック
 	assert(object.contains("type"));
+
+	if(object.contains("disabled")){
+
+		// 有効無効フラグ
+		bool disabled = object["disabled"].get<bool>();
+
+		// 無効な場合は何もしない
+		if (disabled) {
+			
+			// 配置しない(スキップする)
+			return;
+		}
+	}
 
 	// 種別を取得
 	std::string type = object["type"].get<std::string>();
@@ -148,9 +231,9 @@ void Loader::ParseObject(nlohmann::json& object) {
 		objectData.translation.z = transform["translation"][1];
 
 		// 回転角
-		objectData.rotation.x = transform["rotation"][0];
-		objectData.rotation.y = transform["rotation"][2];
-		objectData.rotation.z = transform["rotation"][1];
+		objectData.rotation.x = transform["rotation"][0] * (std::numbers::pi_v<float> / 180.0f);
+		objectData.rotation.y = transform["rotation"][2] * (std::numbers::pi_v<float> / 180.0f);
+		objectData.rotation.z = transform["rotation"][1] * (std::numbers::pi_v<float> / 180.0f);
 
 		// スケーリング
 		objectData.scale.x = transform["scaling"][0];
@@ -161,6 +244,46 @@ void Loader::ParseObject(nlohmann::json& object) {
 		ModelManager::GetInstance()->LoadModelData(kDefaultDirectory, objectData.fileName + ".obj");
 
 		//TODO:コライダーの読み込み
+	}
+	else if (type.compare("PlayerSpawn") == 0) {
+
+		// 要素追加
+		levelData->GetPlayers().emplace_back(LevelData::PlayerSpawnData{});
+		// 今追加した要素の参照を得る
+		LevelData::PlayerSpawnData& playerData = levelData->GetPlayers().back();
+
+		// トランスフォームのパラメータ読み込み
+		nlohmann::json& transform = object["transform"];
+
+		// 平行移動
+		playerData.translation.x = transform["translation"][0];
+		playerData.translation.y = transform["translation"][2];
+		playerData.translation.z = transform["translation"][1];
+
+		// 回転角
+		playerData.rotation.x = transform["rotation"][0] * (std::numbers::pi_v<float> / 180.0f);
+		playerData.rotation.y = transform["rotation"][2] * (std::numbers::pi_v<float> / 180.0f);
+		playerData.rotation.z = transform["rotation"][1] * (std::numbers::pi_v<float> / 180.0f);
+	}
+	else if (type.compare("EnemySpawn") == 0) {
+
+		// 要素追加
+		levelData->GetEnemies().emplace_back(LevelData::EnemySpawnData{});
+		// 今追加した要素の参照を得る
+		LevelData::EnemySpawnData& enemyData = levelData->GetEnemies().back();
+
+		// トランスフォームのパラメータ読み込み
+		nlohmann::json& transform = object["transform"];
+
+		// 平行移動
+		enemyData.translation.x = transform["translation"][0];
+		enemyData.translation.y = transform["translation"][2];
+		enemyData.translation.z = transform["translation"][1];
+
+		// 回転角
+		enemyData.rotation.x = transform["rotation"][0] * (std::numbers::pi_v<float> / 180.0f);
+		enemyData.rotation.y = transform["rotation"][2] * (std::numbers::pi_v<float> / 180.0f);
+		enemyData.rotation.z = transform["rotation"][1] * (std::numbers::pi_v<float> / 180.0f);
 	}
 
 	/// === ツリー構造の走査 === ///

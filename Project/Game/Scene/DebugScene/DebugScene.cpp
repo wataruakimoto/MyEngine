@@ -21,23 +21,16 @@ void DebugScene::Initialize() {
 
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 
-	model = std::make_unique <Model>();
-	model->Initialize("Resources/Sphere", "Sphere.gltf");
-
-	object = std::make_unique <Object3d>();
-	object->Initialize();
-	object->SetModel(model.get());
-
-	// Skyboxの初期化
-	skybox = std::make_unique <Skybox>();
-	skybox->Initialize("Resources", "rostock_laage_airport_4k.dds");
-	skybox->SetScale({ 100.0f, 100.0f, 100.0f });
-	// Skyboxのカメラをセット
-	skybox->SetCamera(camera.get());
-
-	// モデルに環境マップをセット
-	model->SetEnvironmentMapFilePath("Resources/rostock_laage_airport_4k.dds");
-	model->SetLightingMode(7);
+	// レベルローダーの初期化
+	levelLoader = std::make_unique<Loader>();
+	// レベルデータの読み込み
+	levelLoader->LoadLevel("level.json");
+	// オブジェクトの配置
+	levelLoader->PlaceObject();
+	// 自機の配置
+	levelLoader->PlacePlayer();
+	// 敵の配置
+	levelLoader->PlaceEnemy();
 }
 
 void DebugScene::Update() {
@@ -45,11 +38,8 @@ void DebugScene::Update() {
 	// カメラの更新
 	camera->Update();
 
-	// terrainの更新
-	object->Update();
-
-	// Skyboxの更新
-	skybox->Update();
+	// レベルローダーの更新
+	levelLoader->Update();
 }
 
 void DebugScene::Draw() {
@@ -65,7 +55,8 @@ void DebugScene::Draw() {
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 
-	object->Draw();
+	// レベルローダーの描画
+	levelLoader->Draw();
 }
 
 void DebugScene::Finalize() {
@@ -75,21 +66,14 @@ void DebugScene::ShowImGui() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("Sphere");
-	
-	object->ShowImGui();
-
-	model->ShowImGui();
-	
-	ImGui::End();
-
-	skybox->ShowImGui("Skybox");
-
 	ImGui::Begin("Camera");
 
 	camera->ShowImGuiTree();
 
 	ImGui::End();
+
+	// レベルローダーのImGui表示
+	levelLoader->ShowImGui();
 
 #endif // _DEBUG
 }

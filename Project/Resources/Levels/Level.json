@@ -3,27 +3,6 @@
     "objects": [
         {
             "type": "MESH",
-            "name": "Sphere",
-            "transform": {
-                "translation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "rotation": [
-                    0.0,
-                    -0.0,
-                    0.0
-                ],
-                "scaling": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            }
-        },
-        {
-            "type": "MESH",
             "name": "Plane",
             "transform": {
                 "translation": [
@@ -44,13 +23,13 @@
             }
         },
         {
-            "type": "MESH",
-            "name": "ICO1",
+            "type": "PlayerSpawn",
+            "name": "PlayerSpawn",
             "transform": {
                 "translation": [
-                    0.0,
-                    0.0,
-                    0.0
+                    5.0,
+                    -5.0,
+                    1.0
                 ],
                 "rotation": [
                     0.0,
@@ -65,18 +44,60 @@
             }
         },
         {
-            "type": "MESH",
-            "name": "ICO2",
+            "type": "PlayerSpawn",
+            "name": "PlayerSpawn.001",
             "transform": {
                 "translation": [
-                    0.0,
-                    0.0,
-                    0.0
+                    -5.0,
+                    -5.0,
+                    1.0
                 ],
                 "rotation": [
                     0.0,
                     -0.0,
                     0.0
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn",
+            "transform": {
+                "translation": [
+                    5.0,
+                    5.0,
+                    1.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
+                ],
+                "scaling": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "type": "EnemySpawn",
+            "name": "EnemySpawn.001",
+            "transform": {
+                "translation": [
+                    -5.0,
+                    5.0,
+                    1.0
+                ],
+                "rotation": [
+                    0.0,
+                    -0.0,
+                    -179.99998474121094
                 ],
                 "scaling": [
                     1.0,
