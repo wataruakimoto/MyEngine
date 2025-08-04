@@ -45,6 +45,8 @@ void Bullet::Update() {
 		deathTimer_--;
 	}
 
+	worldTransform_.UpdateMatrix();
+
 	object->Update();
 };
 

@@ -1,5 +1,6 @@
 #include "RailCameraController.h"
 #include "Math/MathMatrix.h"
+#include "3d/Object3dCommon.h"
 
 #include <imgui.h>
 
@@ -9,14 +10,20 @@ void RailCameraController::Initialize() {
 	
 	// ワールド変換の初期化
 	worldTransform.Initialize();
-	worldTransform.SetTranslate({ 0.0f, 0.0f, -50.0f });
+	worldTransform.SetTranslate({ 0.0f, 10.0f, 0.0f });
 
 	// カメラの初期化
 	camera = std::make_unique<Camera>();
 	camera->Initialize();
+
+	// カメラの設定
+	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void RailCameraController::Update() {
+
+	// Z方向にカメラを移動
+	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.2f });
 	
 	// ワールド変換の更新
 	worldTransform.UpdateMatrix();

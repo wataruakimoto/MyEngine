@@ -8,6 +8,7 @@
 #include "Reticle/Reticle3D.h"
 #include "Reticle/Reticle2D.h"
 #include "RailCamera/RailCameraController.h"
+#include "Floor/Floor.h"
 
 #include <list>
 #include <sstream>
@@ -95,6 +96,9 @@ private:
 
 	// 2Dレティクルのポインタ
 	std::unique_ptr<Reticle2D> reticle2D_ = nullptr;
+
+	// フロアのポインタ
+	std::unique_ptr<Floor> floor_ = nullptr;
 
 	// 敵を倒した数
 	int killCount = 0;

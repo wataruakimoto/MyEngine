@@ -147,6 +147,7 @@
     <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\FilterManager.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Floor\Floor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -285,6 +286,7 @@
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\FilterManager.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Floor\Floor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

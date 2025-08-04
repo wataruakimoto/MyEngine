@@ -56,8 +56,6 @@ void Reticle2D::Update() {
 	spriteReticle_->SetPosition(reticlePosition_);
 	// スプライトの更新
 	spriteReticle_->Update();
-
-	spriteReticle_->ShowImGui("Reticle");
 }
 
 void Reticle2D::Draw() {

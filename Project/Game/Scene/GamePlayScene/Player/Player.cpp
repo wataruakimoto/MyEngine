@@ -49,10 +49,15 @@ void Player::Update() {
 
 	Move();
 
+	// 奥にずらす
+	Vector3 translate = worldTransform_.GetTranslate();
+	translate.z = 40.0f;
+	worldTransform_.SetTranslate(translate);
+
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
 
-	object->SetTranslate(worldTransform_.GetTranslate());
+	object->SetTranslate(worldTransform_.GetWorldPosition());
 	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
@@ -62,7 +67,7 @@ void Player::Update() {
 void Player::Draw() {
 
 	// 3Dオブジェクトの描画
-	object->Draw(worldTransform_);
+	object->Draw();
 }
 
 void Player::Finalize() {
@@ -180,11 +185,11 @@ void Player::Fire() {
 	bullet->Initialize();
 
 	// 弾の初期位置をプレイヤーの位置に設定
-	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
+	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
 
 	// 弾の初期速度を設定
 	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_.GetTranslate();
+	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_.GetWorldPosition();
 	bullet->SetVelocity(velocity);
 
 	// ゲームプレイシーンの弾をリストに登録

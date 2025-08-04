@@ -42,25 +42,8 @@ void Enemy::Initialize() {
 
 void Enemy::Update() {
 
-	// プレイヤーの座標を取得
-	Vector3 playerPos = player->GetWorldTransform().GetTranslate();
-
-	// プレイヤーとの方向を計算
-	Vector3 direction = playerPos - worldTransform_.GetTranslate();
-	float length = Length(direction);
-	direction= { direction.x / length, direction.y / length, direction.z / length };
-
-	// 向きを計算
-	Vector3 rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
-
-	// 向きを変える
-	worldTransform_.SetRotate(rotate);
-
- 	// 移動速度を計算
-	Vector3 velocity = direction * moveSpeed;
-
-	// プレイヤーに向かって進む
-	worldTransform_.AddTranslate(velocity);
+	// 自機の方に向ける
+	AimToPlayer();
 
 	object->SetTranslate(worldTransform_.GetTranslate());
 	object->SetRotate(worldTransform_.GetRotate());
@@ -74,7 +57,7 @@ void Enemy::Update() {
 void Enemy::Draw() {
 
 	// 3Dオブジェクトの描画
-	object->Draw(worldTransform_);
+	object->Draw();
 }
 
 void Enemy::Finalize() {
@@ -120,4 +103,21 @@ void Enemy::OnCollision(Collider* other) {
 		// 何もしない
 		return;
 	}
+}
+
+void Enemy::AimToPlayer() {
+
+	// プレイヤーの座標を取得
+	Vector3 playerPos = player->GetWorldTransform().GetWorldPosition();
+
+	// プレイヤーとの方向を計算
+	Vector3 direction = playerPos - worldTransform_.GetTranslate();
+	float length = Length(direction);
+	direction = { direction.x / length, direction.y / length, direction.z / length };
+
+	// 向きを計算
+	Vector3 rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
+
+	// 向きを変える
+	worldTransform_.SetRotate(rotate);
 }

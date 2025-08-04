@@ -18,9 +18,6 @@ void GamePlayScene::Initialize() {
 	// レールカメラコントローラーの初期化
 	railCameraController_->Initialize();
 
-	// カメラを設定
-	Object3dCommon::GetInstance()->SetDefaultCamera(&railCameraController_->GetCamera());
-
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->SetCamera(&railCameraController_->GetCamera());
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
@@ -62,6 +59,10 @@ void GamePlayScene::Initialize() {
 
 	// 3Dレティクルに2Dレティクルを設定
 	reticle3D_->SetReticle2D(reticle2D_.get());
+
+	// フロアを生成
+	floor_ = std::make_unique<Floor>();
+	floor_->Initialize();
 }
 
 void GamePlayScene::Update() {
@@ -119,6 +120,12 @@ void GamePlayScene::Update() {
 	// 2Dレティクルの更新
 	reticle2D_->Update();
 
+	// カメラの座標をフロアに設定
+	floor_->SetCameraTranslate(railCameraController_->GetWorldTransform().GetTranslate());
+
+	// フロアの更新
+	floor_->Update();
+
 	// 衝突マネージャの更新
 	collisionManager_->Update();
 
@@ -137,7 +144,7 @@ void GamePlayScene::Draw() {
 	//TODO: 全ての3Dオブジェクト個々の描画
 
 	// 天球描画
-	//skydome->Draw();
+	skydome->Draw();
 
 	// プレイヤー描画
 	player->Draw();
@@ -145,26 +152,29 @@ void GamePlayScene::Draw() {
 	// 弾の描画
 	for (std::unique_ptr<Bullet>& bullet : bullets_) {
 
-		//bullet->Draw();
+		bullet->Draw();
 	}
 
 	// 敵描画
 	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 
-		//enemy->Draw();
+		enemy->Draw();
 	}
 
 	// 3Dレティクルの描画
-	//reticle3D_->Draw();
+	reticle3D_->Draw();
+
+	// フロアの描画
+	floor_->Draw();
 
 	// 衝突マネージャの描画
-	//collisionManager_->Draw();
+	collisionManager_->Draw();
 
 	/// === パーティクルの描画準備 === ///
 	ParticleCommon::GetInstance()->SettingDrawing();
 
 	// パーティクルシステムの描画
-	//ParticleSystem::GetInstance()->Draw();
+	ParticleSystem::GetInstance()->Draw();
 
 	/// === UIの描画準備 === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
@@ -172,7 +182,7 @@ void GamePlayScene::Draw() {
 	// TODO: 全てのスプライト個々の描画
 
 	// 2Dレティクルの描画
-	//reticle2D_->Draw();
+	reticle2D_->Draw();
 }
 
 void GamePlayScene::Finalize() {
@@ -194,8 +204,6 @@ void GamePlayScene::ShowImGui() {
 
 	Input::GetInstance()->ShowImgui();
 
-	ParticleSystem::GetInstance()->ShowImGui("particleSystem");
-
 	railCameraController_->ShowImGui();
 
 	player->ShowImGui();
@@ -205,7 +213,10 @@ void GamePlayScene::ShowImGui() {
 	for (std::unique_ptr<Bullet>& bullet : bullets_) { bullet->ShowImGui(); }
 
 	reticle3D_->ShowImGui();
+
 	reticle2D_->ShowImGui();
+
+	floor_->ShowImGui();
 }
 
 void GamePlayScene::CheckAllCollisions() {
