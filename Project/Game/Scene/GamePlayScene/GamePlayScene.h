@@ -4,7 +4,9 @@
 
 #include "Skydome/Skydome.h"
 #include "Player/Player.h"
+#include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
+#include "Enemy/EnemyBullet.h"
 #include "Reticle/Reticle3D.h"
 #include "Reticle/Reticle2D.h"
 #include "RailCamera/RailCameraController.h"
@@ -63,10 +65,16 @@ public:
 	void UpdateEnemyPopCommands();
 
 	/// <summary>
-	/// 弾の追加
+	/// 自機の弾の追加
 	/// </summary>
 	/// <param name="bullet"></param>
-	void AddBullet(std::unique_ptr<Bullet> bullet);
+	void AddPlayerBullet(std::unique_ptr<Bullet> bullet);
+
+	/// <summary>
+	/// 敵の弾の追加
+	/// </summary>
+	/// <param name="bullet"></param>
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -88,8 +96,11 @@ private:
 	// 敵のリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
-	// 弾のリスト
-	std::list<std::unique_ptr<Bullet>> bullets_;
+	// 自機の弾のリスト
+	std::list<std::unique_ptr<Bullet>> playerBullets_;
+
+	// 敵の弾のリスト
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
 
 	// 3Dレティクルのポインタ
 	std::unique_ptr<Reticle3D> reticle3D_ = nullptr;

@@ -1,16 +1,16 @@
-#include "Bullet.h"
+#include "EnemyBullet.h"
 #include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
 #include "Math/MathVector.h"
 #include <imgui.h>
 
-void Bullet::Initialize() {
+void EnemyBullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("resources/PlayerBullet", "PlayerBullet.obj");
+	model->Initialize("resources/EnemyBullet", "EnemyBullet.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();
@@ -23,10 +23,10 @@ void Bullet::Initialize() {
 	// コライダーの初期化
 	Collider::Initialize();
 	// コライダーにIDを設定
-	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet));
+	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet));
 };
 
-void Bullet::Update() {
+void EnemyBullet::Update() {
 
 	// 速度は向きだけもらってきたから正規化して速さをかける
 	velocity_ = Normalize(velocity_) * moveSpeed;
@@ -50,15 +50,15 @@ void Bullet::Update() {
 	object->Update();
 };
 
-void Bullet::Draw() {
+void EnemyBullet::Draw() {
 
 	object->Draw();
 };
 
-void Bullet::Finalize() {
+void EnemyBullet::Finalize() {
 }
 
-void Bullet::ShowImGui() {
+void EnemyBullet::ShowImGui() {
 
 #ifdef _DEBUG
 
@@ -66,23 +66,25 @@ void Bullet::ShowImGui() {
 
 	worldTransform_.ShowImGui();
 
+	ImGui::Text("Velocity: (%.2f, %.2f, %.2f)", velocity_.x, velocity_.y, velocity_.z);
+
 	ImGui::End();
 
 #endif // _DEBUG
 }
 
-void Bullet::OnCollision(Collider* other) {
+void EnemyBullet::OnCollision(Collider* other) {
 
 	// 衝突相手の種別IDを取得
 	uint32_t typeID = other->GetTypeID();
 
-	// 衝突相手が敵の場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
+	// 衝突相手が自機の場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)) {
 
 		isDead = true;
 	}
-	// 衝突相手が敵の弾の場合
-	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
+	// 衝突相手が自機の弾の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
 
 		isDead = true;
 	}

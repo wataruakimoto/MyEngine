@@ -23,7 +23,7 @@ void RailCameraController::Initialize() {
 void RailCameraController::Update() {
 
 	// Z方向にカメラを移動
-	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.2f });
+	//worldTransform.AddTranslate({ 0.0f, 0.0f, 0.2f });
 	
 	// ワールド変換の更新
 	worldTransform.UpdateMatrix();

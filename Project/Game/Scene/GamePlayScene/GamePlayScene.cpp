@@ -71,7 +71,10 @@ void GamePlayScene::Update() {
 	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) {return enemy->IsDead(); });
 
 	// デスフラグが立った弾を削除
-	bullets_.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
+	playerBullets_.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
+
+	// デスフラグが立った敵の弾を削除
+	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
 
 	// プレイヤーが死んでいたら
 	if (player->IsDead()) {
@@ -96,7 +99,7 @@ void GamePlayScene::Update() {
 	player->Update();
 
 	// 弾の更新
-	for (std::unique_ptr<Bullet>& bullet : bullets_) {
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
 
 		bullet->Update();
 	}
@@ -112,6 +115,11 @@ void GamePlayScene::Update() {
 
 		// 敵更新
 		enemy->Update();
+	}
+
+	// 敵の弾の更新
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+		bullet->Update();
 	}
 
 	// 3Dレティクルの更新
@@ -150,7 +158,13 @@ void GamePlayScene::Draw() {
 	player->Draw();
 
 	// 弾の描画
-	for (std::unique_ptr<Bullet>& bullet : bullets_) {
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
+
+		bullet->Draw();
+	}
+
+	// 敵の弾の描画
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 
 		bullet->Draw();
 	}
@@ -210,7 +224,9 @@ void GamePlayScene::ShowImGui() {
 
 	for (std::unique_ptr<Enemy>& enemy : enemies_) { enemy->ShowImGui(); }
 
-	for (std::unique_ptr<Bullet>& bullet : bullets_) { bullet->ShowImGui(); }
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) { bullet->ShowImGui(); }
+
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) { bullet->ShowImGui(); }
 
 	reticle3D_->ShowImGui();
 
@@ -231,7 +247,11 @@ void GamePlayScene::CheckAllCollisions() {
 		collisionManager_->AddCollider(enemy.get());
 	}
 
-	for (std::unique_ptr<Bullet>& bullet : bullets_) {
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
+		collisionManager_->AddCollider(bullet.get());
+	}
+
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 		collisionManager_->AddCollider(bullet.get());
 	}
 
@@ -306,6 +326,7 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 			std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
 			enemy->Initialize();
 			enemy->GetWorldTransform().SetTranslate({ x, y, z });
+			enemy->SetGamePlayScene(this);
 			// 敵をリストに追加
 			enemies_.push_back(std::move(enemy));
 
@@ -327,8 +348,14 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 	}
 }
 
-void GamePlayScene::AddBullet(std::unique_ptr<Bullet> bullet) {
+void GamePlayScene::AddPlayerBullet(std::unique_ptr<Bullet> bullet) {
 
 	// 弾をリストに登録
-	bullets_.push_back(std::move(bullet));
+	playerBullets_.push_back(std::move(bullet));
+}
+
+void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
+
+	// 弾をリストに登録
+	enemyBullets_.push_back(std::move(bullet));
 }

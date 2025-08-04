@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "input/input.h"
 #include "Scene/GamePlayScene/GamePlayScene.h"
+#include "Bullet.h"
 #include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
 #include "Scene/GamePlayScene/Reticle/Reticle3D.h"
 #include "Math/MathVector.h"
@@ -193,7 +194,7 @@ void Player::Fire() {
 	bullet->SetVelocity(velocity);
 
 	// ゲームプレイシーンの弾をリストに登録
-	gamePlayScene_->AddBullet(std::move(bullet));
+	gamePlayScene_->AddPlayerBullet(std::move(bullet));
 }
 
 void Player::OnCollision(Collider* other) {
@@ -203,6 +204,12 @@ void Player::OnCollision(Collider* other) {
 
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
+		// 死亡フラグを立てる
+		isDead = true;
+	}
+	// 衝突相手が敵の弾の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
+
 		// 死亡フラグを立てる
 		isDead = true;
 	}

@@ -11,6 +11,7 @@
 
 /// === 前方宣言 === ///
 class Player;
+class GamePlayScene;
 
 /// ===== 敵 ===== ///
 class Enemy : public Basecharacter {
@@ -60,6 +61,11 @@ private:
 	/// </summary>
 	void AimToPlayer();
 
+	/// <summary>
+	/// 射撃
+	/// </summary>
+	void Fire();
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -70,6 +76,12 @@ public:
 	/// </summary>
 	/// <param name="player">プレイヤー</param>
 	void SetPlayer(Player* player) { this->player = player; }
+
+	/// <summary>
+	/// ゲームプレイシーンのセッター
+	/// </summary>
+	/// <param name="scene"></param>
+	void SetGamePlayScene(GamePlayScene* scene) { this->gamePlayScene_ = scene; }
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -96,7 +108,12 @@ private:
 	// プレイヤーの借りポインタ
 	Player* player = nullptr;
 
+	// ゲームプレイシーンの借りポインタ
+	GamePlayScene* gamePlayScene_ = nullptr;
+
 	float moveSpeed = 0.2f;
+
+	float fireTimer = 60.0f;
 
 	bool isDead = false;
 
