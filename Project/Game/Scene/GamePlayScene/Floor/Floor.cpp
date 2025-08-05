@@ -80,6 +80,8 @@ void Floor::Finalize() {
 }
 
 void Floor::ShowImGui() {
+
+#ifdef _DEBUG
 	
 	ImGui::Begin("Floor");
 
@@ -105,4 +107,6 @@ void Floor::ShowImGui() {
 	ImGui::Text("Camera Translate: (%.2f, %.2f, %.2f)", cameraTranslate_.x, cameraTranslate_.y, cameraTranslate_.z);
 
 	ImGui::End();
+
+#endif // _DEBUG
 }
