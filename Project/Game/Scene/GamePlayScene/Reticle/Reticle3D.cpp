@@ -8,6 +8,7 @@
 
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 
 void Reticle3D::Initialize() {
@@ -90,8 +91,8 @@ void Reticle3D::ConvertScreenToWorld() {
 	Vector3 posFar = { reticlePosition_.x, screenY, 1.0f };
 
 	// スクリーン座標をワールド座標に変換(2Dから3Dに)
-	posNear = Transform(posNear, inverseViewProjectionViewPort);
-	posFar = Transform(posFar, inverseViewProjectionViewPort);
+	posNear = MathVector::Transform(posNear, inverseViewProjectionViewPort);
+	posFar = MathVector::Transform(posFar, inverseViewProjectionViewPort);
 
 	// マウスレイの方向を計算
 	Vector3 rmouseDirection = Normalize(posFar - posNear);

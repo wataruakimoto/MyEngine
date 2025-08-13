@@ -9,7 +9,8 @@
 #include "Enemy/EnemyBullet.h"
 #include "Reticle/Reticle3D.h"
 #include "Reticle/Reticle2D.h"
-#include "RailCamera/RailCameraController.h"
+#include "CameraControll/RailCamera/RailCameraController.h"
+#include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "Floor/Floor.h"
 
 #include <list>
@@ -83,6 +84,9 @@ private:
 
 	// レールカメラコントローラーのポインタ
 	std::unique_ptr<RailCameraController> railCameraController_ = nullptr;
+
+	// フォローカメラコントローラーのポインタ
+	std::unique_ptr<FollowCameraController> followCameraController_ = nullptr;
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;

@@ -3,6 +3,8 @@
 #include "Math/MathVector.h"
 #include <imgui.h>
 
+using namespace MathVector;
+
 void EnemyBullet::Initialize() {
 
 	// ワールド変換の初期化

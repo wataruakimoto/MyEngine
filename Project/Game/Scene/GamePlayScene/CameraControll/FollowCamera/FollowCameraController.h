@@ -28,6 +28,34 @@ public:
 	void ShowImGui();
 
 ///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ワールド変換のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const WorldTransform& GetWorldTransform() const { return worldTransform; }
+
+	/// <summary>
+	/// カメラのゲッター
+	/// </summary>
+	/// <returns></returns>
+	Camera& GetCamera() const { return *camera; }
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 追従対象のセッター
+	/// </summary>
+	/// <param name="target"></param>
+	void SetTarget(WorldTransform* target) { this->target = target; }
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
@@ -40,5 +68,8 @@ private:
 
 	// 追従対象
 	const WorldTransform* target = nullptr;
+
+	// 追従対象のオフセット
+	Vector3 baseOffset = { 0.0f, 2.0f, -10.0f };
 };
 

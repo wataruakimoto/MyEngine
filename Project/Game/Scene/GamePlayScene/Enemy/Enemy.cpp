@@ -7,6 +7,8 @@
 #include <numbers>
 #include <imgui.h>
 
+using namespace MathVector;
+
 void Enemy::Initialize() {
 
 	// ワールド変換の初期化

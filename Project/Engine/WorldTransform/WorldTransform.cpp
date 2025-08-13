@@ -6,6 +6,7 @@
 
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 
 void WorldTransform::Initialize() {

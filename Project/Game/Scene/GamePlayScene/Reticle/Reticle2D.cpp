@@ -9,6 +9,7 @@
 
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 
 Reticle2D::Reticle2D() {

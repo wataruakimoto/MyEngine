@@ -9,6 +9,8 @@
 #include <list>
 #include <imgui.h>
 
+using namespace MathVector;
+
 void Player::Initialize() {
 
 	// ワールド変換の初期化

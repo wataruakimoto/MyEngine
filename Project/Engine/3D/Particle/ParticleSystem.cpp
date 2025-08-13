@@ -15,6 +15,7 @@
 #include <string>
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 using namespace Logger;
 
