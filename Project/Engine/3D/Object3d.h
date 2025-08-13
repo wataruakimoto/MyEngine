@@ -3,7 +3,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "math/Matrix4x4.h"
-#include "WorldTransform/WorldTransform.h"
+#include "Data/Transform.h"
 
 #include <fstream>
 #include <vector>
@@ -83,8 +83,6 @@ public:
 	/// </summary>
 	void Draw();
 
-	void Draw(WorldTransform worldTransform);
-
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
@@ -134,19 +132,19 @@ public:
 	/// 大きさのセッター
 	/// </summary>
 	/// <param name="scale">大きさ</param>
-	void SetScale(const Vector3& scale) { this->worldTransform.SetScale(scale); }
+	void SetScale(const Vector3& scale) { this->transform.scale = scale; }
 
 	/// <summary>
 	/// 回転のセッター
 	/// </summary>
 	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate) { this->worldTransform.SetRotate(rotate); }
+	void SetRotate(const Vector3& rotate) { this->transform.rotate = rotate; }
 
 	/// <summary>
 	/// 位置のセッター
 	/// </summary>
 	/// <param name="translate">位置</param>
-	void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
+	void SetTranslate(const Vector3& translate) { this->transform.translate = translate; }
 
 	/// <summary>
 	/// モデルのセッター
@@ -193,19 +191,19 @@ public:
 	/// 大きさのゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector3& GetScale() const { return worldTransform.GetScale(); }
+	const Vector3& GetScale() const { return transform.scale; }
 
 	/// <summary>
 	/// 回転のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector3& GetRotate() const { return worldTransform.GetRotate(); }
+	const Vector3& GetRotate() const { return transform.rotate; }
 
 	/// <summary>
 	/// 位置のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector3& GetTranslate() const { return worldTransform.GetTranslate(); }
+	const Vector3& GetTranslate() const { return transform.translate; }
 
 	/// <summary>
 	/// 色のゲッター
@@ -224,12 +222,6 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	float GetIntensity() const { return directionalLightData->intensity; }
-
-	/// <summary>
-	/// ワールド行列のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -265,9 +257,6 @@ private:
 	// モデル
 	Model* model = nullptr;
 
-	// ワールド変換
-	WorldTransform worldTransform;
-
 	// カメラ
 	Camera* camera = nullptr;
 
@@ -275,4 +264,6 @@ private:
 
 	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;
+
+	Transform transform;
 };

@@ -5,8 +5,6 @@
 #include <d3d12.h>
 #include <wrl.h>
 
-/// ===== 前方宣言 ===== ///
-class DirectXUtility;
 class Camera;
 
 /// ===== ワールド変換 ===== ///
@@ -21,16 +19,6 @@ public:
 	/// 初期化
 	/// </summary>
 	void Initialize();
-
-	/// <summary>
-	/// 行列の更新
-	/// </summary>
-	void UpdateMatrix();
-
-	/// <summary>
-	/// 行列の転送
-	/// </summary>
-	void TransferMatrix();
 
 	/// <summary>
 	/// 更新
@@ -112,60 +100,23 @@ public:
 	/// <param name="parent">親のワールド変換クラス</param>
 	void SetParent(const WorldTransform* parent) { parent_ = parent; }
 
-	/// <summary>
-	/// DirectXユーティリティのセッター
-	/// </summary>
-	void SetDirectXUtility(DirectXUtility* dxUtility) { dxUtility_ = dxUtility; }
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	void SetCamera(Camera* camera) { camera_ = camera; }
-
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
-
-	// 座標変換
-	struct Transformation {
-		Matrix4x4 worldMatrix;  // ワールド行列
-		Matrix4x4 WVPMatrix;	// ワールドビュープロジェクション行列
-		Matrix4x4 worldInverseTranspose; // ワールド逆転置行列
-	};
-
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
 	// 拡縮
-	Vector3 scale_ = { 1.0f, 1.0f, 1.0f };
+	Vector3 scale_;
 
 	// 回転
-	Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 rotate_;
 
 	// 平行移動
-	Vector3 translate_ = { 0.0f, 0.0f, 0.0f };
+	Vector3 translate_;
 
 	// ワールド行列
-	Matrix4x4 worldMatrix_ = {};
-
-	// ワールドビュープロジェクション行列
-	Matrix4x4 WVPMatrix_ = {};
+	Matrix4x4 worldMatrix_;
 
 	// 親のワールド変換クラス
-	const WorldTransform* parent_ = nullptr;
-
-	// 座標変換データ
-	Transformation transformationData_ = {};
-
-	// 座標変換リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> transformationResource_ = nullptr;
-
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility_ = nullptr;
-
-	// カメラの借りポインタ
-	Camera* camera_ = nullptr;
+	const WorldTransform* parent_;
 };

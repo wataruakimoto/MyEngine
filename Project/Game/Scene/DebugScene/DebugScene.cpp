@@ -30,6 +30,12 @@ void DebugScene::Initialize() {
 
 void DebugScene::Update() {
 
+	if (Input::GetInstance()->TriggerKey(DIK_1)) {
+
+		// シーンの切り替え
+		SceneManager::GetInstance()->ChangeScene("PLAY");
+	}
+
 	// カメラの更新
 	camera->Update();
 

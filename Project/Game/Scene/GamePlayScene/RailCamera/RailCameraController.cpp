@@ -26,7 +26,7 @@ void RailCameraController::Update() {
 	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.2f });
 	
 	// ワールド変換の更新
-	worldTransform.UpdateMatrix();
+	worldTransform.Update();
 
 	// ワールド行列をワールド変換から取得
 	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();

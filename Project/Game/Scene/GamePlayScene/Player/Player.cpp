@@ -56,7 +56,7 @@ void Player::Update() {
 	worldTransform_.SetTranslate(translate);
 
 	// ワールド変換の更新
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	object->SetTranslate(worldTransform_.GetWorldPosition());
 	object->SetRotate(worldTransform_.GetRotate());
