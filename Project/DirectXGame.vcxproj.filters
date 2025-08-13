@@ -143,12 +143,13 @@
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\RailCamera\RailCameraController.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\RailCamera\RailCameraController.cpp" />
     <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\FilterManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Floor\Floor.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -283,12 +284,13 @@
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RadialBlurFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\RailCamera\RailCameraController.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\RailCamera\RailCameraController.h" />
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\FilterManager.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Floor\Floor.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
