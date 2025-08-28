@@ -52,9 +52,12 @@ void Enemy::Update() {
 	// 射撃
 	if (fireTimer <= 0) {
 
-		Fire();
-		fireTimer = 60.0f;
+		// プレイヤーより手前にいたら
+		if (worldTransform_.GetTranslate().z > player->GetWorldTransform().GetTranslate().z) {
 
+			Fire();
+			fireTimer = 60.0f;
+		}
 	}
 	else {
 
@@ -130,7 +133,7 @@ void Enemy::AimToPlayer() {
 	Vector3 direction = playerPos - worldTransform_.GetTranslate();
 	direction = Normalize(direction);
 
-   // X軸（ピッチ）：上下方向
+	// X軸（ピッチ）：上下方向
 	float pitch = std::atan2(-direction.y, std::sqrt(direction.x * direction.x + direction.z * direction.z));
 	// Y軸（ヨー）：左右方向
 	float yaw = std::atan2(direction.x, direction.z);
