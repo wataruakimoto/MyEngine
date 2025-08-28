@@ -8,24 +8,26 @@
 #include "3d/Particle/ParticleSystem.h"
 #include "math/Vector3.h"
 #include "scene/SceneManager.h"
+#include "CameraControll/FollowCamera/FollowCameraController.h"
 
 #include <imgui.h>
 
 void GamePlayScene::Initialize() {
 
-	// レールカメラコントローラーの生成
-	//railCameraController_ = std::make_unique<RailCameraController>();
-	// レールカメラコントローラーの初期化
-	//railCameraController_->Initialize();
+	// カメラの生成&初期化
+	camera_ = std::make_unique<Camera>();
+	camera_->Initialize();
 
-	// 追従カメラコントローラーの生成
-	followCameraController_ = std::make_unique<FollowCameraController>();
-	// 追従カメラコントローラーの初期化
-	followCameraController_->Initialize();
+	// カメラコントローラーの生成&初期化
+	cameraController_ = std::make_unique<FollowCameraController>();
+	cameraController_->Initialize();
+	cameraController_->SetCamera(camera_.get());
+
+	// カメラの設定
+	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	// パーティクルシステムの初期化
-	//ParticleSystem::GetInstance()->SetCamera(&railCameraController_->GetCamera());
-	ParticleSystem::GetInstance()->SetCamera(&followCameraController_->GetCamera());
+	ParticleSystem::GetInstance()->SetCamera(camera_.get());
 	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
 
 	// 衝突マネージャの初期化
@@ -38,12 +40,10 @@ void GamePlayScene::Initialize() {
 	// プレイヤーの生成&初期化
 	player = std::make_unique<Player>();
 	player->Initialize();
-	//player->GetWorldTransform().SetParent(&railCameraController_->GetWorldTransform());
-	player->GetWorldTransform().SetParent(&followCameraController_->GetWorldTransform());
 	player->SetGamePlayScene(this);
 
-	// 追従カメラにプレイヤーを設定
-	followCameraController_->SetTarget(&player->GetWorldTransform());
+	// キャストし追従カメラの方を呼び出す
+	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player->GetWorldTransform());
 
 	// 敵の生成
 	LoadEnemyPopData();
@@ -54,8 +54,7 @@ void GamePlayScene::Initialize() {
 	// レティクルのプレイヤー設定
 	reticle3D_->SetPlayer(player.get());
 	// レティクルのカメラ設定
-	//reticle3D_->SetCamera(&railCameraController_->GetCamera());
-	reticle3D_->SetCamera(&followCameraController_->GetCamera());
+	reticle3D_->SetCamera(camera_.get());
 
 	// プレイヤーにレティクルを設定
 	player->SetReticle3D(reticle3D_.get());
@@ -66,8 +65,7 @@ void GamePlayScene::Initialize() {
 	// 3Dレティクルを2Dレティクルに設定
 	reticle2D_->SetReticle3D(reticle3D_.get());
 	// カメラを2Dレティクルに設定
-	//reticle2D_->SetCamera(&railCameraController_->GetCamera());
-	reticle2D_->SetCamera(&followCameraController_->GetCamera());
+	reticle2D_->SetCamera(camera_.get());
 
 	// 3Dレティクルに2Dレティクルを設定
 	reticle3D_->SetReticle2D(reticle2D_.get());
@@ -101,11 +99,8 @@ void GamePlayScene::Update() {
 		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 
-	// レールカメラコントローラーの更新
-	//railCameraController_->Update();
-
-	// 追従カメラコントローラーの更新
-	followCameraController_->Update();
+	// カメラコントローラの更新
+	cameraController_->Update();
 
 	// 天球更新
 	skydome->Update();
@@ -144,8 +139,7 @@ void GamePlayScene::Update() {
 	reticle2D_->Update();
 
 	// カメラの座標をフロアに設定
-	//floor_->SetCameraTranslate(railCameraController_->GetWorldTransform().GetTranslate());
-	floor_->SetCameraTranslate(followCameraController_->GetWorldTransform().GetTranslate());
+	floor_->SetCameraTranslate(camera_->GetTranslate());
 
 	// フロアの更新
 	floor_->Update();
@@ -234,9 +228,9 @@ void GamePlayScene::ShowImGui() {
 
 	Input::GetInstance()->ShowImgui();
 
-	//railCameraController_->ShowImGui();
+	camera_->ShowImGui("Camera");
 
-	followCameraController_->ShowImGui();
+	cameraController_->ShowImGui();
 
 	player->ShowImGui();
 

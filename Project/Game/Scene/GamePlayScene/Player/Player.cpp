@@ -15,6 +15,7 @@ void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetTranslate({ 0.0f, 4.0f, 0.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -50,12 +51,31 @@ void Player::Update() {
 		fireTimer--;
 	}
 
-	Move();
+	//Move();
 
-	// 奥にずらす
-	Vector3 translate = worldTransform_.GetTranslate();
-	translate.z = 40.0f;
-	worldTransform_.SetTranslate(translate);
+	// レティクルの位置を取得
+	Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
+
+	// レティクルの方向ベクトルを求める
+	Vector3 toReticle = reticlePos - worldTransform_.GetWorldPosition();
+
+	// 正規化
+	toReticle = Normalize(toReticle);
+
+	// 座標に速度を加算
+	worldTransform_.AddTranslate(toReticle * moveSpeed);
+
+	// 横軸の長さを求める
+	float xzLength = Length(toReticle.x, toReticle.z);
+
+	// ヨー(Y軸回りの回転)を求める
+	float yaw = atan2f(toReticle.x, toReticle.z);
+
+	// ピッチ(X軸回りの回転)を求める
+	float pitch = atan2f(-toReticle.y, xzLength);
+
+	// 回転を設定
+	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
 
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();

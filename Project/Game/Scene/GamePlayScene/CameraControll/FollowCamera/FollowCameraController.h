@@ -1,11 +1,12 @@
 #pragma once
+#include "Scene/GamePlayScene/CameraControll/ICameraController.h"
 #include "WorldTransform/WorldTransform.h"
 #include "Camera/Camera.h"
 
 #include <memory>
 
 /// ===== 追従カメラコントローラー ===== ///
-class FollowCameraController{
+class FollowCameraController : public ICameraController {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -15,34 +16,17 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize() override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
-	void ShowImGui();
-
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// ワールド変換のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const WorldTransform& GetWorldTransform() const { return worldTransform; }
-
-	/// <summary>
-	/// カメラのゲッター
-	/// </summary>
-	/// <returns></returns>
-	Camera& GetCamera() const { return *camera; }
+	void ShowImGui() override;
 
 ///-------------------------------------------/// 
 /// セッター
@@ -60,16 +44,10 @@ public:
 ///-------------------------------------------///
 private:
 
-	// ワールド変換
-	WorldTransform worldTransform;
-
-	// カメラ
-	std::unique_ptr<Camera> camera = nullptr;
-
 	// 追従対象
 	const WorldTransform* target = nullptr;
 
 	// 追従対象のオフセット
-	Vector3 baseOffset = { 0.0f, 2.0f, -10.0f };
+	Vector3 baseOffset = { 0.0f, 1.5f, -25.0f };
 };
 

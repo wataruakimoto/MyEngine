@@ -12,13 +12,6 @@ void FollowCameraController::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform.Initialize();
-
-	// カメラの初期化
-	camera = std::make_unique<Camera>();
-	camera->Initialize();
-
-	// カメラの設定
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void FollowCameraController::Update() {
@@ -63,6 +56,8 @@ void FollowCameraController::ShowImGui() {
 #ifdef _DEBUG
 
 	ImGui::Begin("FollowCameraController");
+
+	ImGui::DragFloat3("BaseOffset", &baseOffset.x, 0.1f);
 
 	// ワールド変換のImGui表示
 	worldTransform.ShowImGui();

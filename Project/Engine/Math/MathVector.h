@@ -27,6 +27,8 @@ namespace MathVector {
 	float Length(const Vector2& v);
 	float Length(const Vector3& v);
 
+	float Length(float f1, float f2);
+
 	// 正規化
 	Vector3 Normalize(const Vector3& v);
 

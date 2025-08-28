@@ -41,6 +41,9 @@ void Reticle3D::Update() {
 
 	ConvertScreenToWorld();
 
+	// ワールド変換の更新
+	worldTransform_.UpdateMatrix();
+
 	// オブジェクトの座標を設定
 	object_->SetTranslate(worldTransform_.GetTranslate());
 	// オブジェクトの更新

@@ -291,6 +291,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Floor\Floor.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\ICameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

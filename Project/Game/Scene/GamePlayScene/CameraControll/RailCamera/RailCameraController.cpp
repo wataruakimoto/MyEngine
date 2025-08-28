@@ -11,13 +11,6 @@ void RailCameraController::Initialize() {
 	// ワールド変換の初期化
 	worldTransform.Initialize();
 	worldTransform.SetTranslate({ 0.0f, 10.0f, 0.0f });
-
-	// カメラの初期化
-	camera = std::make_unique<Camera>();
-	camera->Initialize();
-
-	// カメラの設定
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
 }
 
 void RailCameraController::Update() {

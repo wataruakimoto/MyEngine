@@ -55,6 +55,11 @@ float MathVector::Length(const Vector3& v) {
 	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
+float MathVector::Length(float f1, float f2) {
+
+	return sqrtf(f1 * f1 + f2 * f2);
+}
+
 Vector3 MathVector::Normalize(const Vector3& v) {
 
 	float length = sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
