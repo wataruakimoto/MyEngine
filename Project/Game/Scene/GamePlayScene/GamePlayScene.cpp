@@ -9,6 +9,7 @@
 #include "math/Vector3.h"
 #include "scene/SceneManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
+#include "CameraControll/RailCamera/RailCameraController.h"
 
 #include <imgui.h>
 
@@ -44,6 +45,7 @@ void GamePlayScene::Initialize() {
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player->GetWorldTransform());
+	//player->GetWorldTransform().SetParent(&cameraController_->GetWorldTransform());
 
 	// 敵の生成
 	LoadEnemyPopData();
@@ -73,6 +75,10 @@ void GamePlayScene::Initialize() {
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
 	floor_->Initialize();
+
+	// シリンダーの生成
+	cylinder_ = std::make_unique<Cylinder>();
+	cylinder_->Initialize();
 }
 
 void GamePlayScene::Update() {
@@ -139,10 +145,16 @@ void GamePlayScene::Update() {
 	reticle2D_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetTranslate());
+	floor_->SetCameraTranslate(camera_->GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
+
+	// カメラの座標をシリンダーに設定
+	cylinder_->SetCameraTranslate(camera_->GetWorldPosition());
+
+	// シリンダーの更新
+	cylinder_->Update();
 
 	// 衝突マネージャの更新
 	collisionManager_->Update();
@@ -163,6 +175,12 @@ void GamePlayScene::Draw() {
 
 	// 天球描画
 	skydome->Draw();
+
+	// シリンダーの描画
+	cylinder_->Draw();
+
+	// フロアの描画
+	floor_->Draw();
 
 	// プレイヤー描画
 	player->Draw();
@@ -187,9 +205,6 @@ void GamePlayScene::Draw() {
 
 	// 3Dレティクルの描画
 	reticle3D_->Draw();
-
-	// フロアの描画
-	floor_->Draw();
 
 	// 衝突マネージャの描画
 	collisionManager_->Draw();
@@ -245,6 +260,8 @@ void GamePlayScene::ShowImGui() {
 	reticle2D_->ShowImGui();
 
 	floor_->ShowImGui();
+
+	cylinder_->ShowImGui();
 }
 
 void GamePlayScene::CheckAllCollisions() {

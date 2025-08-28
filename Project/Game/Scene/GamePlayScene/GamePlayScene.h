@@ -12,6 +12,7 @@
 #include "Camera/Camera.h"
 #include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
+#include "Cylinder/Cylinder.h"
 
 #include <list>
 #include <sstream>
@@ -114,6 +115,9 @@ private:
 
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;
+
+	// シリンダーのポインタ
+	std::unique_ptr<Cylinder> cylinder_ = nullptr;
 
 	// 敵を倒した数
 	int killCount = 0;

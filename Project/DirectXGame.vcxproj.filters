@@ -150,6 +150,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Floor\Floor.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -292,6 +293,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\ICameraController.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

@@ -110,6 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\FilterManager.cpp" />
@@ -177,6 +178,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\ICameraController.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.h" />

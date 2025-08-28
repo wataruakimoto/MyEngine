@@ -37,18 +37,14 @@ void FollowCameraController::Update() {
 	// ワールド変換の更新
 	worldTransform.UpdateMatrix();
 
-	// ワールド行列をワールド変換から取得
-	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
+	// 回転を取得
+	worldTransform.SetRotate(worldTransform.GetRotate());
 
-	// ワールド行列を逆行列に変換
-	worldMatrix = Inverse(worldMatrix);
-
-	// カメラのビュー行列を設定
-	camera->SetViewMatrix(worldMatrix);
+	// 位置を取得
+	camera->SetTranslate(worldTransform.GetTranslate());
 
 	// カメラの更新
-	camera->UpdateProjectionMatrix();
-	camera->UpdateViewProjectionMatrix();
+	camera->Update();
 }
 
 void FollowCameraController::ShowImGui() {
