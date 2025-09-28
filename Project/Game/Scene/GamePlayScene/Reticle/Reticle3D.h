@@ -52,12 +52,6 @@ private:
 public:
 
 	/// <summary>
-	/// プレイヤーのセッター
-	/// </summary>
-	/// <param name="player"></param>
-	void SetPlayer(Player* player) { this->player_ = player; }
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
@@ -95,10 +89,7 @@ private:
 	WorldTransform worldTransform_;
 
 	// プレイヤーとレティクルの距離
-	const float kDistancePlayerToReticle_ = 50.0f;
-
-	// プレイヤーの借りポインタ
-	Player* player_ = nullptr;
+	const float kDistancePlayerToReticle_ = 100.0f;
 
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;

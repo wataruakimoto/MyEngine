@@ -53,8 +53,6 @@ void GamePlayScene::Initialize() {
 	// 3Dレティクルの生成
 	reticle3D_ = std::make_unique<Reticle3D>();
 	reticle3D_->Initialize();
-	// レティクルのプレイヤー設定
-	reticle3D_->SetPlayer(player.get());
 	// レティクルのカメラ設定
 	reticle3D_->SetCamera(camera_.get());
 
