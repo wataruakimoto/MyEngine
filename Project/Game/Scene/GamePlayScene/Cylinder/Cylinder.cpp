@@ -13,7 +13,7 @@ void Cylinder::Initialize() {
 	model_->Initialize("Resources/Cylinder", "cylinder.obj");
 
 	// 3Dオブジェクトの生成・初期化
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 20; ++i) {
 		auto object = std::make_unique<Object3d>();
 		object->Initialize();
 		object->SetModel(model_.get());

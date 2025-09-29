@@ -6,6 +6,7 @@
 #include "3d/Object3dCommon.h"
 #include "3d/Particle/ParticleCommon.h"
 #include "3d/Particle/ParticleSystem.h"
+#include "3D/Skybox/SkyboxCommon.h"
 #include "math/Vector3.h"
 #include "scene/SceneManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
@@ -33,10 +34,6 @@ void GamePlayScene::Initialize() {
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();
-
-	// 天球の生成&初期化
-	skydome = std::make_unique<Skydome>();
-	skydome->Initialize();
 
 	// プレイヤーの生成&初期化
 	player = std::make_unique<Player>();
@@ -77,6 +74,14 @@ void GamePlayScene::Initialize() {
 	// シリンダーの生成
 	cylinder_ = std::make_unique<Cylinder>();
 	cylinder_->Initialize();
+
+	// スカイボックスの生成
+	skyBox_ = std::make_unique<SkyBoxGame>();
+	skyBox_->Initialize();
+	// カメラを設定
+	skyBox_->SetCamera(camera_.get());
+	// プレイヤーを設定
+	skyBox_->SetPlayer(player.get());
 }
 
 void GamePlayScene::Update() {
@@ -105,9 +110,6 @@ void GamePlayScene::Update() {
 
 	// カメラコントローラの更新
 	cameraController_->Update();
-
-	// 天球更新
-	skydome->Update();
 
 	// プレイヤー更新
 	player->Update();
@@ -154,6 +156,9 @@ void GamePlayScene::Update() {
 	// シリンダーの更新
 	cylinder_->Update();
 
+	// スカイボックスの更新
+	skyBox_->Update();
+
 	// 衝突マネージャの更新
 	collisionManager_->Update();
 
@@ -166,13 +171,16 @@ void GamePlayScene::Update() {
 
 void GamePlayScene::Draw() {
 
+	/// === スカイボックスの描画準備 === ///
+	SkyboxCommon::GetInstance()->SettingDrawing();
+
+	// スカイボックスの描画
+	skyBox_->Draw();
+
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawing();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
-
-	// 天球描画
-	skydome->Draw();
 
 	// シリンダーの描画
 	cylinder_->Draw();
@@ -232,9 +240,6 @@ void GamePlayScene::Finalize() {
 
 	// プレイヤーの解放
 	player->Finalize();
-
-	// 天球の解放
-	skydome->Finalize();
 }
 
 void GamePlayScene::ShowImGui() {
@@ -260,6 +265,8 @@ void GamePlayScene::ShowImGui() {
 	floor_->ShowImGui();
 
 	cylinder_->ShowImGui();
+
+	skyBox_->ShowImGui();
 }
 
 void GamePlayScene::CheckAllCollisions() {
