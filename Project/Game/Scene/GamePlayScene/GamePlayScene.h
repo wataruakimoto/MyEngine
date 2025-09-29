@@ -2,7 +2,6 @@
 #include "Scene/System/BaseScene.h"
 #include "Collision/CollisionManager.h"
 
-#include "Skydome/Skydome.h"
 #include "Player/Player.h"
 #include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
@@ -13,6 +12,7 @@
 #include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
+#include "SkyBox/SkyBoxGame.h"
 
 #include <list>
 #include <sstream>
@@ -92,9 +92,6 @@ private:
 	// 衝突マネージャのポインタ
 	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
 
-	// 天球のポインタ
-	std::unique_ptr<Skydome> skydome = nullptr;
-
 	// プレイヤーのポインタ
 	std::unique_ptr<Player> player = nullptr;
 
@@ -118,6 +115,9 @@ private:
 
 	// シリンダーのポインタ
 	std::unique_ptr<Cylinder> cylinder_ = nullptr;
+
+	// スカイボックスのポインタ
+	std::unique_ptr<SkyBoxGame> skyBox_ = nullptr;
 
 	// 敵を倒した数
 	int killCount = 0;

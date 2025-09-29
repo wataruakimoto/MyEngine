@@ -176,6 +176,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\RailCamera\RailCameraController.cpp" />
     <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
@@ -261,6 +262,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\RailCamera\RailCameraController.h" />
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
