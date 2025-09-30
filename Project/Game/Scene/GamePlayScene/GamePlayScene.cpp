@@ -59,8 +59,6 @@ void GamePlayScene::Initialize() {
 	// 2Dレティクルの生成
 	reticle2D_ = std::make_unique<Reticle2D>();
 	reticle2D_->Initialize();
-	// 3Dレティクルを2Dレティクルに設定
-	reticle2D_->SetReticle3D(reticle3D_.get());
 	// カメラを2Dレティクルに設定
 	reticle2D_->SetCamera(camera_.get());
 

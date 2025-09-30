@@ -1,14 +1,16 @@
 #pragma once
 
 #include "2D/Sprite.h"
+#include "2D/TextureManager.h"
 
+#include <list>
 #include <memory>
 
 /// === 前方宣言 === ///
-class Camera;
+class Enemy;
 
-/// === 2Dレティクル === ///
-class Reticle2D {
+/// === ロックオン === ///
+class LockOn {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -18,7 +20,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	Reticle2D();
+	LockOn();
 
 	/// <summary>
 	/// 初期化
@@ -35,50 +37,35 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui();
-
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
 private:
 
 ///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera_ = camera; }
-
-///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
 public:
 
-	/// <summary>
-	/// レティクルの位置のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector2& GetReticlePosition() const { return reticlePosition_; }
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	void SetEnemies(std::list<Enemy*> enemies) { enemies_ = enemies; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// レティクルのスプライト
-	std::unique_ptr<Sprite> spriteReticle_ = nullptr;
+	// 敵のリスト
+	std::list<Enemy*> enemies_;
 
-	// レティクルの位置
-	Vector2 reticlePosition_ = { 0.0f, 0.0f };
+	// スプライト
+	std::unique_ptr<Sprite> sprite_ = nullptr;
 
-	// カメラの借りポインタ
-	Camera* camera_ = nullptr;
+	// テクスチャマネージャのインスタンス
+	TextureManager* textureManager_ =  TextureManager::GetInstance();
 };
 

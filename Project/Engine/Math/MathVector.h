@@ -38,6 +38,12 @@ namespace MathVector {
 	// ベクトル変換
 	Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m);
 
+	// ワールド座標→スクリーン座標
+	Vector2 ConvertWorldToScreen(const Vector3& worldPos, const Matrix4x4& viewProjectionMatrix);
+
+	// スクリーン座標→ワールド座標
+	Vector3 ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float nearZ, float farZ);
+
 ///-------------------------------------------/// 
 /// オペレーター演算子
 ///-------------------------------------------///

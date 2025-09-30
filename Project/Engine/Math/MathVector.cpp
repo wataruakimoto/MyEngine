@@ -1,4 +1,6 @@
 #include "MathVector.h"
+#include "WinApp/WinApp.h"
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <cassert>
@@ -99,6 +101,45 @@ Vector3 MathVector::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	resultTransformNormal.z = v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2];
 
 	return resultTransformNormal;
+}
+
+Vector2 MathVector::ConvertWorldToScreen(const Vector3& worldPos, const Matrix4x4& viewProjectMatrix) {
+
+	// ワールド座標をクリップ座標に変換
+	Vector3 clipPos = Transform(worldPos, viewProjectMatrix);
+
+	// クリップ座標をNDC座標に変換
+	Vector2 ndc = { clipPos.x / clipPos.z, clipPos.y / clipPos.z };
+
+	// NDC座標をスクリーン座標に変換
+	Vector2 screenPos = {
+		(ndc.x + 1.0f) / 2.0f * float(WinApp::kClientWidth),
+		(-ndc.y + 1.0f) / 2.0f * float(WinApp::kClientHeight) // y軸は上下反転
+	};
+
+	return screenPos;
+}
+
+Vector3 MathVector::ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float nearZ, float farZ) {
+	
+	// NDC座標に変換
+	Vector2 ndc = { 
+		(screenPos.x / float(WinApp::kClientWidth)) * 2.0f - 1.0f,
+		1.0f - (screenPos.y / float(WinApp::kClientHeight)) * 2.0f // y軸は上下反転
+	};
+
+	// 近平面と遠平面のクリップ座標
+	Vector3 nearClip = { ndc.x, ndc.y, nearZ }; // 近平面
+	Vector3 farClip = { ndc.x, ndc.y, farZ };  // 遠平面
+
+	// クリップ座標をワールド座標に変換
+	Vector3 nearWorld = Transform(nearClip, inverseViewProjectionMatrix);
+	Vector3 farWorld = Transform(farClip, inverseViewProjectionMatrix);
+
+	// 座標の計算
+	Vector3 resultPosition = nearWorld + Normalize(farWorld - nearWorld);
+
+	return resultPosition;
 }
 
 Vector2& MathVector::operator+=(Vector2& v1, const Vector2& v2) {
