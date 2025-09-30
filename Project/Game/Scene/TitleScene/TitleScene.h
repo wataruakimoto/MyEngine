@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene/System/BaseScene.h"
+#include "Scene/SceneManager.h"
+#include "Input/Input.h"
 
 /// ===== タイトルシーン ===== ///
 class TitleScene : public BaseScene {
@@ -38,4 +40,10 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// シーンマネージャのインスタンス
+	SceneManager* sceneManager_ = SceneManager::GetInstance();
+
+	// 入力のインスタンス
+	Input* input_ = Input::GetInstance();
 };

@@ -4,6 +4,11 @@ void TitleScene::Initialize() {
 }
 
 void TitleScene::Update() {
+
+	// スペースキーを押したらゲームシーンへ
+	if (input_->TriggerKey(DIK_SPACE)) {
+		sceneManager_->ChangeScene("PLAY");
+	};
 }
 
 void TitleScene::Draw() {
