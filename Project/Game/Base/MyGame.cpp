@@ -17,7 +17,7 @@ void MyGame::Initialize() {
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
 
 	// シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->ChangeScene("PLAY");
+	SceneManager::GetInstance()->ChangeScene("TITLE");
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->Initialize();
