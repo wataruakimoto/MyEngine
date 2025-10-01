@@ -26,6 +26,16 @@ Vector3 MathVector::Add(const Vector3& v1, const Vector3& v2) {
 	return resultAdd;
 }
 
+Vector2 MathVector::Subtract(const Vector2& v1, const Vector2& v2) {
+	
+	Vector2 result;
+
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+
+	return result;
+}
+
 Vector3 MathVector::Subtract(const Vector3& v1, const Vector3& v2) {
 
 	Vector3 resultSubtract;
@@ -48,6 +58,11 @@ Vector3 MathVector::Multiply(float scalar, const Vector3& v) {
 	return resultMultiply;
 }
 
+float MathVector::Length(float f1, float f2) {
+
+	return sqrtf(f1 * f1 + f2 * f2);
+}
+
 float MathVector::Length(const Vector2& v) {
 	return sqrtf(v.x * v.x + v.y * v.y);
 }
@@ -57,9 +72,14 @@ float MathVector::Length(const Vector3& v) {
 	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-float MathVector::Length(float f1, float f2) {
+float MathVector::Distance(const Vector2& v1, const Vector2& v2) {
+	
+	return Length(v2 - v1);
+}
 
-	return sqrtf(f1 * f1 + f2 * f2);
+float MathVector::Distance(const Vector3& v1, const Vector3& v2) {
+	
+	return Length(v2 - v1);
 }
 
 Vector3 MathVector::Normalize(const Vector3& v) {
@@ -142,6 +162,16 @@ Vector3 MathVector::ConvertScreenToWorld(const Vector2& screenPos, const Matrix4
 	return resultPosition;
 }
 
+Vector2 MathVector::operator+(const Vector2& v1, const Vector2& v2) {
+	
+	return Add(v1, v2);
+}
+
+Vector2 MathVector::operator+(const Vector2& v) {
+	
+	return v;
+}
+
 Vector2& MathVector::operator+=(Vector2& v1, const Vector2& v2) {
 	v1.x += v2.x;
 	v1.y += v2.y;
@@ -161,6 +191,19 @@ Vector3& MathVector::operator+=(Vector3& v1, const Vector3& v2) {
 	v1.x += v2.x;
 	v1.y += v2.y;
 	v1.z += v2.z;
+
+	return v1;
+}
+
+Vector2 MathVector::operator-(const Vector2& v1, const Vector2& v2) {
+	
+	return Subtract(v1, v2);
+}
+
+Vector2 MathVector::operator-=(Vector2& v1, const Vector2& v2) {
+	
+	v1.x -= v2.x;
+	v1.y -= v2.y;
 
 	return v1;
 }

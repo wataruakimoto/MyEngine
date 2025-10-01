@@ -32,7 +32,7 @@ void Reticle3D::Update() {
 	Matrix4x4 inverseViewProjectionMatrix = Inverse(camera_->GetViewProjectionMatrix());
 
 	// 2Dレティクルのスクリーン座標をワールド座標に変換
-	Vector3 reticlePos = MathVector::ConvertScreenToWorld(reticle2DPos, inverseViewProjectionMatrix, 0.0f, 1.0f);
+	Vector3 reticlePos = ConvertScreenToWorld(reticle2DPos, inverseViewProjectionMatrix, 1.0f, 1.0f);
 
 	// ワールド座標をレティクルの座標に設定
 	worldTransform_.SetTranslate(reticlePos);
@@ -57,7 +57,7 @@ void Reticle3D::ShowImGui() {
 #ifdef _DEBUG
 
 	ImGui::Begin("Reticle3D");
-	
+
 	worldTransform_.ShowImGui();
 
 	ImGui::End();

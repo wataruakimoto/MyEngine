@@ -65,6 +65,14 @@ void GamePlayScene::Initialize() {
 	// 3Dレティクルに2Dレティクルを設定
 	reticle3D_->SetReticle2D(reticle2D_.get());
 
+	// ロックオンの生成
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Initialize();
+	// カメラをロックオンに設定
+	lockOn_->SetCamera(camera_.get());
+	// 2Dレティクルをロックオンに設定
+	lockOn_->SetReticle2D(reticle2D_.get());
+
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
 	floor_->Initialize();
@@ -141,6 +149,9 @@ void GamePlayScene::Update() {
 
 	// 2Dレティクルの更新
 	reticle2D_->Update();
+
+	// ロックオンの更新
+	lockOn_->Update();
 
 	// カメラの座標をフロアに設定
 	floor_->SetCameraTranslate(camera_->GetWorldPosition());
@@ -226,6 +237,9 @@ void GamePlayScene::Draw() {
 
 	// 2Dレティクルの描画
 	reticle2D_->Draw();
+
+	// ロックオンの描画
+	lockOn_->Draw();  
 }
 
 void GamePlayScene::Finalize() {
@@ -359,6 +373,10 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 			enemy->Initialize();
 			enemy->GetWorldTransform().SetTranslate({ x, y, z });
 			enemy->SetGamePlayScene(this);
+
+			// ロックオンに敵を登録
+			lockOn_->SetEnemy(enemy.get());
+
 			// 敵をリストに追加
 			enemies_.push_back(std::move(enemy));
 

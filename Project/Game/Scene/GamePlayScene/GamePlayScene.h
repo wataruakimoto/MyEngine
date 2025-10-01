@@ -8,6 +8,7 @@
 #include "Enemy/EnemyBullet.h"
 #include "Reticle/Reticle3D.h"
 #include "Reticle/Reticle2D.h"
+#include "LockOn/LockOn.h"
 #include "Camera/Camera.h"
 #include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
@@ -109,6 +110,9 @@ private:
 
 	// 2Dレティクルのポインタ
 	std::unique_ptr<Reticle2D> reticle2D_ = nullptr;
+
+	// ロックオンのポインタ
+	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;
