@@ -4,12 +4,13 @@
 #include "2D/TextureManager.h"
 
 #include <list>
-#include <utility>
+#include <tuple>
 #include <memory>
 
 /// === 前方宣言 === ///
 class Camera;
 class Enemy;
+class Player;
 class Reticle2D;
 
 /// === ロックオン === ///
@@ -40,10 +41,25 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui();
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
 private:
+	
+	/// <summary>
+	/// ロックオン対象の探索
+	/// </summary>
+	void SearchTarget();
+	
+	/// <summary>
+	/// ロックオン対象を決める
+	/// </summary>
+	void DecideTarget();
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -62,10 +78,16 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	/// <summary>
-	/// 敵リストのセッター
+	/// 敵リストのセッター(追加)
 	/// </summary>
 	/// <param name="enemies"></param>
 	void SetEnemy(Enemy* enemy) { enemies_.push_back(enemy); }
+
+	/// <summary>
+	/// プレイヤーのセッター
+	/// </summary>
+	/// <param name="player"></param>
+	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
 	/// 2Dレティクルのセッター
@@ -84,6 +106,9 @@ private:
 	// 敵のリスト
 	std::list<Enemy*> enemies_;
 
+	// 自機の借りポインタ
+	Player* player_ = nullptr;
+
 	// 2Dレティクルの借りポインタ
 	Reticle2D* reticle2D_ = nullptr;
 
@@ -94,10 +119,10 @@ private:
 	TextureManager* textureManager_ =  TextureManager::GetInstance();
 
 	// スクリーン座標でのロックオン距離の限界値
-	const float kDistanceLockOn_ = 10.0f;
+	const float kDistanceLockOn_ = 50.0f;
 
 	// ロックオン対象リスト
-	std::list<std::pair<float, Enemy*>> targets_;
+	std::list<std::tuple<float, float, Enemy*>> targets_; // <レティクルからの距離、自機からの距離、敵ポインタ＞
 
 	// ロックオン対象
 	Enemy* target_ = nullptr;

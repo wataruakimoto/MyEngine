@@ -68,6 +68,8 @@ void GamePlayScene::Initialize() {
 	// ロックオンの生成
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
+	// 自機をロックオンに設定
+	lockOn_->SetPlayer(player.get());
 	// カメラをロックオンに設定
 	lockOn_->SetCamera(camera_.get());
 	// 2Dレティクルをロックオンに設定
@@ -273,6 +275,8 @@ void GamePlayScene::ShowImGui() {
 	reticle3D_->ShowImGui();
 
 	reticle2D_->ShowImGui();
+
+	lockOn_->ShowImGui();
 
 	floor_->ShowImGui();
 
