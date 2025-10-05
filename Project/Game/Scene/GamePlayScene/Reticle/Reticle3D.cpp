@@ -25,8 +25,17 @@ void Reticle3D::Initialize() {
 
 void Reticle3D::Update() {
 
+	// 2Dレティクルの座標を設定
+	Vector2 reticle2DPos = reticle2D_->GetReticlePosition();
+
+	// カメラからビュープロジェクション行列を受け取り、逆行列に変換
+	Matrix4x4 inverseViewProjectionMatrix = Inverse(camera_->GetViewProjectionMatrix());
+
 	// 2Dレティクルのスクリーン座標をワールド座標に変換
-	ConvertScreenToWorld();
+	Vector3 reticlePos = ConvertScreenToWorld(reticle2DPos, inverseViewProjectionMatrix, 1.0f, 1.0f);
+
+	// ワールド座標をレティクルの座標に設定
+	worldTransform_.SetTranslate(reticlePos);
 
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
@@ -48,36 +57,10 @@ void Reticle3D::ShowImGui() {
 #ifdef _DEBUG
 
 	ImGui::Begin("Reticle3D");
-	
+
 	worldTransform_.ShowImGui();
 
 	ImGui::End();
 
 #endif // _DEBUG
-}
-
-void Reticle3D::ConvertScreenToWorld() {
-
-	// NDC座標に変換
-	Vector2 ndc = {
-		(reticle2D_->GetReticlePosition().x / float(WinApp::kClientWidth)) * 2.0f - 1.0f,
-		1.0f - (reticle2D_->GetReticlePosition().y / float(WinApp::kClientHeight)) * 2.0f // y軸は上下反転
-	};
-
-	// 近平面と遠平面のクリップ座標
-	Vector3 nearClip = { ndc.x, ndc.y, 0.0f }; // 近平面
-	Vector3 farClip = { ndc.x, ndc.y, 1.0f };  // 遠平面
-
-	//ビュープロジェクション逆行列を取得
-	Matrix4x4 inverseViewProjection = Inverse(camera_->GetViewProjectionMatrix());
-
-	// クリップ座標をワールド座標に変換
-	Vector3 nearWorld = MathVector::Transform(nearClip, inverseViewProjection);
-	Vector3 farWorld = MathVector::Transform(farClip, inverseViewProjection);
-
-	// 座標の計算
-	Vector3 translate = nearWorld + Normalize(farWorld - nearWorld) * kDistancePlayerToReticle_;
-
-	// レティクルの位置を計算
-	worldTransform_.SetTranslate(translate);
 }

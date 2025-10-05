@@ -160,6 +160,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\LockOn\LockOn.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -263,6 +264,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\RandomFilter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\LockOn\LockOn.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

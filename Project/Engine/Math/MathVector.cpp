@@ -1,4 +1,6 @@
 #include "MathVector.h"
+#include "WinApp/WinApp.h"
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <cassert>
@@ -24,6 +26,16 @@ Vector3 MathVector::Add(const Vector3& v1, const Vector3& v2) {
 	return resultAdd;
 }
 
+Vector2 MathVector::Subtract(const Vector2& v1, const Vector2& v2) {
+	
+	Vector2 result;
+
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+
+	return result;
+}
+
 Vector3 MathVector::Subtract(const Vector3& v1, const Vector3& v2) {
 
 	Vector3 resultSubtract;
@@ -46,6 +58,11 @@ Vector3 MathVector::Multiply(float scalar, const Vector3& v) {
 	return resultMultiply;
 }
 
+float MathVector::Length(float f1, float f2) {
+
+	return sqrtf(f1 * f1 + f2 * f2);
+}
+
 float MathVector::Length(const Vector2& v) {
 	return sqrtf(v.x * v.x + v.y * v.y);
 }
@@ -55,9 +72,14 @@ float MathVector::Length(const Vector3& v) {
 	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-float MathVector::Length(float f1, float f2) {
+float MathVector::Distance(const Vector2& v1, const Vector2& v2) {
+	
+	return Length(v2 - v1);
+}
 
-	return sqrtf(f1 * f1 + f2 * f2);
+float MathVector::Distance(const Vector3& v1, const Vector3& v2) {
+	
+	return Length(v2 - v1);
 }
 
 Vector3 MathVector::Normalize(const Vector3& v) {
@@ -101,6 +123,55 @@ Vector3 MathVector::TransformNormal(const Vector3& v, const Matrix4x4& m) {
 	return resultTransformNormal;
 }
 
+Vector2 MathVector::ConvertWorldToScreen(const Vector3& worldPos, const Matrix4x4& viewProjectMatrix) {
+
+	// ワールド座標をクリップ座標に変換
+	Vector3 clipPos = Transform(worldPos, viewProjectMatrix);
+
+	// クリップ座標をNDC座標に変換
+	Vector2 ndc = { clipPos.x / clipPos.z, clipPos.y / clipPos.z };
+
+	// NDC座標をスクリーン座標に変換
+	Vector2 screenPos = {
+		(ndc.x + 1.0f) / 2.0f * float(WinApp::kClientWidth),
+		(-ndc.y + 1.0f) / 2.0f * float(WinApp::kClientHeight) // y軸は上下反転
+	};
+
+	return screenPos;
+}
+
+Vector3 MathVector::ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float nearZ, float farZ) {
+	
+	// NDC座標に変換
+	Vector2 ndc = { 
+		(screenPos.x / float(WinApp::kClientWidth)) * 2.0f - 1.0f,
+		1.0f - (screenPos.y / float(WinApp::kClientHeight)) * 2.0f // y軸は上下反転
+	};
+
+	// 近平面と遠平面のクリップ座標
+	Vector3 nearClip = { ndc.x, ndc.y, nearZ }; // 近平面
+	Vector3 farClip = { ndc.x, ndc.y, farZ };  // 遠平面
+
+	// クリップ座標をワールド座標に変換
+	Vector3 nearWorld = Transform(nearClip, inverseViewProjectionMatrix);
+	Vector3 farWorld = Transform(farClip, inverseViewProjectionMatrix);
+
+	// 座標の計算
+	Vector3 resultPosition = nearWorld + Normalize(farWorld - nearWorld);
+
+	return resultPosition;
+}
+
+Vector2 MathVector::operator+(const Vector2& v1, const Vector2& v2) {
+	
+	return Add(v1, v2);
+}
+
+Vector2 MathVector::operator+(const Vector2& v) {
+	
+	return v;
+}
+
 Vector2& MathVector::operator+=(Vector2& v1, const Vector2& v2) {
 	v1.x += v2.x;
 	v1.y += v2.y;
@@ -120,6 +191,19 @@ Vector3& MathVector::operator+=(Vector3& v1, const Vector3& v2) {
 	v1.x += v2.x;
 	v1.y += v2.y;
 	v1.z += v2.z;
+
+	return v1;
+}
+
+Vector2 MathVector::operator-(const Vector2& v1, const Vector2& v2) {
+	
+	return Subtract(v1, v2);
+}
+
+Vector2 MathVector::operator-=(Vector2& v1, const Vector2& v2) {
+	
+	v1.x -= v2.x;
+	v1.y -= v2.y;
 
 	return v1;
 }

@@ -41,11 +41,6 @@ public:
 ///-------------------------------------------///
 private:
 
-	/// <summary>
-	/// スクリーンからワールド座標に変換
-	/// </summary>
-	void ConvertScreenToWorld();
-
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -89,7 +84,7 @@ private:
 	WorldTransform worldTransform_;
 
 	// プレイヤーとレティクルの距離
-	const float kDistancePlayerToReticle_ = 100.0f;
+	const float kDistancePlayerToReticle_ = 50.0f;
 
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;

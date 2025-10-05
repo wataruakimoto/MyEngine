@@ -5,7 +5,6 @@
 #include <memory>
 
 /// === 前方宣言 === ///
-class Reticle3D;
 class Camera;
 
 /// === 2Dレティクル === ///
@@ -52,12 +51,6 @@ private:
 public:
 
 	/// <summary>
-	/// 3Dレティクルのセッター
-	/// </summary>
-	/// <param name="reticle"></param>
-	void SetReticle3D(Reticle3D* reticle) { this->reticle3D_ = reticle; }
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
@@ -84,9 +77,6 @@ private:
 
 	// レティクルの位置
 	Vector2 reticlePosition_ = { 0.0f, 0.0f };
-
-	// 3Dレティクルの借りポインタ
-	Reticle3D* reticle3D_ = nullptr;
 
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;

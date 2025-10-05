@@ -37,45 +37,26 @@ void Player::Initialize() {
 
 void Player::Update() {
 
-	// 射撃
+	// タイマーが0以下なら
 	if (fireTimer <= 0) {
 
+		// スペースキーが押されたら
 		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 
 			Fire();
+
+			// タイマーをリセット
 			fireTimer = 60.0f * 0.2f;
 		}
 	}
 	else {
 
+		// タイマーをデクリメント
 		fireTimer--;
 	}
 
-	//Move();
-
-	// レティクルの位置を取得
-	Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
-
-	// レティクルの方向ベクトルを求める
-	Vector3 toReticle = reticlePos - worldTransform_.GetWorldPosition();
-
-	// 正規化
-	toReticle = Normalize(toReticle);
-
-	// 座標に速度を加算
-	worldTransform_.AddTranslate(toReticle * moveSpeed);
-
-	// 横軸の長さを求める
-	float xzLength = Length(toReticle.x, toReticle.z);
-
-	// ヨー(Y軸回りの回転)を求める
-	float yaw = atan2f(toReticle.x, toReticle.z);
-
-	// ピッチ(X軸回りの回転)を求める
-	float pitch = atan2f(-toReticle.y, xzLength);
-
-	// 回転を設定
-	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+	// レティクルに向かって移動
+	MoveToReticle();
 
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
@@ -113,6 +94,30 @@ void Player::ShowImGui() {
 	ImGui::End();
 
 #endif // _DEBUG
+}
+
+void Player::OnCollision(Collider* other) {
+
+	// 衝突相手の種別IDを取得
+	uint32_t typeID = other->GetTypeID();
+
+	// 衝突相手が敵の場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
+		// 死亡フラグを立てる
+		isDead = true;
+	}
+	// 衝突相手が敵の弾の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
+
+		// 死亡フラグを立てる
+		isDead = true;
+	}
+	// その他と衝突した場合
+	else {
+
+		// 何もしない
+		return;
+	}
 }
 
 void Player::Move() {
@@ -203,6 +208,8 @@ void Player::Move() {
 
 void Player::Fire() {
 
+
+
 	// 弾の生成&初期化
 	std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
 	bullet->Initialize();
@@ -219,26 +226,29 @@ void Player::Fire() {
 	gamePlayScene_->AddPlayerBullet(std::move(bullet));
 }
 
-void Player::OnCollision(Collider* other) {
+void Player::MoveToReticle() {
 
-	// 衝突相手の種別IDを取得
-	uint32_t typeID = other->GetTypeID();
+	// レティクルの位置を取得
+	Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
 
-	// 衝突相手が敵の場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
-		// 死亡フラグを立てる
-		isDead = true;
-	}
-	// 衝突相手が敵の弾の場合
-	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
+	// レティクルの方向ベクトルを求める
+	Vector3 toReticle = reticlePos - worldTransform_.GetWorldPosition();
 
-		// 死亡フラグを立てる
-		isDead = true;
-	}
-	// その他と衝突した場合
-	else {
+	// 正規化
+	toReticle = Normalize(toReticle);
 
-		// 何もしない
-		return;
-	}
+	// 座標に速度を加算
+	worldTransform_.AddTranslate(toReticle * moveSpeed);
+
+	// 横軸の長さを求める
+	float xzLength = Length(toReticle.x, toReticle.z);
+
+	// ヨー(Y軸回りの回転)を求める
+	float yaw = atan2f(toReticle.x, toReticle.z);
+
+	// ピッチ(X軸回りの回転)を求める
+	float pitch = atan2f(-toReticle.y, xzLength);
+
+	// 回転を設定
+	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
 }
