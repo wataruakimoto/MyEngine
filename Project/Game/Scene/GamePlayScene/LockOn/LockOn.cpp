@@ -132,6 +132,9 @@ void LockOn::DecideTarget() {
 	// 一旦ロックオン対象を解除
 	target_ = nullptr;
 
+	// ロックオン中フラグを下げとく
+	isLockOn_ = false;
+
 	// ロックオン判定の敵がいたら
 	if (!targets_.empty()) {
 
@@ -166,5 +169,8 @@ void LockOn::DecideTarget() {
 
 		// スプライトの座標をスクリーン座標に設定
 		sprite_->SetPosition(screenPos);
+
+		// ロックオン中フラグを立てる
+		isLockOn_ = true;
 	}
 }

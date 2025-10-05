@@ -11,7 +11,10 @@
 
 /// === 前方宣言 === ///
 class GamePlayScene;
+class Enemy;
 class Reticle3D;
+class LockOn;
+
 /// ===== プレイヤー ===== ///
 class Player : public Basecharacter {
 
@@ -46,6 +49,16 @@ public:
 	void ShowImGui();
 
 	/// <summary>
+	/// 衝突時の処理
+	/// </summary>
+	void OnCollision(Collider* other) override;
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
 	/// 移動
 	/// </summary>
 	void Move();
@@ -56,9 +69,11 @@ public:
 	void Fire();
 
 	/// <summary>
-	/// 衝突時の処理
+	/// レティクルに向かって移動
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void MoveToReticle();
+
+	// ロックオン
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -88,6 +103,12 @@ public:
 	/// <param name="reticle"></param>
 	void SetReticle3D(Reticle3D* reticle) { this->reticle3D_ = reticle; }
 
+	/// <summary>
+	/// ロックオンのセッター
+	/// </summary>
+	/// <param name="lockOn"></param>
+	void SetLockOn(LockOn* lockOn) { this->lockOn_ = lockOn; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -113,4 +134,7 @@ private:
 
 	// 3Dレティクルの借りポインタ
 	Reticle3D* reticle3D_ = nullptr;
+
+	// ロックオンの借りポインタ
+	LockOn* lockOn_ = nullptr;
 };

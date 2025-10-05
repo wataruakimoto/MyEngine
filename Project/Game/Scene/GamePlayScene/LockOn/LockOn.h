@@ -66,6 +66,18 @@ private:
 ///-------------------------------------------///
 public:
 
+	/// <summary>
+	/// ターゲットのゲッター
+	/// </summary>
+	/// <returns></returns>
+	Enemy* GetTarget() { return target_; }
+
+	/// <summary>
+	/// ロックオン中のゲッター
+	/// </summary>
+	/// <returns></returns>
+	bool IsLockOn() { return isLockOn_; }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -126,5 +138,8 @@ private:
 
 	// ロックオン対象
 	Enemy* target_ = nullptr;
+
+	// ロックオン中フラグ
+	bool isLockOn_ = false;
 };
 
