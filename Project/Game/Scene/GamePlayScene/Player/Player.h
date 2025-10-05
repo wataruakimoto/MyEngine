@@ -99,7 +99,7 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
-	float moveSpeed = 0.2f;
+	float moveSpeed = 0.5f;
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };

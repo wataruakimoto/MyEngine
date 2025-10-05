@@ -48,6 +48,6 @@ private:
 	const WorldTransform* target = nullptr;
 
 	// 追従対象のオフセット
-	Vector3 baseOffset = { 0.0f, 1.5f, -25.0f };
+	Vector3 baseOffset = { 0.0f, 3.0f, -25.0f };
 };
 
