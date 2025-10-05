@@ -224,6 +224,11 @@ Vector3& MathVector::operator-=(Vector3& v1, const Vector3& v2) {
 	return v1;
 }
 
+Vector2 MathVector::operator*(float s, const Vector2& v) {
+	
+	return { v.x * s, v.y * s };
+}
+
 Vector3 MathVector::operator*(float s, const Vector3& v) {
 	return Multiply(s, v);
 }

@@ -153,6 +153,9 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\LockOn\LockOn.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene\UI\TitleUI.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
+    <ClCompile Include="Game\Scene\TitleScene\UI\StartUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\camera\Camera.h">
@@ -298,6 +301,9 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\LockOn\LockOn.h" />
+    <ClInclude Include="Game\Scene\TitleScene\UI\TitleUI.h" />
+    <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
+    <ClInclude Include="Game\Scene\TitleScene\UI\StartUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

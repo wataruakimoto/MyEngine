@@ -26,6 +26,7 @@ void GamePlayScene::Initialize() {
 	cameraController_->SetCamera(camera_.get());
 
 	// カメラの設定
+	SkyboxCommon::GetInstance()->SetDefaultCamera(camera_.get());
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	// パーティクルシステムの初期化
@@ -39,6 +40,7 @@ void GamePlayScene::Initialize() {
 	player = std::make_unique<Player>();
 	player->Initialize();
 	player->SetGamePlayScene(this);
+	player->SetPlayerMode(PlayerMode::Play),
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player->GetWorldTransform());
