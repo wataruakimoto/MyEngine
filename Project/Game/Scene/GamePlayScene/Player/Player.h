@@ -15,6 +15,11 @@ class Enemy;
 class Reticle3D;
 class LockOn;
 
+enum class PlayerMode {
+	Title,
+	Play,
+};
+
 /// ===== プレイヤー ===== ///
 class Player : public Basecharacter {
 
@@ -73,6 +78,11 @@ private:
 	/// </summary>
 	void MoveToReticle();
 
+	/// <summary>
+	/// 奥にしか移動できないようにする(演出用)
+	/// </summary>
+	void MoveToZ();
+
 	// ロックオン
 
 ///-------------------------------------------/// 
@@ -109,6 +119,12 @@ public:
 	/// <param name="lockOn"></param>
 	void SetLockOn(LockOn* lockOn) { this->lockOn_ = lockOn; }
 
+	/// <summary>
+	/// モードの設定
+	/// </summary>
+	/// <param name="mode"></param>
+	void SetPlayerMode(PlayerMode mode) { this->mode_ = mode; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -120,7 +136,7 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
-	float moveSpeed = 0.2f;
+	float moveSpeed = 0.5f;
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
@@ -137,4 +153,7 @@ private:
 
 	// ロックオンの借りポインタ
 	LockOn* lockOn_ = nullptr;
+
+	// プレイヤーモード
+	PlayerMode mode_ = PlayerMode::Play;
 };

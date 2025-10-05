@@ -37,27 +37,43 @@ void Player::Initialize() {
 
 void Player::Update() {
 
-	// タイマーが0以下なら
-	if (fireTimer <= 0) {
+	// 将来的にはWSwitchから基底と継承先を分ける
+	switch (mode_) {
 
-		// スペースキーが押されたら
-		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+	case PlayerMode::Title:
 
-			Fire();
+		// Z方向にしか移動できないようにする
+		MoveToZ();
 
-			// タイマーをリセット
-			fireTimer = 60.0f * 0.2f;
+		break;
+
+	case PlayerMode::Play:
+	default:
+
+		// タイマーが0以下なら
+		if (fireTimer <= 0) {
+
+			// スペースキーが押されたら
+			if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+
+				Fire();
+
+				// タイマーをリセット
+				fireTimer = 60.0f * 0.2f;
+			}
 		}
+		else {
+
+			// タイマーをデクリメント
+			fireTimer--;
+		}
+
+		// レティクルに向かって移動
+		MoveToReticle();
+
+		break;
 	}
-	else {
-
-		// タイマーをデクリメント
-		fireTimer--;
-	}
-
-	// レティクルに向かって移動
-	MoveToReticle();
-
+	
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
 
@@ -208,8 +224,6 @@ void Player::Move() {
 
 void Player::Fire() {
 
-
-
 	// 弾の生成&初期化
 	std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
 	bullet->Initialize();
@@ -251,4 +265,9 @@ void Player::MoveToReticle() {
 
 	// 回転を設定
 	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+}
+
+void Player::MoveToZ() {
+
+	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeed });
 }
