@@ -131,7 +131,10 @@ private:
 	TextureManager* textureManager_ =  TextureManager::GetInstance();
 
 	// スクリーン座標でのロックオン距離の限界値
-	const float kDistanceLockOn_ = 50.0f;
+	const float kDistanceLockOn_ = 75.0f;
+
+	// 3D空間でのロックオン距離の限界値
+	const float kDistanceLockOn3D_ = 150.0f;
 
 	// ロックオン対象リスト
 	std::list<std::tuple<float, float, Enemy*>> targets_; // <レティクルからの距離、自機からの距離、敵ポインタ＞

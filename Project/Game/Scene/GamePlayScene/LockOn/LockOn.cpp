@@ -118,6 +118,13 @@ void LockOn::SearchTarget() {
 		// 自機からの距離
 		float playerDistance = Length(playerPos - enemyPos);
 
+		// 3D空間での距離が範囲内でなければ
+		if (playerDistance > kDistanceLockOn3D_) {
+
+			// 次の敵へ
+			continue;
+		}
+
 		// 2Dレティクルからの距離が範囲内なら
 		if (reticleDistance < kDistanceLockOn_) {
 
