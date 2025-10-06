@@ -30,8 +30,8 @@ void Bullet::Initialize() {
 
 void Bullet::Update() {
 
-	// 速度は向きだけもらってきたから正規化して速さをかける
-	velocity_ = Normalize(velocity_) * moveSpeed;
+	// 速度は向きだけもらってきたから速さをかける
+	velocity_ = velocity_ * moveSpeed;
 
 	// ワールド変換の平行移動に速度を加算
 	worldTransform_.AddTranslate(velocity_);

@@ -77,6 +77,9 @@ void GamePlayScene::Initialize() {
 	// 2Dレティクルをロックオンに設定
 	lockOn_->SetReticle2D(reticle2D_.get());
 
+	// プレイヤーにロックオンを設定
+	player->SetLockOn(lockOn_.get());
+
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
 	floor_->Initialize();
@@ -223,7 +226,7 @@ void GamePlayScene::Draw() {
 	}
 
 	// 3Dレティクルの描画
-	reticle3D_->Draw();
+	//reticle3D_->Draw();
 
 	// 衝突マネージャの描画
 	collisionManager_->Draw();

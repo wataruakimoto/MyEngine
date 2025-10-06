@@ -233,8 +233,37 @@ void Player::Fire() {
 
 	// 弾の初期速度を設定
 	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_.GetWorldPosition();
-	bullet->SetVelocity(velocity);
+
+	// ロックオン中なら
+	if (lockOn_->IsLockOn()) {
+
+		// ターゲットの位置
+		Vector3 targetPos = lockOn_->GetTarget()->GetWorldTransform().GetWorldPosition();
+
+		// ターゲットの位置までの方向ベクトルを求める
+		velocity = targetPos - worldTransform_.GetWorldPosition();
+
+		// 正規化
+		velocity = Normalize(velocity);
+
+		// 速度を設定
+		bullet->SetVelocity(velocity);
+	}
+	// ロックオンしていないなら
+	else {
+
+		// レティクルの位置
+		Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
+
+		// レティクルの位置までの方向ベクトルを求める
+		velocity = reticlePos - worldTransform_.GetWorldPosition();
+
+		// 正規化
+		velocity = Normalize(velocity);
+
+		// 速度を設定
+		bullet->SetVelocity(velocity);
+	}
 
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddPlayerBullet(std::move(bullet));
