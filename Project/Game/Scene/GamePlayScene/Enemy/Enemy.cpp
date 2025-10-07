@@ -2,8 +2,12 @@
 #include "math/MathVector.h"
 #include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
 #include "Scene/GamePlayScene/Player/Player.h"
+#include "Scene/GamePlayScene/GamePlayScene.h"
+#include "EnemyBullet.h"
 #include <numbers>
 #include <imgui.h>
+
+using namespace MathVector;
 
 void Enemy::Initialize() {
 
@@ -42,25 +46,23 @@ void Enemy::Initialize() {
 
 void Enemy::Update() {
 
-	// プレイヤーの座標を取得
-	Vector3 playerPos = player->GetWorldTransform().GetTranslate();
+	// 自機の方に向ける
+	AimToPlayer();
 
-	// プレイヤーとの方向を計算
-	Vector3 direction = playerPos - worldTransform_.GetTranslate();
-	float length = Length(direction);
-	direction= { direction.x / length, direction.y / length, direction.z / length };
+	// 射撃
+	if (fireTimer <= 0) {
 
-	// 向きを計算
-	Vector3 rotate = { 0.0f,std::atan2(direction.x,direction.z),0.0f };
+		// プレイヤーより手前にいたら
+		if (worldTransform_.GetTranslate().z > player->GetWorldTransform().GetTranslate().z) {
 
-	// 向きを変える
-	worldTransform_.SetRotate(rotate);
+			Fire();
+			fireTimer = 60.0f;
+		}
+	}
+	else {
 
- 	// 移動速度を計算
-	Vector3 velocity = direction * moveSpeed;
-
-	// プレイヤーに向かって進む
-	worldTransform_.AddTranslate(velocity);
+		fireTimer--;
+	}
 
 	object->SetTranslate(worldTransform_.GetTranslate());
 	object->SetRotate(worldTransform_.GetRotate());
@@ -74,7 +76,7 @@ void Enemy::Update() {
 void Enemy::Draw() {
 
 	// 3Dオブジェクトの描画
-	object->Draw(worldTransform_);
+	object->Draw();
 }
 
 void Enemy::Finalize() {
@@ -97,9 +99,9 @@ void Enemy::OnCollision(Collider* other) {
 
 	// 衝突相手の種別IDを取得
 	uint32_t typeID = other->GetTypeID();
-	
+
 	// 衝突相手が弾の場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kBullet)) {
+	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
 
 		// パーティクル発生
 		EmitterTransform1.translate = worldTransform_.GetTranslate();
@@ -120,4 +122,46 @@ void Enemy::OnCollision(Collider* other) {
 		// 何もしない
 		return;
 	}
+}
+
+void Enemy::AimToPlayer() {
+
+	// プレイヤーの座標を取得
+	Vector3 playerPos = player->GetWorldTransform().GetWorldPosition();
+
+	// プレイヤーとの方向を計算
+	Vector3 direction = playerPos - worldTransform_.GetTranslate();
+	direction = Normalize(direction);
+
+	// X軸（ピッチ）：上下方向
+	float pitch = std::atan2(-direction.y, std::sqrt(direction.x * direction.x + direction.z * direction.z));
+	// Y軸（ヨー）：左右方向
+	float yaw = std::atan2(direction.x, direction.z);
+	// Z軸（ロール）：通常は0でOK
+	float roll = 0.0f;
+
+	// 向きを変える
+	worldTransform_.SetRotate({ pitch, yaw, roll });
+}
+
+void Enemy::Fire() {
+
+	// 弾の生成&初期化
+	std::unique_ptr<EnemyBullet> bullet = std::make_unique<EnemyBullet>();
+	bullet->Initialize();
+
+	// 弾の初期位置をプレイヤーの位置に設定
+	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
+
+	// プレイヤーの座標を取得
+	Vector3 playerPos = player->GetWorldTransform().GetWorldPosition();
+
+	// 弾の初期速度を設定
+	// プレイヤーとの方向を計算
+	Vector3 direction = playerPos - worldTransform_.GetTranslate();
+	direction = Normalize(direction);
+	bullet->SetVelocity(direction);
+
+	// ゲームプレイシーンの弾をリストに登録
+	gamePlayScene_->AddEnemyBullet(std::move(bullet));
 }

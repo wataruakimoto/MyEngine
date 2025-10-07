@@ -2,6 +2,8 @@
 #include "Collider.h"
 #include "math/MathVector.h"
 
+using namespace MathVector;
+
 void CollisionManager::Initialize() {
 
 	// コライダーを表示する

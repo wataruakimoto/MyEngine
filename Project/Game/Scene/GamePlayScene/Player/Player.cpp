@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "input/input.h"
 #include "Scene/GamePlayScene/GamePlayScene.h"
+#include "Bullet.h"
 #include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
 #include "Scene/GamePlayScene/Reticle/Reticle3D.h"
 #include "Math/MathVector.h"
@@ -8,10 +9,13 @@
 #include <list>
 #include <imgui.h>
 
+using namespace MathVector;
+
 void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetTranslate({ 0.0f, 4.0f, 0.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -33,26 +37,47 @@ void Player::Initialize() {
 
 void Player::Update() {
 
-	// 射撃
-	if (fireTimer <= 0) {
+	// 将来的にはWSwitchから基底と継承先を分ける
+	switch (mode_) {
 
-		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+	case PlayerMode::Title:
 
-			Fire();
-			fireTimer = 60.0f * 0.2f;
+		// Z方向にしか移動できないようにする
+		MoveToZ();
+
+		break;
+
+	case PlayerMode::Play:
+	default:
+
+		// タイマーが0以下なら
+		if (fireTimer <= 0) {
+
+			// スペースキーが押されたら
+			if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+
+				Fire();
+
+				// タイマーをリセット
+				fireTimer = 60.0f * 0.2f;
+			}
 		}
+		else {
+
+			// タイマーをデクリメント
+			fireTimer--;
+		}
+
+		// レティクルに向かって移動
+		MoveToReticle();
+
+		break;
 	}
-	else {
-
-		fireTimer--;
-	}
-
-	Move();
-
+	
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
 
-	object->SetTranslate(worldTransform_.GetTranslate());
+	object->SetTranslate(worldTransform_.GetWorldPosition());
 	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
@@ -62,7 +87,7 @@ void Player::Update() {
 void Player::Draw() {
 
 	// 3Dオブジェクトの描画
-	object->Draw(worldTransform_);
+	object->Draw();
 }
 
 void Player::Finalize() {
@@ -85,6 +110,30 @@ void Player::ShowImGui() {
 	ImGui::End();
 
 #endif // _DEBUG
+}
+
+void Player::OnCollision(Collider* other) {
+
+	// 衝突相手の種別IDを取得
+	uint32_t typeID = other->GetTypeID();
+
+	// 衝突相手が敵の場合
+	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
+		// 死亡フラグを立てる
+		isDead = true;
+	}
+	// 衝突相手が敵の弾の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
+
+		// 死亡フラグを立てる
+		isDead = true;
+	}
+	// その他と衝突した場合
+	else {
+
+		// 何もしない
+		return;
+	}
 }
 
 void Player::Move() {
@@ -180,31 +229,74 @@ void Player::Fire() {
 	bullet->Initialize();
 
 	// 弾の初期位置をプレイヤーの位置に設定
-	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
+	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
 
 	// 弾の初期速度を設定
 	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-	velocity = reticle3D_->GetWorldTransform().GetTranslate() - worldTransform_.GetTranslate();
-	bullet->SetVelocity(velocity);
 
-	// ゲームプレイシーンの弾をリストに登録
-	gamePlayScene_->AddBullet(std::move(bullet));
-}
+	// ロックオン中なら
+	if (lockOn_->IsLockOn()) {
 
-void Player::OnCollision(Collider* other) {
+		// ターゲットの位置
+		Vector3 targetPos = lockOn_->GetTarget()->GetWorldTransform().GetWorldPosition();
 
-	// 衝突相手の種別IDを取得
-	uint32_t typeID = other->GetTypeID();
+		// ターゲットの位置までの方向ベクトルを求める
+		velocity = targetPos - worldTransform_.GetWorldPosition();
 
-	// 衝突相手が敵の場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
-		// 死亡フラグを立てる
-		isDead = true;
+		// 正規化
+		velocity = Normalize(velocity);
+
+		// 速度を設定
+		bullet->SetVelocity(velocity);
 	}
-	// その他と衝突した場合
+	// ロックオンしていないなら
 	else {
 
-		// 何もしない
-		return;
+		// レティクルの位置
+		Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
+
+		// レティクルの位置までの方向ベクトルを求める
+		velocity = reticlePos - worldTransform_.GetWorldPosition();
+
+		// 正規化
+		velocity = Normalize(velocity);
+
+		// 速度を設定
+		bullet->SetVelocity(velocity);
 	}
+
+	// ゲームプレイシーンの弾をリストに登録
+	gamePlayScene_->AddPlayerBullet(std::move(bullet));
+}
+
+void Player::MoveToReticle() {
+
+	// レティクルの位置を取得
+	Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
+
+	// レティクルの方向ベクトルを求める
+	Vector3 toReticle = reticlePos - worldTransform_.GetWorldPosition();
+
+	// 正規化
+	toReticle = Normalize(toReticle);
+
+	// 座標に速度を加算
+	worldTransform_.AddTranslate(toReticle * moveSpeed);
+
+	// 横軸の長さを求める
+	float xzLength = Length(toReticle.x, toReticle.z);
+
+	// ヨー(Y軸回りの回転)を求める
+	float yaw = atan2f(toReticle.x, toReticle.z);
+
+	// ピッチ(X軸回りの回転)を求める
+	float pitch = atan2f(-toReticle.y, xzLength);
+
+	// 回転を設定
+	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+}
+
+void Player::MoveToZ() {
+
+	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeed });
 }

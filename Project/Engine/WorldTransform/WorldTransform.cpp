@@ -6,6 +6,7 @@
 
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 
 void WorldTransform::Initialize() {
@@ -101,4 +102,15 @@ void WorldTransform::ShowImGui() {
 void WorldTransform::AddTranslate(const Vector3& value) {
 
 	translate_ += value;
+}
+
+Vector3 WorldTransform::GetWorldPosition() const {
+
+	Vector3 worldPosition = {
+		worldMatrix_.m[3][0],
+		worldMatrix_.m[3][1],
+		worldMatrix_.m[3][2]
+	};
+
+	return worldPosition;
 }

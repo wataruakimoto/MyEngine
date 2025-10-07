@@ -9,6 +9,7 @@
 
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 
 Reticle2D::Reticle2D() {
@@ -31,8 +32,6 @@ void Reticle2D::Initialize() {
 
 void Reticle2D::Update() {
 
-	ConvertWorldToScreen();
-
 	// ゲームパッドの状態を得る変数(XINPUT)
 	XINPUT_STATE joyState = {};
 
@@ -54,10 +53,9 @@ void Reticle2D::Update() {
 
 	// スプライトの座標変更を反映
 	spriteReticle_->SetPosition(reticlePosition_);
+
 	// スプライトの更新
 	spriteReticle_->Update();
-
-	spriteReticle_->ShowImGui("Reticle");
 }
 
 void Reticle2D::Draw() {
@@ -73,28 +71,4 @@ void Reticle2D::ShowImGui() {
 	ImGui::DragFloat2("Position", &reticlePosition_.x, 0.1f);
 	ImGui::End();
 #endif // _DEBUG
-}
-
-void Reticle2D::ConvertWorldToScreen() {
-
-	// 3Dレティクルの位置を取得
-	Vector3 position = reticle3D_->GetWorldTransform().GetTranslate();
-
-	// ビューポート行列
-	Matrix4x4 viewPortMatrix = MakeViewportMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 1.0f);
-
-	// カメラからビュープロジェクション行列を取得
-	Matrix4x4 viewProjectionMatrix_ = camera_->GetViewProjectionMatrix();
-
-	// ビュープロジェクション行列とビューポート行列を掛け合わせる
-	Matrix4x4 viewProjectionViewPort = viewProjectionMatrix_ * viewPortMatrix;
-
-	// ワールド座標をスクリーン座標に変換(3Dから2Dに)
-	position = Transform(position, viewProjectionViewPort);
-
-	// Y座標を反転
-	float screenY = WinApp::kClientHeight - position.y;
-
-	// 座標を設定
-	reticlePosition_ = { position.x, screenY };
 }

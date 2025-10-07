@@ -8,6 +8,7 @@
 
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 
 void Reticle3D::Initialize() {
@@ -24,21 +25,20 @@ void Reticle3D::Initialize() {
 
 void Reticle3D::Update() {
 
-	// 自機から3Dレティクルへのオフセット(z+向き)
-	Vector3 offset = { 0.0f, 0.0f, 1.0f };
-	// 自機のワールド行列を基準にオフセットを変換
-	offset = TransformNormal(offset, player_->GetWorldTransform().GetWorldMatrix());
-	// ベクトルの長さを整える
-	offset = Normalize(offset) * kDistancePlayerToReticle_;
-	// プレイヤーの座標を取得
-	Vector3 playerPos = player_->GetWorldTransform().GetTranslate();
-	// 位置を計算
-	Vector3 translate = playerPos + offset;
+	// 2Dレティクルの座標を設定
+	Vector2 reticle2DPos = reticle2D_->GetReticlePosition();
 
-	// レティクルの位置を設定
-	worldTransform_.SetTranslate(translate);
+	// カメラからビュープロジェクション行列を受け取り、逆行列に変換
+	Matrix4x4 inverseViewProjectionMatrix = Inverse(camera_->GetViewProjectionMatrix());
 
-	ConvertScreenToWorld();
+	// 2Dレティクルのスクリーン座標をワールド座標に変換
+	Vector3 reticlePos = ConvertScreenToWorld(reticle2DPos, inverseViewProjectionMatrix, 1.0f, 1.0f);
+
+	// ワールド座標をレティクルの座標に設定
+	worldTransform_.SetTranslate(reticlePos);
+
+	// ワールド変換の更新
+	worldTransform_.UpdateMatrix();
 
 	// オブジェクトの座標を設定
 	object_->SetTranslate(worldTransform_.GetTranslate());
@@ -57,51 +57,10 @@ void Reticle3D::ShowImGui() {
 #ifdef _DEBUG
 
 	ImGui::Begin("Reticle3D");
-	
+
 	worldTransform_.ShowImGui();
 
 	ImGui::End();
 
 #endif // _DEBUG
-}
-
-void Reticle3D::ConvertScreenToWorld() {
-
-	// ビューポート行列
-	Matrix4x4 viewPortMatrix = MakeViewportMatrix(0.0f, 0.0f, WinApp::kClientWidth, WinApp::kClientHeight, 0.0f, 1.0f);
-
-	// カメラからビュープロジェクション行列を取得
-	Matrix4x4 viewProjectionMatrix_ = camera_->GetViewProjectionMatrix();
-
-	// ビュープロジェクション行列とビューポート行列を掛け合わせる
-	Matrix4x4 viewProjectionViewPort = viewProjectionMatrix_ * viewPortMatrix;
-
-	// 合成した行列の逆行列を取得
-	Matrix4x4 inverseViewProjectionViewPort = Inverse(viewProjectionViewPort);
-
-	// レティクルのスクリーン座標を取得
-	Vector2 reticlePosition_ = reticle2D_->GetReticlePosition();
-
-	// Y座標を反転
-	float screenY = WinApp::kClientHeight - reticlePosition_.y;
-
-	// スクリーン座標
-	Vector3 posNear = { reticlePosition_.x, screenY, 0.0f };
-	Vector3 posFar = { reticlePosition_.x, screenY, 1.0f };
-
-	// スクリーン座標をワールド座標に変換(2Dから3Dに)
-	posNear = Transform(posNear, inverseViewProjectionViewPort);
-	posFar = Transform(posFar, inverseViewProjectionViewPort);
-
-	// マウスレイの方向を計算
-	Vector3 rmouseDirection = Normalize(posFar - posNear);
-
-	// カメラからレティクルの距離
-	const float kDistanceCameraToReticle = 100.0f;
-	
-	// 位置を計算
-	Vector3 translate = posNear + rmouseDirection * kDistanceCameraToReticle;
-
-	// レティクルの位置を計算
-	worldTransform_.SetTranslate(translate);
 }

@@ -3,7 +3,6 @@
 #include "2d/Sprite.h"
 #include "3d/Model.h"
 #include "3d/Object3d.h"
-#include "Bullet.h"
 #include "Scene/GamePlayScene/Collision/Basecharacter.h"
 #include "Scene/GamePlayScene/Collision/CollisionManager.h"
 
@@ -12,7 +11,14 @@
 
 /// === 前方宣言 === ///
 class GamePlayScene;
+class Enemy;
 class Reticle3D;
+class LockOn;
+
+enum class PlayerMode {
+	Title,
+	Play,
+};
 
 /// ===== プレイヤー ===== ///
 class Player : public Basecharacter {
@@ -48,6 +54,16 @@ public:
 	void ShowImGui();
 
 	/// <summary>
+	/// 衝突時の処理
+	/// </summary>
+	void OnCollision(Collider* other) override;
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
 	/// 移動
 	/// </summary>
 	void Move();
@@ -58,9 +74,16 @@ public:
 	void Fire();
 
 	/// <summary>
-	/// 衝突時の処理
+	/// レティクルに向かって移動
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void MoveToReticle();
+
+	/// <summary>
+	/// 奥にしか移動できないようにする(演出用)
+	/// </summary>
+	void MoveToZ();
+
+	// ロックオン
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -90,6 +113,18 @@ public:
 	/// <param name="reticle"></param>
 	void SetReticle3D(Reticle3D* reticle) { this->reticle3D_ = reticle; }
 
+	/// <summary>
+	/// ロックオンのセッター
+	/// </summary>
+	/// <param name="lockOn"></param>
+	void SetLockOn(LockOn* lockOn) { this->lockOn_ = lockOn; }
+
+	/// <summary>
+	/// モードの設定
+	/// </summary>
+	/// <param name="mode"></param>
+	void SetPlayerMode(PlayerMode mode) { this->mode_ = mode; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -101,7 +136,7 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
-	float moveSpeed = 0.2f;
+	float moveSpeed = 0.5f;
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
@@ -115,4 +150,10 @@ private:
 
 	// 3Dレティクルの借りポインタ
 	Reticle3D* reticle3D_ = nullptr;
+
+	// ロックオンの借りポインタ
+	LockOn* lockOn_ = nullptr;
+
+	// プレイヤーモード
+	PlayerMode mode_ = PlayerMode::Play;
 };

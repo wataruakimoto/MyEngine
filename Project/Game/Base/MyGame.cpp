@@ -17,7 +17,7 @@ void MyGame::Initialize() {
 	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
 
 	// シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->ChangeScene("DEBUG");
+	SceneManager::GetInstance()->ChangeScene("TITLE");
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->Initialize();
@@ -38,9 +38,6 @@ void MyGame::Update() {
 
 		/// === ImGui開始 === ///
 		ImGuiManager::GetInstance()->Begin();
-
-		// フィルターマネージャのImGui表示
-		FilterManager::GetInstance()->ShowImGui();
 
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();

@@ -3,6 +3,8 @@
 #include "Math/MathVector.h"
 #include <imgui.h>
 
+using namespace MathVector;
+
 void Bullet::Initialize() {
 
 	// ワールド変換の初期化
@@ -10,7 +12,7 @@ void Bullet::Initialize() {
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("resources/bullet", "bullet.obj");
+	model->Initialize("resources/PlayerBullet", "PlayerBullet.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();
@@ -23,13 +25,13 @@ void Bullet::Initialize() {
 	// コライダーの初期化
 	Collider::Initialize();
 	// コライダーにIDを設定
-	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kBullet));
+	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet));
 };
 
 void Bullet::Update() {
 
-	// 速度は向きだけもらってきたから正規化して速さをかける
-	velocity_ = Normalize(velocity_) * moveSpeed;
+	// 速度は向きだけもらってきたから速さをかける
+	velocity_ = velocity_ * moveSpeed;
 
 	// ワールド変換の平行移動に速度を加算
 	worldTransform_.AddTranslate(velocity_);
@@ -44,6 +46,8 @@ void Bullet::Update() {
 
 		deathTimer_--;
 	}
+
+	worldTransform_.UpdateMatrix();
 
 	object->Update();
 };
@@ -76,6 +80,11 @@ void Bullet::OnCollision(Collider* other) {
 
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
+
+		isDead = true;
+	}
+	// 衝突相手が敵の弾の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
 		isDead = true;
 	}

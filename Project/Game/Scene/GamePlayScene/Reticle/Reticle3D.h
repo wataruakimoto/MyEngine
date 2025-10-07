@@ -41,21 +41,10 @@ public:
 ///-------------------------------------------///
 private:
 
-	/// <summary>
-	/// スクリーンからワールド座標に変換
-	/// </summary>
-	void ConvertScreenToWorld();
-
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
 public:
-
-	/// <summary>
-	/// プレイヤーのセッター
-	/// </summary>
-	/// <param name="player"></param>
-	void SetPlayer(Player* player) { this->player_ = player; }
 
 	/// <summary>
 	/// カメラのセッター
@@ -96,9 +85,6 @@ private:
 
 	// プレイヤーとレティクルの距離
 	const float kDistancePlayerToReticle_ = 50.0f;
-
-	// プレイヤーの借りポインタ
-	Player* player_ = nullptr;
 
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;

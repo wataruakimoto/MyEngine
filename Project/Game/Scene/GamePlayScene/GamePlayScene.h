@@ -2,12 +2,18 @@
 #include "Scene/System/BaseScene.h"
 #include "Collision/CollisionManager.h"
 
-#include "Skydome/Skydome.h"
 #include "Player/Player.h"
+#include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
+#include "Enemy/EnemyBullet.h"
 #include "Reticle/Reticle3D.h"
 #include "Reticle/Reticle2D.h"
-#include "RailCamera/RailCameraController.h"
+#include "LockOn/LockOn.h"
+#include "Camera/Camera.h"
+#include "CameraControll/ICameraController.h"
+#include "Floor/Floor.h"
+#include "Cylinder/Cylinder.h"
+#include "SkyBox/SkyBoxGame.h"
 
 #include <list>
 #include <sstream>
@@ -62,24 +68,30 @@ public:
 	void UpdateEnemyPopCommands();
 
 	/// <summary>
-	/// 弾の追加
+	/// 自機の弾の追加
 	/// </summary>
 	/// <param name="bullet"></param>
-	void AddBullet(std::unique_ptr<Bullet> bullet);
+	void AddPlayerBullet(std::unique_ptr<Bullet> bullet);
+
+	/// <summary>
+	/// 敵の弾の追加
+	/// </summary>
+	/// <param name="bullet"></param>
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// レールカメラコントローラーのポインタ
-	std::unique_ptr<RailCameraController> railCameraController_ = nullptr;
+	// カメラ
+	std::unique_ptr<Camera> camera_ = nullptr;
+
+	// カメラコントローラ
+	std::unique_ptr<ICameraController> cameraController_ = nullptr;
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
-
-	// 天球のポインタ
-	std::unique_ptr<Skydome> skydome = nullptr;
 
 	// プレイヤーのポインタ
 	std::unique_ptr<Player> player = nullptr;
@@ -87,14 +99,29 @@ private:
 	// 敵のリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;
 
-	// 弾のリスト
-	std::list<std::unique_ptr<Bullet>> bullets_;
+	// 自機の弾のリスト
+	std::list<std::unique_ptr<Bullet>> playerBullets_;
+
+	// 敵の弾のリスト
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
 
 	// 3Dレティクルのポインタ
 	std::unique_ptr<Reticle3D> reticle3D_ = nullptr;
 
 	// 2Dレティクルのポインタ
 	std::unique_ptr<Reticle2D> reticle2D_ = nullptr;
+
+	// ロックオンのポインタ
+	std::unique_ptr<LockOn> lockOn_ = nullptr;
+
+	// フロアのポインタ
+	std::unique_ptr<Floor> floor_ = nullptr;
+
+	// シリンダーのポインタ
+	std::unique_ptr<Cylinder> cylinder_ = nullptr;
+
+	// スカイボックスのポインタ
+	std::unique_ptr<SkyBoxGame> skyBox_ = nullptr;
 
 	// 敵を倒した数
 	int killCount = 0;

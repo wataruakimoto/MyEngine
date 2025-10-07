@@ -77,6 +77,12 @@ public:
 	/// <returns></returns>
 	const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 
+	/// <summary>
+	/// ワールド座標の取得
+	/// </summary>
+	/// <returns></returns>
+	Vector3 GetWorldPosition() const;
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///

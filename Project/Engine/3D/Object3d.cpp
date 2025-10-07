@@ -13,6 +13,7 @@
 #include <numbers>
 #include <imgui.h>
 
+using namespace MathVector;
 using namespace MathMatrix;
 
 void Object3d::Initialize() {

@@ -23,7 +23,7 @@ public:
 public:
 
 	// 中心座標の取得
-	const Vector3 GetCenterPosition() const { return worldTransform_.GetTranslate(); }
+	const Vector3 GetCenterPosition() const { return worldTransform_.GetWorldPosition(); }
 
 	/// <summary>
 	/// ワールド変換のゲッター

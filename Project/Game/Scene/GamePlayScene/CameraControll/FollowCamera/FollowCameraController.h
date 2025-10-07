@@ -1,58 +1,53 @@
 #pragma once
+#include "Scene/GamePlayScene/CameraControll/ICameraController.h"
 #include "WorldTransform/WorldTransform.h"
 #include "Camera/Camera.h"
 
 #include <memory>
 
-/// ===== レールカメラコントローラー ===== ///
-class RailCameraController {
+/// ===== 追従カメラコントローラー ===== ///
+class FollowCameraController : public ICameraController {
 
 ///-------------------------------------------/// 
-/// メンバ変数
+/// メンバ関数
 ///-------------------------------------------///
 public:
 
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize() override;
 
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
-	void ShowImGui();
+	void ShowImGui() override;
 
 ///-------------------------------------------/// 
-///
+/// セッター
 ///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// ワールド変換のゲッター
+	/// 追従対象のセッター
 	/// </summary>
-	/// <returns></returns>
-	const WorldTransform& GetWorldTransform() const { return worldTransform; }
-
-	/// <summary>
-	/// カメラのゲッター
-	/// </summary>
-	/// <returns></returns>
-    Camera& GetCamera() const { return *camera; }
+	/// <param name="target"></param>
+	void SetTarget(WorldTransform* target) { this->target = target; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// ワールド変換
-	WorldTransform worldTransform;
+	// 追従対象
+	const WorldTransform* target = nullptr;
 
-	// カメラ
-	std::unique_ptr<Camera> camera = nullptr;
+	// 追従対象のオフセット
+	Vector3 baseOffset = { 0.0f, 3.0f, -25.0f };
 };
 
