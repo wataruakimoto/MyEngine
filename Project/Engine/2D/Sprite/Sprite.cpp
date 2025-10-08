@@ -3,7 +3,7 @@
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
 #include "base/DirectXUtility.h"
-#include "TextureManager.h"
+#include "2D/Texture/TextureManager.h"
 #include <imgui.h>
 
 using namespace MathMatrix;
