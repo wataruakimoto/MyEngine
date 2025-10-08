@@ -4,8 +4,8 @@
 #include "math/MathMatrix.h"
 #include "winApp/WinApp.h"
 #include "base/DirectXUtility.h"
-#include "2d/TextureManager.h"
-#include "ModelManager.h"
+#include "2D/Texture/TextureManager.h"
+#include "3D/Model/ModelManager.h"
 #include "camera/Camera.h"
 
 #include <cassert>
