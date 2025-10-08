@@ -1,6 +1,6 @@
 #include "Loader.h"
-#include "3D/Model.h"
-#include "3D/ModelManager.h"
+#include "3D/Model/Model.h"
+#include "3D/Model/ModelManager.h"
 #include "json.hpp"
 
 #include <fstream>
