@@ -1,7 +1,7 @@
 #pragma once
 
-#include "3d/Model.h"
-#include "3d/Object3d.h"
+#include "3D/Model/Model.h"
+#include "3D/Object/Object3d.h"
 #include "Scene/GamePlayScene/Collision/Basecharacter.h"
 #include "Scene/GamePlayScene/Collision/CollisionManager.h"
 #include "3d/Particle/ParticleEmitter.h"

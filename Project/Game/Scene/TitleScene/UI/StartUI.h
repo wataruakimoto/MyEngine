@@ -1,6 +1,6 @@
 #pragma once
-#include "2d/TextureManager.h"
-#include "2d/Sprite.h"
+#include "2D/Texture/TextureManager.h"
+#include "2D/Sprite/Sprite.h"
 
 #include <memory>
 

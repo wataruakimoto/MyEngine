@@ -1,5 +1,5 @@
 #include "Reticle2D.h"
-#include "2D/TextureManager.h"
+#include "2D/Texture/TextureManager.h"
 #include "input/Input.h"
 #include "Reticle3D.h"
 #include "Camera/Camera.h"
