@@ -1,5 +1,6 @@
 #pragma once
-#include "Base/Framework.h"
+
+#include "Framework.h"
 
 /// === ゲーム関連 === ///
 class MyGame : public Framework {

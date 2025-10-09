@@ -1,11 +1,11 @@
 #pragma once
 
-#include "3D/Model/Model.h"
-#include "3D/Object/Object3d.h"
-#include "Scene/GamePlayScene/Collision/Basecharacter.h"
-#include "Scene/GamePlayScene/Collision/CollisionManager.h"
-#include "3d/Particle/ParticleEmitter.h"
-#include "3D/Data/Transform.h"
+#include "Model/Model.h"
+#include "Object/Object3d.h"
+#include "Collision/Basecharacter.h"
+#include "Collision/CollisionManager.h"
+#include "Particle/ParticleEmitter.h"
+#include "Data/Transform.h"
 
 #include <memory>
 

@@ -1,6 +1,7 @@
 #include "Camera.h"
-#include "math/MathMatrix.h"
-#include "winApp/WinApp.h"
+#include "MathMatrix.h"
+#include "WinApp.h"
+
 #include <imgui.h>
 
 using namespace MathMatrix;

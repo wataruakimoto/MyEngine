@@ -1,7 +1,8 @@
 #include "MathVector.h"
-#include "WinApp/WinApp.h"
+#include "WinApp.h"
 
 #define _USE_MATH_DEFINES
+
 #include <cmath>
 #include <cassert>
 

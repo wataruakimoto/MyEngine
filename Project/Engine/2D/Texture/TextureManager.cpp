@@ -1,7 +1,7 @@
 #include "TextureManager.h"
-#include "base/DirectXUtility.h"
-#include "base/SrvManager.h"
-#include "utility/StringUtility.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "StringUtility.h"
 
 using namespace StringUtility;
 

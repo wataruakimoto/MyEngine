@@ -1,8 +1,8 @@
 #include "RandomFilter.h"
-#include "Base/DirectXUtility.h"
-#include "Base/SrvManager.h"
-#include "Base/OffscreenRendering/PostEffect.h"
-#include "Debug/Logger.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "OffscreenRendering/PostEffect.h"
+#include "Logger.h"
 
 #include <imgui.h>
 

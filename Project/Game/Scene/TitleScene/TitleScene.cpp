@@ -1,8 +1,8 @@
 #include "TitleScene.h"
-#include "3D/Skybox/SkyboxCommon.h"
-#include "3D/Object/Object3dCommon.h"
-#include "2D/Sprite/SpriteCommon.h"
-#include "Scene/GamePlayScene/CameraControll/FollowCamera/FollowCameraController.h"
+#include "Skybox/SkyboxCommon.h"
+#include "Object/Object3dCommon.h"
+#include "Sprite/SpriteCommon.h"
+#include "CameraControll/FollowCamera/FollowCameraController.h"
 
 #include <imgui.h>
 

@@ -1,8 +1,8 @@
 #include "Object3dCommon.h"
-#include "base/DirectXUtility.h"
-#include "base/SrvManager.h"
-#include "debug/Logger.h"
-#include "camera/DebugCamera.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "Logger.h"
+#include "DebugCamera.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;

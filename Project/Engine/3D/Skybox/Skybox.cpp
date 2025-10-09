@@ -1,9 +1,9 @@
 #include "Skybox.h"
 #include "SkyboxCommon.h"
-#include "base/DirectXUtility.h"
-#include "2D/Texture/TextureManager.h"
-#include "Math/MathMatrix.h"
-#include "camera/Camera.h"
+#include "DirectXUtility.h"
+#include "Texture/TextureManager.h"
+#include "MathMatrix.h"
+#include "Camera.h"
 
 #include <imgui.h>
 

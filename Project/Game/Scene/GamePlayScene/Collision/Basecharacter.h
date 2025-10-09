@@ -1,6 +1,7 @@
 #pragma once
+
 #include "Collider.h"
-#include "WorldTransform/WorldTransform.h"
+#include "WorldTransform.h"
 
 ///-------------------------------------------/// 
 /// キャラクター基底クラス

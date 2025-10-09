@@ -7,7 +7,7 @@
 #include <string>
 #include <chrono>
 
-#include "DirectXTex/DirectXTex.h"
+#include "DirectXTex.h"
 
 /// === DirectX機能 === ///
 class DirectXUtility {

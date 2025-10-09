@@ -1,9 +1,9 @@
 #include "DissolveFilter.h"
-#include "Base/DirectXUtility.h"
-#include "Base/SrvManager.h"
-#include "Base/OffscreenRendering/PostEffect.h"
-#include "Debug/Logger.h"
-#include "2D/TextureManager.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "OffscreenRendering/PostEffect.h"
+#include "Logger.h"
+#include "Texture/TextureManager.h"
 
 #include <imgui.h>
 
