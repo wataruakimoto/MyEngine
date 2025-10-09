@@ -1,7 +1,7 @@
 #include "DirectXUtility.h"
-#include "debug/Logger.h"
-#include "utility/StringUtility.h"
-#include "DirectXTex/d3dx12.h"
+#include "Logger.h"
+#include "StringUtility.h"
+#include "d3dx12.h"
 
 #include <cassert>
 #include <format>

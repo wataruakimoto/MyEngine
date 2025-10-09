@@ -1,8 +1,9 @@
 #pragma once
-#include "3D/Data/TransformationData.h"
-#include "Math/Vector2.h"
-#include "Math/Vector4.h"
-#include "3D/Data/Transform.h"
+
+#include "Data/TransformationData.h"
+#include "Vector2.h"
+#include "Vector4.h"
+#include "Data/Transform.h"
 
 #include <d3d12.h>
 #include <wrl.h>

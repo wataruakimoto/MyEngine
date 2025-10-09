@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene/AbstractSceneFactory.h"
+#include "AbstractSceneFactory.h"
 
 /// ===== シーンファクトリー ===== ///
 class SceneFactory : public AbstractSceneFactory {

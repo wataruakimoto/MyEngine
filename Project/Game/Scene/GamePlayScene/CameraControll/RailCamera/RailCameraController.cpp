@@ -1,6 +1,6 @@
 #include "RailCameraController.h"
-#include "Math/MathMatrix.h"
-#include "3d/Object3dCommon.h"
+#include "MathMatrix.h"
+#include "Object/Object3dCommon.h"
 
 #include <imgui.h>
 

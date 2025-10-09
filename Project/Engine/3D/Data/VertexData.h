@@ -1,7 +1,8 @@
 #pragma once
-#include "math/Vector2.h"
-#include "math/Vector3.h"
-#include "math/Vector4.h"
+
+#include "Vector2.h"
+#include "Vector3.h"
+#include "Vector4.h"
 
 // 頂点データ
 struct VertexData {

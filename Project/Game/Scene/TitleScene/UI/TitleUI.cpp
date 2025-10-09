@@ -1,7 +1,7 @@
 #define NOMINMAX
 
 #include "TitleUI.h"
-#include "Math/MathVector.h"
+#include "MathVector.h"
 
 #include <algorithm>
 #include <imgui.h>

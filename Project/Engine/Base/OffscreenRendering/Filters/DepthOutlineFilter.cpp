@@ -1,11 +1,11 @@
 #include "DepthOutlineFilter.h"
-#include "Base/DirectXUtility.h"
-#include "Base/SrvManager.h"
-#include "Base/OffscreenRendering/PostEffect.h"
-#include "Base/OffscreenRendering/FilterManager.h"
-#include "Debug/Logger.h"
-#include "camera/Camera.h"
-#include "Math/MathMatrix.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "OffscreenRendering/PostEffect.h"
+#include "OffscreenRendering/FilterManager.h"
+#include "Logger.h"
+#include "Camera.h"
+#include "MathMatrix.h"
 
 #include <imgui.h>
 

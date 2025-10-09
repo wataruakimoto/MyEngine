@@ -3,14 +3,14 @@
 #include "PlaneParticle.h"
 #include "RingParticle.h"
 #include "CylinderParticle.h"
-#include "base/DirectXUtility.h"
-#include "base/SrvManager.h"
-#include "2d/TextureManager.h"
-#include "3D/ModelManager.h"
-#include "camera/Camera.h"
-#include "math/MathVector.h"
-#include "math/MathMatrix.h"
-#include "debug/Logger.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
+#include "Camera.h"
+#include "MathVector.h"
+#include "MathMatrix.h"
+#include "Logger.h"
 
 #include <string>
 #include <imgui.h>

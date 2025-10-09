@@ -1,9 +1,10 @@
 #include "Enemy.h"
-#include "math/MathVector.h"
-#include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
-#include "Scene/GamePlayScene/Player/Player.h"
-#include "Scene/GamePlayScene/GamePlayScene.h"
+#include "MathVector.h"
+#include "Collision/CollisionTypeIDDef.h"
+#include "Player/Player.h"
+#include "GamePlayScene.h"
 #include "EnemyBullet.h"
+
 #include <numbers>
 #include <imgui.h>
 

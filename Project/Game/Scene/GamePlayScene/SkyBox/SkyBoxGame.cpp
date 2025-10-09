@@ -1,5 +1,5 @@
 #include "SkyBoxGame.h"
-#include "Scene/GamePlayScene/Player/Player.h"
+#include "Player/Player.h"
 
 #include <imgui.h>
 

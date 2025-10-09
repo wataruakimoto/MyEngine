@@ -1,10 +1,10 @@
 #include "ImGuiManager.h"
+#include "WinApp.h"
+#include "DirectXUtility.h"
+#include "SwapChain.h"
+#include "SrvManager.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
-#include "winApp/WinApp.h"
-#include "base/DirectXUtility.h"
-#include "base/SwapChain.h"
-#include "base/SrvManager.h"
 
 void ImGuiManager::Initialize(WinApp* winApp, SwapChain* swapChain) {
 

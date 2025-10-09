@@ -1,8 +1,8 @@
 #include "Model.h"
-#include "base/DirectXUtility.h"
-#include "math/MathMatrix.h"
-#include "2D/Texture/TextureManager.h"
-#include "3D/Model/ModelManager.h"
+#include "DirectXUtility.h"
+#include "MathMatrix.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
 #include <imgui.h>
 
 using namespace MathMatrix;

@@ -1,6 +1,6 @@
 #include "CollisionManager.h"
 #include "Collider.h"
-#include "math/MathVector.h"
+#include "MathVector.h"
 
 using namespace MathVector;
 

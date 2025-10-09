@@ -1,8 +1,8 @@
 #pragma once
 
-#include "3D/Object/Object3d.h"
-#include "3D/Model/Model.h"
-#include "WorldTransform/WorldTransform.h"
+#include "Object/Object3d.h"
+#include "Model/Model.h"
+#include "WorldTransform.h"
 
 #include <memory>
 

@@ -1,11 +1,11 @@
 #include "Reticle2D.h"
-#include "2D/Texture/TextureManager.h"
-#include "input/Input.h"
+#include "Texture/TextureManager.h"
+#include "Input.h"
 #include "Reticle3D.h"
-#include "Camera/Camera.h"
-#include "math/MathVector.h"
-#include "math/MathMatrix.h"
-#include "winApp/WinApp.h"
+#include "Camera.h"
+#include "MathVector.h"
+#include "MathMatrix.h"
+#include "WinApp.h"
 
 #include <imgui.h>
 
