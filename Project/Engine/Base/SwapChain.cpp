@@ -1,5 +1,5 @@
 #include "SwapChain.h"
-#include "winApp/WinApp.h"
+#include "WinApp.h"
 #include "DirectXUtility.h"
 
 #include <cassert>

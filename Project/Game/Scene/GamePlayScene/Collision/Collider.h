@@ -1,6 +1,7 @@
 #pragma once
-#include "math/Vector3.h"
-#include "3D/Data/Transform.h"
+
+#include "Vector3.h"
+#include "Data/Transform.h"
 
 #include <cstdint>
 

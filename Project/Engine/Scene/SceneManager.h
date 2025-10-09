@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene/System/BaseScene.h"
+#include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 
 /// ===== シーン管理 ===== ///

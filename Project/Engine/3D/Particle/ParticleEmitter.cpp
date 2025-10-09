@@ -1,5 +1,6 @@
 #include "ParticleEmitter.h"
 #include "ParticleSystem.h"
+
 #include <imgui.h>
 
 ParticleEmitter::ParticleEmitter(const std::string& name, const Transform& transform, uint32_t count, float frequency, Particle setting) {

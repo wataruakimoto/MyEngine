@@ -1,5 +1,6 @@
 #pragma once
-#include "Scene/System/BaseScene.h"
+
+#include "BaseScene.h"
 #include "Collision/CollisionManager.h"
 
 #include "Player/Player.h"
@@ -9,7 +10,7 @@
 #include "Reticle/Reticle3D.h"
 #include "Reticle/Reticle2D.h"
 #include "LockOn/LockOn.h"
-#include "Camera/Camera.h"
+#include "Camera.h"
 #include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"

@@ -1,6 +1,6 @@
 #include "DebugCamera.h"
-#include "math/MathMatrix.h"
-#include "winApp/WinApp.h"
+#include "MathMatrix.h"
+#include "WinApp.h"
 
 using namespace MathMatrix;
 

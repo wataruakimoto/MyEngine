@@ -1,5 +1,6 @@
 #pragma once
-#include "math/Vector3.h"
+
+#include "Vector3.h"
 
 // 変換データ
 struct Transform {

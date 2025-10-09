@@ -1,8 +1,9 @@
 #pragma once
-#include "math/Matrix4x4.h"
-#include "3D/Data/MaterialData.h"
-#include "3D/Data/ModelData.h"
-#include "3D/Data/VertexData.h"
+
+#include "Matrix4x4.h"
+#include "Data/MaterialData.h"
+#include "Data/ModelData.h"
+#include "Data/VertexData.h"
 
 #include <d3d12.h>
 #include <wrl.h>

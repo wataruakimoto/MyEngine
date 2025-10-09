@@ -1,6 +1,6 @@
 #pragma once
 
-#include "3D/Skybox/Skybox.h"
+#include "Skybox/Skybox.h"
 
 #include <memory>
 

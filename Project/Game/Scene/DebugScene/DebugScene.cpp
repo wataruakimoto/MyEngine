@@ -1,6 +1,6 @@
 #include "DebugScene.h"
-#include "3D/Object/Object3dCommon.h"
-#include "Base/OffscreenRendering/FilterManager.h"
+#include "Object/Object3dCommon.h"
+#include "OffscreenRendering/FilterManager.h"
 
 #include <imgui.h>
 

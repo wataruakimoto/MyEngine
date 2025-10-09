@@ -1,5 +1,6 @@
 #pragma once
-#include "Scene/System/BaseScene.h"
+
+#include "BaseScene.h"
 
 /// ===== ゲームオーバーシーン ===== ///
 class GameOverScene : public BaseScene {

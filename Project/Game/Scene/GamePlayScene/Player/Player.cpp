@@ -1,10 +1,10 @@
 #include "Player.h"
-#include "input/input.h"
-#include "Scene/GamePlayScene/GamePlayScene.h"
+#include "Input.h"
+#include "GamePlayScene.h"
 #include "Bullet.h"
-#include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
-#include "Scene/GamePlayScene/Reticle/Reticle3D.h"
-#include "Math/MathVector.h"
+#include "Collision/CollisionTypeIDDef.h"
+#include "Reticle/Reticle3D.h"
+#include "MathVector.h"
 
 #include <list>
 #include <imgui.h>

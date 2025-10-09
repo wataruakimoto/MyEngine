@@ -1,9 +1,9 @@
 #pragma once
-#include "3D/Data/VertexData.h"
-#include "3D/Data/Transform.h"
-#include "math/Vector3.h"
-#include "math/Vector4.h"
-#include "math/Matrix4x4.h"
+#include "Data/VertexData.h"
+#include "Data/Transform.h"
+#include "Vector3.h"
+#include "Vector4.h"
+#include "Matrix4x4.h"
 #include "Particle.h"
 
 #include <d3d12.h>

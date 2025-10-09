@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Scene/System/BaseScene.h"
-#include "Camera/Camera.h"
-#include "Level/Loader.h"
+#include "BaseScene.h"
+#include "Camera.h"
+#include "Loader.h"
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {

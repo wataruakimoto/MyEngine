@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BaseFilter.h"
-#include "Math/Vector3.h"
+#include "Vector3.h"
 
 #include <string>
 

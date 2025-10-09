@@ -1,6 +1,7 @@
 #pragma once
-#include "3D/Model/Model.h"
-#include "3D/Object/Object3d.h"
+
+#include "Model/Model.h"
+#include "Object/Object3d.h"
 
 #include <vector>
 

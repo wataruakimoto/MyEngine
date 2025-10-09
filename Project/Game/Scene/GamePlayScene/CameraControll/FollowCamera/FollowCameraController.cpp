@@ -1,7 +1,7 @@
 #include "FollowCameraController.h"
-#include "3D/Object/Object3dCommon.h"
-#include "Math/MathVector.h"
-#include "Math/MathMatrix.h"
+#include "Object/Object3dCommon.h"
+#include "MathVector.h"
+#include "MathMatrix.h"
 
 #include <imgui.h>
 

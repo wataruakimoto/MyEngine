@@ -1,9 +1,9 @@
 #include "Reticle3D.h"
-#include "Scene/GamePlayScene/Player/Player.h"
-#include "Math/MathVector.h"
-#include "Math/MathMatrix.h"
-#include "winApp/WinApp.h"
-#include "Camera/Camera.h"
+#include "Player/Player.h"
+#include "MathVector.h"
+#include "MathMatrix.h"
+#include "WinApp.h"
+#include "Camera.h"
 #include "Reticle2D.h"
 
 #include <imgui.h>

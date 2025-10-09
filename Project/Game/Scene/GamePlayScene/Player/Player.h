@@ -1,10 +1,10 @@
 #pragma once
 
-#include "2D/Sprite/Sprite.h"
-#include "3D/Model/Model.h"
-#include "3D/Object/Object3d.h"
-#include "Scene/GamePlayScene/Collision/Basecharacter.h"
-#include "Scene/GamePlayScene/Collision/CollisionManager.h"
+#include "Sprite/Sprite.h"
+#include "Model/Model.h"
+#include "Object/Object3d.h"
+#include "Collision/Basecharacter.h"
+#include "Collision/CollisionManager.h"
 
 #include <list>
 #include <memory>

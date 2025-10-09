@@ -1,7 +1,7 @@
 #include "SkyboxCommon.h"
-#include "base/DirectXUtility.h"
-#include "base/SrvManager.h"
-#include "debug/Logger.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "Logger.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "2D/Sprite/Sprite.h"
-#include "2D/Texture/TextureManager.h"
+#include "Sprite/Sprite.h"
+#include "Texture/TextureManager.h"
 
 #include <list>
 #include <tuple>

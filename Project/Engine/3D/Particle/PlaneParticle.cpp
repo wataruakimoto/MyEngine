@@ -1,9 +1,9 @@
 #include "PlaneParticle.h"
-#include "Base/DirectXUtility.h"
-#include "Base/SrvManager.h"
-#include "2D/TextureManager.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "Texture/TextureManager.h"
 #include "ParticleCommon.h"
-#include "Math/MathMatrix.h"
+#include "MathMatrix.h"
 
 using namespace MathMatrix;
 

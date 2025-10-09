@@ -1,8 +1,9 @@
 #pragma once
-#include "winApp/WinApp.h"
-#include "base/OffscreenRendering/PostEffect.h"
-#include "base/SwapChain.h"
-#include "scene/AbstractSceneFactory.h"
+
+#include "WinApp.h"
+#include "OffscreenRendering/PostEffect.h"
+#include "SwapChain.h"
+#include "AbstractSceneFactory.h"
 
 #include <memory>
 
