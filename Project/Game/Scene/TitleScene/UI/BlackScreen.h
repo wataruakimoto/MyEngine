@@ -33,33 +33,44 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui();
+
+	/// <summary>
+	/// フェードアウト開始
+	/// </summary>
+	void StartFadeOut();
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
+	/// フェードアウト更新
+	/// </summary>
+	void FadeOutUpdate();
+
+	static float EaseOutCubic(float t);
+
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
 public:
 
 	/// <summary>
-	/// アルファ値のゲッター
+	/// フェードアウト完了フラグのゲッター
 	/// </summary>
 	/// <returns></returns>
-	float GetAlpha() { return alpha_; }
+	bool IsFinishedFadingOut() const { return isFinishedFadingOut_; }
 
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
 public:
 
-	/// <summary>
-	/// アルファ値のセッター
-	/// </summary>
-	/// <param name="alpha"></param>
-	void SetAlpha(float alpha) { alpha_ = alpha; }
-
-	/// <summary>
-	/// アルファ値を減少させる
-	/// </summary>
-	/// <param name="value"></param>
-	void SubAlpha(float value) { alpha_ -= value;}
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -72,6 +83,20 @@ private:
 	// スプライト
 	std::unique_ptr<Sprite> sprite_ = nullptr;
 
+	// アルファ値
 	float alpha_ = 1.0f;
+
+	// フェードアウト速度
+	float fadeOutSpeed_ = 0.005f;
+
+	// フェードアウト完了フラグ
+	bool isFinishedFadingOut_ = false;
+
+	// フェード用パラメータ
+	int fadeFrame_ = 0;
+	int fadeDuration_ = 0;
+
+	// フェードアウトを何秒で行うか
+	const int kFadeDuration = 1;
 };
 

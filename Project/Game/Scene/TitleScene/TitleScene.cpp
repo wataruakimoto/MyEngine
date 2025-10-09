@@ -214,6 +214,9 @@ void TitleScene::ShowImGui() {
 	// スタートUIのImGui表示
 	startUI_->ShowImGui();
 
+	// 黒画面UIのImGui表示
+	blackScreen_->ShowImGui();
+
 #ifdef _DEBUG
 
 	ImGui::Begin("TitleScene");
@@ -225,9 +228,6 @@ void TitleScene::ShowImGui() {
 }
 
 void TitleScene::BlackoutInitialize() {
-
-	// 黒画面のアルファ値を1に設定
-	blackScreen_->SetAlpha(1.0f);
 
 	// スタートUIを非表示に設定
 	startUI_->SetVisible(false);
@@ -260,8 +260,8 @@ void TitleScene::SlideInUpdate() {
 
 void TitleScene::FadeOutInitialize() {
 
-	// 黒画面のアルファ値を1に設定
-	blackScreen_->SetAlpha(1.0f);
+	// 黒画面UIのフェードアウト開始
+	blackScreen_->StartFadeOut();
 
 	// スタートUIを非表示に設定
 	startUI_->SetVisible(false);
@@ -269,11 +269,8 @@ void TitleScene::FadeOutInitialize() {
 
 void TitleScene::FadeOutUpdate() {
 
-	// 黒画面のアルファ値を徐々に減少
-	blackScreen_->SubAlpha(0.005f);
-
 	// 黒画面が完全に透明になったら
-	if (blackScreen_->GetAlpha() <= 0.0f) {
+	if (blackScreen_->IsFinishedFadingOut()) {
 
 		// 状態を入力待ちに変更
 		stateRequest_ = TitleFlowState::WaitInput;
