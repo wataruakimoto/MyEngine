@@ -1,8 +1,8 @@
 #pragma once
 
-#include "2d/Sprite.h"
-#include "3d/Model.h"
-#include "3d/Object3d.h"
+#include "2D/Sprite/Sprite.h"
+#include "3D/Model/Model.h"
+#include "3D/Object/Object3d.h"
 #include "Scene/GamePlayScene/Collision/Basecharacter.h"
 #include "Scene/GamePlayScene/Collision/CollisionManager.h"
 

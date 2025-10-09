@@ -1,6 +1,6 @@
 #pragma once
 #include "LevelData.h"
-#include "3D/Object3d.h"
+#include "3D/Object/Object3d.h"
 
 #include <string>
 #include <map>
