@@ -3,6 +3,7 @@
 #include "Object/Object3dCommon.h"
 #include "Sprite/SpriteCommon.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
+#include "WinApp.h"
 
 #include <imgui.h>
 
@@ -25,6 +26,7 @@ void TitleScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
 	player_->SetPlayerMode(PlayerMode::Title); // タイトルモードに設定
+	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player_->GetWorldTransform());
@@ -56,6 +58,9 @@ void TitleScene::Initialize() {
 	// スタートUIの生成&初期化
 	startUI_ = std::make_unique<StartUI>();
 	startUI_->Initialize();
+
+	// ラジアルブラーをフィルターマネージャから受け取っとく
+	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
 }
 
 void TitleScene::Update() {
@@ -89,6 +94,10 @@ void TitleScene::Update() {
 			MoveUpInitialize();
 			break;
 
+		case TitleFlowState::SpeedUp:
+			SpeedUpInitialize();
+			break;
+
 		default:
 			break;
 		}
@@ -118,6 +127,10 @@ void TitleScene::Update() {
 
 	case TitleFlowState::MoveUp:
 		MoveUpUpdate();
+		break;
+
+	case TitleFlowState::SpeedUp:
+		SpeedUpUpdate();
 		break;
 
 	default:
@@ -214,11 +227,15 @@ void TitleScene::ShowImGui() {
 	// スタートUIのImGui表示
 	startUI_->ShowImGui();
 
+	filterManager_->ShowImGui();
+
 #ifdef _DEBUG
 
 	ImGui::Begin("TitleScene");
 	ImGui::Text("TitleFlowState");
 	ImGui::Text("%d", static_cast<int>(titleFlowState_));
+
+
 	ImGui::End();
 
 #endif // _DEBUG
@@ -231,6 +248,8 @@ void TitleScene::BlackoutInitialize() {
 
 	// スタートUIを非表示に設定
 	startUI_->SetVisible(false);
+
+	player_->SetMoveSpeedTitle(0.5f);
 }
 
 void TitleScene::BlackoutUpdate() {
@@ -313,7 +332,47 @@ void TitleScene::MoveUpUpdate() {
 	// 上に移動が終了したら
 	if (titleUI_->IsMoveUpFinished()) {
 
-		// シーンをゲームプレイシーンに変更
+		// 状態を加速に変更
+		stateRequest_ = TitleFlowState::SpeedUp;
+	}
+}
+
+void TitleScene::SpeedUpInitialize() {
+
+	player_->SetMoveSpeedTitle(2.0f);
+
+	// ラジアルブラーをつける
+	radialBlurFilter_->SetIsActive(true);
+
+	// ブラーの横幅をリセット
+	blurWidth_ = 0.0f;
+
+	// タイマーをセット
+	stateTimer_ = 60.0f * 5.0f; // 5秒
+}
+
+void TitleScene::SpeedUpUpdate() {
+
+	// ブラーの中心を計算
+	blurCenter_.x = player_->GetScreenPos().x / WinApp::kClientWidth;
+	blurCenter_.y = player_->GetScreenPos().y / WinApp::kClientHeight;
+
+	// ブラーの中心を設定
+	radialBlurFilter_->SetCenter(blurCenter_);
+
+	// ブラーの強さを徐々に増加
+	blurWidth_ += 0.001f;
+
+	// ブラーの強さを変更
+	radialBlurFilter_->SetBlurWidth(blurWidth_);
+
+	// タイマーをデクリメント
+	stateTimer_--;
+
+	// タイマーが0以下になったら
+	if (stateTimer_ <= 0.0f) {
+
+		// ゲームプレイシーンに切り替え
 		sceneManager_->ChangeScene("PLAY");
 	}
 }

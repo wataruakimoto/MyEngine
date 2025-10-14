@@ -77,6 +77,8 @@ void Player::Update() {
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
 
+	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
+
 	object->SetTranslate(worldTransform_.GetWorldPosition());
 	object->SetRotate(worldTransform_.GetRotate());
 
@@ -102,6 +104,8 @@ void Player::ShowImGui() {
 	worldTransform_.ShowImGui();
 
 	ImGui::SliderFloat3("Velocity", &velocity_.x, -0.2f, 0.2f);
+
+	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
 
 	object->ShowImGui();
 
@@ -147,8 +151,8 @@ void Player::Move() {
 		// 左スティックがデッドゾーンを超えていたら
 		if (Input::GetInstance()->IsLeftThumbStickOutDeadZone()) {
 
-			velocity_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeed;
-			velocity_.y = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeed;
+			velocity_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeedPlay;
+			velocity_.y = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeedPlay;
 		}
 		else { // 左スティックがデッドゾーン内だったら
 
@@ -167,12 +171,12 @@ void Player::Move() {
 		if (w && !s) { // Wキーだけ押された場合
 
 			// 速度を上向きに加算
-			velocity_.y = moveSpeed;
+			velocity_.y = moveSpeedPlay;
 		}
 		else if (s && !w) { // Sキーだけ押された場合
 
 			// 速度を下向きに加算
-			velocity_.y = -moveSpeed;
+			velocity_.y = -moveSpeedPlay;
 		}
 		else if (w && s) { // 同時に押されていた場合
 
@@ -189,12 +193,12 @@ void Player::Move() {
 		if (a && !d) { // Aキーだけ押された場合
 
 			// 速度を左向きに加算
-			velocity_.x = -moveSpeed;
+			velocity_.x = -moveSpeedPlay;
 		}
 		else if (d && !a) { // Dキーだけ押された場合
 
 			// 速度を右向きに加算
-			velocity_.x = moveSpeed;
+			velocity_.x = moveSpeedPlay;
 		}
 		else if (a && d) { // 同時に押されていた場合
 
@@ -212,10 +216,10 @@ void Player::Move() {
 	float length = Length(Vector2(velocity_.x, velocity_.y));
 
 	// 長さが速さを超えていたら
-	if (length > moveSpeed) {
+	if (length > moveSpeedPlay) {
 
 		// 速度を正規化して速さを掛ける
-		velocity_ = Normalize(velocity_) * moveSpeed;
+		velocity_ = Normalize(velocity_) * moveSpeedPlay;
 	}
 
 	// 速度をワールド変換に加算
@@ -281,7 +285,7 @@ void Player::MoveToReticle() {
 	toReticle = Normalize(toReticle);
 
 	// 座標に速度を加算
-	worldTransform_.AddTranslate(toReticle * moveSpeed);
+	worldTransform_.AddTranslate(toReticle * moveSpeedPlay);
 
 	// 横軸の長さを求める
 	float xzLength = Length(toReticle.x, toReticle.z);
@@ -298,5 +302,5 @@ void Player::MoveToReticle() {
 
 void Player::MoveToZ() {
 
-	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeed });
+	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeedTitle });
 }

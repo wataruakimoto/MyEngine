@@ -39,7 +39,8 @@ void GamePlayScene::Initialize() {
 	player = std::make_unique<Player>();
 	player->Initialize();
 	player->SetGamePlayScene(this);
-	player->SetPlayerMode(PlayerMode::Play),
+	player->SetPlayerMode(PlayerMode::Play); // プレイモードに設定
+	player->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player->GetWorldTransform());

@@ -7,26 +7,42 @@ struct PixelShaderOutput {
     float4 color : SV_TARGET0;
 };
 
-static const float2 kCenter = float2(0.5f, 0.5f); // 中心点。ここを基準に放射状にブラーがかかる
+struct Config {
+    
+    float2 center; // 中心点
+    float blurWidth; // ぼかしの幅
+    float3 glowColor; // グローの色
+};
+
+ConstantBuffer<Config> gConfig : register(b0);
+
 static const int kNumSamples = 10; // サンプリング数。多いほど滑らかだが重い
-static const float kBlurWidth = 0.01f; // ぼかしの幅。大きいほど大きい
 
 PixelShaderOutput main(VertexShaderOutput input) {
     
     // 中心から現在のuvに対しての方向を計算
     // 普段方向といえば、単位ベクトルだが、ここではあえて正規化せず、遠いほどより遠くをサンプリングする
-    float2 direction = input.texcoord - kCenter;
+    float2 direction = input.texcoord - gConfig.center;
+    
     float3 outputColor = float3(0.0f, 0.0f, 0.0f);
     
     for (int sampleIndex = 0; sampleIndex < kNumSamples; ++sampleIndex) {
         
+        // サンプリング位置を指数関数的に分布させる
+        float factor = pow(float(sampleIndex) / (kNumSamples - 1), 2.0f); // 外側ほど速く見える
+        
         // 現在のuvから先ほど計算した方向にサンプリング点を進めながらサンプリングしていく
-        float2 texcoord = input.texcoord + direction * kBlurWidth * float(sampleIndex);
+        float2 texcoord = input.texcoord + direction * gConfig.blurWidth * factor;
+        
         outputColor.rgb += gTexture.Sample(gSampler, texcoord).rgb;
     }
     
     // 平均化する
     outputColor.rgb *= rcp(float(kNumSamples));
+    
+    // 輝度を上げる
+    float boostGlow = saturate(gConfig.blurWidth * 3.0f);
+    
     
     PixelShaderOutput output;
  

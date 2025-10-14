@@ -2,6 +2,7 @@
 
 #include "BaseScene.h"
 #include "SceneManager.h"
+#include "OffscreenRendering/FilterManager.h"
 #include "Input.h"
 #include "Camera.h"
 #include "CameraControll/ICameraController.h"
@@ -16,6 +17,8 @@
 #include <memory>
 #include <optional>
 
+class RadialBlurFilter;
+
 // タイトルの流れの状態
 enum class TitleFlowState {
 	Blackout,	// 画面が真っ黒
@@ -23,6 +26,7 @@ enum class TitleFlowState {
 	FadeOut,	// 画面フェードアウト
 	WaitInput,	// 入力待ち
 	MoveUp,		// UI上に移動
+	SpeedUp, 	// 自機を加速させる
 };
 
 /// ===== タイトルシーン ===== ///
@@ -85,6 +89,10 @@ private:
 
 	void MoveUpUpdate();
 
+	void SpeedUpInitialize();
+
+	void SpeedUpUpdate();
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -92,6 +100,9 @@ private:
 
 	// シーンマネージャのインスタンス
 	SceneManager* sceneManager_ = SceneManager::GetInstance();
+
+	// フィルターマネージャのインスタンス
+	FilterManager* filterManager_ = FilterManager::GetInstance();
 
 	// 入力のインスタンス
 	Input* input_ = Input::GetInstance();
@@ -131,4 +142,13 @@ private:
 
 	// 各状態でのカウントダウンタイマー
 	float stateTimer_ = 0.0f;
+
+	// ラジアルブラー借りポインタ
+	RadialBlurFilter* radialBlurFilter_ = nullptr;
+
+	// ブラーの中心座標
+	Vector2 blurCenter_ = { 0.5f, 0.5f };
+
+	// ブラーの横幅
+	float blurWidth_ = 0.0f;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseFilter.h"
+#include "Vector2.h"
 
 /// ===== ラジアルブラーフィルター ===== ///
 class RadialBlurFilter : public BaseFilter {
@@ -70,9 +71,41 @@ private:
 	/// </summary>
 	void CreateGraphicsPipeline() override;
 
+	/// <summary>
+	/// コンフィグデータ生成
+	/// </summary>
+	void CreateConfigData();
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	void SetCenter(const Vector2& center) { configData->center = center; }
+
+	void SetBlurWidth(float blurWidth) { configData->blurWidth = blurWidth; }
+
+///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
+public:
+
+	struct Config {
+
+		Vector2 center;  // 中心点
+		float blurWidth; // ぼかし強度
+		float padding;   // パディング
+	};
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// コンフィグデータ
+	Config* configData = nullptr;
+
+	// コンフィグデータ用リソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 };
 

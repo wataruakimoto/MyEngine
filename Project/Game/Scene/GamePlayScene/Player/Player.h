@@ -14,6 +14,7 @@ class GamePlayScene;
 class Enemy;
 class Reticle3D;
 class LockOn;
+class Camera;
 
 enum class PlayerMode {
 	Title,
@@ -96,6 +97,12 @@ public:
 	/// <returns></returns>
 	bool IsDead() { return isDead; }
 
+	/// <summary>
+	/// スクリーン座標のゲッター
+	/// </summary>
+	/// <returns></returns>
+	Vector2 GetScreenPos() { return screenPos_; }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -120,10 +127,18 @@ public:
 	void SetLockOn(LockOn* lockOn) { this->lockOn_ = lockOn; }
 
 	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera"></param>
+	void SetCamera(Camera* camera) { this->camera_ = camera; }
+
+	/// <summary>
 	/// モードの設定
 	/// </summary>
 	/// <param name="mode"></param>
 	void SetPlayerMode(PlayerMode mode) { this->mode_ = mode; }
+
+	void SetMoveSpeedTitle(float speed) { this->moveSpeedTitle = speed; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -136,7 +151,11 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
-	float moveSpeed = 0.5f;
+	float moveSpeedTitle = 0.5f;
+
+	float moveSpeedPlay = 0.5f;
+
+	Vector2 screenPos_ = { 0.0f, 0.0f };
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
@@ -153,6 +172,9 @@ private:
 
 	// ロックオンの借りポインタ
 	LockOn* lockOn_ = nullptr;
+
+	// カメラの借りポインタ
+	Camera* camera_ = nullptr;
 
 	// プレイヤーモード
 	PlayerMode mode_ = PlayerMode::Play;
