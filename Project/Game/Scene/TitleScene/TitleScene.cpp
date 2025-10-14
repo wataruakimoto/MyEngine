@@ -61,6 +61,9 @@ void TitleScene::Initialize() {
 
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
+
+	// 状態リクエストにブラックアウトを設定
+	stateRequest_ = TitleFlowState::Blackout;
 }
 
 void TitleScene::Update() {
@@ -339,16 +342,17 @@ void TitleScene::MoveUpUpdate() {
 
 void TitleScene::SpeedUpInitialize() {
 
-	player_->SetMoveSpeedTitle(2.0f);
+	// プレイヤーの速度を設定
+	playerMoveSpeed_ = player_->GetMoveSpeedTitle();
 
 	// ラジアルブラーをつける
 	radialBlurFilter_->SetIsActive(true);
 
-	// ブラーの横幅をリセット
-	blurWidth_ = 0.0f;
+	// ブラーの色はシアン
+	radialBlurFilter_->SetGlowColor({ 0.3f, 0.7f, 1.0f });
 
-	// タイマーをセット
-	stateTimer_ = 60.0f * 5.0f; // 5秒
+	// ブラーの横幅をリセット
+	blurStrength_ = 0.0f;
 }
 
 void TitleScene::SpeedUpUpdate() {
@@ -360,17 +364,38 @@ void TitleScene::SpeedUpUpdate() {
 	// ブラーの中心を設定
 	radialBlurFilter_->SetCenter(blurCenter_);
 
-	// ブラーの強さを徐々に増加
-	blurWidth_ += 0.001f;
+	// ブラーの強さが最大値に達していなかったら
+	if (blurStrength_ < kMaxBlurStrength) {
+
+		// ブラーの強さを徐々に増加
+		blurStrength_ += 0.001f;
+	}
+	else {
+
+		// 最大値を超えたら最大値に固定
+		blurStrength_ = kMaxBlurStrength;
+	}
 
 	// ブラーの強さを変更
-	radialBlurFilter_->SetBlurWidth(blurWidth_);
+	radialBlurFilter_->SetBlurStrength(blurStrength_);
 
-	// タイマーをデクリメント
-	stateTimer_--;
+	// プレイヤーの移動速度が最大値に達していなかったら
+	if (playerMoveSpeed_ < kMaxPlayerMoveSpeed) {
 
-	// タイマーが0以下になったら
-	if (stateTimer_ <= 0.0f) {
+		// プレイヤーの移動速度を徐々に増加
+		playerMoveSpeed_ += 0.02f;
+	}
+	else {
+
+		// 最大値を超えたら最大値に固定
+		playerMoveSpeed_ = kMaxPlayerMoveSpeed;
+	}
+
+	// プレイヤーの移動速度を設定
+	player_->SetMoveSpeedTitle(playerMoveSpeed_);
+
+	// ブラーの強さとプレイヤーの移動速度が最大値に達していたら
+	if (blurStrength_ >= kMaxBlurStrength && playerMoveSpeed_ >= kMaxPlayerMoveSpeed) {
 
 		// ゲームプレイシーンに切り替え
 		sceneManager_->ChangeScene("PLAY");

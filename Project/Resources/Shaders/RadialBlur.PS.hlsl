@@ -9,9 +9,9 @@ struct PixelShaderOutput {
 
 struct Config {
     
-    float2 center; // 中心点
-    float blurWidth; // ぼかしの幅
     float3 glowColor; // グローの色
+    float blurStrength; // ぼかしの強さ
+    float2 center; // 中心点
 };
 
 ConstantBuffer<Config> gConfig : register(b0);
@@ -32,7 +32,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
         float factor = pow(float(sampleIndex) / (kNumSamples - 1), 2.0f); // 外側ほど速く見える
         
         // 現在のuvから先ほど計算した方向にサンプリング点を進めながらサンプリングしていく
-        float2 texcoord = input.texcoord + direction * gConfig.blurWidth * factor;
+        float2 texcoord = input.texcoord + direction * gConfig.blurStrength * factor;
         
         outputColor.rgb += gTexture.Sample(gSampler, texcoord).rgb;
     }
@@ -41,8 +41,9 @@ PixelShaderOutput main(VertexShaderOutput input) {
     outputColor.rgb *= rcp(float(kNumSamples));
     
     // 輝度を上げる
-    float boostGlow = saturate(gConfig.blurWidth * 3.0f);
+    float boostGlow = saturate(gConfig.blurStrength * 3.0f);
     
+    outputColor.rgb += gConfig.glowColor * boostGlow;
     
     PixelShaderOutput output;
  

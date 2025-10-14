@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseFilter.h"
+#include "Vector3.h"
 #include "Vector2.h"
 
 /// ===== ラジアルブラーフィルター ===== ///
@@ -77,13 +78,22 @@ private:
 	void CreateConfigData();
 
 ///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	float GetBlurStrength() { return configData->blurStrength; }
+
+///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
 public:
 
-	void SetCenter(const Vector2& center) { configData->center = center; }
+	void SetGlowColor(const Vector3& glowColor) { configData->glowColor = glowColor; }
 
-	void SetBlurWidth(float blurWidth) { configData->blurWidth = blurWidth; }
+	void SetBlurStrength(float blurStrength) { configData->blurStrength = blurStrength; }
+
+	void SetCenter(const Vector2& center) { configData->center = center; }
 
 ///-------------------------------------------/// 
 /// 構造体
@@ -92,9 +102,9 @@ public:
 
 	struct Config {
 
-		Vector2 center;  // 中心点
-		float blurWidth; // ぼかし強度
-		float padding;   // パディング
+		Vector3 glowColor;  // 発光色
+		float blurStrength; // ぼかし強度
+		Vector2 center;	    // 中心点
 	};
 
 ///-------------------------------------------/// 

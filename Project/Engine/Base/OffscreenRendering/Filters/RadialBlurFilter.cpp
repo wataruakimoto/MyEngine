@@ -52,8 +52,9 @@ void RadialBlurFilter::ShowImGui() {
 		// 有効化フラグのチェックボックス
 		ImGui::Checkbox("IsActive", &isActive);
 
+		ImGui::ColorEdit3("BlurColor", &configData->glowColor.x);
+		ImGui::SliderFloat("BlurStrength", &configData->blurStrength, 0.0f, 1.0f, "%.3f");
 		ImGui::SliderFloat2("Center", &configData->center.x, 0.0f, 1.0f, "%.2f");
-		ImGui::SliderFloat("BlurWidth", &configData->blurWidth, 0.0f, 1.0f, "%.3f");
 
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
@@ -221,7 +222,8 @@ void RadialBlurFilter::CreateConfigData() {
 	configResource->Map(0, nullptr, reinterpret_cast<void**>(&configData));
 
 	// データの初期化
+	configData->glowColor = { 1.0f, 1.0f, 1.0f }; // 光の色
+	configData->blurStrength = 0.01f;		 // ぼかし強度
 	configData->center = { 0.5f, 0.5f }; // 画面中央
-	configData->blurWidth = 0.01f;		 // ぼかし強度
 }
 

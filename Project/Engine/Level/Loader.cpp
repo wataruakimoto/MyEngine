@@ -96,9 +96,9 @@ void Loader::PlacePlayer() {
 		// モデルを生成
 		std::unique_ptr<Model> model = std::make_unique<Model>();
 		// モデルの読み込み
-		ModelManager::GetInstance()->LoadModelData("Resources/Player", "player.obj");
+		ModelManager::GetInstance()->LoadModelData("Resources/Player", "player_.obj");
 		// モデルの初期化
-		model->Initialize("Resources/Player", "player.obj");
+		model->Initialize("Resources/Player", "player_.obj");
 
 		// 3Dオブジェクトの生成
 		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();

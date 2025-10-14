@@ -103,6 +103,10 @@ public:
 	/// <returns></returns>
 	Vector2 GetScreenPos() { return screenPos_; }
 
+	float GetMoveSpeedTitle() { return moveSpeedTitle; }
+
+	float GetMoveSpeedPlay() { return moveSpeedPlay; }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -139,6 +143,8 @@ public:
 	void SetPlayerMode(PlayerMode mode) { this->mode_ = mode; }
 
 	void SetMoveSpeedTitle(float speed) { this->moveSpeedTitle = speed; }
+
+	void SetMoveSpeedPlay(float speed) { this->moveSpeedPlay = speed; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
