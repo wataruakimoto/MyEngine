@@ -349,6 +349,9 @@
     <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp">
       <Filter>Engine\WorldTransform</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Scene\System\TransitionManager.cpp">
+      <Filter>Game\Scene\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h">
@@ -614,6 +617,9 @@
     </ClInclude>
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h">
       <Filter>Engine\WorldTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\System\TransitionManager.h">
+      <Filter>Game\Scene\System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

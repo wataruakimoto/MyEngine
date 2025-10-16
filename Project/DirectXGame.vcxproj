@@ -181,6 +181,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\TitleUI.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\StartUI.cpp" />
+    <ClCompile Include="Game\Scene\System\TransitionManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -271,6 +272,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\LockOn\LockOn.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\TitleUI.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\StartUI.h" />
+    <ClInclude Include="Game\Scene\System\TransitionManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
