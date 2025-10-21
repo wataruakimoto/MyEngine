@@ -99,6 +99,10 @@ void GamePlayScene::Initialize() {
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
 
+	// 警告UIの生成&初期化
+	warningUI_ = std::make_unique<WarningUI>();
+	warningUI_->Initialize();
+
 	// 状態リクエストに減速を設定
 	stateRequest_ = PlayFlowState::SpeedDown;
 }
@@ -118,6 +122,10 @@ void GamePlayScene::Update() {
 			SpeedDownInitialize();
 			break;
 
+		case PlayFlowState::ShowUI:
+			ShowUIInitialize();
+			break;
+
 		case PlayFlowState::Play:
 			PlayInitialize();
 			break;
@@ -135,6 +143,10 @@ void GamePlayScene::Update() {
 
 	case PlayFlowState::SpeedDown:
 		SpeedDownUpdate();
+		break;
+
+	case PlayFlowState::ShowUI:
+		ShowUIUpdate();
 		break;
 
 	case PlayFlowState::Play:
@@ -289,7 +301,10 @@ void GamePlayScene::Draw() {
 	reticle2D_->Draw();
 
 	// ロックオンの描画
-	lockOn_->Draw();  
+	lockOn_->Draw();
+
+	// 警告UIの描画
+	warningUI_->Draw();
 }
 
 void GamePlayScene::Finalize() {
@@ -331,6 +346,19 @@ void GamePlayScene::ShowImGui() {
 	cylinder_->ShowImGui();
 
 	skyBox_->ShowImGui();
+
+	warningUI_->ShowImGui();
+
+	filterManager_->ShowImGui();
+
+#ifdef _DEBUG
+
+	ImGui::Begin("GamePlayScene");
+	ImGui::Text("PlayFlowState: %d", static_cast<int>(playFlowState_));
+	ImGui::End();
+
+#endif // _DEBUG
+
 }
 
 void GamePlayScene::CheckAllCollisions() {
@@ -505,23 +533,39 @@ void GamePlayScene::SpeedDownUpdate() {
 	radialBlurFilter_->SetBlurStrength(blurStrength_);
 
 	// プレイヤーの速度を徐々に落とす
-	if (player_->GetMoveSpeedTitle() > kPlayerMoveSpeedPlay) {
+	if (player_->GetMoveSpeedTitle() > 0.0f) {
 
 		playerMoveSpeed_ -= 0.02f;
 	}
 	else {
 
-		playerMoveSpeed_ = kPlayerMoveSpeedPlay;
+		playerMoveSpeed_ = 0.0f;
 	}
 
 	// プレイヤーの速度を設定
 	player_->SetMoveSpeedTitle(playerMoveSpeed_);
 
 	// プレイヤーの速度が0.5fで ブラーがオフだったら
-	if (playerMoveSpeed_ <= kPlayerMoveSpeedPlay && radialBlurFilter_->GetIsActive() == false) {
+	if (playerMoveSpeed_ == 0.0f && radialBlurFilter_->GetIsActive() == false) {
 
-		// プレイモードに設定
-		player_->SetPlayerMode(PlayerMode::Play);
+		// 状態をプレイに変更
+		stateRequest_ = PlayFlowState::ShowUI;
+	}
+}
+
+void GamePlayScene::ShowUIInitialize() {
+
+	// 警告UIのバウンスアニメーション開始
+	warningUI_->StartBounceAnimation();
+}
+
+void GamePlayScene::ShowUIUpdate() {
+
+	// 警告UIの更新
+	warningUI_->Update();
+
+	// エンターキーが押されたら
+	if(warningUI_->IsAnimationFinished()) {
 
 		// 状態をプレイに変更
 		stateRequest_ = PlayFlowState::Play;
@@ -529,6 +573,9 @@ void GamePlayScene::SpeedDownUpdate() {
 }
 
 void GamePlayScene::PlayInitialize() {
+
+	// プレイヤーモードをゲームプレイに変更
+	player_->SetPlayerMode(PlayerMode::Play);
 }
 
 void GamePlayScene::PlayUpdate() {

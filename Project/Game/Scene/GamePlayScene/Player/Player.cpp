@@ -107,6 +107,12 @@ void Player::ShowImGui() {
 
 	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
 
+	ImGui::Text("Mode: %s", (mode_ == PlayerMode::Title) ? "Title" : "Play");
+
+	ImGui::Text("speedTitle: %.2f", moveSpeedTitle);
+
+	ImGui::Text("speedPlay: %.2f", moveSpeedPlay);
+
 	object->ShowImGui();
 
 	model->ShowImGui();

@@ -15,6 +15,7 @@
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
 #include "SkyBox/SkyBoxGame.h"
+#include "UI/WarningUI.h"
 
 #include <list>
 #include <sstream>
@@ -25,6 +26,7 @@ class RadialBlurFilter;
 
 enum class PlayFlowState {
 	SpeedDown,	// 自機を減速させる
+	ShowUI,		// UI表示
 	Play,		// プレイ
 };
 
@@ -96,6 +98,10 @@ private:
 	void SpeedDownInitialize();
 
 	void SpeedDownUpdate();
+
+	void ShowUIInitialize();
+
+	void ShowUIUpdate();
 
 	void PlayInitialize();
 
@@ -183,4 +189,7 @@ private:
 
 	// プレイ時のプレイヤーの移動速度
 	const float kPlayerMoveSpeedPlay = 0.5f;
+
+	// 警告UI
+	std::unique_ptr<WarningUI> warningUI_ = nullptr;
 };

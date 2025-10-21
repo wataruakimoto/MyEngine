@@ -136,9 +136,11 @@
     <Filter Include="Engine\Math">
       <UniqueIdentifier>{317783d9-f57b-44df-9d64-2ccaee7c8874}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Scene\GamePlayScene\UI">
+      <UniqueIdentifier>{9b5297a4-415d-491d-bd4b-29a358fb7c1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
@@ -351,6 +353,12 @@
     </ClCompile>
     <ClCompile Include="Game\Scene\System\TransitionManager.cpp">
       <Filter>Game\Scene\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\WarningUI.cpp">
+      <Filter>Game\Scene\GamePlayScene\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -621,6 +629,7 @@
     <ClInclude Include="Game\Scene\System\TransitionManager.h">
       <Filter>Game\Scene\System</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\WarningUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">
