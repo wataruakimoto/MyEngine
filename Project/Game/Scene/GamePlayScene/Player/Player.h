@@ -207,6 +207,7 @@ private:
 
 	const float kRollSpeed = 0.1f;
 	const float kRollAcceleration = 0.001f;
+	const float kRollMaxSpeed = 0.3f;
 
 	const float kSwayAmplitude = 0.1f;
 	const float kSwayFrequency = 4.0f;
