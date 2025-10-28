@@ -1,4 +1,4 @@
-#include "PlaneParticle.h"
+#include "CubeParticle.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Texture/TextureManager.h"
@@ -7,7 +7,7 @@
 
 using namespace MathMatrix;
 
-void PlaneParticle::Initialize() {
+void CubeParticle::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
@@ -22,10 +22,10 @@ void PlaneParticle::Initialize() {
 	GenerateMaterialData();
 }
 
-void PlaneParticle::Update() {
+void CubeParticle::Update() {
 }
 
-void PlaneParticle::Draw(ParticleGroup* group) {
+void CubeParticle::Draw(ParticleGroup* group) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -46,7 +46,7 @@ void PlaneParticle::Draw(ParticleGroup* group) {
 	dxUtility->GetCommandList()->DrawIndexedInstanced(6, group->numInstance, 0, 0, 0);
 }
 
-void PlaneParticle::GenerateVertexData() {
+void CubeParticle::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
 	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * 6);
@@ -67,21 +67,25 @@ void PlaneParticle::GenerateVertexData() {
 
 	/// === VertexResourceに初期値を書き込む(4頂点) === ///
 
-	// 左下
-	vertexData[0].position = { -0.5f, 0.5f, 0.0f, 1.0f };
-	vertexData[0].texcoord = { 0.0f, 1.0f };
-	// 左上
-	vertexData[1].position = { -0.5f, -0.5f, 0.0f, 1.0f };
-	vertexData[1].texcoord = { 0.0f, 0.0f };
-	// 右下
-	vertexData[2].position = { 0.5f, 0.5f, 0.0f, 1.0f };
-	vertexData[2].texcoord = { 1.0f, 1.0f };
-	// 右上
-	vertexData[3].position = { 0.5f, -0.5f, 0.0f, 1.0f };
-	vertexData[3].texcoord = { 1.0f, 0.0f };
+	// 左下奥
+	vertexData[0].position = { -0.5f, -0.5f, -0.5f, 1.0f };
+	// 右下奥
+	vertexData[1].position = { 0.5f, -0.5f, -0.5f, 1.0f };
+	// 左上奥
+	vertexData[2].position = { -0.5f, 0.5f, -0.5f, 1.0f };
+	// 右上奥
+	vertexData[3].position = { 0.5f, 0.5f, -0.5f, 1.0f };
+	// 左下手前
+	vertexData[4].position = { -0.5f, -0.5f, 0.5f, 1.0f };
+	// 右下手前
+	vertexData[5].position = { 0.5f, -0.5f, 0.5f, 1.0f };
+	// 左上手前
+	vertexData[6].position = { -0.5f, 0.5f, 0.5f, 1.0f };
+	// 右上手前
+	vertexData[7].position = { 0.5f, 0.5f, 0.5f, 1.0f };
 }
 
-void PlaneParticle::GenerateIndexData() {
+void CubeParticle::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
 	indexResource = dxUtility->CreateBufferResource(sizeof(uint32_t) * 6);
@@ -110,7 +114,7 @@ void PlaneParticle::GenerateIndexData() {
 	indexData[5] = 2; // 右下
 }
 
-void PlaneParticle::GenerateMaterialData() {
+void CubeParticle::GenerateMaterialData() {
 
 	/// === MaterialResourceを作る === ///
 	materialResource = dxUtility->CreateBufferResource(sizeof(Material));

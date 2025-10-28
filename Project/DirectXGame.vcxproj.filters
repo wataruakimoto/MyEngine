@@ -360,6 +360,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\3D\Particle\CubeParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h">
@@ -630,6 +631,7 @@
       <Filter>Game\Scene\System</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\UI\WarningUI.h" />
+    <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Sprite.hlsli">

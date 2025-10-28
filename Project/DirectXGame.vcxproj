@@ -110,6 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\3D\Particle\CubeParticle.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.cpp" />
@@ -185,6 +186,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\UI\WarningUI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.h" />
