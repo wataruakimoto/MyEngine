@@ -99,6 +99,11 @@ void WorldTransform::ShowImGui() {
 	}
 }
 
+void WorldTransform::AddRotate(const Vector3& value) {
+
+	rotate_ += value;
+}
+
 void WorldTransform::AddTranslate(const Vector3& value) {
 
 	translate_ += value;

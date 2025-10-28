@@ -25,7 +25,7 @@ void TitleScene::Initialize() {
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
-	player_->SetPlayerMode(PlayerMode::Title); // タイトルモードに設定
+	player_->SetPlayerState(PlayerState::AutoPilot); // タイトルモードに設定
 	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
@@ -252,7 +252,7 @@ void TitleScene::BlackoutInitialize() {
 	// スタートUIを非表示に設定
 	startUI_->SetVisible(false);
 
-	player_->SetMoveSpeedTitle(0.5f);
+	player_->SetMoveSpeedAuto(0.5f);
 }
 
 void TitleScene::BlackoutUpdate() {
@@ -392,7 +392,7 @@ void TitleScene::SpeedUpUpdate() {
 	}
 
 	// プレイヤーの移動速度を設定
-	player_->SetMoveSpeedTitle(playerMoveSpeed_);
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
 
 	// ブラーの強さとプレイヤーの移動速度が最大値に達していたら
 	if (blurStrength_ >= kMaxBlurStrength && playerMoveSpeed_ >= kMaxPlayerMoveSpeed) {

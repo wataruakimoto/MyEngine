@@ -39,7 +39,7 @@ void GamePlayScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
 	player_->SetGamePlayScene(this);
-	player_->SetPlayerMode(PlayerMode::Title); // タイトルモードに設定
+	player_->SetPlayerState(PlayerState::AutoPilot); // オートパイロットに設定
 	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
@@ -167,10 +167,10 @@ void GamePlayScene::Update() {
 	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
 
 	// プレイヤーが死んでいたら
-	if (player_->IsDead()) {
+	if (player_->GetState() == PlayerState::Dead) {
 
 		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("FAIL");
+		//SceneManager::GetInstance()->ChangeScene("FAIL");
 	}
 
 	if (killCount >= 20) {
@@ -496,7 +496,7 @@ void GamePlayScene::SpeedDownInitialize() {
 	playerMoveSpeed_ = 5.0f;
 
 	// プレイヤーの速度を設定
-	player_->SetMoveSpeedTitle(playerMoveSpeed_);
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
 
 	// ブラーの強さを取得
 	blurStrength_ = radialBlurFilter_->GetBlurStrength();
@@ -543,7 +543,7 @@ void GamePlayScene::SpeedDownUpdate() {
 	}
 
 	// プレイヤーの速度を設定
-	player_->SetMoveSpeedTitle(playerMoveSpeed_);
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
 
 	// プレイヤーの速度が0.5fで ブラーがオフだったら
 	if (playerMoveSpeed_ == 0.0f && radialBlurFilter_->GetIsActive() == false) {
@@ -575,7 +575,7 @@ void GamePlayScene::ShowUIUpdate() {
 void GamePlayScene::PlayInitialize() {
 
 	// プレイヤーモードをゲームプレイに変更
-	player_->SetPlayerMode(PlayerMode::Play);
+	player_->SetPlayerState(PlayerState::Manual);
 }
 
 void GamePlayScene::PlayUpdate() {

@@ -27,8 +27,6 @@ void Player::Initialize() {
 	object->SetModel(model.get());
 	object->SetScale({ 1.0f, 1.0f, 1.0f });
 
-	isDead = false;
-
 	// コライダーの初期化
 	Collider::Initialize();
 	// コライダーにIDを設定
@@ -37,43 +35,70 @@ void Player::Initialize() {
 
 void Player::Update() {
 
+	// 状態の変更がリクエストされていたら
+	if (stateRequest_) {
+
+		// 状態を変更
+		state_ = stateRequest_.value();
+
+		// 各状態の初期化を行う
+		switch (state_) {
+
+		case PlayerState::AutoPilot:
+
+			// オートパイロットモードの初期化処理
+			AutoPilotInitialize();
+
+			break;
+
+		case PlayerState::Manual:
+
+			// マニュアルモードの初期化処理
+			ManualInitialize();
+
+			break;
+
+		case PlayerState::Dead:
+
+			// 死亡モードの初期化処理
+			DeadInitialize();
+
+			break;
+
+		default:
+
+			break;
+		}
+
+		// リクエストをクリア
+		stateRequest_ = std::nullopt;
+	}
+
 	// 将来的にはWSwitchから基底と継承先を分ける
-	switch (mode_) {
+	switch (state_) {
 
-	case PlayerMode::Title:
+	case PlayerState::AutoPilot:
 
-		// Z方向にしか移動できないようにする
-		MoveToZ();
+		// オートパイロットモードの更新
+		AutoPilotUpdate();
 
 		break;
 
-	case PlayerMode::Play:
-	default:
+	case PlayerState::Manual:
 
-		// タイマーが0以下なら
-		if (fireTimer <= 0) {
+		// マニュアルモードの更新
+		ManualUpdate();
 
-			// スペースキーが押されたら
-			if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		break;
 
-				Fire();
+	case PlayerState::Dead:
 
-				// タイマーをリセット
-				fireTimer = 60.0f * 0.2f;
-			}
-		}
-		else {
-
-			// タイマーをデクリメント
-			fireTimer--;
-		}
-
-		// レティクルに向かって移動
-		MoveToReticle();
+		// 死亡モードの更新
+		DeadUpdate();
 
 		break;
 	}
-	
+
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
 
@@ -107,11 +132,11 @@ void Player::ShowImGui() {
 
 	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
 
-	ImGui::Text("Mode: %s", (mode_ == PlayerMode::Title) ? "Title" : "Play");
+	ImGui::Text("Mode: %s", (state_ == PlayerState::AutoPilot) ? "AutoPilot" : "Manual");
 
-	ImGui::Text("speedTitle: %.2f", moveSpeedTitle);
+	ImGui::Text("speedTitle: %.2f", moveSpeedAuto);
 
-	ImGui::Text("speedPlay: %.2f", moveSpeedPlay);
+	ImGui::Text("speedPlay: %.2f", moveSpeedManual);
 
 	object->ShowImGui();
 
@@ -129,14 +154,13 @@ void Player::OnCollision(Collider* other) {
 
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
-		// 死亡フラグを立てる
-		isDead = true;
+		
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
-		// 死亡フラグを立てる
-		isDead = true;
+		// 死亡状態に変更をリクエスト
+		stateRequest_ = PlayerState::Dead;
 	}
 	// その他と衝突した場合
 	else {
@@ -157,8 +181,8 @@ void Player::Move() {
 		// 左スティックがデッドゾーンを超えていたら
 		if (Input::GetInstance()->IsLeftThumbStickOutDeadZone()) {
 
-			velocity_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeedPlay;
-			velocity_.y = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeedPlay;
+			velocity_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeedManual;
+			velocity_.y = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeedManual;
 		}
 		else { // 左スティックがデッドゾーン内だったら
 
@@ -177,12 +201,12 @@ void Player::Move() {
 		if (w && !s) { // Wキーだけ押された場合
 
 			// 速度を上向きに加算
-			velocity_.y = moveSpeedPlay;
+			velocity_.y = moveSpeedManual;
 		}
 		else if (s && !w) { // Sキーだけ押された場合
 
 			// 速度を下向きに加算
-			velocity_.y = -moveSpeedPlay;
+			velocity_.y = -moveSpeedManual;
 		}
 		else if (w && s) { // 同時に押されていた場合
 
@@ -199,12 +223,12 @@ void Player::Move() {
 		if (a && !d) { // Aキーだけ押された場合
 
 			// 速度を左向きに加算
-			velocity_.x = -moveSpeedPlay;
+			velocity_.x = -moveSpeedManual;
 		}
 		else if (d && !a) { // Dキーだけ押された場合
 
 			// 速度を右向きに加算
-			velocity_.x = moveSpeedPlay;
+			velocity_.x = moveSpeedManual;
 		}
 		else if (a && d) { // 同時に押されていた場合
 
@@ -222,10 +246,10 @@ void Player::Move() {
 	float length = Length(Vector2(velocity_.x, velocity_.y));
 
 	// 長さが速さを超えていたら
-	if (length > moveSpeedPlay) {
+	if (length > moveSpeedManual) {
 
 		// 速度を正規化して速さを掛ける
-		velocity_ = Normalize(velocity_) * moveSpeedPlay;
+		velocity_ = Normalize(velocity_) * moveSpeedManual;
 	}
 
 	// 速度をワールド変換に加算
@@ -291,7 +315,7 @@ void Player::MoveToReticle() {
 	toReticle = Normalize(toReticle);
 
 	// 座標に速度を加算
-	worldTransform_.AddTranslate(toReticle * moveSpeedPlay);
+	worldTransform_.AddTranslate(toReticle * moveSpeedManual);
 
 	// 横軸の長さを求める
 	float xzLength = Length(toReticle.x, toReticle.z);
@@ -306,7 +330,94 @@ void Player::MoveToReticle() {
 	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
 }
 
-void Player::MoveToZ() {
+void Player::AutoPilotInitialize() {
+}
 
-	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeedTitle });
+void Player::AutoPilotUpdate() {
+
+	// Z方向のみの移動
+	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeedAuto });
+}
+
+void Player::ManualInitialize() {
+
+	// タイマーリセット
+	fireTimer = 60.0f * 2.0f;
+}
+
+void Player::ManualUpdate() {
+
+	// タイマーが0以下なら
+	if (fireTimer <= 0) {
+
+		// スペースキーが押されたら
+		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+
+			Fire();
+
+			// タイマーをリセット
+			fireTimer = 60.0f * 0.2f;
+		}
+	}
+	else {
+
+		// タイマーをデクリメント
+		fireTimer--;
+	}
+
+	// レティクルに向かって移動
+	MoveToReticle();
+}
+
+void Player::DeadInitialize() {
+
+	// タイマーをリセット
+	deathTimer_ = 0.0f;
+
+	// 落下速度・回転速度を設定
+	deathVelocity_ = { 0.0f, kFallStartSpeed, 0.0f };
+	deathRotateVelocity_ = { kRollSpeed, 0.0f, kRollSpeed * 0.5f };
+
+	// 操作・弾発射を無効化
+	velocity_ = { 0.0f, 0.0f, 0.0f };
+}
+
+void Player::DeadUpdate() {
+
+	// タイマーを進める
+	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
+
+	// 回転速度の加算
+	deathRotateVelocity_.x += kRollAcceleration;
+	deathRotateVelocity_.z += kRollAcceleration * 0.5f;
+
+	// 回転の更新
+	worldTransform_.AddRotate(deathRotateVelocity_);
+
+	// 落下処理
+	deathVelocity_.y += kFallAcceleration;
+
+	// 落下が既定値より速くなったら
+	if (deathVelocity_.y < kMaxFallSpeed) {
+
+		// 最大値に揃える
+		deathVelocity_.y = kMaxFallSpeed;
+	}
+
+	// 横揺れの計算
+	float swayX = sinf(deathTimer_ * kSwayFrequency) * kSwayAmplitude;
+	float swayZ = cosf(deathTimer_ * kSwayFrequency * 0.5f) * kSwayAmplitude;
+
+	// 座標の計算
+	Vector3 position = { swayX * 0.05f, deathVelocity_.y, swayZ * 0.05f };
+
+	// 座標の更新
+	worldTransform_.AddTranslate(position);
+
+	// 地面に到達したら
+	if (worldTransform_.GetWorldPosition().y <= kGroundHeight) {
+		
+		// Y座標を地面の高さに揃える
+		worldTransform_.SetTranslate({ worldTransform_.GetWorldPosition().x, kGroundHeight, worldTransform_.GetWorldPosition().z });
+	}
 }

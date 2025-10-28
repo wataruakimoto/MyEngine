@@ -8,6 +8,7 @@
 
 #include <list>
 #include <memory>
+#include <optional>
 
 /// === 前方宣言 === ///
 class GamePlayScene;
@@ -16,9 +17,10 @@ class Reticle3D;
 class LockOn;
 class Camera;
 
-enum class PlayerMode {
-	Title,
-	Play,
+enum class PlayerState {
+	AutoPilot,
+	Manual,
+	Dead,
 };
 
 /// ===== プレイヤー ===== ///
@@ -79,12 +81,21 @@ private:
 	/// </summary>
 	void MoveToReticle();
 
-	/// <summary>
-	/// 奥にしか移動できないようにする(演出用)
-	/// </summary>
-	void MoveToZ();
+///-------------------------------------------/// 
+/// 状態ごとの処理
+///-------------------------------------------///
 
-	// ロックオン
+	void AutoPilotInitialize();
+
+	void AutoPilotUpdate();
+
+	void ManualInitialize();
+
+	void ManualUpdate();
+
+	void DeadInitialize();
+
+	void DeadUpdate();
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -92,20 +103,16 @@ private:
 public:
 
 	/// <summary>
-	/// 死亡フラグのゲッター
-	/// </summary>
-	/// <returns></returns>
-	bool IsDead() { return isDead; }
-
-	/// <summary>
 	/// スクリーン座標のゲッター
 	/// </summary>
 	/// <returns></returns>
 	Vector2 GetScreenPos() { return screenPos_; }
 
-	float GetMoveSpeedTitle() { return moveSpeedTitle; }
+	float GetMoveSpeedTitle() { return moveSpeedAuto; }
 
-	float GetMoveSpeedPlay() { return moveSpeedPlay; }
+	float GetMoveSpeedPlay() { return moveSpeedManual; }
+
+	PlayerState GetState() { return state_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -137,14 +144,14 @@ public:
 	void SetCamera(Camera* camera) { this->camera_ = camera; }
 
 	/// <summary>
-	/// モードの設定
+	/// 状態変更リクエストのセッター
 	/// </summary>
-	/// <param name="mode"></param>
-	void SetPlayerMode(PlayerMode mode) { this->mode_ = mode; }
+	/// <param name="state"></param>
+	void SetPlayerState(PlayerState state) { this->stateRequest_ = state; }
 
-	void SetMoveSpeedTitle(float speed) { this->moveSpeedTitle = speed; }
+	void SetMoveSpeedAuto(float speed) { this->moveSpeedAuto = speed; }
 
-	void SetMoveSpeedPlay(float speed) { this->moveSpeedPlay = speed; }
+	void SetMoveSpeedManual(float speed) { this->moveSpeedManual = speed; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -157,9 +164,9 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
-	float moveSpeedTitle = 0.5f;
+	float moveSpeedAuto = 0.5f;
 
-	float moveSpeedPlay = 0.5f;
+	float moveSpeedManual = 0.5f;
 
 	Vector2 screenPos_ = { 0.0f, 0.0f };
 
@@ -167,8 +174,6 @@ private:
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	float fireTimer = 60.0f * 0.2f;
-
-	bool isDead = false;
 
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;
@@ -182,6 +187,30 @@ private:
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;
 
-	// プレイヤーモード
-	PlayerMode mode_ = PlayerMode::Play;
+	// 状態
+	PlayerState state_ = PlayerState::Manual;
+
+	// 状態変更リクエスト
+	std::optional<PlayerState> stateRequest_ = std::nullopt;
+
+	/// ===== 死亡アニメーション用 ===== ///
+
+	float deathTimer_ = 0.0f;
+
+	Vector3 deathVelocity_ = {};
+
+	Vector3 deathRotateVelocity_ = {};
+
+	const float kFallStartSpeed = -0.02f;
+	const float kFallAcceleration = -0.001f;
+	const float kMaxFallSpeed = -0.2f;
+
+	const float kRollSpeed = 0.1f;
+	const float kRollAcceleration = 0.001f;
+
+	const float kSwayAmplitude = 0.1f;
+	const float kSwayFrequency = 4.0f;
+
+	const float kGroundHeight = 0.0f;
+	const float kParticleSpawnDelay = 0.2f;
 };
