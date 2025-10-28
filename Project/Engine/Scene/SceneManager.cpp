@@ -1,6 +1,7 @@
 #include "SceneManager.h"
 
 #include <cassert>
+#include <imgui.h>
 
 SceneManager* SceneManager::instance = nullptr;
 
@@ -33,9 +34,6 @@ void SceneManager::Update() {
 
 	// 実行中のシーンを更新
 	scene_->Update();
-
-	// ImGuiの表示
-	scene_->ShowImGui();
 }
 
 void SceneManager::Draw() {
@@ -51,6 +49,13 @@ void SceneManager::Finalize() {
 
 	delete instance;
 	instance = nullptr;
+}
+
+void SceneManager::ShowImGui() {
+
+	scene_->ShowImGui();
+
+	sceneFactory_->ShowImGui();
 }
 
 void SceneManager::ChangeScene(const std::string& sceneName) {

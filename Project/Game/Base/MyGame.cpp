@@ -42,6 +42,9 @@ void MyGame::Update() {
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();
 
+		// シーンのImGui表示
+		SceneManager::GetInstance()->ShowImGui();
+
 		/// === ImGui終了 === ///
 		ImGuiManager::GetInstance()->End();
 	}

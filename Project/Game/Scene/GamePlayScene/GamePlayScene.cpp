@@ -3,8 +3,6 @@
 #include "Texture/TextureManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "Object/Object3dCommon.h"
-#include "Particle/ParticleCommon.h"
-#include "Particle/ParticleSystem.h"
 #include "Skybox/SkyboxCommon.h"
 #include "Vector3.h"
 #include "SceneManager.h"
@@ -29,8 +27,10 @@ void GamePlayScene::Initialize() {
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->SetCamera(camera_.get());
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
+	particleSystem->SetCamera(camera_.get());
+	particleSystem->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
+	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleType::CUBE);
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();
@@ -234,7 +234,7 @@ void GamePlayScene::Update() {
 	collisionManager_->Update();
 
 	// パーティクルシステムの更新
-	ParticleSystem::GetInstance()->Update();
+	particleSystem->Update();
 
 	// 衝突判定と応答
 	CheckAllCollisions();
@@ -287,10 +287,10 @@ void GamePlayScene::Draw() {
 	collisionManager_->Draw();
 
 	/// === パーティクルの描画準備 === ///
-	ParticleCommon::GetInstance()->SettingDrawing();
+	particleCommon->SettingDrawing();
 
 	// パーティクルシステムの描画
-	ParticleSystem::GetInstance()->Draw();
+	particleSystem->Draw();
 
 	/// === UIの描画準備 === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
@@ -350,6 +350,8 @@ void GamePlayScene::ShowImGui() {
 	warningUI_->ShowImGui();
 
 	filterManager_->ShowImGui();
+
+	particleSystem->ShowImGui("ParticleSystem");
 
 #ifdef _DEBUG
 

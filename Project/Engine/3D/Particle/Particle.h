@@ -25,13 +25,13 @@ struct Particle {
     bool randomizeLifeTime = false;
 
 	// ランダムの範囲
-	Vector3 randomScaleMin = { 0.0f, 0.0f, 0.0f };
+	Vector3 randomScaleMin = { -1.0f, -1.0f, -1.0f };
 	Vector3 randomScaleMax = { 1.0f, 1.0f, 1.0f };
-	Vector3 randomRotateMin = { 0.0f, 0.0f, 0.0f };
+	Vector3 randomRotateMin = { -1.0f, -1.0f, -1.0f };
 	Vector3 randomRotateMax = { 1.0f, 1.0f, 1.0f };
-	Vector3 randomTranslateMin = { 0.0f, 0.0f, 0.0f };
+	Vector3 randomTranslateMin = { -1.0f, -1.0f, -1.0f };
 	Vector3 randomTranslateMax = { 1.0f, 1.0f, 1.0f };
-	Vector3 randomVelocityMin = { 0.0f, 0.0f, 0.0f };
+	Vector3 randomVelocityMin = { -1.0f, -1.0f, -1.0f };
 	Vector3 randomVelocityMax = { 1.0f, 1.0f, 1.0f };
 	Vector4 randomColorMin = { 0.0f, 0.0f, 0.0f, 0.0f };
 	Vector4 randomColorMax = { 1.0f, 1.0f, 1.0f, 1.0f };

@@ -3,6 +3,8 @@
 #include "BaseScene.h"
 #include "Collision/CollisionManager.h"
 #include "OffscreenRendering/FilterManager.h"
+#include "Particle/ParticleCommon.h"
+#include "Particle/ParticleSystem.h"
 #include "Player/Player.h"
 #include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
@@ -192,4 +194,10 @@ private:
 
 	// 警告UI
 	std::unique_ptr<WarningUI> warningUI_ = nullptr;
+
+	// パーティクルシステムのインスタンス
+	ParticleSystem* particleSystem = ParticleSystem::GetInstance();
+
+	// パーティクル共通のインスタンス
+	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
 };

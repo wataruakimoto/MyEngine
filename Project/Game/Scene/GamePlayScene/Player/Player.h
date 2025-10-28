@@ -5,6 +5,8 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
+#include "Particle/ParticleEmitter.h"
+#include "Data/Transform.h"
 
 #include <list>
 #include <memory>
@@ -214,4 +216,24 @@ private:
 
 	const float kGroundHeight = 0.0f;
 	const float kParticleSpawnDelay = 0.2f;
+
+	// 地面着地フラグ
+	bool isGroundHit_ = false;
+
+	/// ===== パーティクル用 ===== ///
+
+	// エミッターREDのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterRed = nullptr;
+
+	// エミッターBLUEのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterBlue = nullptr;
+
+	// エミッタ変換データ
+	Transform emitterTransform = {};
+
+	// パーティクル設定
+	Particle particleSetting = {};
+
+	// パーティクルを出したかどうか
+	bool isParticleEmitted_ = false;
 };

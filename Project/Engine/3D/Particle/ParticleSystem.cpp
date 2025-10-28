@@ -3,6 +3,7 @@
 #include "PlaneParticle.h"
 #include "RingParticle.h"
 #include "CylinderParticle.h"
+#include "CubeParticle.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Texture/TextureManager.h"
@@ -128,6 +129,10 @@ void ParticleSystem::Update() {
 		case ParticleType::CYLINDER:
 			particleGroup.particleTypeClass->Update();
 			break;
+
+		case ParticleType::CUBE:
+			particleGroup.particleTypeClass->Update();
+			break;
 		}
 	}
 }
@@ -149,6 +154,10 @@ void ParticleSystem::Draw() {
 			break;
 
 		case ParticleType::CYLINDER:
+			particleGroup.particleTypeClass->Draw(&particleGroup);
+			break;
+
+		case ParticleType::CUBE:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 		}
@@ -252,6 +261,10 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 
 	case ParticleType::CYLINDER:
 		particleGroups[name].particleTypeClass = new CylinderParticle();
+		break;
+
+	case ParticleType::CUBE:
+		particleGroups[name].particleTypeClass = new CubeParticle();
 		break;
 	}
 

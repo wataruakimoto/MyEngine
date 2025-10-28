@@ -113,8 +113,11 @@ void Player::Update() {
 
 void Player::Draw() {
 
-	// 3Dオブジェクトの描画
-	object->Draw();
+	if (!isGroundHit_) {
+
+		// 3Dオブジェクトの描画
+		object->Draw();
+	}
 }
 
 void Player::Finalize() {
@@ -132,7 +135,10 @@ void Player::ShowImGui() {
 
 	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
 
-	ImGui::Text("Mode: %s", (state_ == PlayerState::AutoPilot) ? "AutoPilot" : "Manual");
+	// 状態の表示
+	ImGui::Text("State: %s", (state_ == PlayerState::AutoPilot) ? "AutoPilot" :
+		(state_ == PlayerState::Manual) ? "Manual" :
+		(state_ == PlayerState::Dead) ? "Dead" : "Unknown");
 
 	ImGui::Text("speedTitle: %.2f", moveSpeedAuto);
 
@@ -144,6 +150,10 @@ void Player::ShowImGui() {
 
 	ImGui::End();
 
+	particleEmitterRed->ShowImGui("ParticleEmitterRed");
+
+	particleEmitterBlue->ShowImGui("ParticleEmitterBlue");
+
 #endif // _DEBUG
 }
 
@@ -154,7 +164,7 @@ void Player::OnCollision(Collider* other) {
 
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
-		
+
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
@@ -380,6 +390,22 @@ void Player::DeadInitialize() {
 
 	// 操作・弾発射を無効化
 	velocity_ = { 0.0f, 0.0f, 0.0f };
+
+	isGroundHit_ = false;
+
+	// パーティクルの初期化
+	particleSetting.transform.scale = { 0.5f,0.5f,0.5f }; // スケール0.5f
+	particleSetting.lifeTime = 2.0f;					  // 2秒
+	particleSetting.useBillboard = false;				  // ビルボードを使わない
+	particleSetting.randomizeRotate = true;
+	particleSetting.randomizeVelocity = true;
+	particleSetting.randomVelocityMin = { -2.0f, 0.0f, -2.0f };
+	particleSetting.randomVelocityMax = { 2.0f, 2.0f, 2.0f };
+	isParticleEmitted_ = false;
+
+	// エミッターの生成
+	particleEmitterRed = std::make_unique<ParticleEmitter>("Red", emitterTransform, 5, 0.0f, particleSetting);
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("Blue", emitterTransform, 25, 0.0f, particleSetting);
 }
 
 void Player::DeadUpdate() {
@@ -416,8 +442,28 @@ void Player::DeadUpdate() {
 
 	// 地面に到達したら
 	if (worldTransform_.GetWorldPosition().y <= kGroundHeight) {
-		
+
+		Vector3 Translate = { worldTransform_.GetWorldPosition().x, kGroundHeight, worldTransform_.GetWorldPosition().z };
+
 		// Y座標を地面の高さに揃える
-		worldTransform_.SetTranslate({ worldTransform_.GetWorldPosition().x, kGroundHeight, worldTransform_.GetWorldPosition().z });
+		worldTransform_.SetTranslate(Translate);
+
+		// フラグを立てる
+		isGroundHit_ = true;
+
+		if (!isParticleEmitted_) {
+
+			emitterTransform.translate = Translate;
+
+			// エミッターの位置を設定
+			particleEmitterRed->SetTransform(emitterTransform);
+			particleEmitterBlue->SetTransform(emitterTransform);
+
+			// パーティクルを発生させる
+			particleEmitterRed->Emit();
+			particleEmitterBlue->Emit();
+
+			isParticleEmitted_ = true;
+		}
 	}
 }
