@@ -31,6 +31,8 @@ void Player::Initialize() {
 	Collider::Initialize();
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayer));
+
+	isDead_ = false;
 }
 
 void Player::Update() {
@@ -165,6 +167,8 @@ void Player::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
+		// 死亡状態に変更をリクエスト
+		stateRequest_ = PlayerState::Dead;
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
@@ -412,6 +416,12 @@ void Player::DeadUpdate() {
 
 	// タイマーを進める
 	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
+
+	// 5秒経過したらタイトルシーンに戻る
+	if (deathTimer_ >= 5.0f) {
+		isDead_ = true;
+		return; // 以降の処理をスキップ
+	}
 
 	// 回転速度の加算
 	deathRotateVelocity_.x += kRollAcceleration;

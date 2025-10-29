@@ -115,6 +115,8 @@ public:
 	float GetMoveSpeedPlay() { return moveSpeedManual; }
 
 	PlayerState GetState() { return state_; }
+	
+	bool IsDead() { return isDead_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -219,6 +221,8 @@ private:
 
 	// 地面着地フラグ
 	bool isGroundHit_ = false;
+
+	bool isDead_ = false;
 
 	/// ===== パーティクル用 ===== ///
 

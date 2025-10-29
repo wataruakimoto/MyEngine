@@ -167,16 +167,16 @@ void GamePlayScene::Update() {
 	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
 
 	// プレイヤーが死んでいたら
-	if (player_->GetState() == PlayerState::Dead) {
+	if (player_->IsDead()) {
 
 		// シーン切り替え
-		//SceneManager::GetInstance()->ChangeScene("FAIL");
+		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 
-	if (killCount >= 20) {
+	if (player_->GetCenterPosition().z >= 1700.0f) {
 
 		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("CLEAR");
+		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 
 	// カメラコントローラの更新
