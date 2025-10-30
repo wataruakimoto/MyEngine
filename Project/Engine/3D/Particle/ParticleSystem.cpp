@@ -142,6 +142,13 @@ void ParticleSystem::Draw() {
 	// 各パーティクルグループの描画
 	for (auto& [key, particleGroup] : particleGroups) {
 
+		// インスタンスが0のとき
+		if (particleGroup.numInstance == 0) {
+
+			// 描画処理に入らず次にSkip
+			continue;
+		}
+
 		switch (particleGroup.particleType) {
 
 		case ParticleType::PLANE:
