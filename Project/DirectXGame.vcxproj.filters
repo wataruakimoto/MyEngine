@@ -31,7 +31,6 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{652420ed-feb7-4ee8-8411-6a56eba0fe1c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Base">
       <UniqueIdentifier>{cccedc4d-8cc9-496a-84e4-9e3dc402efa0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Base\DirectX">
@@ -136,10 +135,11 @@
     <Filter Include="Engine\Math">
       <UniqueIdentifier>{317783d9-f57b-44df-9d64-2ccaee7c8874}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Scene\GamePlayScene\UI">
+      <UniqueIdentifier>{9b5297a4-415d-491d-bd4b-29a358fb7c1c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
+  <ItemGroup><ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\input\Input.cpp">
@@ -349,6 +349,16 @@
     <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp">
       <Filter>Engine\WorldTransform</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Scene\System\TransitionManager.cpp">
+      <Filter>Game\Scene\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\WarningUI.cpp">
+      <Filter>Game\Scene\GamePlayScene\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\3D\Particle\CubeParticle.cpp">
+      <Filter>Engine\3D\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine\debug\D3DResourceLeakChecker.h">
@@ -614,6 +624,15 @@
     </ClInclude>
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h">
       <Filter>Engine\WorldTransform</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\System\TransitionManager.h">
+      <Filter>Game\Scene\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\3D\Particle\CubeParticle.h">
+      <Filter>Engine\3D\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\WarningUI.h">
+      <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

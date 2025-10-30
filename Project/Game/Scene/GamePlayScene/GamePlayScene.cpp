@@ -3,8 +3,6 @@
 #include "Texture/TextureManager.h"
 #include "Sprite/SpriteCommon.h"
 #include "Object/Object3dCommon.h"
-#include "Particle/ParticleCommon.h"
-#include "Particle/ParticleSystem.h"
 #include "Skybox/SkyboxCommon.h"
 #include "Vector3.h"
 #include "SceneManager.h"
@@ -29,20 +27,23 @@ void GamePlayScene::Initialize() {
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
 	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->SetCamera(camera_.get());
-	ParticleSystem::GetInstance()->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
+	particleSystem->SetCamera(camera_.get());
+	particleSystem->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
+	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleType::CUBE);
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();
 
 	// プレイヤーの生成&初期化
-	player = std::make_unique<Player>();
-	player->Initialize();
-	player->SetGamePlayScene(this);
-	player->SetPlayerMode(PlayerMode::Play),
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
+	player_->SetGamePlayScene(this);
+	player_->SetPlayerState(PlayerState::AutoPilot); // オートパイロットに設定
+	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
-	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player->GetWorldTransform());
+	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player_->GetWorldTransform());
 	//player->GetWorldTransform().SetParent(&cameraController_->GetWorldTransform());
 
 	// 敵の生成
@@ -55,7 +56,7 @@ void GamePlayScene::Initialize() {
 	reticle3D_->SetCamera(camera_.get());
 
 	// プレイヤーにレティクルを設定
-	player->SetReticle3D(reticle3D_.get());
+	player_->SetReticle3D(reticle3D_.get());
 
 	// 2Dレティクルの生成
 	reticle2D_ = std::make_unique<Reticle2D>();
@@ -70,14 +71,14 @@ void GamePlayScene::Initialize() {
 	lockOn_ = std::make_unique<LockOn>();
 	lockOn_->Initialize();
 	// 自機をロックオンに設定
-	lockOn_->SetPlayer(player.get());
+	lockOn_->SetPlayer(player_.get());
 	// カメラをロックオンに設定
 	lockOn_->SetCamera(camera_.get());
 	// 2Dレティクルをロックオンに設定
 	lockOn_->SetReticle2D(reticle2D_.get());
 
 	// プレイヤーにロックオンを設定
-	player->SetLockOn(lockOn_.get());
+	player_->SetLockOn(lockOn_.get());
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
@@ -93,10 +94,68 @@ void GamePlayScene::Initialize() {
 	// カメラを設定
 	skyBox_->SetCamera(camera_.get());
 	// プレイヤーを設定
-	skyBox_->SetPlayer(player.get());
+	skyBox_->SetPlayer(player_.get());
+
+	// ラジアルブラーをフィルターマネージャから受け取っとく
+	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
+
+	// 警告UIの生成&初期化
+	warningUI_ = std::make_unique<WarningUI>();
+	warningUI_->Initialize();
+
+	// 状態リクエストに減速を設定
+	stateRequest_ = PlayFlowState::SpeedDown;
 }
 
 void GamePlayScene::Update() {
+
+	// 状態の変更がリクエストされていたら
+	if (stateRequest_) {
+
+		// 状態を変更
+		playFlowState_ = stateRequest_.value();
+
+		// 各状態を初期化
+		switch (playFlowState_) {
+
+		case PlayFlowState::SpeedDown:
+			SpeedDownInitialize();
+			break;
+
+		case PlayFlowState::ShowUI:
+			ShowUIInitialize();
+			break;
+
+		case PlayFlowState::Play:
+			PlayInitialize();
+			break;
+
+		default:
+			break;
+		}
+
+		// リクエストをクリア
+		stateRequest_ = std::nullopt;
+	}
+
+	// 各状態の更新
+	switch (playFlowState_) {
+
+	case PlayFlowState::SpeedDown:
+		SpeedDownUpdate();
+		break;
+
+	case PlayFlowState::ShowUI:
+		ShowUIUpdate();
+		break;
+
+	case PlayFlowState::Play:
+		PlayUpdate();
+		break;
+
+	default:
+		break;
+	}
 
 	// デスフラグの立った敵を削除
 	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) {return enemy->IsDead(); });
@@ -108,23 +167,23 @@ void GamePlayScene::Update() {
 	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
 
 	// プレイヤーが死んでいたら
-	if (player->IsDead()) {
+	if (player_->IsDead()) {
 
 		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("FAIL");
+		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 
-	if (killCount >= 20) {
+	if (player_->GetCenterPosition().z >= 1700.0f) {
 
 		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("CLEAR");
+		SceneManager::GetInstance()->ChangeScene("TITLE");
 	}
 
 	// カメラコントローラの更新
 	cameraController_->Update();
 
 	// プレイヤー更新
-	player->Update();
+	player_->Update();
 
 	// 弾の更新
 	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
@@ -132,14 +191,11 @@ void GamePlayScene::Update() {
 		bullet->Update();
 	}
 
-	// 敵発生コマンドの更新
-	UpdateEnemyPopCommands();
-
 	// 敵キャラの更新
 	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 
 		// プレイヤーを敵にセット
-		enemy->SetPlayer(player.get());
+		enemy->SetPlayer(player_.get());
 
 		// 敵更新
 		enemy->Update();
@@ -178,7 +234,7 @@ void GamePlayScene::Update() {
 	collisionManager_->Update();
 
 	// パーティクルシステムの更新
-	ParticleSystem::GetInstance()->Update();
+	particleSystem->Update();
 
 	// 衝突判定と応答
 	CheckAllCollisions();
@@ -204,7 +260,7 @@ void GamePlayScene::Draw() {
 	floor_->Draw();
 
 	// プレイヤー描画
-	player->Draw();
+	player_->Draw();
 
 	// 弾の描画
 	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
@@ -231,10 +287,10 @@ void GamePlayScene::Draw() {
 	collisionManager_->Draw();
 
 	/// === パーティクルの描画準備 === ///
-	ParticleCommon::GetInstance()->SettingDrawing();
+	particleCommon->SettingDrawing();
 
 	// パーティクルシステムの描画
-	ParticleSystem::GetInstance()->Draw();
+	particleSystem->Draw();
 
 	/// === UIの描画準備 === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
@@ -245,7 +301,10 @@ void GamePlayScene::Draw() {
 	reticle2D_->Draw();
 
 	// ロックオンの描画
-	lockOn_->Draw();  
+	lockOn_->Draw();
+
+	// 警告UIの描画
+	warningUI_->Draw();
 }
 
 void GamePlayScene::Finalize() {
@@ -257,7 +316,7 @@ void GamePlayScene::Finalize() {
 	}
 
 	// プレイヤーの解放
-	player->Finalize();
+	player_->Finalize();
 }
 
 void GamePlayScene::ShowImGui() {
@@ -268,7 +327,7 @@ void GamePlayScene::ShowImGui() {
 
 	cameraController_->ShowImGui();
 
-	player->ShowImGui();
+	player_->ShowImGui();
 
 	for (std::unique_ptr<Enemy>& enemy : enemies_) { enemy->ShowImGui(); }
 
@@ -287,6 +346,21 @@ void GamePlayScene::ShowImGui() {
 	cylinder_->ShowImGui();
 
 	skyBox_->ShowImGui();
+
+	warningUI_->ShowImGui();
+
+	filterManager_->ShowImGui();
+
+	particleSystem->ShowImGui("ParticleSystem");
+
+#ifdef _DEBUG
+
+	ImGui::Begin("GamePlayScene");
+	ImGui::Text("PlayFlowState: %d", static_cast<int>(playFlowState_));
+	ImGui::End();
+
+#endif // _DEBUG
+
 }
 
 void GamePlayScene::CheckAllCollisions() {
@@ -295,7 +369,7 @@ void GamePlayScene::CheckAllCollisions() {
 	collisionManager_->Reset();
 
 	// コライダーをリストに追加
-	collisionManager_->AddCollider(player.get());
+	collisionManager_->AddCollider(player_.get());
 
 	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 		collisionManager_->AddCollider(enemy.get());
@@ -311,6 +385,18 @@ void GamePlayScene::CheckAllCollisions() {
 
 	// 衝突判定と応答
 	collisionManager_->CheckAllCollisions();
+}
+
+void GamePlayScene::AddPlayerBullet(std::unique_ptr<Bullet> bullet) {
+
+	// 弾をリストに登録
+	playerBullets_.push_back(std::move(bullet));
+}
+
+void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
+
+	// 弾をリストに登録
+	enemyBullets_.push_back(std::move(bullet));
 }
 
 void GamePlayScene::LoadEnemyPopData() {
@@ -406,14 +492,96 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 	}
 }
 
-void GamePlayScene::AddPlayerBullet(std::unique_ptr<Bullet> bullet) {
+void GamePlayScene::SpeedDownInitialize() {
 
-	// 弾をリストに登録
-	playerBullets_.push_back(std::move(bullet));
+	// 移動速度を取得
+	playerMoveSpeed_ = 5.0f;
+
+	// プレイヤーの速度を設定
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
+
+	// ブラーの強さを取得
+	blurStrength_ = radialBlurFilter_->GetBlurStrength();
+
+	// ブラーの強さを設定
+	radialBlurFilter_->SetBlurStrength(blurStrength_);
 }
 
-void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
+void GamePlayScene::SpeedDownUpdate() {
 
-	// 弾をリストに登録
-	enemyBullets_.push_back(std::move(bullet));
+	// ブラーの中心を計算
+	blurCenter_.x = player_->GetScreenPos().x / WinApp::kClientWidth;
+	blurCenter_.y = player_->GetScreenPos().y / WinApp::kClientHeight;
+
+	// ブラーの中心を設定
+	radialBlurFilter_->SetCenter(blurCenter_);
+
+	// ブラーの強さが0に達していなければ
+	if (blurStrength_ > 0.0f) {
+
+		// ブラーの強さを徐々に減らす
+		blurStrength_ -= 0.001f;
+	}
+	else {
+
+		// 0を下回らないようにする
+		blurStrength_ = 0.0f;
+		
+		// ラジアルブラーをオフにする
+		radialBlurFilter_->SetIsActive(false);
+	}
+
+	// ブラーの強さを設定
+	radialBlurFilter_->SetBlurStrength(blurStrength_);
+
+	// プレイヤーの速度を徐々に落とす
+	if (player_->GetMoveSpeedTitle() > 0.0f) {
+
+		playerMoveSpeed_ -= 0.02f;
+	}
+	else {
+
+		playerMoveSpeed_ = 0.0f;
+	}
+
+	// プレイヤーの速度を設定
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
+
+	// プレイヤーの速度が0.5fで ブラーがオフだったら
+	if (playerMoveSpeed_ == 0.0f && radialBlurFilter_->GetIsActive() == false) {
+
+		// 状態をプレイに変更
+		stateRequest_ = PlayFlowState::ShowUI;
+	}
+}
+
+void GamePlayScene::ShowUIInitialize() {
+
+	// 警告UIのバウンスアニメーション開始
+	warningUI_->StartBounceAnimation();
+}
+
+void GamePlayScene::ShowUIUpdate() {
+
+	// 警告UIの更新
+	warningUI_->Update();
+
+	// エンターキーが押されたら
+	if(warningUI_->IsAnimationFinished()) {
+
+		// 状態をプレイに変更
+		stateRequest_ = PlayFlowState::Play;
+	}
+}
+
+void GamePlayScene::PlayInitialize() {
+
+	// プレイヤーモードをゲームプレイに変更
+	player_->SetPlayerState(PlayerState::Manual);
+}
+
+void GamePlayScene::PlayUpdate() {
+
+	// 敵発生コマンドの更新
+	UpdateEnemyPopCommands();
 }

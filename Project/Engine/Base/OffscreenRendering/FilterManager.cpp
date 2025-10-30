@@ -112,6 +112,8 @@ void FilterManager::Finalize() {
 
 void FilterManager::ShowImGui() {
 
+#ifdef _DEBUG
+
 	ImGui::Begin("Filter Manager");
 
 	for (const auto& key : filterOrder) {
@@ -120,6 +122,8 @@ void FilterManager::ShowImGui() {
 	}
 
 	ImGui::End();
+
+#endif // _DEBUG
 }
 
 FilterManager* FilterManager::instance = nullptr;

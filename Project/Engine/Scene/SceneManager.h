@@ -50,6 +50,11 @@ public:
 	void Finalize();
 
 	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui();
+
+	/// <summary>
 	/// シーンファクトリーのセッター
 	/// </summary>
 	/// <param name="sceneFactory">シーンファクトリー</param>

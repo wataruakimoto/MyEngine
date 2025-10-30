@@ -43,6 +43,12 @@ public:
 	void ShowImGui();
 
 	/// <summary>
+	/// 回転に加算
+	/// </summary>
+	/// <param name="value"></param>
+	void AddRotate(const Vector3& value);
+
+	/// <summary>
 	/// 平行移動に加算
 	/// </summary>
 	/// <param name="value"></param>

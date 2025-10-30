@@ -3,6 +3,7 @@
 #include "Object/Object3dCommon.h"
 #include "Sprite/SpriteCommon.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
+#include "WinApp.h"
 
 #include <imgui.h>
 
@@ -24,7 +25,8 @@ void TitleScene::Initialize() {
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
-	player_->SetPlayerMode(PlayerMode::Title); // タイトルモードに設定
+	player_->SetPlayerState(PlayerState::AutoPilot); // タイトルモードに設定
+	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player_->GetWorldTransform());
@@ -56,6 +58,12 @@ void TitleScene::Initialize() {
 	// スタートUIの生成&初期化
 	startUI_ = std::make_unique<StartUI>();
 	startUI_->Initialize();
+
+	// ラジアルブラーをフィルターマネージャから受け取っとく
+	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
+
+	// 状態リクエストにブラックアウトを設定
+	stateRequest_ = TitleFlowState::Blackout;
 }
 
 void TitleScene::Update() {
@@ -89,6 +97,10 @@ void TitleScene::Update() {
 			MoveUpInitialize();
 			break;
 
+		case TitleFlowState::SpeedUp:
+			SpeedUpInitialize();
+			break;
+
 		default:
 			break;
 		}
@@ -118,6 +130,10 @@ void TitleScene::Update() {
 
 	case TitleFlowState::MoveUp:
 		MoveUpUpdate();
+		break;
+
+	case TitleFlowState::SpeedUp:
+		SpeedUpUpdate();
 		break;
 
 	default:
@@ -214,11 +230,15 @@ void TitleScene::ShowImGui() {
 	// スタートUIのImGui表示
 	startUI_->ShowImGui();
 
+	filterManager_->ShowImGui();
+
 #ifdef _DEBUG
 
 	ImGui::Begin("TitleScene");
 	ImGui::Text("TitleFlowState");
 	ImGui::Text("%d", static_cast<int>(titleFlowState_));
+
+
 	ImGui::End();
 
 #endif // _DEBUG
@@ -231,6 +251,8 @@ void TitleScene::BlackoutInitialize() {
 
 	// スタートUIを非表示に設定
 	startUI_->SetVisible(false);
+
+	player_->SetMoveSpeedAuto(0.5f);
 }
 
 void TitleScene::BlackoutUpdate() {
@@ -313,7 +335,69 @@ void TitleScene::MoveUpUpdate() {
 	// 上に移動が終了したら
 	if (titleUI_->IsMoveUpFinished()) {
 
-		// シーンをゲームプレイシーンに変更
+		// 状態を加速に変更
+		stateRequest_ = TitleFlowState::SpeedUp;
+	}
+}
+
+void TitleScene::SpeedUpInitialize() {
+
+	// プレイヤーの速度を設定
+	playerMoveSpeed_ = player_->GetMoveSpeedTitle();
+
+	// ラジアルブラーをつける
+	radialBlurFilter_->SetIsActive(true);
+
+	// ブラーの色はシアン
+	radialBlurFilter_->SetGlowColor({ 0.3f, 0.7f, 1.0f });
+
+	// ブラーの横幅をリセット
+	blurStrength_ = 0.0f;
+}
+
+void TitleScene::SpeedUpUpdate() {
+
+	// ブラーの中心を計算
+	blurCenter_.x = player_->GetScreenPos().x / WinApp::kClientWidth;
+	blurCenter_.y = player_->GetScreenPos().y / WinApp::kClientHeight;
+
+	// ブラーの中心を設定
+	radialBlurFilter_->SetCenter(blurCenter_);
+
+	// ブラーの強さが最大値に達していなかったら
+	if (blurStrength_ < kMaxBlurStrength) {
+
+		// ブラーの強さを徐々に増加
+		blurStrength_ += 0.001f;
+	}
+	else {
+
+		// 最大値を超えたら最大値に固定
+		blurStrength_ = kMaxBlurStrength;
+	}
+
+	// ブラーの強さを変更
+	radialBlurFilter_->SetBlurStrength(blurStrength_);
+
+	// プレイヤーの移動速度が最大値に達していなかったら
+	if (playerMoveSpeed_ < kMaxPlayerMoveSpeed) {
+
+		// プレイヤーの移動速度を徐々に増加
+		playerMoveSpeed_ += 0.02f;
+	}
+	else {
+
+		// 最大値を超えたら最大値に固定
+		playerMoveSpeed_ = kMaxPlayerMoveSpeed;
+	}
+
+	// プレイヤーの移動速度を設定
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
+
+	// ブラーの強さとプレイヤーの移動速度が最大値に達していたら
+	if (blurStrength_ >= kMaxBlurStrength && playerMoveSpeed_ >= kMaxPlayerMoveSpeed) {
+
+		// ゲームプレイシーンに切り替え
 		sceneManager_->ChangeScene("PLAY");
 	}
 }

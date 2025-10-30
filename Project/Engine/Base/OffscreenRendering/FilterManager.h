@@ -82,6 +82,12 @@ public:
 	/// <returns></returns>
 	Camera* GetCamera() const { return camera; }
 
+	/// <summary>
+	/// ラジアルブラーのゲッター
+	/// </summary>
+	/// <returns></returns>
+	RadialBlurFilter* GetRadialBlurFilter() const { return static_cast<RadialBlurFilter*>(filters_.at("RadialBlur").get()); }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///

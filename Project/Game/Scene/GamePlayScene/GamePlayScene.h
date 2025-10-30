@@ -1,8 +1,9 @@
 #pragma once
-
 #include "BaseScene.h"
 #include "Collision/CollisionManager.h"
-
+#include "OffscreenRendering/FilterManager.h"
+#include "Particle/ParticleCommon.h"
+#include "Particle/ParticleSystem.h"
 #include "Player/Player.h"
 #include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
@@ -15,10 +16,20 @@
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
 #include "SkyBox/SkyBoxGame.h"
+#include "UI/WarningUI.h"
 
 #include <list>
 #include <sstream>
 #include <memory>
+#include <optional>
+
+class RadialBlurFilter;
+
+enum class PlayFlowState {
+	SpeedDown,	// 自機を減速させる
+	ShowUI,		// UI表示
+	Play,		// プレイ
+};
 
 /// ===== ゲームプレイシーン ===== ///
 class GamePlayScene : public BaseScene {
@@ -59,16 +70,6 @@ public:
 	void CheckAllCollisions();
 
 	/// <summary>
-	/// 敵発生データの読み込み
-	/// </summary>
-	void LoadEnemyPopData();
-
-	/// <summary>
-	/// 敵発生コマンドの更新
-	/// </summary>
-	void UpdateEnemyPopCommands();
-
-	/// <summary>
 	/// 自機の弾の追加
 	/// </summary>
 	/// <param name="bullet"></param>
@@ -81,9 +82,39 @@ public:
 	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
 
 ///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
+	void LoadEnemyPopData();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+
+	void SpeedDownInitialize();
+
+	void SpeedDownUpdate();
+
+	void ShowUIInitialize();
+
+	void ShowUIUpdate();
+
+	void PlayInitialize();
+
+	void PlayUpdate();
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// フィルターマネージャのインスタンス
+	FilterManager* filterManager_ = FilterManager::GetInstance();
 
 	// カメラ
 	std::unique_ptr<Camera> camera_ = nullptr;
@@ -95,7 +126,7 @@ private:
 	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
 
 	// プレイヤーのポインタ
-	std::unique_ptr<Player> player = nullptr;
+	std::unique_ptr<Player> player_ = nullptr;
 
 	// 敵のリスト
 	std::list<std::unique_ptr<Enemy>> enemies_;
@@ -135,4 +166,37 @@ private:
 
 	// 待機タイマー
 	int32_t standbyTimer_ = 0;
+
+	// プレイの流れの状態
+	PlayFlowState playFlowState_ = PlayFlowState::SpeedDown;
+
+	// 状態リクエスト
+	std::optional<PlayFlowState> stateRequest_ = std::nullopt;
+
+	// ラジアルブラー借りポインタ
+	RadialBlurFilter* radialBlurFilter_ = nullptr;
+
+	// ブラーの中心座標
+	Vector2 blurCenter_ = { 0.5f, 0.5f };
+
+	// ブラーの強さ
+	float blurStrength_ = 0.07f;
+
+	// ブラーの最小値
+	const float kMinBlurStrength = 0.0f;
+
+	// プレイヤーの移動速度
+	float playerMoveSpeed_ = 4.0f;
+
+	// プレイ時のプレイヤーの移動速度
+	const float kPlayerMoveSpeedPlay = 0.5f;
+
+	// 警告UI
+	std::unique_ptr<WarningUI> warningUI_ = nullptr;
+
+	// パーティクルシステムのインスタンス
+	ParticleSystem* particleSystem = ParticleSystem::GetInstance();
+
+	// パーティクル共通のインスタンス
+	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
 };

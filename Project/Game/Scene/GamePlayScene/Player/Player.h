@@ -5,19 +5,24 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
+#include "Particle/ParticleEmitter.h"
+#include "Data/Transform.h"
 
 #include <list>
 #include <memory>
+#include <optional>
 
 /// === 前方宣言 === ///
 class GamePlayScene;
 class Enemy;
 class Reticle3D;
 class LockOn;
+class Camera;
 
-enum class PlayerMode {
-	Title,
-	Play,
+enum class PlayerState {
+	AutoPilot,
+	Manual,
+	Dead,
 };
 
 /// ===== プレイヤー ===== ///
@@ -78,12 +83,21 @@ private:
 	/// </summary>
 	void MoveToReticle();
 
-	/// <summary>
-	/// 奥にしか移動できないようにする(演出用)
-	/// </summary>
-	void MoveToZ();
+///-------------------------------------------/// 
+/// 状態ごとの処理
+///-------------------------------------------///
 
-	// ロックオン
+	void AutoPilotInitialize();
+
+	void AutoPilotUpdate();
+
+	void ManualInitialize();
+
+	void ManualUpdate();
+
+	void DeadInitialize();
+
+	void DeadUpdate();
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -91,10 +105,18 @@ private:
 public:
 
 	/// <summary>
-	/// 死亡フラグのゲッター
+	/// スクリーン座標のゲッター
 	/// </summary>
 	/// <returns></returns>
-	bool IsDead() { return isDead; }
+	Vector2 GetScreenPos() { return screenPos_; }
+
+	float GetMoveSpeedTitle() { return moveSpeedAuto; }
+
+	float GetMoveSpeedPlay() { return moveSpeedManual; }
+
+	PlayerState GetState() { return state_; }
+	
+	bool IsDead() { return isDead_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -120,10 +142,20 @@ public:
 	void SetLockOn(LockOn* lockOn) { this->lockOn_ = lockOn; }
 
 	/// <summary>
-	/// モードの設定
+	/// カメラのセッター
 	/// </summary>
-	/// <param name="mode"></param>
-	void SetPlayerMode(PlayerMode mode) { this->mode_ = mode; }
+	/// <param name="camera"></param>
+	void SetCamera(Camera* camera) { this->camera_ = camera; }
+
+	/// <summary>
+	/// 状態変更リクエストのセッター
+	/// </summary>
+	/// <param name="state"></param>
+	void SetPlayerState(PlayerState state) { this->stateRequest_ = state; }
+
+	void SetMoveSpeedAuto(float speed) { this->moveSpeedAuto = speed; }
+
+	void SetMoveSpeedManual(float speed) { this->moveSpeedManual = speed; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -136,14 +168,16 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
-	float moveSpeed = 0.5f;
+	float moveSpeedAuto = 0.5f;
+
+	float moveSpeedManual = 0.5f;
+
+	Vector2 screenPos_ = { 0.0f, 0.0f };
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	float fireTimer = 60.0f * 0.2f;
-
-	bool isDead = false;
 
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;
@@ -154,6 +188,56 @@ private:
 	// ロックオンの借りポインタ
 	LockOn* lockOn_ = nullptr;
 
-	// プレイヤーモード
-	PlayerMode mode_ = PlayerMode::Play;
+	// カメラの借りポインタ
+	Camera* camera_ = nullptr;
+
+	// 状態
+	PlayerState state_ = PlayerState::Manual;
+
+	// 状態変更リクエスト
+	std::optional<PlayerState> stateRequest_ = std::nullopt;
+
+	/// ===== 死亡アニメーション用 ===== ///
+
+	float deathTimer_ = 0.0f;
+
+	Vector3 deathVelocity_ = {};
+
+	Vector3 deathRotateVelocity_ = {};
+
+	const float kFallStartSpeed = -0.02f;
+	const float kFallAcceleration = -0.001f;
+	const float kMaxFallSpeed = -0.2f;
+
+	const float kRollSpeed = 0.1f;
+	const float kRollAcceleration = 0.001f;
+	const float kRollMaxSpeed = 0.3f;
+
+	const float kSwayAmplitude = 0.1f;
+	const float kSwayFrequency = 4.0f;
+
+	const float kGroundHeight = 0.0f;
+	const float kParticleSpawnDelay = 0.2f;
+
+	// 地面着地フラグ
+	bool isGroundHit_ = false;
+
+	bool isDead_ = false;
+
+	/// ===== パーティクル用 ===== ///
+
+	// エミッターREDのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterRed = nullptr;
+
+	// エミッターBLUEのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterBlue = nullptr;
+
+	// エミッタ変換データ
+	Transform emitterTransform = {};
+
+	// パーティクル設定
+	Particle particleSetting = {};
+
+	// パーティクルを出したかどうか
+	bool isParticleEmitted_ = false;
 };
