@@ -1,5 +1,4 @@
 #include "DebugScene.h"
-
 #include <imgui.h>
 
 void DebugScene::Initialize() {

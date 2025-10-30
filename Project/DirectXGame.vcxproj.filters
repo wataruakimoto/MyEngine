@@ -31,7 +31,6 @@
     <Filter Include="Engine\Audio">
       <UniqueIdentifier>{652420ed-feb7-4ee8-8411-6a56eba0fe1c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Base">
       <UniqueIdentifier>{cccedc4d-8cc9-496a-84e4-9e3dc402efa0}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Base\DirectX">
@@ -140,8 +139,7 @@
       <UniqueIdentifier>{9b5297a4-415d-491d-bd4b-29a358fb7c1c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
+  <ItemGroup><ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
     <ClCompile Include="engine\input\Input.cpp">

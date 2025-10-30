@@ -1,5 +1,4 @@
 #pragma once
-
 #include "BaseScene.h"
 #include "Collision/CollisionManager.h"
 #include "OffscreenRendering/FilterManager.h"
