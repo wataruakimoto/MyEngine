@@ -1,6 +1,8 @@
 #pragma once
+
 #include "MaterialData.h"
 #include "VertexData.h"
+
 #include <vector>
 
 // ノード

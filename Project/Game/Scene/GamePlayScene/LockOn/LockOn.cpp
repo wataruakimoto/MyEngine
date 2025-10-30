@@ -1,9 +1,9 @@
 #include "LockOn.h"
-#include "Camera/Camera.h"
-#include "Scene/GamePlayScene/Enemy/Enemy.h"
-#include "Scene/GamePlayScene/Player/Player.h"
-#include "Scene/GamePlayScene/Reticle/Reticle2D.h"
-#include "Math/MathVector.h"
+#include "Camera.h"
+#include "Enemy/Enemy.h"
+#include "Player/Player.h"
+#include "Reticle/Reticle2D.h"
+#include "MathVector.h"
 
 #include <imgui.h>
 

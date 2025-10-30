@@ -1,7 +1,8 @@
 #pragma once
-#include "Scene/GamePlayScene/CameraControll/ICameraController.h"
-#include "WorldTransform/WorldTransform.h"
-#include "Camera/Camera.h"
+
+#include "CameraControll/ICameraController.h"
+#include "WorldTransform.h"
+#include "Camera.h"
 
 #include <memory>
 

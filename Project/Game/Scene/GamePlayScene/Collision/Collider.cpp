@@ -1,4 +1,5 @@
 #include "Collider.h"
+
 #include <imgui.h>
 
 void Collider::Initialize() {

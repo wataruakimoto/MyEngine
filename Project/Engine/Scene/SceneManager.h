@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene/System/BaseScene.h"
+#include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 
 /// ===== シーン管理 ===== ///
@@ -48,6 +48,11 @@ public:
 	/// 終了
 	/// </summary>
 	void Finalize();
+
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui();
 
 	/// <summary>
 	/// シーンファクトリーのセッター

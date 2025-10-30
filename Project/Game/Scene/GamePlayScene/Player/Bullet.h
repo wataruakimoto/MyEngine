@@ -1,9 +1,9 @@
 #pragma once
 
-#include "3d/Model.h"
-#include "3d/Object3d.h"
-#include "Scene/GamePlayScene/Collision/Basecharacter.h"
-#include "Scene/GamePlayScene/Collision/CollisionManager.h"
+#include "Model/Model.h"
+#include "Object/Object3d.h"
+#include "Collision/Basecharacter.h"
+#include "Collision/CollisionManager.h"
 
 #include <memory>
 

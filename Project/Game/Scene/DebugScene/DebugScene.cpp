@@ -1,6 +1,4 @@
 #include "DebugScene.h"
-#include "3d/Object3dCommon.h"
-#include "Base/OffscreenRendering/FilterManager.h"
 
 #include <imgui.h>
 
@@ -9,43 +7,51 @@ void DebugScene::Initialize() {
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->SetRotate({ 0.25f,0.0f,0.0f });
-	camera->SetTranslate({ 0.0f,5.0f,-20.0f });
+	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
 
-	FilterManager::GetInstance()->SetCamera(camera.get());
+	// パーティクルシステムの初期化
+	particleSystem->SetCamera(camera.get());
+	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleType::CUBE);
 
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
+	// エミッター変換データの初期化
+	emitterTransform.translate = { 0.0f,0.0f,0.0f };
 
-	// レベルローダーの初期化
-	levelLoader = std::make_unique<Loader>();
-	// レベルデータの読み込み
-	levelLoader->LoadLevel("level.json");
-	// オブジェクトの配置
-	levelLoader->PlaceObject();
-	// 自機の配置
-	levelLoader->PlacePlayer();
-	// 敵の配置
-	levelLoader->PlaceEnemy();
+	// パーティクルの初期化
+	particleSetting.transform.scale = { 0.2f,0.2f,0.2f }; // スケール0.2
+	particleSetting.lifeTime = 2.0f;                 // 2秒
+	particleSetting.randomizeRotate = true;
+	particleSetting.randomizeVelocity = true;
+
+	// エミッターの生成
+	particleEmitterRed = std::make_unique<ParticleEmitter>("Red", emitterTransform, 5, 0.0f, particleSetting);
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("Blue", emitterTransform, 25, 0.0f, particleSetting);
 }
 
 void DebugScene::Update() {
 
+	// スペースキーを押したら
+	if(input->TriggerKey(DIK_SPACE)) {
+
+		// パーティクル発生
+		particleEmitterRed->Emit();
+		particleEmitterBlue->Emit();
+	}
+
 	// カメラの更新
 	camera->Update();
 
-	// レベルローダーの更新
-	levelLoader->Update();
+	// パーティクルシステムの更新
+	particleSystem->Update();
 }
 
 void DebugScene::Draw() {
 
-	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawing();
+	/// === パーティクルの描画前処理 === ///
+	particleCommon->SettingDrawing();
 
-	//TODO: 全ての3Dオブジェクト個々の描画
-
-	// レベルローダーの描画
-	levelLoader->Draw();
+	// パーティクルシステムの描画
+	particleSystem->Draw();
 }
 
 void DebugScene::Finalize() {
@@ -53,16 +59,11 @@ void DebugScene::Finalize() {
 
 void DebugScene::ShowImGui() {
 
-#ifdef _DEBUG
+	camera->ShowImGui("Camera");
 
-	ImGui::Begin("Camera");
+	particleSystem->ShowImGui("ParticleSystem");
 
-	camera->ShowImGuiTree();
+	particleEmitterRed->ShowImGui("ParticleEmitterRed");
 
-	ImGui::End();
-
-	// レベルローダーのImGui表示
-	levelLoader->ShowImGui();
-
-#endif // _DEBUG
+	particleEmitterBlue->ShowImGui("ParticleEmitterBlue");
 }

@@ -1,6 +1,6 @@
 #pragma once
-#include "Math/Vector3.h"
-#include "Math/Matrix4x4.h"
+#include "Vector3.h"
+#include "Matrix4x4.h"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -41,6 +41,12 @@ public:
 	/// ImGui表示
 	/// </summary>
 	void ShowImGui();
+
+	/// <summary>
+	/// 回転に加算
+	/// </summary>
+	/// <param name="value"></param>
+	void AddRotate(const Vector3& value);
 
 	/// <summary>
 	/// 平行移動に加算

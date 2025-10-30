@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Scene/System/BaseScene.h"
+#include "BaseScene.h"
+
 #include <string>
 
 /// ===== 抽象シーンファクトリー ===== ///
@@ -22,4 +23,17 @@ public:
 	/// <param name="sceneName">シーン名</param>
 	/// <returns>BaseScene</returns>
 	virtual BaseScene* CreateScene(const std::string& sceneName) = 0;
+
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	virtual void ShowImGui() = 0;
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
+protected:
+
+	// 現在のシーン名
+	std::string currentSceneName_;
 };

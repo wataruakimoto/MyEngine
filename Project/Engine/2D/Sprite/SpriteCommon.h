@@ -1,14 +1,14 @@
 #pragma once
+
 #include <d3d12.h>
 #include <dxcapi.h>
 #include <wrl.h>
 
 /// === 前方宣言 === ///
-class Camera;
 class DirectXUtility;
 
-/// === 3Dオブジェクト共通部 === ///
-class Object3dCommon {
+// スプライト共通部
+class SpriteCommon {
 
 ///-------------------------------------------/// 
 /// シングルトン
@@ -16,16 +16,16 @@ class Object3dCommon {
 private:
 
 	// インスタンス
-	static Object3dCommon* instance;
+	static SpriteCommon* instance;
 
 	// コンストラクタの隠蔽
-	Object3dCommon() = default;
+	SpriteCommon() = default;
 	// デストラクタの隠蔽
-	~Object3dCommon() = default;
+	~SpriteCommon() = default;
 	// コピーコンストラクタの封印
-	Object3dCommon(Object3dCommon&) = delete;
+	SpriteCommon(SpriteCommon&) = delete;
 	// コピー代入演算子の封印
-	Object3dCommon& operator=(Object3dCommon&) = delete;
+	SpriteCommon& operator=(SpriteCommon&) = delete;
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -36,7 +36,7 @@ public:
 	/// シングルトンインスタンスの取得
 	/// </summary>
 	/// <returns></returns>
-	static Object3dCommon* GetInstance();
+	static SpriteCommon* GetInstance();
 
 	/// <summary>
 	/// 初期化
@@ -98,34 +98,12 @@ private:
 	/// </summary>
 	void CreateGraphicsPipeline();
 
-///-------------------------------------------///
-/// セッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// デフォルトカメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
-
-///-------------------------------------------///
-/// ゲッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// デフォルトカメラのゲッター
-	/// </summary>
-	/// <returns>Camera</returns>
-	Camera* GetDefaultCamera() const { return defaultCamera_; }
-
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
-
-	// DirectXUtilityのポインタ
+	
+	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility_ = nullptr;
 
 	// RootSignature
@@ -133,7 +111,7 @@ private:
 
 	// InputLayout
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
 
 	// BlendState
 	D3D12_BLEND_DESC blendDesc{};
@@ -151,8 +129,5 @@ private:
 	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 
 	// GraphicsPipeline
-	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
-
-	// デフォルトカメラ
-	Camera* defaultCamera_ = nullptr;
+	Microsoft::WRL::ComPtr<ID3D12PipelineState> graphicsPipelineState = nullptr;
 };

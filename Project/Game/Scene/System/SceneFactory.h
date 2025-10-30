@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Scene/AbstractSceneFactory.h"
+#include "AbstractSceneFactory.h"
 
 /// ===== シーンファクトリー ===== ///
 class SceneFactory : public AbstractSceneFactory {
@@ -16,4 +16,9 @@ public:
 	/// <param name="sceneName">シーン名</param>
 	/// <returns>BaseScene</returns>
 	BaseScene* CreateScene(const std::string& sceneName) override;
+
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
 };

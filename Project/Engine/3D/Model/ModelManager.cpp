@@ -1,5 +1,5 @@
 #include "ModelManager.h"
-#include "Debug/Logger.h"
+#include "Logger.h"
 
 #include <fstream>
 #include <iostream>
@@ -177,7 +177,7 @@ ModelData* ModelManager::FindModelData(const std::string& directoryPath, const s
 	}
 
 	// ファイル名一致なしならログを出す
-	Log("ModelManager::FindModelData: Model data not found for " + filePath);
+	Log("ModelManager::FindModelData: Model data not found for " + filePath + "\n");
 	return nullptr;
 }
 

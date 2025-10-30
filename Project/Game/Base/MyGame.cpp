@@ -1,11 +1,11 @@
 #include "MyGame.h"
-#include "Base/DirectXUtility.h"
-#include "Base/OffscreenRendering/FilterManager.h"
-#include "Debug/ImGuiManager.h"
-#include "3D/Particle/ParticleCommon.h"
-#include "3D/Particle/ParticleSystem.h"
-#include "Scene/SceneManager.h"
-#include "Scene/System/SceneFactory.h"
+#include "DirectXUtility.h"
+#include "OffscreenRendering/FilterManager.h"
+#include "ImGuiManager.h"
+#include "Particle/ParticleCommon.h"
+#include "Particle/ParticleSystem.h"
+#include "SceneManager.h"
+#include "SceneFactory.h"
 
 void MyGame::Initialize() {
 
@@ -41,6 +41,9 @@ void MyGame::Update() {
 
 		// シーンマネージャの更新
 		SceneManager::GetInstance()->Update();
+
+		// シーンのImGui表示
+		SceneManager::GetInstance()->ShowImGui();
 
 		/// === ImGui終了 === ///
 		ImGuiManager::GetInstance()->End();

@@ -1,12 +1,12 @@
 #include "Object3d.h"
 #include "Object3dCommon.h"
-#include "math/MathVector.h"
-#include "math/MathMatrix.h"
-#include "winApp/WinApp.h"
-#include "base/DirectXUtility.h"
-#include "2d/TextureManager.h"
-#include "ModelManager.h"
-#include "camera/Camera.h"
+#include "MathVector.h"
+#include "MathMatrix.h"
+#include "WinApp.h"
+#include "DirectXUtility.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
+#include "Camera.h"
 
 #include <cassert>
 #include <sstream>

@@ -1,6 +1,7 @@
 #include "EnemyBullet.h"
-#include "Scene/GamePlayScene/Collision/CollisionTypeIDDef.h"
-#include "Math/MathVector.h"
+#include "Collision/CollisionTypeIDDef.h"
+#include "MathVector.h"
+
 #include <imgui.h>
 
 using namespace MathVector;

@@ -3,14 +3,15 @@
 #include "PlaneParticle.h"
 #include "RingParticle.h"
 #include "CylinderParticle.h"
-#include "base/DirectXUtility.h"
-#include "base/SrvManager.h"
-#include "2d/TextureManager.h"
-#include "3D/ModelManager.h"
-#include "camera/Camera.h"
-#include "math/MathVector.h"
-#include "math/MathMatrix.h"
-#include "debug/Logger.h"
+#include "CubeParticle.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
+#include "Camera.h"
+#include "MathVector.h"
+#include "MathMatrix.h"
+#include "Logger.h"
 
 #include <string>
 #include <imgui.h>
@@ -128,6 +129,10 @@ void ParticleSystem::Update() {
 		case ParticleType::CYLINDER:
 			particleGroup.particleTypeClass->Update();
 			break;
+
+		case ParticleType::CUBE:
+			particleGroup.particleTypeClass->Update();
+			break;
 		}
 	}
 }
@@ -136,6 +141,13 @@ void ParticleSystem::Draw() {
 
 	// 各パーティクルグループの描画
 	for (auto& [key, particleGroup] : particleGroups) {
+
+		// インスタンスが0のとき
+		if (particleGroup.numInstance == 0) {
+
+			// 描画処理に入らず次にSkip
+			continue;
+		}
 
 		switch (particleGroup.particleType) {
 
@@ -149,6 +161,10 @@ void ParticleSystem::Draw() {
 			break;
 
 		case ParticleType::CYLINDER:
+			particleGroup.particleTypeClass->Draw(&particleGroup);
+			break;
+
+		case ParticleType::CUBE:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 		}
@@ -252,6 +268,10 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 
 	case ParticleType::CYLINDER:
 		particleGroups[name].particleTypeClass = new CylinderParticle();
+		break;
+
+	case ParticleType::CUBE:
+		particleGroups[name].particleTypeClass = new CubeParticle();
 		break;
 	}
 

@@ -1,5 +1,7 @@
 #pragma once
-#include "Base/Framework.h"
+
+#include "Framework.h"
+#include "Scene/System/TransitionManager.h"
 
 /// === ゲーム関連 === ///
 class MyGame : public Framework {
@@ -28,4 +30,12 @@ public:
 	/// 終了
 	/// </summary>
 	void Finalize() override;
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
+private:
+
+	// 遷移マネージャのインスタンス
+	TransitionManager* transitionManager_ = TransitionManager::GetInstance();
 };

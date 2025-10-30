@@ -1,5 +1,7 @@
 #pragma once
-#include "Math/Vector3.h"
+
+#include "Vector3.h"
+
 #include "json.hpp"
 
 #include <list>

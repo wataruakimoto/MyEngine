@@ -1,5 +1,6 @@
 #pragma once
-#include "math/Matrix4x4.h"
+
+#include "Matrix4x4.h"
 #include "Data/MaterialData.h"
 #include "Data/ModelData.h"
 #include "Data/VertexData.h"

@@ -1,5 +1,6 @@
 #pragma once
-#include "3d/Model.h"
+
+#include "Model/Model.h"
 #include "Data/ModelData.h"
 
 #include <assimp/Importer.hpp>

@@ -1,8 +1,8 @@
 #include "WorldTransform.h"
-#include "Base/DirectXUtility.h"
-#include "Camera/Camera.h"
-#include "Math/MathVector.h"
-#include "Math/MathMatrix.h"
+#include "DirectXUtility.h"
+#include "Camera.h"
+#include "MathVector.h"
+#include "MathMatrix.h"
 
 #include <imgui.h>
 
@@ -97,6 +97,11 @@ void WorldTransform::ShowImGui() {
 
 		ImGui::TreePop();
 	}
+}
+
+void WorldTransform::AddRotate(const Vector3& value) {
+
+	rotate_ += value;
 }
 
 void WorldTransform::AddTranslate(const Vector3& value) {

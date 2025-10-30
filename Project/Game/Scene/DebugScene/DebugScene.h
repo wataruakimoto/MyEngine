@@ -1,8 +1,11 @@
 #pragma once
 
-#include "Scene/System/BaseScene.h"
-#include "Camera/Camera.h"
-#include "Level/Loader.h"
+#include "BaseScene.h"
+#include "Camera.h"
+#include "Particle/ParticleEmitter.h"
+#include "Particle/ParticleCommon.h"
+#include "Particle/ParticleSystem.h"
+#include "Input.h"
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {
@@ -45,6 +48,24 @@ private:
 	// カメラのポインタ
 	std::unique_ptr <Camera> camera = nullptr;
 
-	// レベルローダーのポインタ
-	std::unique_ptr<Loader> levelLoader = nullptr;
+	// エミッターREDのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterRed = nullptr;
+
+	// エミッターBLUEのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterBlue = nullptr;
+
+	// エミッタ変換データ
+	Transform emitterTransform = {};
+
+	// パーティクル設定
+	Particle particleSetting = {};
+
+	// パーティクルシステムのインスタンス
+	ParticleSystem* particleSystem = ParticleSystem::GetInstance();
+
+	// パーティクル共通のインスタンス
+	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
+
+	// インプットのインスタンス
+	Input* input = Input::GetInstance();
 };

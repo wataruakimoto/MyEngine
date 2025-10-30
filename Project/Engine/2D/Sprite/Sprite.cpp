@@ -1,9 +1,10 @@
 #include "Sprite.h"
 #include "SpriteCommon.h"
-#include "math/MathMatrix.h"
-#include "winApp/WinApp.h"
-#include "base/DirectXUtility.h"
-#include "TextureManager.h"
+#include "MathMatrix.h"
+#include "WinApp.h"
+#include "DirectXUtility.h"
+#include "Texture/TextureManager.h"
+
 #include <imgui.h>
 
 using namespace MathMatrix;

@@ -1,8 +1,8 @@
 #include "ParticleCommon.h"
-#include "base/DirectXUtility.h"
-#include "base/SwapChain.h"
-#include "base/SrvManager.h"
-#include "debug/Logger.h"
+#include "DirectXUtility.h"
+#include "SwapChain.h"
+#include "SrvManager.h"
+#include "Logger.h"
 
 using namespace Microsoft::WRL;
 using namespace Logger;

@@ -1,9 +1,11 @@
 #include "SceneFactory.h"
-#include "Scene/TitleScene/TitleScene.h"
-#include "Scene/GamePlayScene/GamePlayScene.h"
-#include "Scene/GameClearScene/GameClearScene.h"
-#include "Scene/GameOverScene/GameOverScene.h"
-#include "Scene/DebugScene/DebugScene.h"
+#include "TitleScene.h"
+#include "GamePlayScene.h"
+#include "GameClearScene.h"
+#include "GameOverScene.h"
+#include "DebugScene.h"
+
+#include <imgui.h>
 
 BaseScene* SceneFactory::CreateScene(const std::string& sceneName) {
 
@@ -31,5 +33,39 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName) {
 		newScene = new DebugScene();
 	}
 
+	// 現在のシーン名を更新
+	currentSceneName_ = sceneName;
+
 	return newScene;
+}
+
+void SceneFactory::ShowImGui() {
+
+#ifdef _DEBUG
+
+	ImGui::Begin("SceneFactory");
+	
+	// 現在のシーン名表示
+	ImGui::Text("Current Scene: %s", currentSceneName_.c_str());
+
+	// ボタンでシーン切り替え
+	if (ImGui::Button("Title Scene")) {
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+	}
+	if (ImGui::Button("Game Play Scene")) {
+		SceneManager::GetInstance()->ChangeScene("PLAY");
+	}
+	if (ImGui::Button("Game Clear Scene")) {
+		SceneManager::GetInstance()->ChangeScene("CLEAR");
+	}
+	if (ImGui::Button("Game Over Scene")) {
+		SceneManager::GetInstance()->ChangeScene("OVER");
+	}
+	if (ImGui::Button("Debug Scene")) {
+		SceneManager::GetInstance()->ChangeScene("DEBUG");
+	}
+
+	ImGui::End();
+
+#endif // _DEBUG
 }

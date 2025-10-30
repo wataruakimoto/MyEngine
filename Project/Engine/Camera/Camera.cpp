@@ -1,6 +1,7 @@
 #include "Camera.h"
-#include "math/MathMatrix.h"
-#include "winApp/WinApp.h"
+#include "MathMatrix.h"
+#include "WinApp.h"
+
 #include <imgui.h>
 
 using namespace MathMatrix;
@@ -95,8 +96,18 @@ void Camera::ShowImGui(const char* name) {
 		ImGui::TreePop();
 	}
 
-	ImGui::End();
+	// ビュー行列を表示
+	if (ImGui::TreeNode("ViewMatrix")) {
 
+		for (int i = 0; i < 4; ++i) {
+
+			ImGui::Text("%f, %f, %f, %f", viewMatrix.m[i][0], viewMatrix.m[i][1], viewMatrix.m[i][2], viewMatrix.m[i][3]);
+		}
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
 
 #endif // _DEBUG
 }
