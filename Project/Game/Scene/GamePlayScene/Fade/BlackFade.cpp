@@ -1,32 +1,32 @@
 #define NOMINMAX
 
-#include "WhiteFade.h"
+#include "BlackFade.h"
 
 #include <imgui.h>
 #include <algorithm>
 
-WhiteFade::WhiteFade() {
+BlackFade::BlackFade() {
 
 	// テクスチャの読み込み
-	textureManager_->LoadTexture("Resources/white1280x720.png");
+	textureManager_->LoadTexture("Resources/Black1280x720.png");
 }
 
-void WhiteFade::Initialize() {
+void BlackFade::Initialize() {
 
 	// スプライトの生成
 	sprite_ = std::make_unique<Sprite>();
 	// スプライトの初期化
-	sprite_->Initialize("Resources/white1280x720.png");
+	sprite_->Initialize("Resources/Black1280x720.png");
 	// 画面左上に配置
 	sprite_->SetPosition({ 0.0f, 0.0f });
 	// 初期は完全透明
-	sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+	sprite_->SetColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 
 	// フェード状態をリセット
 	ResetFade();
 }
 
-void WhiteFade::Update() {
+void BlackFade::Update() {
 
 	// フェード中の場合
 	if (isFading_) {
@@ -52,7 +52,7 @@ void WhiteFade::Update() {
 	sprite_->Update();
 }
 
-void WhiteFade::Draw() {
+void BlackFade::Draw() {
 
 	// アルファ値が0より大きい場合のみ描画
 	if (alpha_ > 0.0f) {
@@ -60,11 +60,11 @@ void WhiteFade::Draw() {
 	}
 }
 
-void WhiteFade::ShowImGui() {
+void BlackFade::ShowImGui() {
 
 #ifdef _DEBUG
 
-	ImGui::Begin("WhiteFade");
+	ImGui::Begin("BlackFade");
 
 	// 現在の状態表示
 	ImGui::Text("Alpha: %.3f", alpha_);
@@ -89,12 +89,12 @@ void WhiteFade::ShowImGui() {
 	ImGui::End();
 
 	// スプライトのImGui表示
-	sprite_->ShowImGui("WhiteFade Sprite");
+	sprite_->ShowImGui("BlackFade Sprite");
 
 #endif // _DEBUG
 }
 
-void WhiteFade::StartFadeAnimation() {
+void BlackFade::StartFadeAnimation() {
 
 	// フェード状態をリセット
 	fadeTimer_ = 0.0f;
@@ -106,7 +106,7 @@ void WhiteFade::StartFadeAnimation() {
 	sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
 }
 
-void WhiteFade::ResetFade() {
+void BlackFade::ResetFade() {
 
 	// フェード状態をリセット
 	fadeTimer_ = 0.0f;

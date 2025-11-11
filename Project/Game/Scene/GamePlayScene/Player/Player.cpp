@@ -418,7 +418,7 @@ void Player::DeadUpdate() {
 	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
 
 	// 5秒経過したらタイトルシーンに戻る
-	if (deathTimer_ >= 5.0f) {
+	if (deathTimer_ >= 2.0f) {
 		isDead_ = true;
 		return; // 以降の処理をスキップ
 	}

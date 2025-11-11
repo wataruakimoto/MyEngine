@@ -9,10 +9,13 @@ enum class AnimationStateWarning {
 	BounceIn,  // 拡大
 	Wait,      // 待機
 	ScaleDown, // 縮小
+	SecondBounceIn,  // 2回目の拡大
+	SecondWait,      // 2回目の待機
+	SecondScaleDown, // 2回目の縮小
 };
 
-/// ===== 警告UI ===== ///
-class WarningUI {
+/// ===== 説明UI ===== ///
+class RuleUI {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -22,7 +25,7 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	WarningUI();
+	RuleUI();
 
 	/// <summary>
 	/// 初期化
@@ -60,7 +63,7 @@ private:
 	void AnimationUpdate();
 
 	static float EaseOutBounce(float t);
-	
+
 	static float EaseInOut(float t);
 
 ///-------------------------------------------/// 
@@ -75,7 +78,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	std::unique_ptr<Sprite> warningSprite_ = nullptr;
+	std::unique_ptr<Sprite> ruleSprite_ = nullptr;
+	std::unique_ptr<Sprite> operationSprite_ = nullptr;
 
 	// アニメーション関連
 	Vector2 startScale_ = { 0.0f, 0.0f }; // 開始時のスケール
@@ -91,7 +95,7 @@ private:
 	bool isAnimating_ = false;			  // アニメーション中フラグ
 	bool isAnimationFinished_ = false;	  // アニメーション終了フラグ
 
-	const Vector2 kDefaultSize = { 960.0f, 540.0f }; // デフォルトのサイズ
+	const Vector2 kDefaultSize = { 896.0f, 504.0f }; // デフォルトのサイズ
 
 	AnimationStateWarning animationState_ = AnimationStateWarning::BounceIn;
 };

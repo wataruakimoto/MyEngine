@@ -95,9 +95,10 @@
     <ClCompile Include="Game\Scene\TitleScene\UI\TitleUI.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\StartUI.cpp" />
     <ClCompile Include="Game\Scene\System\TransitionManager.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\UI\WarningUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Goal\Goal.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\RuleUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
@@ -190,9 +191,10 @@
     <ClInclude Include="Game\Scene\TitleScene\UI\TitleUI.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\StartUI.h" />
     <ClInclude Include="Game\Scene\System\TransitionManager.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\UI\WarningUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Goal\Goal.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />
