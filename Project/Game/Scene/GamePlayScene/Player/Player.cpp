@@ -356,7 +356,7 @@ void Player::AutoPilotUpdate() {
 void Player::ManualInitialize() {
 
 	// タイマーリセット
-	fireTimer = 60.0f * 2.0f;
+	fireTimer = 60.0f * 0.4f;
 }
 
 void Player::ManualUpdate() {
@@ -370,7 +370,7 @@ void Player::ManualUpdate() {
 			Fire();
 
 			// タイマーをリセット
-			fireTimer = 60.0f * 0.2f;
+			fireTimer = 60.0f * 0.4f;
 		}
 	}
 	else {

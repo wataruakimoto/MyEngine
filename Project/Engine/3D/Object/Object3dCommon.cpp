@@ -75,10 +75,10 @@ void Object3dCommon::CreateRootSignature() {
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
 
-	// gTransformationMatrix CBV t0
+	// gTransformationMatrix CBV b6
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
+	rootParameters[1].Descriptor.ShaderRegister = 6; // レジスタ番号0を使う
 
 	// gTexture SRV t0
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う

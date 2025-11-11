@@ -17,6 +17,7 @@
 #include "Cylinder/Cylinder.h"
 #include "SkyBox/SkyBoxGame.h"
 #include "UI/WarningUI.h"
+#include "Fade/whiteFade.h"
 
 #include <list>
 #include <sstream>
@@ -29,6 +30,7 @@ enum class PlayFlowState {
 	SpeedDown,	// 自機を減速させる
 	ShowUI,		// UI表示
 	Play,		// プレイ
+	WhiteFade,	// 白フェード
 };
 
 /// ===== ゲームプレイシーン ===== ///
@@ -96,6 +98,12 @@ private:
 	/// </summary>
 	void UpdateEnemyPopCommands();
 
+	/// <summary>
+	/// ノルマクリアのチェック
+	/// </summary>
+	/// <returns></returns>
+	bool CheckNormaClear();
+
 	void SpeedDownInitialize();
 
 	void SpeedDownUpdate();
@@ -107,6 +115,10 @@ private:
 	void PlayInitialize();
 
 	void PlayUpdate();
+
+	void WhiteFadeInitialize();
+
+	void WhiteFadeUpdate();
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -158,6 +170,12 @@ private:
 	// 敵を倒した数
 	int killCount = 0;
 
+	// クリアのノルマ
+	const int kClearNorma_ = 5; // とりあえず5体に設定
+
+	// ゴールラインのZ座標
+	const float kGoalLineZ = 1700.0f;
+
 	// 敵発生コマンド
 	std::stringstream enemyPopCommands;
 
@@ -199,4 +217,7 @@ private:
 
 	// パーティクル共通のインスタンス
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
+
+	// 白フェードのポインタ
+	std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
 };

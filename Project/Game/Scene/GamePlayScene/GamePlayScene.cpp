@@ -103,6 +103,11 @@ void GamePlayScene::Initialize() {
 	warningUI_ = std::make_unique<WarningUI>();
 	warningUI_->Initialize();
 
+	// 白フェードの初期化
+	whiteFade_ = std::make_unique<WhiteFade>();
+	whiteFade_->Initialize();
+	whiteFade_->SetFadeDuration(3.0f); // フェード時間を3秒に設定
+
 	// 状態リクエストに減速を設定
 	stateRequest_ = PlayFlowState::SpeedDown;
 }
@@ -130,6 +135,10 @@ void GamePlayScene::Update() {
 			PlayInitialize();
 			break;
 
+		case PlayFlowState::WhiteFade:
+			WhiteFadeInitialize();
+			break;
+
 		default:
 			break;
 		}
@@ -153,12 +162,31 @@ void GamePlayScene::Update() {
 		PlayUpdate();
 		break;
 
+	case PlayFlowState::WhiteFade:
+		WhiteFadeUpdate();
+		break;
+
 	default:
 		break;
 	}
 
 	// デスフラグの立った敵を削除
-	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) {return enemy->IsDead(); });
+	for (auto ite = enemies_.begin(); ite != enemies_.end(); ) {
+
+		if ((*ite)->IsDead()) {
+
+			// 敵を削除
+			ite = enemies_.erase(ite);
+
+			// 倒した数をカウントアップ
+			killCount++;
+		}
+		else {
+
+			// 次の敵へ
+			++ite;
+		}
+	}
 
 	// デスフラグが立った弾を削除
 	playerBullets_.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
@@ -168,12 +196,6 @@ void GamePlayScene::Update() {
 
 	// プレイヤーが死んでいたら
 	if (player_->IsDead()) {
-
-		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("TITLE");
-	}
-
-	if (player_->GetCenterPosition().z >= 1700.0f) {
 
 		// シーン切り替え
 		SceneManager::GetInstance()->ChangeScene("TITLE");
@@ -280,6 +302,9 @@ void GamePlayScene::Draw() {
 		enemy->Draw();
 	}
 
+	// ゴールの描画
+	//goal_->Draw();
+
 	// 3Dレティクルの描画
 	//reticle3D_->Draw();
 
@@ -305,6 +330,9 @@ void GamePlayScene::Draw() {
 
 	// 警告UIの描画
 	warningUI_->Draw();
+
+	// 白フェードの描画
+	whiteFade_->Draw();
 }
 
 void GamePlayScene::Finalize() {
@@ -348,6 +376,8 @@ void GamePlayScene::ShowImGui() {
 	skyBox_->ShowImGui();
 
 	warningUI_->ShowImGui();
+
+	whiteFade_->ShowImGui();
 
 	filterManager_->ShowImGui();
 
@@ -492,6 +522,15 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 	}
 }
 
+bool GamePlayScene::CheckNormaClear() {
+
+	// ノルマ達成とゴールライン到達の判定
+	bool isNormaClear = killCount >= kClearNorma_;
+	bool isClearNorma = player_->GetWorldTransform().GetWorldPosition().z >= kGoalLineZ;
+
+	return isNormaClear && isClearNorma;
+}
+
 void GamePlayScene::SpeedDownInitialize() {
 
 	// 移動速度を取得
@@ -584,4 +623,32 @@ void GamePlayScene::PlayUpdate() {
 
 	// 敵発生コマンドの更新
 	UpdateEnemyPopCommands();
+
+	// ゴール条件のチェック
+	if (CheckNormaClear()) {
+		// 白フェードに遷移
+		stateRequest_ = PlayFlowState::WhiteFade;
+	}
+}
+
+void GamePlayScene::WhiteFadeInitialize() {
+
+	// プレイヤーの操作を無効化
+	player_->SetPlayerState(PlayerState::AutoPilot);
+	player_->SetMoveSpeedAuto(0.5f);
+
+	// 白フェードアニメーション開始
+	whiteFade_->StartFadeAnimation();
+}
+
+void GamePlayScene::WhiteFadeUpdate() {
+
+	// 白フェードの更新
+	whiteFade_->Update();
+
+	// フェードが完了していたら
+	if (whiteFade_->IsFadeFinished()) {
+		// シーン切り替え
+		SceneManager::GetInstance()->ChangeScene("CLEAR");
+	}
 }

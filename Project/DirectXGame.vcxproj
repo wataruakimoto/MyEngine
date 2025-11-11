@@ -163,6 +163,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\LockOn\LockOn.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Goal\Goal.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -184,6 +185,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\TitleScene\UI\StartUI.cpp" />
     <ClCompile Include="Game\Scene\System\TransitionManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\WarningUI.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
@@ -277,6 +279,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\TitleScene\UI\StartUI.h" />
     <ClInclude Include="Game\Scene\System\TransitionManager.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\WarningUI.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Goal\Goal.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
