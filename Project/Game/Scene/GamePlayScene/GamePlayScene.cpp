@@ -99,9 +99,17 @@ void GamePlayScene::Initialize() {
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
 
-	// 警告UIの生成&初期化
+	// ルールUIの生成&初期化
 	ruleUI_ = std::make_unique<RuleUI>();
 	ruleUI_->Initialize();
+
+	// ノルマUIの生成&初期化
+	normaUI_ = std::make_unique<NormaUI>();
+	normaUI_->Initialize();
+	// ノルマUIに目標値を設定
+	normaUI_->SetTargetValue(5);
+	// ノルマUIに現在値を設定
+	normaUI_->SetCurrentValue(0);
 
 	// 白フェードの初期化
 	whiteFade_ = std::make_unique<WhiteFade>();
@@ -334,8 +342,11 @@ void GamePlayScene::Draw() {
 	// ロックオンの描画
 	lockOn_->Draw();
 
-	// 警告UIの描画
+	// ルールUIの描画
 	ruleUI_->Draw();
+
+	// ノルマUIの描画
+	normaUI_->Draw();
 
 	// 白フェードの描画
 	whiteFade_->Draw();
@@ -385,6 +396,8 @@ void GamePlayScene::ShowImGui() {
 	skyBox_->ShowImGui();
 
 	ruleUI_->ShowImGui();
+
+	normaUI_->ShowImGui();
 
 	whiteFade_->ShowImGui();
 
@@ -644,6 +657,14 @@ void GamePlayScene::PlayInitialize() {
 }
 
 void GamePlayScene::PlayUpdate() {
+
+	// ノルマUIに目標値を設定
+	normaUI_->SetTargetValue(kClearNorma_);
+	// ノルマUIに現在値を設定
+	normaUI_->SetCurrentValue(killCount);
+
+	// ノルマUIの更新
+	normaUI_->Update();
 
 	// 敵発生コマンドの更新
 	UpdateEnemyPopCommands();

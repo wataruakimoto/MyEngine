@@ -17,6 +17,7 @@
 #include "Cylinder/Cylinder.h"
 #include "SkyBox/SkyBoxGame.h"
 #include "UI/RuleUI.h"
+#include "UI/NormaUI.h"
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
 
@@ -223,8 +224,11 @@ private:
 	// プレイ時のプレイヤーの移動速度
 	const float kPlayerMoveSpeedPlay = 0.5f;
 
-	// 警告UI
+	// ルールUI
 	std::unique_ptr<RuleUI> ruleUI_ = nullptr;
+
+	// ノルマUI
+	std::unique_ptr<NormaUI> normaUI_ = nullptr;
 
 	// パーティクルシステムのインスタンス
 	ParticleSystem* particleSystem = ParticleSystem::GetInstance();
