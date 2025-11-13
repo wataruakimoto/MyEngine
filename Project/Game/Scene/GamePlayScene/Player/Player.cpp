@@ -7,6 +7,7 @@
 #include "MathVector.h"
 
 #include <list>
+#include <algorithm>
 #include <imgui.h>
 
 using namespace MathVector;
@@ -328,9 +329,6 @@ void Player::MoveToReticle() {
 	// 正規化
 	toReticle = Normalize(toReticle);
 
-	// 座標に速度を加算
-	worldTransform_.AddTranslate(toReticle * moveSpeedManual);
-
 	// 横軸の長さを求める
 	float xzLength = Length(toReticle.x, toReticle.z);
 
@@ -342,6 +340,23 @@ void Player::MoveToReticle() {
 
 	// 回転を設定
 	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+
+	// 座標に速度を加算
+	worldTransform_.AddTranslate(toReticle * moveSpeedManual);
+
+	// 大きさを取得
+	Vector3 scale = worldTransform_.GetScale();
+
+	// 加算後の座標を取得
+	Vector3 currentPos = worldTransform_.GetTranslate();
+
+	// X軸のクランプ
+	currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.y);
+	// Y軸のクランプ
+	currentPos.y = std::clamp(currentPos.y, kMoveMin.y + scale.y, kMoveMax.y - scale.y);
+
+	// クランプ後の座標を設定
+	worldTransform_.SetTranslate(currentPos);
 }
 
 void Player::AutoPilotInitialize() {
@@ -451,9 +466,9 @@ void Player::DeadUpdate() {
 	worldTransform_.AddTranslate(position);
 
 	// 地面に到達したら
-	if (worldTransform_.GetWorldPosition().y <= kGroundHeight) {
+	if (worldTransform_.GetWorldPosition().y <= kGroundHeight + worldTransform_.GetScale().y) {
 
-		Vector3 Translate = { worldTransform_.GetWorldPosition().x, kGroundHeight, worldTransform_.GetWorldPosition().z };
+		Vector3 Translate = { worldTransform_.GetWorldPosition().x, kGroundHeight + worldTransform_.GetScale().y, worldTransform_.GetWorldPosition().z };
 
 		// Y座標を地面の高さに揃える
 		worldTransform_.SetTranslate(Translate);

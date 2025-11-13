@@ -240,4 +240,8 @@ private:
 
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;
+
+	// 移動範囲の制限
+	const Vector2 kMoveMin = { -20.0f, 0.0f }; // X,Yの最小値 左下
+	const Vector2 kMoveMax = { 20.0f, 20.0f }; // X,Yの最大値 右上
 };
