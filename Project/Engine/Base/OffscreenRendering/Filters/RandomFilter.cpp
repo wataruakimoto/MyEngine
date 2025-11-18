@@ -49,6 +49,8 @@ void RandomFilter::Draw() {
 
 void RandomFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("RandomFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -56,6 +58,8 @@ void RandomFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void RandomFilter::CreateRootSignature() {

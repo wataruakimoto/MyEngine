@@ -62,7 +62,7 @@ void WhiteFade::Draw() {
 
 void WhiteFade::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("WhiteFade");
 
@@ -91,7 +91,7 @@ void WhiteFade::ShowImGui() {
 	// スプライトのImGui表示
 	sprite_->ShowImGui("WhiteFade Sprite");
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void WhiteFade::StartFadeAnimation() {

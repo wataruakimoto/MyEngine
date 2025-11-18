@@ -1,7 +1,6 @@
 #include "Goal.h"
 
 #include <imgui.h>
-#define USE_IMGUI
 
 void Goal::Initialize() {
 

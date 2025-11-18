@@ -43,6 +43,8 @@ void FullScreenFilter::Draw() {
 
 void FullScreenFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("FullScreenFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -50,6 +52,8 @@ void FullScreenFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void FullScreenFilter::CreateRootSignature() {

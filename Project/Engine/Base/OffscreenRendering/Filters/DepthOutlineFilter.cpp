@@ -59,6 +59,8 @@ void DepthOutlineFilter::Draw() {
 
 void DepthOutlineFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("DepthOutlineFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -66,6 +68,8 @@ void DepthOutlineFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void DepthOutlineFilter::CreateRootSignature() {

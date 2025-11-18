@@ -62,7 +62,7 @@ void BlackFade::Draw() {
 
 void BlackFade::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("BlackFade");
 
@@ -91,7 +91,7 @@ void BlackFade::ShowImGui() {
 	// スプライトのImGui表示
 	sprite_->ShowImGui("BlackFade Sprite");
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void BlackFade::StartFadeAnimation() {

@@ -54,7 +54,7 @@ void Reticle3D::Draw() {
 
 void Reticle3D::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Reticle3D");
 
@@ -62,5 +62,5 @@ void Reticle3D::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }

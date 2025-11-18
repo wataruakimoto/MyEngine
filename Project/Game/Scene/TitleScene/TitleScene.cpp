@@ -232,7 +232,7 @@ void TitleScene::ShowImGui() {
 
 	filterManager_->ShowImGui();
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("TitleScene");
 	ImGui::Text("TitleFlowState");
@@ -241,7 +241,7 @@ void TitleScene::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void TitleScene::BlackoutInitialize() {

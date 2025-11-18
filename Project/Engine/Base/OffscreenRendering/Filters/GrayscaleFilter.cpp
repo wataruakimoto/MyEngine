@@ -41,6 +41,8 @@ void GrayscaleFilter::Draw() {
 
 void GrayscaleFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("GrayscaleFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -48,6 +50,8 @@ void GrayscaleFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void GrayscaleFilter::CreateRootSignature() {

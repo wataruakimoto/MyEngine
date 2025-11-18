@@ -185,7 +185,8 @@ void ParticleSystem::Finalize() {
 
 void ParticleSystem::ShowImGui(const char* name) {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
+
 	ImGui::Begin(name);
 
 	for (auto& [key, particleGroup] : particleGroups) {
@@ -209,7 +210,8 @@ void ParticleSystem::ShowImGui(const char* name) {
 	}
 
 	ImGui::End();
-#endif // _DEBUG
+
+#endif // USE_IMGUI
 }
 
 void ParticleSystem::CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleType type) {

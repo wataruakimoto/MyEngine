@@ -41,6 +41,8 @@ void VignetteFilter::Draw() {
 
 void VignetteFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("VignetteFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -48,6 +50,8 @@ void VignetteFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void VignetteFilter::CreateRootSignature() {

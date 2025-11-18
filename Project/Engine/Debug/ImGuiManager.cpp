@@ -8,6 +8,8 @@
 
 void ImGuiManager::Initialize(WinApp* winApp, SwapChain* swapChain) {
 
+#ifdef USE_IMGUI
+
 	// 引数をメンバ変数にコピー
 	swapChain_ = swapChain;
 
@@ -38,23 +40,35 @@ void ImGuiManager::Initialize(WinApp* winApp, SwapChain* swapChain) {
 		SrvManager::GetInstance()->GetCPUDescriptorHandle(srvIndex),
 		SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex)
 	);
+
+#endif // USE_IMGUI
 }
 
 void ImGuiManager::Begin() {
+
+#ifdef USE_IMGUI
 
 	// ImGuiフレーム開始
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+#endif // USE_IMGUI
 }
 
 void ImGuiManager::End() {
 
+#ifdef USE_IMGUI
+
 	// ImGuiの内部コマンドを生成する
 	ImGui::Render();
+
+#endif // USE_IMGUI
 }
 
 void ImGuiManager::Draw() {
+
+#ifdef USE_IMGUI
 
 	ID3D12GraphicsCommandList* commandList = dxUtility_->GetCommandList().Get();
 
@@ -64,6 +78,8 @@ void ImGuiManager::Draw() {
 
 	// 実際のcommandListのImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
+
+#endif // USE_IMGUI
 }
 
 void ImGuiManager::Finalize() {

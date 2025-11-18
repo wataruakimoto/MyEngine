@@ -81,7 +81,7 @@ void Cylinder::Finalize() {
 
 void Cylinder::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Cylinder");
 
@@ -108,5 +108,5 @@ void Cylinder::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
