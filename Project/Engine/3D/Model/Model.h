@@ -104,6 +104,12 @@ public:
 
 	const Vector4& GetPosition() const { return vertexData->position; }
 
+	/// <summary>
+	/// 色のセッター
+	/// </summary>
+	/// <param name="color"></param>
+	void SetColor(const Vector4& color) { materialData->color = color; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

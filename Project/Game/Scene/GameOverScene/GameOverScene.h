@@ -1,6 +1,13 @@
 #pragma once
 
 #include "BaseScene.h"
+#include "SceneManager.h"
+#include "Input.h"
+#include "Texture/TextureManager.h"
+#include "Sprite/SpriteCommon.h"
+#include "Sprite/Sprite.h"
+
+#include <memory>
 
 /// ===== ゲームオーバーシーン ===== ///
 class GameOverScene : public BaseScene {
@@ -39,4 +46,19 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// シーンマネージャのインスタンス
+	SceneManager* sceneManager_ = SceneManager::GetInstance();
+
+	// インプットのインスタンス
+	Input* input_ = Input::GetInstance();
+
+	// テクスチャマネージャのインスタンス
+	TextureManager* textureManager_ = TextureManager::GetInstance();
+
+	// スプライトコモンのインスタンス
+	SpriteCommon* spriteCommon_ = SpriteCommon::GetInstance();
+
+	// スプライト
+	std::unique_ptr<Sprite> sprite_ = nullptr;
 };

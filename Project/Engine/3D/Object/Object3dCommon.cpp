@@ -75,10 +75,10 @@ void Object3dCommon::CreateRootSignature() {
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
 
-	// gTransformationMatrix CBV t0
+	// gTransformationMatrix CBV b6
 	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
 	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX; // VertexShaderで使う
-	rootParameters[1].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
+	rootParameters[1].Descriptor.ShaderRegister = 6; // レジスタ番号0を使う
 
 	// gTexture SRV t0
 	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
@@ -172,8 +172,15 @@ void Object3dCommon::CreateInputLayout() {
 
 void Object3dCommon::CreateBlendState() {
 
-	// すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	// アルファブレンドで設定
+	blendDesc.RenderTarget[0].BlendEnable = true; // ブレンドを有効化
+	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値
+	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デストの(1-ソースアルファ)
+	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD; // 加算
+	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE; // ソースのアルファ値そのまま
+	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO; // デストのアルファ値は使わない
+	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
 }
 
 void Object3dCommon::CreateRasterizerState() {
@@ -200,8 +207,8 @@ void Object3dCommon::CreateDepthStencilState() {
 
 	// Depthの機能を有効化する
 	depthStencilDesc.DepthEnable = true;
-	// 書き込みします
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+	// 書き込みを無効にする
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 	// 比較関数はLessEqual。つまり、近ければ描画される
 	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
 }
