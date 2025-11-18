@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXGame", "DirectXGame.vcxproj", "{E3F15711-35F8-40F4-8576-515F47894DCA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{991ED025-F3A2-4AC9-B61D-3D250F757F0E} = {991ED025-F3A2-4AC9-B61D-3D250F757F0E}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ソリューション項目", "ソリューション項目", "{6F921451-4EB9-4FE4-9C1E-F7E52AA5FB5F}"
 EndProject

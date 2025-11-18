@@ -41,6 +41,8 @@ void BoxBlurFilter::Draw() {
 
 void BoxBlurFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if(ImGui::TreeNode("BoxBlurFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -48,6 +50,8 @@ void BoxBlurFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void BoxBlurFilter::CreateRootSignature() {

@@ -63,7 +63,7 @@ void Bullet::Finalize() {
 
 void Bullet::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Bullet");
 
@@ -71,7 +71,7 @@ void Bullet::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void Bullet::OnCollision(Collider* other) {

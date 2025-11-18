@@ -41,7 +41,7 @@ BaseScene* SceneFactory::CreateScene(const std::string& sceneName) {
 
 void SceneFactory::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("SceneFactory");
 	
@@ -67,5 +67,5 @@ void SceneFactory::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }

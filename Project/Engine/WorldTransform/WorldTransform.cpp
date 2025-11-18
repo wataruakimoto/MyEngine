@@ -76,6 +76,8 @@ void WorldTransform::Update() {
 
 void WorldTransform::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	// ツリーで表示
 	if (ImGui::TreeNode("WorldTransform")) {
 
@@ -97,6 +99,8 @@ void WorldTransform::ShowImGui() {
 
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void WorldTransform::AddRotate(const Vector3& value) {

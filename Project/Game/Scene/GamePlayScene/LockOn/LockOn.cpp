@@ -47,7 +47,7 @@ void LockOn::Draw() {
 
 void LockOn::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("LockOn");
 
@@ -69,7 +69,7 @@ void LockOn::ShowImGui() {
 	
 	ImGui::End();
 	
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void LockOn::SearchTarget() {

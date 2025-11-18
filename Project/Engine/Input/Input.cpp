@@ -76,7 +76,7 @@ void Input::Finalize() {
 
 void Input::ShowImgui() {
 
-#ifdef _DEBUG // _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Input");
 
@@ -92,7 +92,7 @@ void Input::ShowImgui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 bool Input::PushKey(BYTE keyNumber) {

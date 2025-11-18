@@ -47,6 +47,8 @@ void RadialBlurFilter::Draw() {
 
 void RadialBlurFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("RadialBlurFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -59,6 +61,8 @@ void RadialBlurFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void RadialBlurFilter::CreateRootSignature() {

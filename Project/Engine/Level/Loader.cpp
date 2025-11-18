@@ -171,6 +171,8 @@ void Loader::Draw() {
 
 void Loader::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	ImGui::Begin("Level");
 
 	// オブジェクトのImGui表示
@@ -185,6 +187,8 @@ void Loader::ShowImGui() {
 	}
 
 	ImGui::End();
+
+#endif // USE_IMGUI
 }
 
 void Loader::ParseObject(nlohmann::json& object) {

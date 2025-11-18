@@ -119,7 +119,7 @@ void Sprite::Draw() {
 
 void Sprite::ShowImGui(const char* name) {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	ImGui::Begin(name);
 
 	if (ImGui::TreeNode("Transform")) {
@@ -140,7 +140,7 @@ void Sprite::ShowImGui(const char* name) {
 	}
 
 	ImGui::End();
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void Sprite::InitializeVertexData() {

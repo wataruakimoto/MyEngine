@@ -140,6 +140,8 @@ void Object3d::Draw(WorldTransform worldTransform) {
 
 void Object3d::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("Object3d")) {
 
 		ImGui::Checkbox("Draw", &isDraw);
@@ -181,6 +183,8 @@ void Object3d::ShowImGui() {
 
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void Object3d::InitializeTransformationMatrixData() {

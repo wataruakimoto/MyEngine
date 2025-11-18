@@ -81,7 +81,7 @@ void Floor::Finalize() {
 
 void Floor::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	
 	ImGui::Begin("Floor");
 
@@ -108,5 +108,5 @@ void Floor::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }

@@ -16,7 +16,11 @@
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
 #include "SkyBox/SkyBoxGame.h"
-#include "UI/WarningUI.h"
+#include "UI/RuleUI.h"
+#include "UI/NormaUI.h"
+#include "Fade/whiteFade.h"
+#include "Fade/BlackFade.h"
+#include "Goal/Goal.h"
 
 #include <list>
 #include <sstream>
@@ -29,6 +33,8 @@ enum class PlayFlowState {
 	SpeedDown,	// 自機を減速させる
 	ShowUI,		// UI表示
 	Play,		// プレイ
+	WhiteFade,	// 白フェード
+	BlackFade,  // 黒フェード
 };
 
 /// ===== ゲームプレイシーン ===== ///
@@ -96,6 +102,20 @@ private:
 	/// </summary>
 	void UpdateEnemyPopCommands();
 
+	/// <summary>
+	/// ノルマクリアのチェック
+	/// </summary>
+	/// <returns></returns>
+	bool CheckNormaClear();
+
+	/// <summary>
+	/// ゲームオーバー条件のチェック（プレイヤー死亡またはゴールライン到達でノルマ未達成）
+	/// </summary>
+	/// <returns></returns>
+	bool CheckGameOverConditions();
+
+	/// ===== 各状態の処理 ===== ///
+
 	void SpeedDownInitialize();
 
 	void SpeedDownUpdate();
@@ -107,6 +127,14 @@ private:
 	void PlayInitialize();
 
 	void PlayUpdate();
+
+	void WhiteFadeInitialize();
+
+	void WhiteFadeUpdate();
+
+	void BlackFadeInitialize();
+
+	void BlackFadeUpdate();
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -158,6 +186,12 @@ private:
 	// 敵を倒した数
 	int killCount = 0;
 
+	// クリアのノルマ
+	const int kClearNorma_ = 5; // とりあえず5体に設定
+
+	// ゴールラインのZ座標
+	const float kGoalLineZ = 1700.0f;
+
 	// 敵発生コマンド
 	std::stringstream enemyPopCommands;
 
@@ -191,12 +225,24 @@ private:
 	// プレイ時のプレイヤーの移動速度
 	const float kPlayerMoveSpeedPlay = 0.5f;
 
-	// 警告UI
-	std::unique_ptr<WarningUI> warningUI_ = nullptr;
+	// ルールUI
+	std::unique_ptr<RuleUI> ruleUI_ = nullptr;
+
+	// ノルマUI
+	std::unique_ptr<NormaUI> normaUI_ = nullptr;
 
 	// パーティクルシステムのインスタンス
 	ParticleSystem* particleSystem = ParticleSystem::GetInstance();
 
 	// パーティクル共通のインスタンス
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
+
+	// 白フェードのポインタ
+	std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
+
+	// 黒フェードのポインタ
+	std::unique_ptr<BlackFade> blackFade_ = nullptr;
+
+	// ゴールのポインタ
+	std::unique_ptr<Goal> goal_ = nullptr;
 };
