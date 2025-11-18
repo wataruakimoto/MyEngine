@@ -41,6 +41,8 @@ void GaussianBlurFilter::Draw() {
 
 void GaussianBlurFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("GaussianBlurFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -48,6 +50,8 @@ void GaussianBlurFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void GaussianBlurFilter::CreateRootSignature() {

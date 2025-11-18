@@ -89,7 +89,7 @@ void Enemy::Finalize() {
 
 void Enemy::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Enemy");
 
@@ -97,7 +97,7 @@ void Enemy::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void Enemy::OnCollision(Collider* other) {

@@ -49,7 +49,7 @@ void FollowCameraController::Update() {
 
 void FollowCameraController::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("FollowCameraController");
 
@@ -63,5 +63,5 @@ void FollowCameraController::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }

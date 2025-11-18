@@ -76,7 +76,7 @@ void RuleUI::Draw() {
 
 void RuleUI::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	// スプライトのImGui表示
 	ruleSprite_->ShowImGui("RuleUI");
@@ -102,7 +102,7 @@ void RuleUI::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void RuleUI::StartBounceAnimation() {

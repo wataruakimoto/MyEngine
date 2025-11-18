@@ -37,7 +37,7 @@ void RailCameraController::Update() {
 
 void RailCameraController::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("RailCameraController");
 
@@ -49,5 +49,5 @@ void RailCameraController::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }

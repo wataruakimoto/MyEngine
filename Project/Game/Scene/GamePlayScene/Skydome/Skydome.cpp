@@ -21,7 +21,7 @@ void Skydome::Initialize() {
 
 void Skydome::Update() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Skydome");
 
@@ -31,7 +31,7 @@ void Skydome::Update() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 	// 3Dオブジェクトの更新
 	object->Update();

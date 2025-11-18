@@ -10,7 +10,6 @@
 #include "CameraControll/RailCamera/RailCameraController.h"
 
 #include <imgui.h>
-#define USE_IMGUI
 
 void GamePlayScene::Initialize() {
 

@@ -91,7 +91,7 @@ void NormaUI::Draw() {
 
 void NormaUI::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("NormaUI");
 
@@ -116,7 +116,7 @@ void NormaUI::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 
 }
 

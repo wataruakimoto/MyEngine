@@ -41,6 +41,8 @@ void LuminanceOutlineFilter::Draw() {
 
 void LuminanceOutlineFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	if (ImGui::TreeNode("LuminanceOutlineFilter")) {
 
 		// 有効化フラグのチェックボックス
@@ -48,6 +50,8 @@ void LuminanceOutlineFilter::ShowImGui() {
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void LuminanceOutlineFilter::CreateRootSignature() {

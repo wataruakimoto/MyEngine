@@ -112,7 +112,7 @@ void FilterManager::Finalize() {
 
 void FilterManager::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Filter Manager");
 
@@ -123,7 +123,7 @@ void FilterManager::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 FilterManager* FilterManager::instance = nullptr;

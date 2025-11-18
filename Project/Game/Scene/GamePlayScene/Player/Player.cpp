@@ -128,7 +128,7 @@ void Player::Finalize() {
 
 void Player::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Player");
 
@@ -157,7 +157,7 @@ void Player::ShowImGui() {
 
 	particleEmitterBlue->ShowImGui("ParticleEmitterBlue");
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void Player::OnCollision(Collider* other) {

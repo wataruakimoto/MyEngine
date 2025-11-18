@@ -74,7 +74,7 @@ void Camera::Update() {
 
 void Camera::ShowImGui(const char* name) {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin(name);
 
@@ -109,10 +109,12 @@ void Camera::ShowImGui(const char* name) {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void Camera::ShowImGuiTree() {
+
+#ifdef USE_IMGUI
 
 	if (ImGui::TreeNode("Camera")) {
 
@@ -147,6 +149,8 @@ void Camera::ShowImGuiTree() {
 
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 const Vector3& Camera::GetWorldPosition() const {

@@ -36,7 +36,7 @@ void SkyBoxGame::Finalize() {
 
 void SkyBoxGame::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("SkyBoxGame");
 	skybox->ShowImGui("SkyBoxGame");

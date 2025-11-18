@@ -51,7 +51,7 @@ void DissolveFilter::Draw() {
 
 void DissolveFilter::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	if (ImGui::TreeNode("DissolveFilter")) {
 
@@ -66,7 +66,7 @@ void DissolveFilter::ShowImGui() {
 		ImGui::TreePop();
 	}
 	
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void DissolveFilter::CreateRootSignature() {

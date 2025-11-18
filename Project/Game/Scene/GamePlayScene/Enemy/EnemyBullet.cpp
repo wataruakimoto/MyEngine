@@ -63,7 +63,7 @@ void EnemyBullet::Finalize() {
 
 void EnemyBullet::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 
 	ImGui::Begin("Bullet");
 
@@ -73,7 +73,7 @@ void EnemyBullet::ShowImGui() {
 
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void EnemyBullet::OnCollision(Collider* other) {

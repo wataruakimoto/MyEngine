@@ -41,7 +41,7 @@ void TitleUI::Draw() {
 
 void TitleUI::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
 	
 	// スプライトのImGui表示
 	sprite_->ShowImGui("TitleUI");
@@ -54,7 +54,7 @@ void TitleUI::ShowImGui() {
 	ImGui::Text("Tween Duration: %d", tweenDuration_);
 	ImGui::End();
 
-#endif // _DEBUG
+#endif // USE_IMGUI
 }
 
 void TitleUI::StartSlideInAnimation() {

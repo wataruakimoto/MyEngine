@@ -66,9 +66,11 @@ void Reticle2D::Draw() {
 
 void Reticle2D::ShowImGui() {
 
-#ifdef _DEBUG
+#ifdef USE_IMGUI
+
 	ImGui::Begin("Reticle2D");
 	ImGui::DragFloat2("Position", &reticlePosition_.x, 0.1f);
 	ImGui::End();
-#endif // _DEBUG
+
+#endif // USE_IMGUI
 }
