@@ -68,10 +68,14 @@ void ImGuiManager::Draw() {
 
 void ImGuiManager::Finalize() {
 
+#ifdef USE_IMGUI
+
 	// ImGuiの終了処理。初期化と逆順に行う
 	ImGui_ImplDX12_Shutdown();
 	ImGui_ImplWin32_Shutdown();
 	ImGui::DestroyContext();
+
+#endif // USE_IMGUI
 
 	delete instance;
 	instance = nullptr;
