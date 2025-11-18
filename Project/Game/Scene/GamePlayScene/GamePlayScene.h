@@ -20,6 +20,7 @@
 #include "UI/NormaUI.h"
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
+#include "Goal/Goal.h"
 
 #include <list>
 #include <sstream>
@@ -241,4 +242,7 @@ private:
 
 	// 黒フェードのポインタ
 	std::unique_ptr<BlackFade> blackFade_ = nullptr;
+
+	// ゴールのポインタ
+	std::unique_ptr<Goal> goal_ = nullptr;
 };

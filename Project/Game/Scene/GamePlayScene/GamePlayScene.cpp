@@ -10,6 +10,7 @@
 #include "CameraControll/RailCamera/RailCameraController.h"
 
 #include <imgui.h>
+#define USE_IMGUI
 
 void GamePlayScene::Initialize() {
 
@@ -123,6 +124,10 @@ void GamePlayScene::Initialize() {
 
 	// 状態リクエストに減速を設定
 	stateRequest_ = PlayFlowState::SpeedDown;
+
+	// ゴールの生成&初期化
+	goal_ = std::make_unique<Goal>();
+	goal_->Initialize();
 }
 
 void GamePlayScene::Update() {
@@ -272,6 +277,9 @@ void GamePlayScene::Update() {
 	// パーティクルシステムの更新
 	particleSystem->Update();
 
+	// ゴールの更新
+	goal_->Update();
+
 	// 衝突判定と応答
 	CheckAllCollisions();
 }
@@ -292,16 +300,16 @@ void GamePlayScene::Draw() {
 	// シリンダーの描画
 	cylinder_->Draw();
 
+	// ゴールの描画
+	goal_->Draw();
+
 	// フロアの描画
 	floor_->Draw();
 
-	// プレイヤー描画
-	player_->Draw();
+	// 敵描画
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
 
-	// 弾の描画
-	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
-
-		bullet->Draw();
+		enemy->Draw();
 	}
 
 	// 敵の弾の描画
@@ -310,17 +318,14 @@ void GamePlayScene::Draw() {
 		bullet->Draw();
 	}
 
-	// 敵描画
-	for (std::unique_ptr<Enemy>& enemy : enemies_) {
+	// 弾の描画
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
 
-		enemy->Draw();
+		bullet->Draw();
 	}
 
-	// ゴールの描画
-	//goal_->Draw();
-
-	// 3Dレティクルの描画
-	//reticle3D_->Draw();
+	// プレイヤー描画
+	player_->Draw();
 
 	// 衝突マネージャの描画
 	collisionManager_->Draw();
@@ -405,14 +410,15 @@ void GamePlayScene::ShowImGui() {
 
 	particleSystem->ShowImGui("ParticleSystem");
 
-#ifdef _DEBUG
+	goal_->ShowImGui();
+
+#ifdef USE_IMGUI
 
 	ImGui::Begin("GamePlayScene");
 	ImGui::Text("PlayFlowState: %d", static_cast<int>(playFlowState_));
 	ImGui::End();
 
-#endif // _DEBUG
-
+#endif // USE_IMGUI
 }
 
 void GamePlayScene::CheckAllCollisions() {
