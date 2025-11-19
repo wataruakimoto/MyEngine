@@ -112,6 +112,10 @@ void GamePlayScene::Initialize() {
 	// ノルマUIに現在値を設定
 	normaUI_->SetCurrentValue(0);
 
+	// リザルトUIの生成&初期化
+	resultUI_ = std::make_unique<ResultUI>();
+	resultUI_->Initialize();
+
 	// 白フェードの初期化
 	whiteFade_ = std::make_unique<WhiteFade>();
 	whiteFade_->Initialize();
@@ -128,6 +132,9 @@ void GamePlayScene::Initialize() {
 	// ゴールの生成&初期化
 	goal_ = std::make_unique<Goal>();
 	goal_->Initialize();
+
+	// ゴールラインを設定
+	goalLineZ_ = goal_->GetWorldTransform().GetTranslate().z;
 }
 
 void GamePlayScene::Update() {
@@ -151,6 +158,10 @@ void GamePlayScene::Update() {
 
 		case PlayFlowState::Play:
 			PlayInitialize();
+			break;
+
+		case PlayFlowState::Result:
+			ResultInitialize();
 			break;
 
 		case PlayFlowState::WhiteFade:
@@ -182,6 +193,10 @@ void GamePlayScene::Update() {
 
 	case PlayFlowState::Play:
 		PlayUpdate();
+		break;
+
+	case PlayFlowState::Result:
+		ResultUpdate();
 		break;
 
 	case PlayFlowState::WhiteFade:
@@ -353,6 +368,9 @@ void GamePlayScene::Draw() {
 	// ノルマUIの描画
 	normaUI_->Draw();
 
+	// リザルトUIの描画
+	resultUI_->Draw();
+
 	// 白フェードの描画
 	whiteFade_->Draw();
 
@@ -403,6 +421,8 @@ void GamePlayScene::ShowImGui() {
 	ruleUI_->ShowImGui();
 
 	normaUI_->ShowImGui();
+
+	resultUI_->ShowImGui();
 
 	whiteFade_->ShowImGui();
 
@@ -550,30 +570,6 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 	}
 }
 
-bool GamePlayScene::CheckNormaClear() {
-
-	// ノルマ達成とゴールライン到達の判定
-	bool isNormaClear = killCount >= kClearNorma_;
-	bool isClearNorma = player_->GetWorldTransform().GetWorldPosition().z >= kGoalLineZ;
-
-	return isNormaClear && isClearNorma;
-}
-
-bool GamePlayScene::CheckGameOverConditions() {
-	
-	// プレイヤーのデスフラグを取得
-	bool isPlayerDead = player_->IsDead();
-
-	// ゴールライン到達の判定
-	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= kGoalLineZ;
-
-	// ノルマ未達成の判定
-	bool isNotClearedNorma = killCount < kClearNorma_;
-
-	// ゲームオーバー条件の判定
-	return isPlayerDead || (isReachedGoalLine && isNotClearedNorma);
-}
-
 void GamePlayScene::SpeedDownInitialize() {
 
 	// 移動速度を取得
@@ -675,26 +671,74 @@ void GamePlayScene::PlayUpdate() {
 	// 敵発生コマンドの更新
 	UpdateEnemyPopCommands();
 
-	// ゴール条件のチェック
-	if (CheckNormaClear()) {
+	// ゴールライン到達の判定
+	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goalLineZ_;
 
-		// 白フェードに遷移
-		stateRequest_ = PlayFlowState::WhiteFade;
+	// プレイヤーのデスフラグを取得
+	bool isPlayerDead = player_->IsDead();
+
+	// ゴールラインに到達していたら
+	if (isReachedGoalLine) {
+
+		// 状態を結果表示に変更
+		stateRequest_ = PlayFlowState::Result;
 	}
-
-	// ゲームオーバー条件のチェック
-	if (CheckGameOverConditions()) {
-
-		// 黒フェードに遷移
+	// プレイヤーがデスフラグが立っていたら
+	else if (isPlayerDead) {
+		
+		// 黒フェード状態に変更
 		stateRequest_ = PlayFlowState::BlackFade;
 	}
 }
 
-void GamePlayScene::WhiteFadeInitialize() {
+void GamePlayScene::ResultInitialize() {
+
+	// ノルマクリアの判定
+	bool isNormaClear = killCount >= kClearNorma_;
+
+	// ノルマクリアしていたら
+	if (isNormaClear) {
+
+		// リザルトUIにクリアアニメーションを開始させる
+		resultUI_->StartAnimation(ResultType::Clear);
+	}
+	else {
+		
+		// リザルトUIにゲームオーバーアニメーションを開始させる
+		resultUI_->StartAnimation(ResultType::GameOver);
+	}
 
 	// プレイヤーの操作を無効化
 	player_->SetPlayerState(PlayerState::AutoPilot);
 	player_->SetMoveSpeedAuto(0.5f);
+}
+
+void GamePlayScene::ResultUpdate() {
+
+	// リザルトUIの更新
+	resultUI_->Update();
+
+	// リザルトUIのアニメーションが完了していたら
+	if (resultUI_->IsAnimationFinished()) {
+
+		// ノルマクリアの判定
+		bool isNormaClear = killCount >= kClearNorma_;
+
+		// ノルマクリアしていたら
+		if (isNormaClear) {
+
+			// 状態を白フェードに変更
+			stateRequest_ = PlayFlowState::WhiteFade;
+		}
+		else {
+
+			// 状態を黒フェードに変更
+			stateRequest_ = PlayFlowState::BlackFade;
+		}
+	}
+}
+
+void GamePlayScene::WhiteFadeInitialize() {
 
 	// 白フェードアニメーション開始
 	whiteFade_->StartFadeAnimation();

@@ -188,6 +188,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\RuleUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\ResultUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
@@ -285,6 +286,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\NormaUI.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\ResultUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
