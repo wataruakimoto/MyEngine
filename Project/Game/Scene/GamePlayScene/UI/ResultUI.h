@@ -85,7 +85,7 @@ private:
 
 	// アニメーション関連
 	Vector2 startPosition_ = { 640.0f, -300.0f }; // 開始位置（画面外上部）
-	Vector2 targetPosition_ = { 640.0f, 360.0f }; // 目標位置（画面中央）
+	Vector2 targetPosition_ = { 640.0f, 288.0f }; // 目標位置（画面中央）
 	Vector2 endPosition_ = { 640.0f, 1000.0f };   // 終了位置（画面外下部）
 
 	int animationFrame_ = 0;			  // 現在のアニメーションフレーム

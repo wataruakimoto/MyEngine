@@ -305,7 +305,7 @@ void GamePlayScene::Draw() {
 	SkyboxCommon::GetInstance()->SettingDrawing();
 
 	// スカイボックスの描画
-	skyBox_->Draw();
+	//skyBox_->Draw();
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawing();
