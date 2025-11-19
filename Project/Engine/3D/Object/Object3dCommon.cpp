@@ -174,6 +174,7 @@ void Object3dCommon::CreateBlendState() {
 
 	// アルファブレンドで設定
 	blendDesc.RenderTarget[0].BlendEnable = true; // ブレンドを有効化
+	blendDesc.RenderTarget[0].LogicOpEnable = false; // 論理演算は使わない
 	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値
 	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デストの(1-ソースアルファ)
 	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD; // 加算
@@ -189,6 +190,8 @@ void Object3dCommon::CreateRasterizerState() {
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
 	// 三角形の中を塗りつぶす
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+	// 深度クリップを有効にする
+	rasterizerDesc.DepthClipEnable = true;
 }
 
 void Object3dCommon::CreateVertexShader() {
