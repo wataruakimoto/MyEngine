@@ -18,6 +18,7 @@
 #include "SkyBox/SkyBoxGame.h"
 #include "UI/RuleUI.h"
 #include "UI/NormaUI.h"
+#include "UI/ResultUI.h"
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
 #include "Goal/Goal.h"
@@ -33,6 +34,7 @@ enum class PlayFlowState {
 	SpeedDown,	// 自機を減速させる
 	ShowUI,		// UI表示
 	Play,		// プレイ
+	Result,     // 結果表示
 	WhiteFade,	// 白フェード
 	BlackFade,  // 黒フェード
 };
@@ -102,18 +104,6 @@ private:
 	/// </summary>
 	void UpdateEnemyPopCommands();
 
-	/// <summary>
-	/// ノルマクリアのチェック
-	/// </summary>
-	/// <returns></returns>
-	bool CheckNormaClear();
-
-	/// <summary>
-	/// ゲームオーバー条件のチェック（プレイヤー死亡またはゴールライン到達でノルマ未達成）
-	/// </summary>
-	/// <returns></returns>
-	bool CheckGameOverConditions();
-
 	/// ===== 各状態の処理 ===== ///
 
 	void SpeedDownInitialize();
@@ -127,6 +117,10 @@ private:
 	void PlayInitialize();
 
 	void PlayUpdate();
+
+	void ResultInitialize();
+
+	void ResultUpdate();
 
 	void WhiteFadeInitialize();
 
@@ -190,7 +184,7 @@ private:
 	const int kClearNorma_ = 5; // とりあえず5体に設定
 
 	// ゴールラインのZ座標
-	const float kGoalLineZ = 1700.0f;
+	float goalLineZ_ = 1700.0f;
 
 	// 敵発生コマンド
 	std::stringstream enemyPopCommands;
@@ -230,6 +224,9 @@ private:
 
 	// ノルマUI
 	std::unique_ptr<NormaUI> normaUI_ = nullptr;
+
+	// リザルトUI
+	std::unique_ptr<ResultUI> resultUI_ = nullptr;
 
 	// パーティクルシステムのインスタンス
 	ParticleSystem* particleSystem = ParticleSystem::GetInstance();

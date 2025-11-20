@@ -56,17 +56,17 @@ void WinApp::Initialize() {
 
 	// ウィンドウの生成
 	hwnd = CreateWindow(
-		wc.lpszClassName,	  // 利用するクラス名
-		L"Engine",			  // タイトルバーの文字(何でも良い)
-		WS_OVERLAPPEDWINDOW,  // よく見るウィンドウスタイル
-		CW_USEDEFAULT,		  // 表示X座標(Windowsに任せる)
-		CW_USEDEFAULT,		  // 表示Y座標(WindowsOSに任せる)
+		wc.lpszClassName, // 利用するクラス名
+		L"LE3B_01_アキモト_ワタル", // タイトルバーの文字(何でも良い)
+		WS_OVERLAPPEDWINDOW, // よく見るウィンドウスタイル
+		CW_USEDEFAULT, // 表示X座標(Windowsに任せる)
+		CW_USEDEFAULT, // 表示Y座標(WindowsOSに任せる)
 		wrc.right - wrc.left, // ウィンドウ横幅
 		wrc.bottom - wrc.top, // ウィンドウ縦幅
-		nullptr,			  // 親ウィンドウハンドル
-		nullptr,			  // メニューハンドル
-		wc.hInstance,		  // インスタンスハンドル
-		nullptr				  // オプション
+		nullptr, // 親ウィンドウハンドル
+		nullptr, // メニューハンドル
+		wc.hInstance, // インスタンスハンドル
+		nullptr // オプション
 	);
 
 	// システムタイマーの分解能を上げる

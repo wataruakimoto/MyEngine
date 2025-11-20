@@ -100,6 +100,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\RuleUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\ResultUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\NormaUI.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\ResultUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />

@@ -6,7 +6,7 @@ void Goal::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetTranslate({ 0.0f, 0.0f, 700.0f });
+	worldTransform_.SetTranslate({ 0.0f, 0.0f, 1700.0f });
 
 	// モデルの生成・初期化
 	model_ = std::make_unique<Model>();
