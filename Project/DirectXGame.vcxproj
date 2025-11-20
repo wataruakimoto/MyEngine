@@ -165,6 +165,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\LockOn\LockOn.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Goal\Goal.cpp" />
+    <ClCompile Include="Engine\Base\GraphicsPipelineCreater.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -287,6 +288,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\NormaUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\ResultUI.h" />
+    <ClInclude Include="Engine\Base\GraphicsPipelineCreater.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
