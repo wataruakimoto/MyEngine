@@ -108,7 +108,7 @@ void GamePlayScene::Initialize() {
 	normaUI_ = std::make_unique<NormaUI>();
 	normaUI_->Initialize();
 	// ノルマUIに目標値を設定
-	normaUI_->SetTargetValue(5);
+	normaUI_->SetTargetValue(kClearNorma_);
 	// ノルマUIに現在値を設定
 	normaUI_->SetCurrentValue(0);
 
