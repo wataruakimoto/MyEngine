@@ -117,10 +117,13 @@ private:
 
 	bool isDead = false;
 
-	// パーティクル発生機
-	std::unique_ptr <ParticleEmitter> particleEmitter1 = nullptr;
+	// エミッターBlackのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterBlack = nullptr;
+
+	// エミッターWhiteのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterWhite = nullptr;
 
 	Transform EmitterTransform1 = {};
 
-	Particle particleSetting1 = {};
+	Particle particleSetting = {};
 };
