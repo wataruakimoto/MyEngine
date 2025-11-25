@@ -94,17 +94,17 @@ void GraphicsPipelineCreater::CreateBlendState(Preset preset) {
 void GraphicsPipelineCreater::CreateRasterizerState(Preset preset) {
 
 	// デフォルトで初期設定
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-	rasterizerDesc.FrontCounterClockwise = false;
-	rasterizerDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-	rasterizerDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-	rasterizerDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-	rasterizerDesc.DepthClipEnable = true;
-	rasterizerDesc.MultisampleEnable = false;
-	rasterizerDesc.AntialiasedLineEnable = false;
-	rasterizerDesc.ForcedSampleCount = 0;
-	rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // 三角形の中を塗りつぶす
+	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; // 裏面(時計回り)を表示しない
+	rasterizerDesc.FrontCounterClockwise = false; // 頂点の並びが時計回りなら正面
+	rasterizerDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS; // 深度バイアス値
+	rasterizerDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP; // 深度バイアスクランプ値
+	rasterizerDesc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS; // 傾斜に応じた深度バイアス値
+	rasterizerDesc.DepthClipEnable = true; // 深度クリッピングを有効化
+	rasterizerDesc.MultisampleEnable = false; // マルチサンプルを無効化
+	rasterizerDesc.AntialiasedLineEnable = false; // アンチエイリアスを無効化
+	rasterizerDesc.ForcedSampleCount = 0; // 強制サンプル数
+	rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF; // 保守的ラスタライザモードを無効化
 
 	// プリセットごとの設定
 	switch (preset) {
