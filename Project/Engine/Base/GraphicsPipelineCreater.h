@@ -10,6 +10,8 @@ enum class Preset {
 	Default,  // デフォルト設定
 	Sprite,   // スプライト
 	Object3D, // 3Dオブジェクト
+	Particle, // パーティクル
+	Skybox,   // スカイボックス
 };
 
 /// ===== グラフィックスパイプライン生成クラス ===== ///

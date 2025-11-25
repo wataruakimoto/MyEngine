@@ -68,11 +68,11 @@ void GraphicsPipelineCreater::CreateBlendState(Preset preset) {
 		blendDesc.RenderTarget[0].BlendEnable = false; // ブレンドを無効化
 		blendDesc.RenderTarget[0].LogicOpEnable = false; // 論理演算は使わない
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
-
 		break;
 
 	case Preset::Sprite:
 	case Preset::Object3D:
+	case Preset::Particle:
 
 		// アルファブレンドで設定
 		blendDesc.AlphaToCoverageEnable = false;
@@ -86,7 +86,16 @@ void GraphicsPipelineCreater::CreateBlendState(Preset preset) {
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO; // デストのアルファ値は使わない
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
+		break;
 
+	case Preset::Skybox:
+
+		// ブレンド無効
+		blendDesc.AlphaToCoverageEnable = false;
+		blendDesc.IndependentBlendEnable = false;
+		blendDesc.RenderTarget[0].BlendEnable = false; // ブレンドを無効化
+		blendDesc.RenderTarget[0].LogicOpEnable = false; // 論理演算は使わない
+		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
 		break;
 	}
 }
@@ -116,13 +125,18 @@ void GraphicsPipelineCreater::CreateRasterizerState(Preset preset) {
 	case Preset::Sprite:
 
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; // カリングしない(裏面も表示させる)
-
 		break;
 
 	case Preset::Object3D:
+	case Preset::Particle:
 
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; // 裏面(時計回り)を表示しない
+		break;
 
+	case Preset::Skybox:
+
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; // カリングしない(裏面も表示させる)
+		rasterizerDesc.DepthClipEnable = false; // 深度クリッピングを無効化
 		break;
 	}
 }
@@ -158,16 +172,15 @@ void GraphicsPipelineCreater::CreateDepthStencilState(Preset preset) {
 	case Preset::Sprite:
 
 		depthStencilDesc.DepthEnable = false; // Depthの機能を無効化する
-
-
 		break;
 
 	case Preset::Object3D:
+	case Preset::Particle:
+	case Preset::Skybox:
 		
-		depthStencilDesc.DepthEnable = TRUE;
+		depthStencilDesc.DepthEnable = true;
 		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-
 		break;
 	}
 }

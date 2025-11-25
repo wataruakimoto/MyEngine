@@ -45,22 +45,22 @@ void Skybox::Update() {
 void Skybox::Draw() {
 
 	// 頂点バッファビューを設定
-	SkyboxCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+	dxUtility_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// インデックスバッファビューを設定
-	SkyboxCommon::GetInstance()->GetdxUtility()->GetCommandList()->IASetIndexBuffer(&indexBufferView);
+	dxUtility_->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 
 	// 座標変換リソースのCBufferの場所を設定
-	SkyboxCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationResource->GetGPUVirtualAddress());
+	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationResource->GetGPUVirtualAddress());
 
 	// マテリアルリソースのCBufferの場所を設定
-	SkyboxCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
+	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの場所を設定
-	SkyboxCommon::GetInstance()->GetdxUtility()->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(filePath));
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(filePath));
 
 	// 描画(DrawCall)
-	SkyboxCommon::GetInstance()->GetdxUtility()->GetCommandList()->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
+	dxUtility_->GetCommandList()->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
 }
 
 void Skybox::ShowImGui(const char* name) {
@@ -83,7 +83,7 @@ void Skybox::ShowImGui(const char* name) {
 void Skybox::InitializeVertexData() {
 
 	// 頂点リソースを作成
-	vertexResource = SkyboxCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(VertexData) * vertexCount);
+	vertexResource = dxUtility_->CreateBufferResource(sizeof(VertexData) * vertexCount);
 
 	/// === 頂点バッファビューを作成 === ///
 
@@ -112,7 +112,7 @@ void Skybox::InitializeVertexData() {
 void Skybox::InitializeIndexData() {
 
 	// インデックスリソースを作成
-	indexResource = SkyboxCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(uint32_t) * indexCount);
+	indexResource = dxUtility_->CreateBufferResource(sizeof(uint32_t) * indexCount);
 
 	/// === インデックスバッファビューを作成 === ///
 
@@ -180,7 +180,7 @@ void Skybox::InitializeIndexData() {
 void Skybox::InitializeTransformationData() {
 
 	// 座標変換リソースを作成
-	transformationResource = SkyboxCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(TransformationData));
+	transformationResource = dxUtility_->CreateBufferResource(sizeof(TransformationData));
 
 	// 座標変換リソースに座標変換データを書き込むためのアドレスを取得、割り当てする
 	transformationResource->Map(0, nullptr, reinterpret_cast<void**>(&transformationData));
@@ -192,7 +192,7 @@ void Skybox::InitializeTransformationData() {
 void Skybox::InitializeMaterialData() {
 
 	// マテリアルリソースを作成
-	materialResource = SkyboxCommon::GetInstance()->GetdxUtility()->CreateBufferResource(sizeof(Material));
+	materialResource = dxUtility_->CreateBufferResource(sizeof(Material));
 
 	// マテリアルリソースにマテリアルデータを書き込むためのアドレスを取得、割り当てする
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
