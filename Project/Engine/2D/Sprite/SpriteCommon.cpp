@@ -1,5 +1,4 @@
 #include "SpriteCommon.h"
-#include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Logger.h"
 
@@ -17,11 +16,24 @@ SpriteCommon* SpriteCommon::GetInstance() {
 
 void SpriteCommon::Initialize(){
 
-	// DirectXUtilityのインスタンスを取得
-	dxUtility_ = DirectXUtility::GetInstance();
+	// RootSignatureを生成
+	CreateRootSignature();
 
-	// グラフィックスパイプラインの生成
-	CreateGraphicsPipeline();
+	// RootSignatureをセット
+	pipelineCreater_.SetRootSignature(rootSignature.Get());
+
+	// InputLayoutを生成
+	CreateInputLayout();
+
+	// InputLayoutをセット
+	pipelineCreater_.SetInputLayoutDesc(inputLayoutDesc);
+
+	// シェーダパスをセット
+	pipelineCreater_.SetVSFileName(L"Sprite.VS.hlsl");
+	pipelineCreater_.SetPSFileName(L"Sprite.PS.hlsl");
+
+	// パイプライン生成
+	pipelineCreater_.Create(Preset::Sprite);
 }
 
 void SpriteCommon::Finalize() {
@@ -35,7 +47,7 @@ void SpriteCommon::SettingDrawing() {
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreater_.GetGraphicsPipelineState().Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -124,103 +136,3 @@ void SpriteCommon::CreateInputLayout() {
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 }
 
-void SpriteCommon::CreateBlendState() {
-
-	// すべての色要素を書き込む
-	// blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-
-
-	// アルファブレンド有効化
-	blendDesc.AlphaToCoverageEnable = FALSE;
-	blendDesc.IndependentBlendEnable = FALSE;
-	auto& rtDesc = blendDesc.RenderTarget[0];
-	rtDesc.BlendEnable = TRUE;
-	rtDesc.LogicOpEnable = FALSE;
-	rtDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;
-	rtDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
-	rtDesc.BlendOp = D3D12_BLEND_OP_ADD;
-	rtDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
-	rtDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
-	rtDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
-	rtDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-}
-
-void SpriteCommon::CreateRasterizerState() {
-
-	// カリングしない(裏面も表示させる)
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
-	// 三角形の中を塗りつぶす
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-}
-
-void SpriteCommon::CreateVertexShader() {
-
-	vertexShaderBlob = dxUtility_->CompileShader(L"resources/shaders/Sprite.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
-}
-
-void SpriteCommon::CreatePixelShader() {
-
-	pixelShaderBlob = dxUtility_->CompileShader(L"resources/shaders/Sprite.PS.hlsl", L"ps_6_0");
-	assert(pixelShaderBlob != nullptr);
-}
-
-void SpriteCommon::CreateDepthStencilState() {
-
-	// Depthの機能を有効化する
-	// depthStencilDesc.DepthEnable = true;
-	depthStencilDesc.DepthEnable = false;
-	// 書き込みします
-	//depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	// 比較関数はLessEqual。つまり、近ければ描画される
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-}
-
-void SpriteCommon::CreateGraphicsPipeline() {
-
-	// PSOを生成する
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-
-	/// === RootSignature === ///
-	CreateRootSignature();
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
-
-	/// === InputLayout === ///
-	CreateInputLayout();
-	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
-
-	/// === BlendState === ///
-	CreateBlendState();
-	graphicsPipelineStateDesc.BlendState = blendDesc;
-
-	/// === RasterizerState === ///
-	CreateRasterizerState();
-	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
-
-	/// === VertexShader === ///
-	CreateVertexShader();
-	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize() };
-
-	/// === PixelShader === ///
-	CreatePixelShader();
-	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() };
-
-	/// === DepthStencilState === ///
-	CreateDepthStencilState();
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
-	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
-	// 書き込むRTVの情報
-	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	// 利用するトポロジ(形状)のタイプ。三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	// どのように画面に色を打ち込むかの設定(気にしなくて良い)
-	graphicsPipelineStateDesc.SampleDesc.Count = 1;
-	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	// 実際に生成
-	HRESULT hr = dxUtility_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&graphicsPipelineState));
-	assert(SUCCEEDED(hr));
-}

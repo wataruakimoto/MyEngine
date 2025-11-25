@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Base/DirectXUtility.h"
 #include "Data/TransformationData.h"
 #include "Vector2.h"
 #include "Vector4.h"
@@ -163,5 +164,8 @@ private:
 
 	// カメラの借りポインタ
 	Camera* camera = nullptr;
+
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
 };
 
