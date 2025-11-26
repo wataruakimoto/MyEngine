@@ -33,6 +33,8 @@ void GamePlayScene::Initialize() {
 	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleType::CUBE);
 	particleSystem->CreateParticleGroup("White", "Resources/White.png", ParticleType::CUBE);
 	particleSystem->CreateParticleGroup("Black", "Resources/Black.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Bullet", "Resources/Blue.png", ParticleType::SHARD);
+	particleSystem->CreateParticleGroup("BulletEnemy", "Resources/Red.png", ParticleType::SHARD);
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();

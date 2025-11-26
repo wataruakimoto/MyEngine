@@ -31,6 +31,8 @@ enum class ParticleType {
 	RING,
 	CYLINDER,
 	CUBE,
+	SPHERE,
+	SHARD,
 };
 
 // パーティクルグループ
@@ -106,6 +108,8 @@ public:
 	/// パーティクルの発生
 	/// </summary>
 	void Emit(const std::string name, const Vector3& position, uint32_t count, Particle setting);
+
+	void EmitExplosion(const std::string name, const Vector3& center, float radius, uint32_t count, Particle setting);
 
 ///-------------------------------------------/// 
 /// クラス内関数

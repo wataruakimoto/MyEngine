@@ -191,6 +191,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\ResultUI.cpp" />
     <ClCompile Include="Engine\3D\Particle\SpherePariticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShardParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
@@ -291,6 +292,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\UI\ResultUI.h" />
     <ClInclude Include="Engine\Base\GraphicsPipelineCreater.h" />
     <ClInclude Include="Engine\3D\Particle\SpherePariticle.h" />
+    <ClInclude Include="Engine\3D\Particle\ShardParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

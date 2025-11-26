@@ -32,8 +32,16 @@ void ParticleEmitter::Emit() {
 	// 頻度より大きいなら発生
 	if (frequency <= frequencyTime) {
 
-		// 発生処理
-		ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count, settings);
+		// 爆発モードなら爆発処理
+		if (useExplosion) {
+
+			ParticleSystem::GetInstance()->EmitExplosion(particleName, transform.translate, explosionRadius, count, settings);
+		}
+		else {
+
+			// 発生処理
+			ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count, settings);
+		}
 
 		// 余計に過ぎた時間も加味して頻度計算する
 		frequencyTime -= frequency;
@@ -56,9 +64,16 @@ void ParticleEmitter::ShowImGui(const char* name) {
 		ImGui::DragFloat("Frequency", &frequency, 0.1f);
 		ImGui::DragFloat("FrequencyTime", &frequencyTime, 0.1f);
 
+		ImGui::Checkbox("UseExplosion", &useExplosion);
+
 		// ボタンを押したらパーティクル発生
 		if (ImGui::Button("Emit")) {
-			ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count, settings);
+			if (useExplosion) {
+				ParticleSystem::GetInstance()->EmitExplosion(particleName, transform.translate, explosionRadius, count, settings);
+			}
+			else {
+				ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count, settings);
+			}
 		}
 
 		ImGui::TreePop();

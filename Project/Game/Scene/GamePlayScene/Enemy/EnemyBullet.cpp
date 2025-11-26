@@ -27,6 +27,23 @@ void EnemyBullet::Initialize() {
 	Collider::Initialize();
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet));
+
+	// パーティクルの設定
+	particleSetting.lifeTime = 0.5f;
+	particleSetting.useBillboard = false;
+	particleSetting.randomizeScale = true;
+	particleSetting.randomScaleMin = { 0.2f, 0.2f, 0.2f };
+	particleSetting.randomScaleMax = { 0.3f, 0.3f, 0.3f };
+	particleSetting.randomizeRotate = true;
+	particleSetting.randomRotateMin = { 0.0f, 0.0f, 0.0f };
+	particleSetting.randomRotateMax = { 1.0f, 1.0f, 1.0f };
+	particleSetting.randomizeVelocity = true;
+	particleSetting.randomVelocityMin = { 2.0f, 0.0f, 0.0f };
+	particleSetting.randomVelocityMax = { 4.0f, 0.0f, 0.0f };
+
+	// エミッターの生成
+	particleEmitter = std::make_unique<ParticleEmitter>("BulletEnemy", emitterTransform, 20, 0.0f, particleSetting);
+	particleEmitter->SetUseExplosion(true);
 };
 
 void EnemyBullet::Update() {
@@ -84,10 +101,28 @@ void EnemyBullet::OnCollision(Collider* other) {
 	// 衝突相手が自機の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)) {
 
+		// エミッターの位置をワールド座標に設定
+		emitterTransform.translate = worldTransform_.GetTranslate();
+
+		// エミッターの位置を設定
+		particleEmitter->SetTransform(emitterTransform);
+
+		// パーティクル発生
+		particleEmitter->Emit();
+
 		isDead = true;
 	}
 	// 衝突相手が自機の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
+
+		// エミッターの位置をワールド座標に設定
+		emitterTransform.translate = worldTransform_.GetTranslate();
+
+		// エミッターの位置を設定
+		particleEmitter->SetTransform(emitterTransform);
+
+		// パーティクル発生
+		particleEmitter->Emit();
 
 		isDead = true;
 	}

@@ -4,6 +4,8 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
+#include "Particle/ParticleEmitter.h"
+#include "Data/Transform.h"
 
 #include <memory>
 
@@ -86,4 +88,13 @@ private:
 	int32_t deathTimer_ = kLifeTime;
 
 	bool isDead = false;
+
+	// エミッターのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitter = nullptr;
+
+	// エミッタ変換データ
+	Transform emitterTransform = {};
+
+	// パーティクル設定
+	Particle particleSetting = {};
 };

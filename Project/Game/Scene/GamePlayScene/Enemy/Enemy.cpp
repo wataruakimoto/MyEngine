@@ -33,17 +33,19 @@ void Enemy::Initialize() {
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemy));
 
 	// パーティクルの設定
-	particleSetting.transform.scale = { 0.5f,0.5f,0.5f }; // スケール0.5f
-	particleSetting.lifeTime = 2.0f;					  // 2秒
+	particleSetting.transform.scale = { 0.25f,0.25f,0.25f }; // スケール0.25f
+	particleSetting.lifeTime = 1.0f;					  // 1秒
 	particleSetting.useBillboard = false;				  // ビルボードを使わない
 	particleSetting.randomizeRotate = true;
+	particleSetting.randomRotateMin = { 0.0f, 0.0f, 0.0f };
+	particleSetting.randomRotateMax = { 1.0f, 1.0f, 1.0f };
 	particleSetting.randomizeVelocity = true;
-	particleSetting.randomVelocityMin = { -2.0f, 0.0f, -2.0f };
+	particleSetting.randomVelocityMin = { -2.0f, -2.0f, -2.0f };
 	particleSetting.randomVelocityMax = { 2.0f, 2.0f, 2.0f };
 
 	// エミッタ生成
-	particleEmitterBlack = std::make_unique<ParticleEmitter>("Black", EmitterTransform1, 25, 0.0f, particleSetting);
-	particleEmitterWhite = std::make_unique<ParticleEmitter>("White", EmitterTransform1, 5, 0.0f, particleSetting);
+	particleEmitterBlack = std::make_unique<ParticleEmitter>("Black", EmitterTransform1, 40, 0.0f, particleSetting);
+	particleEmitterWhite = std::make_unique<ParticleEmitter>("White", EmitterTransform1, 10, 0.0f, particleSetting);
 }
 
 void Enemy::Update() {
