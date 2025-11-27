@@ -119,28 +119,28 @@ void ParticleSystem::Update() {
 
 		switch (particleGroup.particleType) {
 
-		case ParticleType::PLANE:
+		case ParticleShape::PLANE:
 		default:
 			particleGroup.particleTypeClass->Update();
 			break;
 	
-		case ParticleType::RING:
+		case ParticleShape::RING:
 			particleGroup.particleTypeClass->Update();
 			break;
 
-		case ParticleType::CYLINDER:
+		case ParticleShape::CYLINDER:
 			particleGroup.particleTypeClass->Update();
 			break;
 
-		case ParticleType::CUBE:
+		case ParticleShape::CUBE:
 			particleGroup.particleTypeClass->Update();
 			break;
 
-		case ParticleType::SPHERE:
+		case ParticleShape::SPHERE:
 			particleGroup.particleTypeClass->Update();
 			break;
 
-		case ParticleType::SHARD:
+		case ParticleShape::SHARD:
 			particleGroup.particleTypeClass->Update();
 			break;
 		}
@@ -161,28 +161,28 @@ void ParticleSystem::Draw() {
 
 		switch (particleGroup.particleType) {
 
-		case ParticleType::PLANE:
+		case ParticleShape::PLANE:
 		default:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 
-		case ParticleType::RING:
+		case ParticleShape::RING:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 
-		case ParticleType::CYLINDER:
+		case ParticleShape::CYLINDER:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 
-		case ParticleType::CUBE:
+		case ParticleShape::CUBE:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 
-		case ParticleType::SPHERE:
+		case ParticleShape::SPHERE:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 
-		case ParticleType::SHARD:
+		case ParticleShape::SHARD:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 		}
@@ -232,7 +232,7 @@ void ParticleSystem::ShowImGui(const char* name) {
 #endif // USE_IMGUI
 }
 
-void ParticleSystem::CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleType type) {
+void ParticleSystem::CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleShape type) {
 
 	// 登録済みの名前かチェック
 	if (particleGroups.find(name) != particleGroups.end()) {
@@ -277,28 +277,28 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 
 	// パーティクルの種類に応じたクラスを生成
 	switch (type) {
-	case ParticleType::PLANE:
+	case ParticleShape::PLANE:
 	default:
 		particleGroups[name].particleTypeClass = new PlaneParticle();
 		break;
 
-	case ParticleType::RING:
+	case ParticleShape::RING:
 		particleGroups[name].particleTypeClass = new RingParticle();
 		break;
 
-	case ParticleType::CYLINDER:
+	case ParticleShape::CYLINDER:
 		particleGroups[name].particleTypeClass = new CylinderParticle();
 		break;
 
-	case ParticleType::CUBE:
+	case ParticleShape::CUBE:
 		particleGroups[name].particleTypeClass = new CubeParticle();
 		break;
 
-	case ParticleType::SPHERE:
+	case ParticleShape::SPHERE:
 		particleGroups[name].particleTypeClass = new SpherePariticle();
 		break;
 
-	case ParticleType::SHARD:
+	case ParticleShape::SHARD:
 		particleGroups[name].particleTypeClass = new ShardParticle();
 		break;
 	}
