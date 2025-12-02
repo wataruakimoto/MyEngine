@@ -168,14 +168,22 @@ void Player::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// 死亡状態に変更をリクエスト
-		stateRequest_ = PlayerState::Dead;
+		// 状態が死亡状態でなければ
+		if (state_ != PlayerState::Dead) {
+
+			// 死亡状態に変更をリクエスト
+			stateRequest_ = PlayerState::Dead;
+		}
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
-		// 死亡状態に変更をリクエスト
-		stateRequest_ = PlayerState::Dead;
+		// 状態が死亡状態でなければ
+		if (state_ != PlayerState::Dead) {
+
+			// 死亡状態に変更をリクエスト
+			stateRequest_ = PlayerState::Dead;
+		}
 	}
 	// その他と衝突した場合
 	else {
@@ -413,18 +421,20 @@ void Player::DeadInitialize() {
 	isGroundHit_ = false;
 
 	// パーティクルの初期化
-	particleSetting.transform.scale = { 0.5f,0.5f,0.5f }; // スケール0.5f
-	particleSetting.lifeTime = 2.0f;					  // 2秒
+	particleSetting.transform.scale = { 0.25f,0.25f,0.25f }; // スケール0.25f
+	particleSetting.lifeTime = 1.0f;					  // 1秒
 	particleSetting.useBillboard = false;				  // ビルボードを使わない
 	particleSetting.randomizeRotate = true;
+	particleSetting.randomRotateMin = { 0.0f, 0.0f, 0.0f };
+	particleSetting.randomRotateMax = { 1.0f, 1.0f, 1.0f };
 	particleSetting.randomizeVelocity = true;
 	particleSetting.randomVelocityMin = { -2.0f, 0.0f, -2.0f };
 	particleSetting.randomVelocityMax = { 2.0f, 2.0f, 2.0f };
 	isParticleEmitted_ = false;
 
 	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("Red", emitterTransform, 5, 0.0f, particleSetting);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("Blue", emitterTransform, 25, 0.0f, particleSetting);
+	particleEmitterRed = std::make_unique<ParticleEmitter>("Red", emitterTransform, 10, 0.0f, particleSetting);
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("Blue", emitterTransform, 40, 0.0f, particleSetting);
 }
 
 void Player::DeadUpdate() {
