@@ -29,12 +29,12 @@ void GamePlayScene::Initialize() {
 
 	// パーティクルシステムの初期化
 	particleSystem->SetCamera(camera_.get());
-	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("White", "Resources/White.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("Black", "Resources/Black.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("Bullet", "Resources/Blue.png", ParticleShape::SHARD);
-	particleSystem->CreateParticleGroup("BulletEnemy", "Resources/Red.png", ParticleShape::SHARD);
+	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("White", "Resources/White.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Black", "Resources/Black.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Bullet", "Resources/Blue.png", ParticleType::SHARD);
+	particleSystem->CreateParticleGroup("BulletEnemy", "Resources/Red.png", ParticleType::SHARD);
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();

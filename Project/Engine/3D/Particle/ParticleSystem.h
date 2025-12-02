@@ -26,7 +26,7 @@ struct ParticleForGPU {
 };
 
 // パーティクルの種類
-enum class ParticleShape {
+enum class ParticleType {
 	PLANE,
 	RING,
 	CYLINDER,
@@ -43,7 +43,7 @@ struct ParticleGroup {
 	Microsoft::WRL::ComPtr <ID3D12Resource> particleResource; // パーティクルリソース
 	ParticleForGPU* particleData; // パーティクルデータ
 	uint32_t numInstance = 0; // インスタンスの数
-	ParticleShape particleType; // パーティクルの種類
+	ParticleType particleType; // パーティクルの種類
 	BaseParticleType* particleTypeClass; // パーティクルの種類クラス
 };
 
@@ -102,7 +102,7 @@ public:
 	/// </summary>
 	/// <param name="name"></param>
 	/// <param name="textureFilePath"></param>
-	void CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleShape type);
+	void CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleType type);
 
 	/// <summary>
 	/// パーティクルの発生
