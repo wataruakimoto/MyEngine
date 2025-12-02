@@ -311,7 +311,7 @@ void GamePlayScene::Draw() {
 	//skyBox_->Draw();
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawing();
+	Object3dCommon::GetInstance()->SettingDrawingOpaque();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 

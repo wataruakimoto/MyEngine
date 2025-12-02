@@ -49,7 +49,12 @@ public:
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
-	void SettingDrawing();
+	void SettingDrawingOpaque();
+
+	/// <summary>
+	/// 半透明オブジェクト用描画設定
+	/// </summary>
+	void SettingDrawingAlpha();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -97,7 +102,10 @@ private:
 	DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
 
 	// パイプラインクリエイター
-	GraphicsPipelineCreater pipelineCreater_;
+	GraphicsPipelineCreater pipelineCreaterOpaque_;
+
+	// 半透明用パイプラインクリエイター
+	GraphicsPipelineCreater pipelineCreaterAlpha_;
 
 	// RootSignature
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;

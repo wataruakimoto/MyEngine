@@ -6,7 +6,7 @@ GraphicsPipelineCreater::GraphicsPipelineCreater() {
 GraphicsPipelineCreater::~GraphicsPipelineCreater() {
 }
 
-void GraphicsPipelineCreater::Create(Preset preset) {
+void GraphicsPipelineCreater::Create(BlendMode blendMode, CullMode cullMode, DepthMode depthMode) {
 
 	// PSOを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -18,11 +18,11 @@ void GraphicsPipelineCreater::Create(Preset preset) {
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
 
 	/// === BlendState === ///
-	CreateBlendState(preset);
+	CreateBlendState(blendMode);
 	graphicsPipelineStateDesc.BlendState = blendDesc;
 
 	/// === RasterizerState === ///
-	CreateRasterizerState(preset);
+	CreateRasterizerState(cullMode);
 	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
 
 	/// === VertexShader === ///
@@ -34,7 +34,7 @@ void GraphicsPipelineCreater::Create(Preset preset) {
 	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() };
 
 	/// === DepthStencilState === ///
-	CreateDepthStencilState(preset);
+	CreateDepthStencilState(depthMode);
 	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
 	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
@@ -54,57 +54,41 @@ void GraphicsPipelineCreater::Create(Preset preset) {
 	assert(SUCCEEDED(hr));
 }
 
-void GraphicsPipelineCreater::CreateBlendState(Preset preset) {
+void GraphicsPipelineCreater::CreateBlendState(BlendMode blendMode) {
 
-	// プリセットごとの設定
-	switch (preset) {
+	// デフォルト値で初期化
+	blendDesc.AlphaToCoverageEnable = false;
+	blendDesc.IndependentBlendEnable = false;
+	blendDesc.RenderTarget[0].LogicOpEnable = false; // 論理演算は使わない
+	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
 
-	case Preset::Default:
-	default:
+	// ブレンドモードごとの設定
+	switch (blendMode) {
 
-		// ブレンド無効
-		blendDesc.AlphaToCoverageEnable = false;
-		blendDesc.IndependentBlendEnable = false;
+	case BlendMode::None:
+
 		blendDesc.RenderTarget[0].BlendEnable = false; // ブレンドを無効化
-		blendDesc.RenderTarget[0].LogicOpEnable = false; // 論理演算は使わない
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
+
 		break;
 
-	case Preset::Sprite:
-	case Preset::Object3D:
-	case Preset::Particle:
+	case BlendMode::AlphaBlend:
 
-		// アルファブレンドで設定
-		blendDesc.AlphaToCoverageEnable = false;
-		blendDesc.IndependentBlendEnable = false;
 		blendDesc.RenderTarget[0].BlendEnable = true; // ブレンドを有効化
-		blendDesc.RenderTarget[0].LogicOpEnable = false; // 論理演算は使わない
 		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値
 		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デストの(1-ソースアルファ)
 		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD; // 加算
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE; // ソースのアルファ値そのまま
 		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO; // デストのアルファ値は使わない
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
-		break;
 
-	case Preset::Skybox:
-
-		// ブレンド無効
-		blendDesc.AlphaToCoverageEnable = false;
-		blendDesc.IndependentBlendEnable = false;
-		blendDesc.RenderTarget[0].BlendEnable = false; // ブレンドを無効化
-		blendDesc.RenderTarget[0].LogicOpEnable = false; // 論理演算は使わない
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
 		break;
 	}
 }
 
-void GraphicsPipelineCreater::CreateRasterizerState(Preset preset) {
+void GraphicsPipelineCreater::CreateRasterizerState(CullMode cullMode) {
 
-	// デフォルトで初期設定
+	// デフォルト値で初期化
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // 三角形の中を塗りつぶす
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; // 裏面(時計回り)を表示しない
 	rasterizerDesc.FrontCounterClockwise = false; // 頂点の並びが時計回りなら正面
 	rasterizerDesc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS; // 深度バイアス値
 	rasterizerDesc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP; // 深度バイアスクランプ値
@@ -115,28 +99,25 @@ void GraphicsPipelineCreater::CreateRasterizerState(Preset preset) {
 	rasterizerDesc.ForcedSampleCount = 0; // 強制サンプル数
 	rasterizerDesc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF; // 保守的ラスタライザモードを無効化
 
-	// プリセットごとの設定
-	switch (preset) {
+	// カリングモードごとの設定
+	switch (cullMode) {
 
-	case Preset::Default:
-	default:
-		break;
-
-	case Preset::Sprite:
-
-		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; // カリングしない(裏面も表示させる)
-		break;
-
-	case Preset::Object3D:
-	case Preset::Particle:
+	case CullMode::Back:
 
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; // 裏面(時計回り)を表示しない
+
 		break;
 
-	case Preset::Skybox:
+	case CullMode::Front:
+
+		rasterizerDesc.CullMode = D3D12_CULL_MODE_FRONT; // 表面(反時計回り)を表示しない
+
+		break;
+
+	case CullMode::None:
 
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; // カリングしない(裏面も表示させる)
-		rasterizerDesc.DepthClipEnable = false; // 深度クリッピングを無効化
+
 		break;
 	}
 }
@@ -161,26 +142,32 @@ void GraphicsPipelineCreater::CreatePixelShader() {
 	assert(pixelShaderBlob != nullptr);
 }
 
-void GraphicsPipelineCreater::CreateDepthStencilState(Preset preset) {
+void GraphicsPipelineCreater::CreateDepthStencilState(DepthMode depthMode) {
 
-	switch (preset) {
+	// デフォルト値で初期化
+	depthStencilDesc.DepthEnable = true; // Depthの機能を有効化
+	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL; // 書き込み可能
+	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS; // 小さい値ほど手前に描画
 
-	case Preset::Default:
-	default:
+	// デプスモードごとの設定
+	switch (depthMode) {
+
+	case DepthMode::ReadWrite:
+
+		// デフォルト設定のまま
+
 		break;
 
-	case Preset::Sprite:
+	case DepthMode::ReadOnly:
 
-		depthStencilDesc.DepthEnable = false; // Depthの機能を無効化する
+		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO; // 読み込み専用
+
 		break;
 
-	case Preset::Object3D:
-	case Preset::Particle:
-	case Preset::Skybox:
-		
-		depthStencilDesc.DepthEnable = true;
-		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+	case DepthMode::Disabled:
+
+		depthStencilDesc.DepthEnable = false; // Depthの機能を無効化
+
 		break;
 	}
 }

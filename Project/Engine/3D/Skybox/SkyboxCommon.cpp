@@ -25,7 +25,7 @@ void SkyboxCommon::Initialize() {
 	pipelineCreater_.SetPSFileName(L"Skybox.PS.hlsl");
 
 	// パイプライン生成
-	pipelineCreater_.Create(Preset::Skybox);
+	pipelineCreater_.Create(BlendMode::None, CullMode::None, DepthMode::ReadOnly);
 }
 
 void SkyboxCommon::SettingDrawing() {

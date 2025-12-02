@@ -24,7 +24,7 @@ void ParticleCommon::Initialize() {
 	pipelineCreater_.SetPSFileName(L"Particle.PS.hlsl");
 
 	// パイプライン生成
-	pipelineCreater_.Create(Preset::Particle);
+	pipelineCreater_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadOnly);
 }
 
 void ParticleCommon::SettingDrawing() {

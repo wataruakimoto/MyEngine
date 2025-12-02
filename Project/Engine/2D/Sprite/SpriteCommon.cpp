@@ -33,7 +33,7 @@ void SpriteCommon::Initialize(){
 	pipelineCreater_.SetPSFileName(L"Sprite.PS.hlsl");
 
 	// パイプライン生成
-	pipelineCreater_.Create(Preset::Sprite);
+	pipelineCreater_.Create(BlendMode::AlphaBlend, CullMode::None, DepthMode::Disabled);
 }
 
 void SpriteCommon::Finalize() {

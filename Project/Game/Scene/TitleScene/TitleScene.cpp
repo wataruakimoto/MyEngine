@@ -181,7 +181,7 @@ void TitleScene::Draw() {
 	//skyBox_->Draw();
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawing();
+	Object3dCommon::GetInstance()->SettingDrawingOpaque();
 
 	// シリンダーの描画
 	cylinder_->Draw();
