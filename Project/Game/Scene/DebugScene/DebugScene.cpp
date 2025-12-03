@@ -1,4 +1,5 @@
 #include "DebugScene.h"
+#include "Input.h"
 
 #include <imgui.h>
 
@@ -9,12 +10,26 @@ void DebugScene::Initialize() {
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,0.0f,-10.0f });
 
-	// オブジェクト3D共通部のカメラ設定
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera.get());
+	// パーティクルシステムの初期化
+	particleSystem->SetCamera(camera.get());
+	particleSystem->CreateParticleGroup("DebugParticle", "Resources/Blue.png", ParticleType::SHARD);
 
-	// ゴールの生成&初期化
-	goal = std::make_unique<Goal>();
-	goal->Initialize();
+	// パーティクルの設定
+	particleSetting.lifeTime = 0.5f;
+	particleSetting.useBillboard = false;
+	particleSetting.randomizeScale = true;
+	particleSetting.randomScaleMin = { 0.1f, 0.1f, 0.1f };
+	particleSetting.randomScaleMax = { 0.2f, 0.2f, 0.2f };
+	particleSetting.randomizeRotate = true;
+	particleSetting.randomRotateMin = { 0.0f, 0.0f, 0.0f };
+	particleSetting.randomRotateMax = { 1.0f, 1.0f, 1.0f };
+	particleSetting.randomizeVelocity = true;
+	particleSetting.randomVelocityMin = { 1.0f, 0.0f, 0.0f };
+	particleSetting.randomVelocityMax = { 2.0f, 0.0f, 0.0f };
+
+	// エミッターの生成
+	particleEmitter = std::make_unique<ParticleEmitter>("DebugParticle", emitterTransform, 20, 0.0f, particleSetting);
+	particleEmitter->SetUseExplosion(true);
 }
 
 void DebugScene::Update() {
@@ -22,17 +37,22 @@ void DebugScene::Update() {
 	// カメラの更新
 	camera->Update();
 
-	// ゴールの更新
-	goal->Update();
+	// スペースキーが押されたらパーティクルを発生させる
+	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+		particleEmitter->Emit();
+	}
+
+	// パーティクルシステムの更新
+	particleSystem->Update();
 }
 
 void DebugScene::Draw() {
 
-	/// === 3Dオブジェクト描画準備 === ///
-	object3dCommon->SettingDrawing();
+	/// === パーティクルの描画準備 === ///
+	particleCommon->SettingDrawing();
 
-	// ゴールの描画
-	goal->Draw();
+	// パーティクルシステムの描画
+	particleSystem->Draw();
 }
 
 void DebugScene::Finalize() {
@@ -43,6 +63,9 @@ void DebugScene::ShowImGui() {
 	// カメラのImGui表示
 	camera->ShowImGui("Camera");
 
-	// ゴールのImGui表示
-	goal->ShowImGui();
+	// パーティクルシステムのImGui表示
+	particleSystem->ShowImGui("ParticleSystem");
+
+	// エミッターのImGui表示
+	particleEmitter->ShowImGui("ParticleEmitter");
 }

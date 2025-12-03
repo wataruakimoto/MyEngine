@@ -27,6 +27,8 @@ public:
 
 	void SetTransform(const Transform& transform) { this->transform = transform; }
 
+	void SetUseExplosion(bool useExplosion) { this->useExplosion = useExplosion; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -52,4 +54,10 @@ private:
 
 	// 設定項目
 	Particle settings;
+
+	// 爆発モードかどうか
+	bool useExplosion = false;
+
+	// 爆発の半径（球の大きさ）
+	float explosionRadius = 0.0f;
 };

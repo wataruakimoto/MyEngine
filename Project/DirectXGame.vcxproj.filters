@@ -102,6 +102,8 @@
     <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\ResultUI.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipelineCreater.cpp" />
+    <ClCompile Include="Engine\3D\Particle\SpherePariticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShardParticle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
@@ -201,6 +203,8 @@
     <ClInclude Include="Game\Scene\GamePlayScene\UI\NormaUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\ResultUI.h" />
     <ClInclude Include="Engine\Base\GraphicsPipelineCreater.h" />
+    <ClInclude Include="Engine\3D\Particle\SpherePariticle.h" />
+    <ClInclude Include="Engine\3D\Particle\ShardParticle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />

@@ -4,6 +4,8 @@
 #include "RingParticle.h"
 #include "CylinderParticle.h"
 #include "CubeParticle.h"
+#include "SpherePariticle.h"
+#include "ShardParticle.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Texture/TextureManager.h"
@@ -133,6 +135,14 @@ void ParticleSystem::Update() {
 		case ParticleType::CUBE:
 			particleGroup.particleTypeClass->Update();
 			break;
+
+		case ParticleType::SPHERE:
+			particleGroup.particleTypeClass->Update();
+			break;
+
+		case ParticleType::SHARD:
+			particleGroup.particleTypeClass->Update();
+			break;
 		}
 	}
 }
@@ -165,6 +175,14 @@ void ParticleSystem::Draw() {
 			break;
 
 		case ParticleType::CUBE:
+			particleGroup.particleTypeClass->Draw(&particleGroup);
+			break;
+
+		case ParticleType::SPHERE:
+			particleGroup.particleTypeClass->Draw(&particleGroup);
+			break;
+
+		case ParticleType::SHARD:
 			particleGroup.particleTypeClass->Draw(&particleGroup);
 			break;
 		}
@@ -275,6 +293,14 @@ void ParticleSystem::CreateParticleGroup(const std::string name, const std::stri
 	case ParticleType::CUBE:
 		particleGroups[name].particleTypeClass = new CubeParticle();
 		break;
+
+	case ParticleType::SPHERE:
+		particleGroups[name].particleTypeClass = new SpherePariticle();
+		break;
+
+	case ParticleType::SHARD:
+		particleGroups[name].particleTypeClass = new ShardParticle();
+		break;
 	}
 
 	// パーティクルの種類を初期化
@@ -301,6 +327,45 @@ void ParticleSystem::Emit(const std::string name, const Vector3& position, uint3
 		particle.transform.translate = position;
 
 		// 指定されたパーティクルグループに追加
+		particleGroups[name].particles.push_back(particle);
+	}
+}
+
+void ParticleSystem::EmitExplosion(const std::string name, const Vector3& center, float radius, uint32_t count, Particle setting) {
+
+	// 登録済みのParticleGroupかチェック
+	if (particleGroups.find(name) == particleGroups.end()) {
+
+		// 登録されていないならエラーメッセージを出す
+		Log("Not found ParticleGroup: " + name + "\n");
+		return;
+	}
+
+	// ランダム生成器の準備（-1.0 ～ 1.0 の範囲）
+	std::uniform_real_distribution<float> distDir(-1.0f, 1.0f);
+	// 速度の強さをランダムにする（settingのVelocityMin.x ～ Max.x を「速さ」として使う例）
+	std::uniform_real_distribution<float> distSpeed(setting.randomVelocityMin.x, setting.randomVelocityMax.x);
+
+	for (uint32_t i = 0; i < count; ++i) {
+
+		// 基本設定でパーティクル作成（色や寿命などは引き継ぐ）
+		Particle particle = MakeNewParticle(setting);
+
+		// 1. ランダムな方向ベクトルを作成
+		Vector3 direction = { distDir(randomEngine), distDir(randomEngine), distDir(randomEngine) };
+
+		// 正規化（長さを1にする） ※MathVectorのNormalize関数を使用
+		direction = Normalize(direction);
+
+		// 2. 位置の決定：球の表面（または内部）に配置
+		// center + (方向 × 半径)
+		particle.transform.translate = center + (direction * radius);
+
+		// 3. 速度の決定：中心から外側に向かって飛ばす
+		float speed = distSpeed(randomEngine); // ランダムな速さ
+		particle.velocity = direction * speed; // 方向 × 速さ
+
+		// リストに追加
 		particleGroups[name].particles.push_back(particle);
 	}
 }

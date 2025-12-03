@@ -29,9 +29,12 @@ void GamePlayScene::Initialize() {
 
 	// パーティクルシステムの初期化
 	particleSystem->SetCamera(camera_.get());
-	particleSystem->CreateParticleGroup("circle2", "Resources/circle2.png", ParticleType::PLANE);
 	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleType::CUBE);
 	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("White", "Resources/White.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Black", "Resources/Black.png", ParticleType::CUBE);
+	particleSystem->CreateParticleGroup("Bullet", "Resources/Blue.png", ParticleType::SHARD);
+	particleSystem->CreateParticleGroup("BulletEnemy", "Resources/Red.png", ParticleType::SHARD);
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();
@@ -308,15 +311,12 @@ void GamePlayScene::Draw() {
 	//skyBox_->Draw();
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawing();
+	Object3dCommon::GetInstance()->SettingDrawingOpaque();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 
 	// シリンダーの描画
 	cylinder_->Draw();
-
-	// ゴールの描画
-	goal_->Draw();
 
 	// フロアの描画
 	floor_->Draw();
@@ -344,6 +344,12 @@ void GamePlayScene::Draw() {
 
 	// 衝突マネージャの描画
 	collisionManager_->Draw();
+
+	/// === 半透明オブジェクトの描画準備 === ///
+	Object3dCommon::GetInstance()->SettingDrawingAlpha();
+
+	// ゴールの描画
+	goal_->Draw();
 
 	/// === パーティクルの描画準備 === ///
 	particleCommon->SettingDrawing();

@@ -32,17 +32,20 @@ void Enemy::Initialize() {
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemy));
 
-	// Transformの設定
-	EmitterTransform1.translate = { 0.0f,2.0f,0.0f };
 	// パーティクルの設定
-	particleSetting1.randomizeScale = true;
-	particleSetting1.randomScaleMin = { 0.2f,1.0f,1.0f };
-	particleSetting1.randomScaleMax = { 0.2f,3.0f,1.0f };
-	particleSetting1.randomizeRotate = true;
-	particleSetting1.randomRotateMin = { 0.0f,0.0f,-std::numbers::pi_v<float> };
-	particleSetting1.randomRotateMax = { 0.0f,0.0f,std::numbers::pi_v<float> };
+	particleSetting.transform.scale = { 0.25f,0.25f,0.25f }; // スケール0.25f
+	particleSetting.lifeTime = 1.0f;					  // 1秒
+	particleSetting.useBillboard = false;				  // ビルボードを使わない
+	particleSetting.randomizeRotate = true;
+	particleSetting.randomRotateMin = { 0.0f, 0.0f, 0.0f };
+	particleSetting.randomRotateMax = { 1.0f, 1.0f, 1.0f };
+	particleSetting.randomizeVelocity = true;
+	particleSetting.randomVelocityMin = { -2.0f, -2.0f, -2.0f };
+	particleSetting.randomVelocityMax = { 2.0f, 2.0f, 2.0f };
+
 	// エミッタ生成
-	particleEmitter1 = std::make_unique<ParticleEmitter>("circle2", EmitterTransform1, 3, 0.0f, particleSetting1);
+	particleEmitterBlack = std::make_unique<ParticleEmitter>("Black", EmitterTransform1, 40, 0.0f, particleSetting);
+	particleEmitterWhite = std::make_unique<ParticleEmitter>("White", EmitterTransform1, 10, 0.0f, particleSetting);
 }
 
 void Enemy::Update() {
@@ -110,8 +113,14 @@ void Enemy::OnCollision(Collider* other) {
 
 		// パーティクル発生
 		EmitterTransform1.translate = worldTransform_.GetTranslate();
-		particleEmitter1->SetTransform(EmitterTransform1);
-		particleEmitter1->Emit();
+
+		// エミッターの位置を設定
+		particleEmitterBlack->SetTransform(EmitterTransform1);
+		particleEmitterWhite->SetTransform(EmitterTransform1);
+
+		// パーティクル発生
+		particleEmitterWhite->Emit();
+		particleEmitterBlack->Emit();
 
 		// 死亡
 		isDead = true;

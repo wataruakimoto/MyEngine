@@ -6,12 +6,24 @@
 #include <wrl.h>
 #include <string>
 
-enum class Preset {
-	Default,  // デフォルト設定
-	Sprite,   // スプライト
-	Object3D, // 3Dオブジェクト
-	Particle, // パーティクル
-	Skybox,   // スカイボックス
+// ブレンドモード
+enum class BlendMode {
+	None,       // ブレンドなし
+	AlphaBlend // アルファブレンド
+};
+
+// カリングモード
+enum class CullMode {
+	Back,  // 裏面(時計回り)を表示しない
+	Front, // 表面(反時計回り)を表示しない
+	None   // カリングしない(裏面も表示させる)
+};
+
+// デプスモード
+enum class DepthMode {
+	ReadWrite, // 読み書き可能
+	ReadOnly,  // 読み込みのみ
+	Disabled   // 無効化
 };
 
 /// ===== グラフィックスパイプライン生成クラス ===== ///
@@ -35,7 +47,10 @@ public:
 	/// <summary>
 	/// パイプライン生成
 	/// </summary>
-	void Create(Preset preset);
+	/// <param name="blendMode">ブレンドモード</param>
+	/// <param name="cullMode">カリングモード</param>
+	/// <param name="depthMode">デプスモード</param>
+	void Create(BlendMode blendMode, CullMode cullMode, DepthMode depthMode);
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -45,12 +60,14 @@ private:
 	/// <summary>
 	/// BlendStateの生成
 	/// </summary>
-	void CreateBlendState(Preset preset);
+	/// <param name="blendMode">ブレンドモード</param>
+	void CreateBlendState(BlendMode blendMode);
 
 	/// <summary>
 	/// RasterizerStateの生成
 	/// </summary>
-	void CreateRasterizerState(Preset preset);
+	/// <param name="cullMode">カリングモード</param>
+	void CreateRasterizerState(CullMode cullMode);
 
 	/// <summary>
 	/// VertexShaderの生成
@@ -65,7 +82,8 @@ private:
 	/// <summary>
 	/// DepthStencilStateの生成
 	/// </summary>
-	void CreateDepthStencilState(Preset preset);
+	/// <param name="depthMode">デプスモード</param>
+	void CreateDepthStencilState(DepthMode depthMode);
 
 ///-------------------------------------------/// 
 /// セッター
