@@ -34,7 +34,7 @@ struct ParticleGroup {
 	Microsoft::WRL::ComPtr <ID3D12Resource> particleResource; // パーティクルリソース
 	ParticleForGPU* particleData; // パーティクルデータ
 	uint32_t numInstance = 0; // インスタンスの数
-	ParticleShape particleType; // パーティクルの種類
+	ParticleType particleType; // パーティクルの種類
 	BaseParticleType* particleTypeClass; // パーティクルの種類クラス
 };
 
