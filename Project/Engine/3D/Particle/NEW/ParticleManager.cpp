@@ -46,6 +46,10 @@ void ParticleManager::Draw() {
 	// カメラがないと描画できないのでアサート
 	assert(camera && "Camera is nullptr");
 
+	// フレームの最初に呼び出し
+	planeRenderer->BeginFrame();
+	cubeRenderer->BeginFrame();
+
 	// 板ポリのパーティクルコンテナの描画
 	for (auto& [textureFileName, particles] : planeGroups) {
 

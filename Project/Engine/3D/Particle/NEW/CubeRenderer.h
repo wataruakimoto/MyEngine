@@ -11,6 +11,8 @@ public:
 
 	void Initialize() override;
 
+	void BeginFrame() override;
+
 	void Draw(const std::list<ParticleInstance>& particles, const Camera& camera) override;
 
 ///-------------------------------------------/// 

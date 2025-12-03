@@ -33,20 +33,38 @@ void PlaneRenderer::Initialize() {
 	GenerateInstanceData();
 }
 
+void PlaneRenderer::BeginFrame() {
+
+	// カウンターをリセット
+	currentInstanceIndex = 0;
+}
+
 void PlaneRenderer::Draw(const std::list<ParticleInstance>& particles, const Camera& camera) {
 
 	// リストが空なら何もしない
 	if (particles.empty()) return;
 
+	// 今回描画する数
+	uint32_t count = static_cast<uint32_t>(particles.size());
+
+	// 今回書き込むと最大数を超えてしまうなら
+	if (count + currentInstanceIndex >= kMaxInstanceCount) {
+
+		// 超えてしまったときの処理を行う
+
+		// 中止
+		assert(false);
+	}
+
 	//  インスタンスの数をカウント
-	uint32_t instanceCount = 0;
+	uint32_t index = 0;
 
 	// カメラからViewProjectionを受け取る
 	Matrix4x4 viewProjectionMatrix = camera.GetViewProjectionMatrix();
 
 	// 180度回転行列を作成
 	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
-	
+
 	// ビルボード行列を計算
 	Matrix4x4 billboardMatrix = backToFrontMatrix * camera.GetWorldMatrix();
 
@@ -55,10 +73,10 @@ void PlaneRenderer::Draw(const std::list<ParticleInstance>& particles, const Cam
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
 
-	for(const auto& particle : particles) {
+	for (const auto& particle : particles) {
 
-		// 最大数を超えたら抜ける
-		if (instanceCount >= kMaxInstanceCount) break;
+		// 現在のオフセットから今回の分加算する
+		uint32_t targetIndex = currentInstanceIndex + index;
 
 		// ワールド行列を初期化
 		Matrix4x4 worldMatrix = MakeIdentity4x4();
@@ -87,13 +105,13 @@ void PlaneRenderer::Draw(const std::list<ParticleInstance>& particles, const Cam
 		// ワールドビュー射影行列計算
 		Matrix4x4 wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);
 
-		// インスタンスデータに転送
-		instanceData[instanceCount].world = worldMatrix;
-		instanceData[instanceCount].WVP = wvpMatrix;
-		instanceData[instanceCount].color = particle.color;
+		// ずらしたあとの先頭から書き込む
+		instanceData[targetIndex].world = worldMatrix;
+		instanceData[targetIndex].WVP = wvpMatrix;
+		instanceData[targetIndex].color = particle.color;
 
 		// インスタンス数をインクリメント
-		++instanceCount;
+		index++;
 	}
 
 	// 頂点バッファビューを設定
@@ -105,17 +123,20 @@ void PlaneRenderer::Draw(const std::list<ParticleInstance>& particles, const Cam
 	// マテリアルCBufferの場所を設定
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
+	/// === InstanceDataのCBufferの場所を設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(srvIndex));
+
 	// パーティクルのテクスチャパスを取得 (同じテクスチャのリストなので先頭だけでOK)
 	std::string textureFullPath = particles.front().setting->textureFullPath;
 
 	// SRVのDescriptorTableの先頭を設定
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(textureFullPath));
 
-	/// === パーティクルCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(srvIndex));
-
 	// 描画(DrawCall)
-	dxUtility->GetCommandList()->DrawIndexedInstanced(6, instanceCount, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(36, count, 0, 0, currentInstanceIndex);
+
+	// オフセット分を加算
+	currentInstanceIndex += count;
 }
 
 void PlaneRenderer::GenerateVertexData() {

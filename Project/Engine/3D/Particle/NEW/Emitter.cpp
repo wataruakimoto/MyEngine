@@ -13,6 +13,15 @@ void Emitter::Initialize() {
 
 void Emitter::Update() {
 
+	// タイマー更新
+	timer += deltaTime;
+
+	// 発生頻度を超えたらパーティクル発生
+	if (timer >= frequency) {
+		Emit();
+		timer = 0.0f;
+	}
+
 	// ワールド変換の更新
 	worldTransform.UpdateMatrix();
 }
@@ -26,7 +35,7 @@ void Emitter::Emit() {
 	if (!setting) return;
 
 	// パーティクルインスタンスを作成
-	for (int i = 0; i < count; ++i) {
+	for (uint32_t i = 0; i < count; ++i) {
 
 		// 新しいインスタンスを作成
 		ParticleInstance particle;

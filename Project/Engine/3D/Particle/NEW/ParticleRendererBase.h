@@ -31,6 +31,8 @@ public:
 	/// </summary>
 	virtual void Initialize() = 0;
 
+	virtual void BeginFrame() = 0;
+
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -112,4 +114,7 @@ protected:
 
 	// SRVインデックス
 	uint32_t srvIndex = 0;
+
+	// 現在のインスタンスインデックス
+	uint32_t currentInstanceIndex = 0;
 };

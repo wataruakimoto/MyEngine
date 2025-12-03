@@ -16,7 +16,11 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="effectName">エフェクト名</param>
-	Emitter(std::string	effectName) : effectName(effectName) {};
+	Emitter(std::string	effectName, float frequency, uint32_t count) :
+		effectName(effectName),
+		frequency(frequency),
+		count(count) {
+	};
 
 	/// <summary>
 	/// 初期化
@@ -41,14 +45,17 @@ private:
 	// エフェクト名
 	std::string effectName;
 
-	// 発生頻度
+	// 発生頻度 (秒間)
 	float frequency = 0.0f;
 
 	// 発生用タイマー
 	float timer = 0.0f;
 
+	// デルタタイム
+	const float deltaTime = 1.0f / 60.0f;
+
 	// 1回あたりの発生数
-	int count = 10;
+	uint32_t count = 10;
 
 	// ワールド変換情報
 	WorldTransform worldTransform;

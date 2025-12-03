@@ -16,8 +16,9 @@ void DebugScene::Initialize() {
 	particleManager->SetCamera(camera.get());
 
 	// エミッターの生成
-	particleEmitterRed = std::make_unique<Emitter>("PlayerDeathRed");
-	particleEmitterBlue = std::make_unique<Emitter>("PlayerDeathBlue");
+	particleEmitterRed = std::make_unique<Emitter>("PlayerDeathRed", 1.0f, 5);
+	particleEmitterBlue = std::make_unique<Emitter>("PlayerDeathBlue", 1.0f, 5);
+
 	// エミッターの初期化
 	particleEmitterRed->Initialize();
 	particleEmitterBlue->Initialize();
@@ -27,12 +28,6 @@ void DebugScene::Update() {
 
 	// カメラの更新
 	camera->Update();
-
-	// スペースキーが押されたらパーティクルを発生させる
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		particleEmitterRed->Emit();
-		particleEmitterBlue->Emit();
-	}
 
 	// エミッターの更新
 	particleEmitterRed->Update();
