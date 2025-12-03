@@ -10,26 +10,17 @@ void DebugScene::Initialize() {
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,0.0f,-20.0f });
 
-	// パーティクルシステムの初期化
-	particleSystem->SetCamera(camera.get());
-	particleSystem->CreateParticleGroup("DebugParticle", "Resources/Blue.png", ParticleShape::SHARD);
-
-	// パーティクルの設定
-	particleSetting.lifeTime = 0.5f;
-	particleSetting.useBillboard = false;
-	particleSetting.randomizeScale = true;
-	particleSetting.randomScaleMin = { 0.2f, 0.2f, 0.2f };
-	particleSetting.randomScaleMax = { 0.3f, 0.3f, 0.3f };
-	particleSetting.randomizeRotate = true;
-	particleSetting.randomRotateMin = { 0.0f, 0.0f, 0.0f };
-	particleSetting.randomRotateMax = { 1.0f, 1.0f, 1.0f };
-	particleSetting.randomizeVelocity = true;
-	particleSetting.randomVelocityMin = { 2.0f, 0.0f, 0.0f };
-	particleSetting.randomVelocityMax = { 4.0f, 0.0f, 0.0f };
+	// パーティクルマネージャー初期化
+	particleManager->Initialize();
+	// カメラのセット
+	particleManager->SetCamera(camera.get());
 
 	// エミッターの生成
-	particleEmitter = std::make_unique<ParticleEmitter>("DebugParticle", emitterTransform, 20, 0.0f, particleSetting);
-	particleEmitter->SetUseExplosion(true);
+	particleEmitterRed = std::make_unique<Emitter>("PlayerDeathRed");
+	particleEmitterBlue = std::make_unique<Emitter>("PlayerDeathBlue");
+	// エミッターの初期化
+	particleEmitterRed->Initialize();
+	particleEmitterBlue->Initialize();
 }
 
 void DebugScene::Update() {
@@ -39,11 +30,16 @@ void DebugScene::Update() {
 
 	// スペースキーが押されたらパーティクルを発生させる
 	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		particleEmitter->Emit();
+		particleEmitterRed->Emit();
+		particleEmitterBlue->Emit();
 	}
 
+	// エミッターの更新
+	particleEmitterRed->Update();
+	particleEmitterBlue->Update();
+
 	// パーティクルシステムの更新
-	particleSystem->Update();
+	particleManager->Update();
 }
 
 void DebugScene::Draw() {
@@ -52,10 +48,13 @@ void DebugScene::Draw() {
 	particleCommon->SettingDrawing();
 
 	// パーティクルシステムの描画
-	particleSystem->Draw();
+	particleManager->Draw();
 }
 
 void DebugScene::Finalize() {
+
+	// パーティクルマネージャーの終了
+	particleManager->Finalize();
 }
 
 void DebugScene::ShowImGui() {
@@ -63,9 +62,6 @@ void DebugScene::ShowImGui() {
 	// カメラのImGui表示
 	camera->ShowImGui("Camera");
 
-	// パーティクルシステムのImGui表示
-	particleSystem->ShowImGui("ParticleSystem");
-
-	// エミッターのImGui表示
-	particleEmitter->ShowImGui("ParticleEmitter");
+	// パーティクルマネージャーのImGui表示
+	particleManager->ShowImGui();
 }

@@ -104,6 +104,11 @@
     <ClCompile Include="Engine\Base\GraphicsPipelineCreater.cpp" />
     <ClCompile Include="Engine\3D\Particle\SpherePariticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShardParticle.cpp" />
+    <ClCompile Include="Engine\Math\MathRandom.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\ParticleManager.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\Emitter.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\PlaneRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\CubeRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
@@ -205,6 +210,13 @@
     <ClInclude Include="Engine\Base\GraphicsPipelineCreater.h" />
     <ClInclude Include="Engine\3D\Particle\SpherePariticle.h" />
     <ClInclude Include="Engine\3D\Particle\ShardParticle.h" />
+    <ClInclude Include="Engine\Math\MathRandom.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ParticleManager.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ParticleData.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ParticleRendererBase.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\Emitter.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\PlaneRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\CubeRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />

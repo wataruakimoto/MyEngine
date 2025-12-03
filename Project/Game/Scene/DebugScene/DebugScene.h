@@ -3,9 +3,8 @@
 #include "BaseScene.h"
 #include "Camera.h"
 #include "Particle/ParticleCommon.h"
-#include "Particle/ParticleSystem.h"
-#include "Particle/ParticleEmitter.h"
-#include "Data/Transform.h"
+#include "Particle/NEW/ParticleManager.h"
+#include "Particle/NEW/Emitter.h"
 
 #include <memory>
 
@@ -50,18 +49,13 @@ private:
 	// カメラのポインタ
 	std::unique_ptr<Camera> camera = nullptr;
 
-	// パーティクルシステムのインスタンス
-	ParticleSystem* particleSystem = ParticleSystem::GetInstance();
-
 	// パーティクル共通のインスタンス
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
 
+	// パーティクルマネージャーのインスタンス
+	ParticleManager* particleManager = ParticleManager::GetInstance();
+
 	// エミッターのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitter = nullptr;
-
-	// エミッタ変換データ
-	Transform emitterTransform = {};
-
-	// パーティクル設定
-	Particle particleSetting = {};
+	std::unique_ptr<Emitter> particleEmitterRed = nullptr;
+	std::unique_ptr<Emitter> particleEmitterBlue = nullptr;
 };

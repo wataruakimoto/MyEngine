@@ -123,12 +123,12 @@ void GraphicsPipelineCreater::CreateRasterizerState(Preset preset) {
 		break;
 
 	case Preset::Sprite:
+	case Preset::Particle:
 
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE; // カリングしない(裏面も表示させる)
 		break;
 
 	case Preset::Object3D:
-	case Preset::Particle:
 
 		rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK; // 裏面(時計回り)を表示しない
 		break;
@@ -177,7 +177,7 @@ void GraphicsPipelineCreater::CreateDepthStencilState(Preset preset) {
 	case Preset::Object3D:
 	case Preset::Particle:
 	case Preset::Skybox:
-		
+
 		depthStencilDesc.DepthEnable = true;
 		depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
 		depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;

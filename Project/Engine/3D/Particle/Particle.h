@@ -3,6 +3,7 @@
 #include "Data/Transform.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "MathRandom.h"
 
 // パーティクル
 struct Particle {
@@ -38,11 +39,3 @@ struct Particle {
 	float randomLifeTimeMin = 0.0f;
 	float randomLifeTimeMax = 1.0f;
 };
-
-struct PaticleSetting{
-
-	std::string name; // パーティクル名
-	std::string textureFileName; // テクスチャファイル名
-	ParticleShape shape; // パーティクルの形状
-
-}

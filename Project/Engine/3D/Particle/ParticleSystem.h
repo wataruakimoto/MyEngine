@@ -5,6 +5,7 @@
 #include "Vector4.h"
 #include "Matrix4x4.h"
 #include "Particle.h"
+#include "NEW/ParticleData.h"
 
 #include <d3d12.h>
 #include <random>
@@ -23,16 +24,6 @@ struct ParticleForGPU {
 	Matrix4x4 WVP;
 	Matrix4x4 world;
 	Vector4 color;
-};
-
-// パーティクルの種類
-enum class ParticleShape {
-	PLANE,
-	RING,
-	CYLINDER,
-	CUBE,
-	SPHERE,
-	SHARD,
 };
 
 // パーティクルグループ
@@ -94,14 +85,14 @@ public:
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
-	/// <param name="name"></param>
+	/// <param effectName="effectName"></param>
 	void ShowImGui(const char* name);
 
 	/// <summary>
 	/// パーティクルグループの生成
 	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="textureFilePath"></param>
+	/// <param effectName="effectName"></param>
+	/// <param effectName="textureFilePath"></param>
 	void CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleShape type);
 
 	/// <summary>
@@ -140,7 +131,7 @@ public:
 	/// <summary>
 	/// カメラのセッター
 	/// </summary>
-	/// <param name="camera">カメラ</param>
+	/// <param effectName="camera">カメラ</param>
 	void SetCamera(Camera* camera) { this->camera = camera; }
 
 ///-------------------------------------------/// 
