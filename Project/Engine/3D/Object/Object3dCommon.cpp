@@ -22,20 +22,25 @@ void Object3dCommon::Initialize() {
 	CreateRootSignature();
 
 	// RootSignatureをセット
-	pipelineCreater_.SetRootSignature(rootSignature.Get());
+	pipelineCreaterOpaque_.SetRootSignature(rootSignature.Get());
+	pipelineCreaterAlpha_.SetRootSignature(rootSignature.Get());
 
 	// InputLayoutを生成
 	CreateInputLayout();
 
 	// InputLayoutをセット
-	pipelineCreater_.SetInputLayoutDesc(inputLayoutDesc);
+	pipelineCreaterOpaque_.SetInputLayoutDesc(inputLayoutDesc);
+	pipelineCreaterAlpha_.SetInputLayoutDesc(inputLayoutDesc);
 
 	// シェーダパスをセット
-	pipelineCreater_.SetVSFileName(L"Object3d.VS.hlsl");
-	pipelineCreater_.SetPSFileName(L"Object3d.PS.hlsl");
+	pipelineCreaterOpaque_.SetVSFileName(L"Object3d.VS.hlsl");
+	pipelineCreaterOpaque_.SetPSFileName(L"Object3d.PS.hlsl");
+	pipelineCreaterAlpha_.SetVSFileName(L"Object3d.VS.hlsl");
+	pipelineCreaterAlpha_.SetPSFileName(L"Object3d.PS.hlsl");
 
 	// パイプライン生成
-	pipelineCreater_.Create(Preset::Object3D);
+	pipelineCreaterOpaque_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadWrite);
+	pipelineCreaterAlpha_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadOnly);
 }
 
 void Object3dCommon::Finalize() {
@@ -43,13 +48,28 @@ void Object3dCommon::Finalize() {
 	instance = nullptr;
 }
 
-void Object3dCommon::SettingDrawing() {
+void Object3dCommon::SettingDrawingOpaque() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreater_.GetGraphicsPipelineState().Get());
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreaterOpaque_.GetGraphicsPipelineState().Get());
+
+	/// === プリミティブトポロジーをセットするコマンド === ///
+	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
+	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+}
+
+void Object3dCommon::SettingDrawingAlpha() {
+
+	/// === ルートシグネチャをセットするコマンド === ///
+	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+
+	/// === グラフィックスパイプラインステートをセットするコマンド === ///
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreaterOpaque_.GetGraphicsPipelineState().Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
