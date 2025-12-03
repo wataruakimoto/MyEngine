@@ -318,9 +318,6 @@ void GamePlayScene::Draw() {
 	// シリンダーの描画
 	cylinder_->Draw();
 
-	// ゴールの描画
-	goal_->Draw();
-
 	// フロアの描画
 	floor_->Draw();
 
@@ -347,6 +344,12 @@ void GamePlayScene::Draw() {
 
 	// 衝突マネージャの描画
 	collisionManager_->Draw();
+
+	/// === 半透明オブジェクトの描画準備 === ///
+	Object3dCommon::GetInstance()->SettingDrawingAlpha();
+
+	// ゴールの描画
+	goal_->Draw();
 
 	/// === パーティクルの描画準備 === ///
 	particleCommon->SettingDrawing();
