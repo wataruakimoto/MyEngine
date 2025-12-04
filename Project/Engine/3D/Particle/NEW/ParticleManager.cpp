@@ -44,68 +44,24 @@ void ParticleManager::Initialize() {
 void ParticleManager::Update() {
 
 	// カメラからViewProjectionを受け取る
-	Matrix4x4 viewProjectionMatrix = camera->GetViewProjectionMatrix();
+	viewProjectionMatrix = camera->GetViewProjectionMatrix();
 
 	// 180度回転行列を作成
 	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
 
 	// ビルボード行列を計算
-	Matrix4x4 billboardMatrix = backToFrontMatrix * camera->GetWorldMatrix();
+	billboardMatrix = backToFrontMatrix * camera->GetWorldMatrix();
 
 	// 行列の平行移動成分を排除する
 	billboardMatrix.m[3][0] = 0.0f;
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
 
-	// キューブの更新
-	for (auto& [key, group] : cubeGroups) {
+	// 板ポリのパーティクルコンテナの更新
+	UpdateGroups(planeGroups);
 
-		// インスタンス数をリセット
-		group.numInstance = 0;
-
-		if (group.particles.empty()) continue;
-
-		// 各パーティクルの更新
-		UpdateParticles(group.particles);
-
-		for (const auto& particle : group.particles) {
-
-			// ワールド行列を初期化
-			Matrix4x4 worldMatrix = MakeIdentity4x4();
-
-			// ビルボードするなら
-			if (particle.setting->useBillboard) {
-
-				// Scale行列
-				Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.scale);
-
-				// Z軸回転行列
-				Matrix4x4 rotateZMatrix = MakeRotateZMatrix(particle.rotate.z);
-
-				// Translate行列
-				Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.translate);
-
-				// ワールド行列計算
-				worldMatrix = scaleMatrix * rotateZMatrix * billboardMatrix * translateMatrix;
-			}
-			else {
-
-				// ワールド行列計算
-				worldMatrix = MakeAffineMatrix(particle.scale, particle.rotate, particle.translate);
-			}
-
-			// ワールドビュー射影行列計算
-			Matrix4x4 wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);
-
-			// ずらしたあとの先頭から書き込む
-			group.instanceData[group.numInstance].world = worldMatrix;
-			group.instanceData[group.numInstance].WVP = wvpMatrix;
-			group.instanceData[group.numInstance].color = particle.color;
-
-			// インスタンス数をインクリメント
-			group.numInstance++;
-		}
-	}
+	// キューブのパーティクルコンテナの更新
+	UpdateGroups(cubeGroups);
 }
 
 void ParticleManager::Draw() {
@@ -273,6 +229,58 @@ void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {
 		ite->translate += ite->velocity;
 		// 次のパーティクルへ
 		++ite;
+	}
+}
+
+void ParticleManager::UpdateGroups(std::unordered_map<std::string, ParticleGroupNew>& groups) {
+
+	for (auto& [key, group] : groups) {
+
+		// インスタンス数をリセット
+		group.numInstance = 0;
+
+		if (group.particles.empty()) continue;
+
+		// 各パーティクルの更新
+		UpdateParticles(group.particles);
+
+		for (const auto& particle : group.particles) {
+
+			// ワールド行列を初期化
+			Matrix4x4 worldMatrix = MakeIdentity4x4();
+
+			// ビルボードするなら
+			if (particle.setting->useBillboard) {
+
+				// Scale行列
+				Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.scale);
+
+				// Z軸回転行列
+				Matrix4x4 rotateZMatrix = MakeRotateZMatrix(particle.rotate.z);
+
+				// Translate行列
+				Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.translate);
+
+				// ワールド行列計算
+				worldMatrix = scaleMatrix * rotateZMatrix * billboardMatrix * translateMatrix;
+			}
+			else {
+
+				// ワールド行列計算
+				worldMatrix = MakeAffineMatrix(particle.scale, particle.rotate, particle.translate);
+			}
+
+			// ワールドビュー射影行列計算
+			Matrix4x4 wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+
+			// ずらしたあとの先頭から書き込む
+			group.instanceData[group.numInstance].world = worldMatrix;
+			group.instanceData[group.numInstance].WVP = wvpMatrix;
+			group.instanceData[group.numInstance].color = particle.color;
+
+			// インスタンス数をインクリメント
+			group.numInstance++;
+		}
 	}
 }
 

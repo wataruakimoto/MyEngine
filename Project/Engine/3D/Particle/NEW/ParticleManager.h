@@ -89,6 +89,12 @@ private:
 	void UpdateParticles(std::list<ParticleInstance>& particles);
 
 	/// <summary>
+	/// グループコンテナの更新
+	/// </summary>
+	/// <param name="groups"></param>
+	void UpdateGroups(std::unordered_map<std::string, ParticleGroupNew>& groups);
+
+	/// <summary>
 	/// JSONからパーティクル設定を全て読み込み
 	/// </summary>
 	void LoadParticleSettingsFromJSON();
@@ -197,5 +203,11 @@ private:
 
 	// 編集用の一時設定
 	ParticleSetting tempSetting;
+
+	// ViewProjection行列
+	Matrix4x4 viewProjectionMatrix = {};
+
+	// ビルボード行列
+	Matrix4x4 billboardMatrix = {};
 };
 
