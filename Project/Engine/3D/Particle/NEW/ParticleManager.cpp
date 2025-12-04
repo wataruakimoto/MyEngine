@@ -529,9 +529,24 @@ void ParticleManager::ShowParameters() {
 	// 5. テストエミットボタン
 	// -------------------------------------------------------------
 	if (ImGui::Button("Test Emit (Preview)")) {
+
+		// ★一時的にtempSettingを正式にsettingsに登録する
+		std::string tempKey = "TEMP_PREVIEW_" + p.effectName;
+
+		// テクスチャのフルパスを確実に設定
+		p.textureFullPath = TextureFolderPath + p.textureFileName;
+
+		// テクスチャを読み込む
+		textureManager->LoadTexture(p.textureFullPath);
+
+		// 一時的に設定を登録
+		ParticleSetting tempSettingCopy = p;
+		tempSettingCopy.effectName = tempKey;
+		settings[tempKey] = tempSettingCopy;
+
 		for (int i = 0; i < 10; ++i) {
 			ParticleInstance instance;
-			instance.setting = &p; // ★一時設定へのポインタを渡す
+			instance.setting = &settings[tempKey]; // ★正式に登録された設定への参照
 
 			// 位置
 			instance.translate = p.translateRandom ? RandomVector3(p.translateRange) : p.translate;
@@ -548,6 +563,9 @@ void ParticleManager::ShowParameters() {
 
 			AddInstance(instance);
 		}
+
+		// ★プレビュー後、一時設定を削除
+		settings.erase(tempKey);
 	}
 
 	ImGui::Separator();
