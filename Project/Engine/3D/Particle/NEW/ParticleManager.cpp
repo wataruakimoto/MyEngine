@@ -32,10 +32,25 @@ void ParticleManager::Initialize() {
 	// 板ポリのレンダラーを初期化
 	planeRenderer->Initialize();
 
+	// リングのレンダラーを作成
+	ringRenderer = std::make_unique<RingRenderer>();
+	// リングのレンダラーを初期化
+	ringRenderer->Initialize();
+
+	// シリンダーのレンダラーを作成
+	cylinderRenderer = std::make_unique<CylinderRenderer>();
+	// シリンダーのレンダラーを初期化
+	cylinderRenderer->Initialize();
+
 	// キューブのレンダラーを作成
 	cubeRenderer = std::make_unique<CubeRenderer>();
 	// キューブのレンダラーを初期化
 	cubeRenderer->Initialize();
+
+	// シャードのレンダラーを作成
+	shardRenderer = std::make_unique<ShardRenderer>();
+	// シャードのレンダラーを初期化
+	shardRenderer->Initialize();
 
 	// JSONからパーティクル設定を全て読み込み
 	LoadParticleSettingsFromJSON();
@@ -60,8 +75,17 @@ void ParticleManager::Update() {
 	// 板ポリのパーティクルコンテナの更新
 	UpdateGroups(planeGroups);
 
+	// リングのパーティクルコンテナの更新
+	UpdateGroups(ringGroups);
+
+	// シリンダーのパーティクルコンテナの更新
+	UpdateGroups(cylinderGroups);
+
 	// キューブのパーティクルコンテナの更新
 	UpdateGroups(cubeGroups);
+
+	// シャードのパーティクルコンテナの更新
+	UpdateGroups(shardGroups);
 }
 
 void ParticleManager::Draw() {
@@ -79,6 +103,22 @@ void ParticleManager::Draw() {
 		planeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
 
+	// リングのパーティクルコンテナの描画
+	for (auto& [textureFileName, group] : ringGroups) {
+		// リストが空なら描画しない
+		if (group.particles.empty()) continue;
+		// リングレンダラーで描画
+		ringRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+	}
+
+	// シリンダーのパーティクルコンテナの描画
+	for (auto& [textureFileName, group] : cylinderGroups) {
+		// リストが空なら描画しない
+		if (group.particles.empty()) continue;
+		// シリンダーレンダラーで描画
+		cylinderRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+	}
+
 	// キューブのパーティクルコンテナの描画
 	for (auto& [textureFileName, group] : cubeGroups) {
 
@@ -87,6 +127,14 @@ void ParticleManager::Draw() {
 
 		// キューブレンダラーで描画
 		cubeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+	}
+
+	// シャードのパーティクルコンテナの描画
+	for (auto& [textureFileName, group] : shardGroups) {
+		// リストが空なら描画しない
+		if (group.particles.empty()) continue;
+		// シャードレンダラーで描画
+		shardRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
 }
 
@@ -185,6 +233,32 @@ void ParticleManager::AddInstance(const ParticleInstance& instance) {
 
 		break;
 
+	case ParticleShape::RING:
+
+		// リソース未作成なら
+		if (!ringGroups[key].isResourceCreated) {
+			// リソース作成
+			CreateGroupResource(ringGroups[key]);
+		}
+
+		// グループのリストに追加
+		ringGroups[key].particles.push_back(instance);
+		break;
+
+	case ParticleShape::CYLINDER:
+
+		// リソース未作成なら
+		if (!cylinderGroups[key].isResourceCreated) {
+
+			// リソース作成
+			CreateGroupResource(cylinderGroups[key]);
+		}
+
+		// グループのリストに追加
+		cylinderGroups[key].particles.push_back(instance);
+
+		break;
+
 	case ParticleShape::CUBE:
 
 		// リソース未作成なら
@@ -196,6 +270,20 @@ void ParticleManager::AddInstance(const ParticleInstance& instance) {
 
 		// グループのリストに追加
 		cubeGroups[key].particles.push_back(instance);
+
+		break;
+
+	case ParticleShape::SHARD:
+
+		// リソース未作成なら
+		if (!shardGroups[key].isResourceCreated) {
+
+			// リソース作成
+			CreateGroupResource(shardGroups[key]);
+		}
+
+		// グループのリストに追加
+		shardGroups[key].particles.push_back(instance);
 
 		break;
 	}

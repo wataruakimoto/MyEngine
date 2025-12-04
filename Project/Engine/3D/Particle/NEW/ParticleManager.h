@@ -1,8 +1,11 @@
 #pragma once
 
 #include "ParticleData.h"
-#include "PlaneRenderer.h"
-#include "CubeRenderer.h"
+#include "ShapeRenderers/PlaneRenderer.h"
+#include "ShapeRenderers/RingRenderer.h"
+#include "ShapeRenderers/CylinderRenderer.h"
+#include "ShapeRenderers/CubeRenderer.h"
+#include "ShapeRenderers/ShardRenderer.h"
 
 #include <unordered_map>
 #include <string>
@@ -178,7 +181,10 @@ private:
 
 	// グループコンテナ  エフェクト名、グループ
 	std::unordered_map<std::string, ParticleGroupNew> planeGroups;
+	std::unordered_map<std::string, ParticleGroupNew> ringGroups;
+	std::unordered_map<std::string, ParticleGroupNew> cylinderGroups;
 	std::unordered_map<std::string, ParticleGroupNew> cubeGroups;
+	std::unordered_map<std::string, ParticleGroupNew> shardGroups;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;
@@ -186,8 +192,17 @@ private:
 	// 板ポリのレンダラー
 	std::unique_ptr<PlaneRenderer> planeRenderer = nullptr;
 
+	// リングのレンダラー
+	std::unique_ptr<RingRenderer> ringRenderer = nullptr;
+
+	// シリンダーのレンダラー
+	std::unique_ptr<CylinderRenderer> cylinderRenderer = nullptr;
+
 	// キューブのレンダラー
 	std::unique_ptr<CubeRenderer> cubeRenderer = nullptr;
+
+	// シャードのレンダラー
+	std::unique_ptr<ShardRenderer> shardRenderer = nullptr;
 
 	// Jsonデータを入れておくフォルダパス
 	const std::string DataFolderPath = "Resources/Data/Particles/";

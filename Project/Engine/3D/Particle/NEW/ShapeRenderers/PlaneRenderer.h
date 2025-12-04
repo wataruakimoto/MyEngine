@@ -11,6 +11,8 @@ public:
 
 	void Initialize() override;
 
+	void Update() override;
+
 	void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
 
 ///-------------------------------------------/// 

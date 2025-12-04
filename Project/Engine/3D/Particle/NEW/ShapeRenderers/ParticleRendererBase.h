@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParticleData.h"
+#include "Particle/New/ParticleData.h"
 #include "Data/VertexData.h"
 
 #include <list>
@@ -9,9 +9,8 @@
 
 /// === 前方宣言 === ///
 class DirectXUtility;
-class TextureManager;
 class SrvManager;
-class Camera;
+class TextureManager;
 
 /// ===== パーティクル描画用の抽象基底クラス ===== ///
 class ParticleRendererBase {
@@ -30,6 +29,11 @@ public:
 	/// 初期化
 	/// </summary>
 	virtual void Initialize() = 0;
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	virtual void Update() = 0;
 
 	/// <summary>
 	/// 描画
@@ -67,11 +71,11 @@ protected:
 	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;
 
-	// TextureManagerのインスタンス
-	TextureManager* textureManager = nullptr;
-
 	// SrvManagerのインスタンス
 	SrvManager* srvManager = nullptr;
+
+	// TextureManagerのインスタンス
+	TextureManager* textureManager = nullptr;
 
 	// 頂点リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
