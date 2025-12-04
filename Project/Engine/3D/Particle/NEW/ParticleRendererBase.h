@@ -31,14 +31,13 @@ public:
 	/// </summary>
 	virtual void Initialize() = 0;
 
-	virtual void BeginFrame() = 0;
-
 	/// <summary>
 	/// 描画
 	/// </summary>
-	/// <param effectName="Groups">パーティクルのリスト</param>
-	/// <param effectName="camera">カメラ</param>
-	virtual void Draw(const std::list<ParticleInstance>& particles, const Camera& camera) = 0;
+	/// <param name="instanceCount">インスタンス数</param>
+	/// <param name="instanceSrvIndex">インスタンス用SRVインデックス</param>
+	/// <param name="texturePath">テクスチャパス</param>
+	virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) = 0;
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -59,11 +58,6 @@ protected:
 	/// マテリアルデータ生成
 	/// </summary>
 	virtual void GenerateMaterialData() = 0;
-
-	/// <summary>
-	/// インスタンスデータ生成
-	/// </summary>
-	virtual void GenerateInstanceData() = 0;
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -102,19 +96,4 @@ protected:
 
 	// マテリアルデータ
 	Material* materialData = nullptr;
-
-	// インスタンスリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> instanceResource;
-
-	// インスタンスデータ
-	InstanceData* instanceData = nullptr;
-
-	// インスタンスの最大数
-	const uint32_t kMaxInstanceCount = 1000;
-
-	// SRVインデックス
-	uint32_t srvIndex = 0;
-
-	// 現在のインスタンスインデックス
-	uint32_t currentInstanceIndex = 0;
 };

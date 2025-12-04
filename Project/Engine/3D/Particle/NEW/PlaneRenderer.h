@@ -11,9 +11,7 @@ public:
 
 	void Initialize() override;
 
-	void BeginFrame() override;
-
-	void Draw(const std::list<ParticleInstance>& particles, const Camera& camera) override;
+	void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -25,7 +23,5 @@ private:
 	void GenerateIndexData() override;
 
 	void GenerateMaterialData() override;
-
-	void GenerateInstanceData() override;
 };
 

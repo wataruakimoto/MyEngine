@@ -7,6 +7,9 @@
 #include "MathRandom.h"
 
 #include <string>
+#include <list>
+#include <d3d12.h>
+#include <wrl.h>
 #include <json.hpp>
 
 // パーティクルの形状
@@ -17,6 +20,19 @@ enum class ParticleShape {
 	CUBE,
 	SPHERE,
 	SHARD,
+};
+
+// マテリアルデータ
+struct Material {
+	Vector4 color;
+	Matrix4x4 uvTransform;
+};
+
+// シェーダー用パーティクルデータ
+struct InstanceData {
+	Matrix4x4 world; // ワールド行列
+	Matrix4x4 WVP; // ワールドビュー射影行列
+	Vector4 color; // 色
 };
 
 // どんなパーティクルを作るかの設定(Blueprint)
@@ -75,17 +91,18 @@ struct ParticleInstance {
 	float currentTime = 0.0f; // 現在の時間
 };
 
-// マテリアルデータ
-struct Material {
-	Vector4 color;
-	Matrix4x4 uvTransform;
-};
+// パーティクルのグループデータ
+struct ParticleGroupNew {
 
-// シェーダー用パーティクルデータ
-struct InstanceData {
-	Matrix4x4 WVP;
-	Matrix4x4 world;
-	Vector4 color;
+	std::list<ParticleInstance> particles; // パーティクルのリスト
+	bool isResourceCreated = false; // リソースが作成済みかどうか
+
+	// GPUリソース関連
+	Microsoft::WRL::ComPtr <ID3D12Resource> instanceResource; // インスタンスリソース
+	InstanceData* instanceData = nullptr; // インスタンスデータ
+	uint32_t srvIndex = 0; // SRVのインデックス
+	const uint16_t kMaxInstanceCount = 1024; // インスタンスの最大数 2^10
+	uint16_t numInstance = 0; // インスタンスの数
 };
 
 // JSON用のシリアライズ・デシリアライズ定義
@@ -109,8 +126,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParticleInstance,
 	color, lifeTime, currentTime
 )
 
-NLOHMANN_JSON_SERIALIZE_ENUM(ParticleShape, {
-	{ParticleShape::PLANE, "PLANE"},       // デフォルト値 (万が一変な値が来た時はこれになる)
+NLOHMANN_JSON_SERIALIZE_ENUM(ParticleShape,
+	{
 	{ParticleShape::PLANE, "PLANE"},
 	{ParticleShape::RING, "RING"},
 	{ParticleShape::CYLINDER, "CYLINDER"},

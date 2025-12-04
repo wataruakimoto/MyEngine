@@ -10,8 +10,10 @@
 #include <memory>
 
 /// ===== 前方宣言 ===== ///
-class Camera;
 class TextureManager;
+class DirectXUtility;
+class SrvManager;
+class Camera;
 
 /// ===== パ＝ティクルマネージャー ===== ///
 class ParticleManager {
@@ -72,8 +74,8 @@ public:
 	/// <summary>
 	/// パーティクルの追加
 	/// </summary>
-	/// <param effectName="particle"></param>
-	void AddParticle(const ParticleInstance& particle);
+	/// <param effectName="instance">インスタンス</param>
+	void AddInstance(const ParticleInstance& instance);
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -113,6 +115,12 @@ private:
 	/// <param name="filePath">ファイルパス</param>
 	void LoadSettingsFromJSON(const std::string& filePath);
 
+	/// <summary>
+	/// グループのリソース作成
+	/// </summary>
+	/// <param name="group"></param>
+	void CreateGroupResource(ParticleGroupNew& group);
+
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
@@ -147,18 +155,24 @@ public:
 ///-------------------------------------------///
 private:
 
-	// カメラの借りポインタ
-	Camera* camera = nullptr;
-
 	// テクスチャマネージャーのインスタンス
 	TextureManager* textureManager;
+
+	// DirectXユーティリティのインスタンス
+	DirectXUtility* dxUtility;
+
+	// SRVマネージャーのインスタンス
+	SrvManager* srvManager;
+
+	// カメラの借りポインタ
+	Camera* camera = nullptr;
 
 	// 設定のコンテナ エフェクト名、設定
 	std::unordered_map<std::string, ParticleSetting> settings;
 
-	// パーティクルのコンテナ テクスチャのフルパス、パーティクルリスト
-	std::unordered_map<std::string, std::list<ParticleInstance>> planeGroups;
-	std::unordered_map<std::string, std::list<ParticleInstance>> cubeGroups;
+	// グループコンテナ  エフェクト名、グループ
+	std::unordered_map<std::string, ParticleGroupNew> planeGroups;
+	std::unordered_map<std::string, ParticleGroupNew> cubeGroups;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;

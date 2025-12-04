@@ -1,12 +1,18 @@
 #include "ParticleManager.h"
 #include "Texture/TextureManager.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "Camera.h"
 #include "MathVector.h"
+#include "MathMatrix.h"
 
+#include <numbers>
 #include <fstream>
 #include <cassert>
 #include <imgui.h>
 
 using namespace MathVector;
+using namespace MathMatrix;
 using namespace MathRandom;
 using namespace nlohmann;
 
@@ -14,6 +20,12 @@ void ParticleManager::Initialize() {
 
 	// テクスチャマネージャーのインスタンスを取得
 	textureManager = TextureManager::GetInstance();
+
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
+
+	// SRVマネージャーのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
 
 	// 板ポリのレンダラーを作成
 	planeRenderer = std::make_unique<PlaneRenderer>();
@@ -31,13 +43,68 @@ void ParticleManager::Initialize() {
 
 void ParticleManager::Update() {
 
-	// 全パーティクルコンテナの更新
-	for (auto& [textureFileName, particles] : planeGroups) {
-		UpdateParticles(particles);
-	}
+	// カメラからViewProjectionを受け取る
+	Matrix4x4 viewProjectionMatrix = camera->GetViewProjectionMatrix();
 
-	for (auto& [textureFileName, particles] : cubeGroups) {
-		UpdateParticles(particles);
+	// 180度回転行列を作成
+	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
+
+	// ビルボード行列を計算
+	Matrix4x4 billboardMatrix = backToFrontMatrix * camera->GetWorldMatrix();
+
+	// 行列の平行移動成分を排除する
+	billboardMatrix.m[3][0] = 0.0f;
+	billboardMatrix.m[3][1] = 0.0f;
+	billboardMatrix.m[3][2] = 0.0f;
+
+	// キューブの更新
+	for (auto& [key, group] : cubeGroups) {
+
+		// インスタンス数をリセット
+		group.numInstance = 0;
+
+		if (group.particles.empty()) continue;
+
+		// 各パーティクルの更新
+		UpdateParticles(group.particles);
+
+		for (const auto& particle : group.particles) {
+
+			// ワールド行列を初期化
+			Matrix4x4 worldMatrix = MakeIdentity4x4();
+
+			// ビルボードするなら
+			if (particle.setting->useBillboard) {
+
+				// Scale行列
+				Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.scale);
+
+				// Z軸回転行列
+				Matrix4x4 rotateZMatrix = MakeRotateZMatrix(particle.rotate.z);
+
+				// Translate行列
+				Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.translate);
+
+				// ワールド行列計算
+				worldMatrix = scaleMatrix * rotateZMatrix * billboardMatrix * translateMatrix;
+			}
+			else {
+
+				// ワールド行列計算
+				worldMatrix = MakeAffineMatrix(particle.scale, particle.rotate, particle.translate);
+			}
+
+			// ワールドビュー射影行列計算
+			Matrix4x4 wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);
+
+			// ずらしたあとの先頭から書き込む
+			group.instanceData[group.numInstance].world = worldMatrix;
+			group.instanceData[group.numInstance].WVP = wvpMatrix;
+			group.instanceData[group.numInstance].color = particle.color;
+
+			// インスタンス数をインクリメント
+			group.numInstance++;
+		}
 	}
 }
 
@@ -46,28 +113,24 @@ void ParticleManager::Draw() {
 	// カメラがないと描画できないのでアサート
 	assert(camera && "Camera is nullptr");
 
-	// フレームの最初に呼び出し
-	planeRenderer->BeginFrame();
-	cubeRenderer->BeginFrame();
-
 	// 板ポリのパーティクルコンテナの描画
-	for (auto& [textureFileName, particles] : planeGroups) {
+	for (auto& [textureFileName, group] : planeGroups) {
 
 		// リストが空なら描画しない
-		if (particles.empty()) continue;
+		if (group.particles.empty()) continue;
 
 		// 板ポリレンダラーで描画
-		planeRenderer->Draw(particles, *camera);
+		planeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
 
 	// キューブのパーティクルコンテナの描画
-	for (auto& [textureFileName, particles] : cubeGroups) {
+	for (auto& [textureFileName, group] : cubeGroups) {
 
 		// リストが空なら描画しない
-		if (particles.empty()) continue;
+		if (group.particles.empty()) continue;
 
 		// キューブレンダラーで描画
-		cubeRenderer->Draw(particles, *camera);
+		cubeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
 }
 
@@ -144,26 +207,40 @@ void ParticleManager::AddSetting(ParticleSetting& setting) {
 	settings[setting.effectName] = setting;
 }
 
-void ParticleManager::AddParticle(const ParticleInstance& particle) {
+void ParticleManager::AddInstance(const ParticleInstance& instance) {
 
-	std::string key = particle.setting->textureFullPath;
+	// フルパスを取得
+	std::string key = instance.setting->textureFullPath;
 
-#ifdef _DEBUG
-	OutputDebugStringA(("AddParticle: Key=" + key +
-		" Color: R=" + std::to_string(particle.color.x) +
-		" G=" + std::to_string(particle.color.y) +
-		" B=" + std::to_string(particle.color.z) + "\n").c_str());
-#endif
-
-	// ★形状を見て、入れる箱を変える
-	switch (particle.setting->shape) {
+	// 形状で分岐
+	switch (instance.setting->shape) {
 
 	case ParticleShape::PLANE:
-		planeGroups[key].push_back(particle);
+
+		// リソース未作成なら
+		if (!planeGroups[key].isResourceCreated) {
+
+			// リソース作成
+			CreateGroupResource(planeGroups[key]);
+		}
+
+		// グループのリストに追加
+		planeGroups[key].particles.push_back(instance);
+
 		break;
 
 	case ParticleShape::CUBE:
-		cubeGroups[key].push_back(particle);
+
+		// リソース未作成なら
+		if (!cubeGroups[key].isResourceCreated) {
+
+			// リソース作成
+			CreateGroupResource(cubeGroups[key]);
+		}
+
+		// グループのリストに追加
+		cubeGroups[key].particles.push_back(instance);
+
 		break;
 	}
 }
@@ -183,7 +260,7 @@ void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {
 			// 次のパーティクルへ
 			continue;
 		}
-		
+
 		// 0.0f(生まれたて) -> 1.0f(死ぬ直前)
 		float alphaRatio = 1.0f - (ite->currentTime / ite->lifeTime);
 
@@ -373,7 +450,7 @@ void ParticleManager::ShowParameters() {
 			// 寿命
 			instance.lifeTime = p.lifeTimeRandom ? RandomFloat(p.lifeTimeRange.min, p.lifeTimeRange.max) : p.lifeTime;
 
-			AddParticle(instance);
+			AddInstance(instance);
 		}
 	}
 
@@ -534,6 +611,35 @@ void ParticleManager::LoadSettingsFromJSON(const std::string& filePath) {
 
 	// マップに登録
 	settings[setting.effectName] = setting;
+}
+
+void ParticleManager::CreateGroupResource(ParticleGroupNew& group) {
+
+	// 既に作成済みなら何もしない
+	if (group.isResourceCreated) return;
+
+	/// === InstanceResourceを作る === ///
+	group.instanceResource = dxUtility->CreateBufferResource(sizeof(InstanceData) * group.kMaxInstanceCount);
+
+	/// === InstanceResourceにデータを書き込むためのアドレスを取得してInstanceDataに割り当てる === ///
+	group.instanceResource->Map(0, nullptr, reinterpret_cast<void**>(&group.instanceData));
+
+	/// === InstanceDataに初期値を書き込む === ///
+	for (uint32_t index = 0; index < group.kMaxInstanceCount; ++index) {
+
+		group.instanceData[index].WVP = MakeIdentity4x4(); // 単位行列を書き込む
+		group.instanceData[index].world = MakeIdentity4x4(); // 単位行列を書き込む
+		group.instanceData[index].color = { 1.0f,1.0f,1.0f,1.0f }; // 白を書き込む
+	}
+
+	// SRVインデックスを取得
+	group.srvIndex = srvManager->Allocate();
+
+	/// === SRVを作成 === ///
+	srvManager->CreateSRVforStructuredBuffer(group.srvIndex, group.instanceResource.Get(), group.kMaxInstanceCount, sizeof(InstanceData));
+
+	// リソースを作成済みにしておく
+	group.isResourceCreated = true;
 }
 
 ParticleManager* ParticleManager::instance = nullptr;

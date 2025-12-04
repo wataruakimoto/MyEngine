@@ -17,7 +17,7 @@ void DebugScene::Initialize() {
 
 	// エミッターの生成
 	particleEmitterRed = std::make_unique<Emitter>("PlayerDeathRed", 1.0f, 5);
-	particleEmitterBlue = std::make_unique<Emitter>("PlayerDeathBlue", 1.0f, 5);
+	particleEmitterBlue = std::make_unique<Emitter>("PlayerDeathBlue", 1.0f, 10);
 
 	// エミッターの初期化
 	particleEmitterRed->Initialize();

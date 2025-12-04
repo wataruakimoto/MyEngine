@@ -128,6 +128,6 @@ void Emitter::Emit() {
 		}
 
 		// マネージャーにインスタンスを追加
-		ParticleManager::GetInstance()->AddParticle(particle);
+		ParticleManager::GetInstance()->AddInstance(particle);
 	}
 }

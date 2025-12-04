@@ -28,91 +28,9 @@ void PlaneRenderer::Initialize() {
 
 	// マテリアルデータ生成
 	GenerateMaterialData();
-
-	// インスタンスデータ生成
-	GenerateInstanceData();
 }
 
-void PlaneRenderer::BeginFrame() {
-
-	// カウンターをリセット
-	currentInstanceIndex = 0;
-}
-
-void PlaneRenderer::Draw(const std::list<ParticleInstance>& particles, const Camera& camera) {
-
-	// リストが空なら何もしない
-	if (particles.empty()) return;
-
-	// 今回描画する数
-	uint32_t count = static_cast<uint32_t>(particles.size());
-
-	// 今回書き込むと最大数を超えてしまうなら
-	if (count + currentInstanceIndex >= kMaxInstanceCount) {
-
-		// 超えてしまったときの処理を行う
-
-		// 中止
-		assert(false);
-	}
-
-	//  インスタンスの数をカウント
-	uint32_t index = 0;
-
-	// カメラからViewProjectionを受け取る
-	Matrix4x4 viewProjectionMatrix = camera.GetViewProjectionMatrix();
-
-	// 180度回転行列を作成
-	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
-
-	// ビルボード行列を計算
-	Matrix4x4 billboardMatrix = backToFrontMatrix * camera.GetWorldMatrix();
-
-	// 行列の平行移動成分を排除する
-	billboardMatrix.m[3][0] = 0.0f;
-	billboardMatrix.m[3][1] = 0.0f;
-	billboardMatrix.m[3][2] = 0.0f;
-
-	for (const auto& particle : particles) {
-
-		// 現在のオフセットから今回の分加算する
-		uint32_t targetIndex = currentInstanceIndex + index;
-
-		// ワールド行列を初期化
-		Matrix4x4 worldMatrix = MakeIdentity4x4();
-
-		// ビルボードするなら
-		if (particle.setting->useBillboard) {
-
-			// Scale行列
-			Matrix4x4 scaleMatrix = MakeScaleMatrix(particle.scale);
-
-			// Z軸回転行列
-			Matrix4x4 rotateZMatrix = MakeRotateZMatrix(particle.rotate.z);
-
-			// Translate行列
-			Matrix4x4 translateMatrix = MakeTranslateMatrix(particle.translate);
-
-			// ワールド行列計算
-			worldMatrix = scaleMatrix * rotateZMatrix * billboardMatrix * translateMatrix;
-		}
-		else {
-
-			// ワールド行列計算
-			worldMatrix = MakeAffineMatrix(particle.scale, particle.rotate, particle.translate);
-		}
-
-		// ワールドビュー射影行列計算
-		Matrix4x4 wvpMatrix = Multiply(worldMatrix, viewProjectionMatrix);
-
-		// ずらしたあとの先頭から書き込む
-		instanceData[targetIndex].world = worldMatrix;
-		instanceData[targetIndex].WVP = wvpMatrix;
-		instanceData[targetIndex].color = particle.color;
-
-		// インスタンス数をインクリメント
-		index++;
-	}
+void PlaneRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -124,19 +42,13 @@ void PlaneRenderer::Draw(const std::list<ParticleInstance>& particles, const Cam
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
 	/// === InstanceDataのCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(srvIndex));
-
-	// パーティクルのテクスチャパスを取得 (同じテクスチャのリストなので先頭だけでOK)
-	std::string textureFullPath = particles.front().setting->textureFullPath;
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(instanceSrvIndex));
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(textureFullPath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
 
 	// 描画(DrawCall)
-	dxUtility->GetCommandList()->DrawIndexedInstanced(36, count, 0, 0, currentInstanceIndex);
-
-	// オフセット分を加算
-	currentInstanceIndex += count;
+	dxUtility->GetCommandList()->DrawIndexedInstanced(36, instanceCount, 0, 0, 0);
 }
 
 void PlaneRenderer::GenerateVertexData() {
@@ -214,27 +126,4 @@ void PlaneRenderer::GenerateMaterialData() {
 	/// === MaterialDataに初期値を書き込む === ///
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
-}
-
-void PlaneRenderer::GenerateInstanceData() {
-
-	/// === InstanceResourceを作る === ///
-	instanceResource = dxUtility->CreateBufferResource(sizeof(InstanceData) * kMaxInstanceCount);
-
-	/// === InstanceResourceにデータを書き込むためのアドレスを取得してInstanceDataに割り当てる === ///
-	instanceResource->Map(0, nullptr, reinterpret_cast<void**>(&instanceData));
-
-	/// === InstanceDataに初期値を書き込む === ///
-	for (uint32_t index = 0; index < kMaxInstanceCount; ++index) {
-
-		instanceData[index].WVP = MakeIdentity4x4(); // 単位行列を書き込む
-		instanceData[index].world = MakeIdentity4x4(); // 単位行列を書き込む
-		instanceData[index].color = { 1.0f,1.0f,1.0f,1.0f }; // 白を書き込む
-	}
-
-	// SRVインデックスを取得
-	srvIndex = srvManager->Allocate();
-
-	/// === SRVを作成 === ///
-	srvManager->CreateSRVforStructuredBuffer(srvIndex, instanceResource.Get(), kMaxInstanceCount, sizeof(InstanceData));
 }
