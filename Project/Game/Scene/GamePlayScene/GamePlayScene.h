@@ -2,6 +2,7 @@
 #include "BaseScene.h"
 #include "Collision/CollisionManager.h"
 #include "OffscreenRendering/FilterManager.h"
+#include "Particle/NEW/ParticleManager.h"
 #include "Particle/ParticleCommon.h"
 #include "Particle/ParticleSystem.h"
 #include "Player/Player.h"
@@ -137,6 +138,9 @@ private:
 
 	// フィルターマネージャのインスタンス
 	FilterManager* filterManager_ = FilterManager::GetInstance();
+
+	// パーティクルマネージャのインスタンス
+	ParticleManager* particleManager_ = ParticleManager::GetInstance();
 
 	// カメラ
 	std::unique_ptr<Camera> camera_ = nullptr;

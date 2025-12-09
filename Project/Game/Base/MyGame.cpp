@@ -4,6 +4,7 @@
 #include "ImGuiManager.h"
 #include "Particle/ParticleCommon.h"
 #include "Particle/ParticleSystem.h"
+#include "Particle/NEW/ParticleManager.h"
 #include "SceneManager.h"
 #include "SceneFactory.h"
 
@@ -21,6 +22,9 @@ void MyGame::Initialize() {
 
 	// パーティクルシステムの初期化
 	ParticleSystem::GetInstance()->Initialize();
+
+	// パーティクルマネージャの初期化
+	ParticleManager::GetInstance()->Initialize();
 }
 
 void MyGame::Update() {
@@ -78,6 +82,9 @@ void MyGame::Draw() {
 }
 
 void MyGame::Finalize() {
+
+	// パーティクルマネージャの終了
+	ParticleManager::GetInstance()->Finalize();
 
 	// パーティクルシステムの終了
 	ParticleSystem::GetInstance()->Finalize();

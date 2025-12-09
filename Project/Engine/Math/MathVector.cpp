@@ -18,13 +18,25 @@ Vector2 MathVector::Add(const Vector2& v1, const Vector2& v2) {
 
 Vector3 MathVector::Add(const Vector3& v1, const Vector3& v2) {
 
-	Vector3 resultAdd;
+	Vector3 result;
 
-	resultAdd.x = v1.x + v2.x;
-	resultAdd.y = v1.y + v2.y;
-	resultAdd.z = v1.z + v2.z;
+	result.x = v1.x + v2.x;
+	result.y = v1.y + v2.y;
+	result.z = v1.z + v2.z;
 
-	return resultAdd;
+	return result;
+}
+
+Vector4 MathVector::Add(const Vector4& v1, const Vector4& v2) {
+	
+	Vector4 result;
+
+	result.x = v1.x + v2.x;
+	result.y = v1.y + v2.y;
+	result.z = v1.z + v2.z;
+	result.w = v1.w + v2.w;
+
+	return result;
 }
 
 Vector2 MathVector::Subtract(const Vector2& v1, const Vector2& v2) {
@@ -39,24 +51,58 @@ Vector2 MathVector::Subtract(const Vector2& v1, const Vector2& v2) {
 
 Vector3 MathVector::Subtract(const Vector3& v1, const Vector3& v2) {
 
-	Vector3 resultSubtract;
+	Vector3 result;
 
-	resultSubtract.x = v1.x - v2.x;
-	resultSubtract.y = v1.y - v2.y;
-	resultSubtract.z = v1.z - v2.z;
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
 
-	return resultSubtract;
+	return result;
 }
 
-Vector3 MathVector::Multiply(float scalar, const Vector3& v) {
+Vector4 MathVector::Subtract(const Vector4& v1, const Vector4& v2) {
+	
+	Vector4 result;
 
-	Vector3 resultMultiply;
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	result.w = v1.w - v2.w;
 
-	resultMultiply.x = v.x * scalar;
-	resultMultiply.y = v.y * scalar;
-	resultMultiply.z = v.z * scalar;
+	return result;
+}
 
-	return resultMultiply;
+Vector2 MathVector::Multiply(float s, const Vector2& v) {
+	
+	Vector2 result;
+
+	result.x = v.x * s;
+	result.y = v.y * s;
+
+	return result;
+}
+
+Vector3 MathVector::Multiply(float s, const Vector3& v) {
+
+	Vector3 result;
+
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+
+	return result;
+}
+
+Vector4 MathVector::Multiply(float s, const Vector4& v) {
+	
+	Vector4 result;
+
+	result.x = v.x * s;
+	result.y = v.y * s;
+	result.z = v.z * s;
+	result.w = v.w * s;
+
+	return result;
 }
 
 float MathVector::Length(float f1, float f2) {
@@ -73,12 +119,22 @@ float MathVector::Length(const Vector3& v) {
 	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
+float MathVector::Length(const Vector4& v) {
+	
+	return sqrtf(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+}
+
 float MathVector::Distance(const Vector2& v1, const Vector2& v2) {
 	
 	return Length(v2 - v1);
 }
 
 float MathVector::Distance(const Vector3& v1, const Vector3& v2) {
+	
+	return Length(v2 - v1);
+}
+
+float MathVector::Distance(const Vector4& v1, const Vector4& v2) {
 	
 	return Length(v2 - v1);
 }
@@ -174,6 +230,7 @@ Vector2 MathVector::operator+(const Vector2& v) {
 }
 
 Vector2& MathVector::operator+=(Vector2& v1, const Vector2& v2) {
+
 	v1.x += v2.x;
 	v1.y += v2.y;
 
@@ -181,17 +238,40 @@ Vector2& MathVector::operator+=(Vector2& v1, const Vector2& v2) {
 }
 
 Vector3 MathVector::operator+(const Vector3& v1, const Vector3& v2) {
+
 	return Add(v1, v2);
 }
 
 Vector3 MathVector::operator+(const Vector3& v) {
+
 	return v;
 }
 
 Vector3& MathVector::operator+=(Vector3& v1, const Vector3& v2) {
+
 	v1.x += v2.x;
 	v1.y += v2.y;
 	v1.z += v2.z;
+
+	return v1;
+}
+
+Vector4 MathVector::operator+(const Vector4& v1, const Vector4& v2) {
+	
+	return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z, v1.w + v2.w };
+}
+
+Vector4 MathVector::operator+(const Vector4& v) {
+	
+	return v;
+}
+
+Vector4& MathVector::operator+=(Vector4& v1, const Vector4& v2) {
+	
+	v1.x += v2.x;
+	v1.y += v2.y;
+	v1.z += v2.z;
+	v1.w += v2.w;
 
 	return v1;
 }
@@ -201,7 +281,12 @@ Vector2 MathVector::operator-(const Vector2& v1, const Vector2& v2) {
 	return Subtract(v1, v2);
 }
 
-Vector2 MathVector::operator-=(Vector2& v1, const Vector2& v2) {
+Vector2 MathVector::operator-(const Vector2& v) {
+	
+	return { -v.x, -v.y };
+}
+
+Vector2& MathVector::operator-=(Vector2& v1, const Vector2& v2) {
 	
 	v1.x -= v2.x;
 	v1.y -= v2.y;
@@ -210,17 +295,40 @@ Vector2 MathVector::operator-=(Vector2& v1, const Vector2& v2) {
 }
 
 Vector3 MathVector::operator-(const Vector3& v1, const Vector3& v2) {
+
 	return Subtract(v1, v2);
 }
 
 Vector3 MathVector::operator-(const Vector3& v) {
+
 	return { -v.x, -v.y, -v.z };
 }
 
 Vector3& MathVector::operator-=(Vector3& v1, const Vector3& v2) {
+
 	v1.x -= v2.x;
 	v1.y -= v2.y;
 	v1.z -= v2.z;
+
+	return v1;
+}
+
+Vector4 MathVector::operator-(const Vector4& v1, const Vector4& v2) {
+	
+	return { v1.x - v2.x, v1.y - v2.y, v1.z - v2.z, v1.w - v2.w };
+}
+
+Vector4 MathVector::operator-(const Vector4& v) {
+	
+	return { -v.x, -v.y, -v.z, -v.w };
+}
+
+Vector4& MathVector::operator-=(Vector4& v1, const Vector4& v2) {
+	
+	v1.x -= v2.x;
+	v1.y -= v2.y;
+	v1.z -= v2.z;
+	v1.w -= v2.w;
 
 	return v1;
 }
@@ -230,15 +338,31 @@ Vector2 MathVector::operator*(float s, const Vector2& v) {
 	return { v.x * s, v.y * s };
 }
 
+Vector2 MathVector::operator*(const Vector2& v, float s) {
+	
+	return s * v;
+}
+
+Vector2& MathVector::operator*=(Vector2& v, float s) {
+	
+	v.x *= s;
+	v.y *= s;
+
+	return v;
+}
+
 Vector3 MathVector::operator*(float s, const Vector3& v) {
+
 	return Multiply(s, v);
 }
 
 Vector3 MathVector::operator*(const Vector3& v, float s) {
+
 	return s * v;
 }
 
 Vector3& MathVector::operator *= (Vector3 & v, float s) {
+
 	v.x *= s;
 	v.y *= s;
 	v.z *= s;
@@ -246,14 +370,64 @@ Vector3& MathVector::operator *= (Vector3 & v, float s) {
 	return v;
 }
 
+Vector4 MathVector::operator*(float s, const Vector4& v) {
+	
+	return { v.x * s, v.y * s, v.z * s, v.w * s };
+}
+
+Vector4 MathVector::operator*(const Vector4& v, float s) {
+	
+	return s * v;
+}
+
+Vector4& MathVector::operator*=(Vector4& v, float s) {
+	
+	v.x *= s;
+	v.y *= s;
+	v.z *= s;
+	v.w *= s;
+
+	return v;
+}
+
+Vector2 MathVector::operator/(const Vector2& v, float s) {
+	
+	return Multiply(1.0f / s, v);
+}
+
+Vector2& MathVector::operator/=(Vector2& v, float s) {
+	
+	v.x /= s;
+	v.y /= s;
+
+	return v;
+}
+
 Vector3 MathVector::operator/(const Vector3& v, float s) {
+
 	return Multiply(1.0f / s, v);
 }
 
 Vector3& MathVector::operator/=(Vector3& v, float s) {
+
 	v.x /= s;
 	v.y /= s;
 	v.z /= s;
+
+	return v;
+}
+
+Vector4 MathVector::operator/(const Vector4& v, float s) {
+	
+	return Multiply(1.0f / s, v);
+}
+
+Vector4& MathVector::operator/=(Vector4& v, float s) {
+	
+	v.x /= s;
+	v.y /= s;
+	v.z /= s;
+	v.w /= s;
 
 	return v;
 }

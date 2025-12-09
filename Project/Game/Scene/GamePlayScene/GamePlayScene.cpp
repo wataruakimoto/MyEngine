@@ -27,14 +27,16 @@ void GamePlayScene::Initialize() {
 	SkyboxCommon::GetInstance()->SetDefaultCamera(camera_.get());
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 
+	particleManager_->SetCamera(camera_.get());
+
 	// パーティクルシステムの初期化
 	particleSystem->SetCamera(camera_.get());
-	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleType::CUBE);
-	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleType::CUBE);
-	particleSystem->CreateParticleGroup("White", "Resources/White.png", ParticleType::CUBE);
-	particleSystem->CreateParticleGroup("Black", "Resources/Black.png", ParticleType::CUBE);
-	particleSystem->CreateParticleGroup("Bullet", "Resources/Blue.png", ParticleType::SHARD);
-	particleSystem->CreateParticleGroup("BulletEnemy", "Resources/Red.png", ParticleType::SHARD);
+	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleShape::CUBE);
+	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleShape::CUBE);
+	particleSystem->CreateParticleGroup("White", "Resources/White.png", ParticleShape::CUBE);
+	particleSystem->CreateParticleGroup("Black", "Resources/Black.png", ParticleShape::CUBE);
+	particleSystem->CreateParticleGroup("Bullet", "Resources/Blue.png", ParticleShape::SHARD);
+	particleSystem->CreateParticleGroup("BulletEnemy", "Resources/Red.png", ParticleShape::SHARD);
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();
@@ -293,6 +295,9 @@ void GamePlayScene::Update() {
 	collisionManager_->Update();
 
 	// パーティクルシステムの更新
+	particleManager_->Update();
+
+	// パーティクルシステムの更新
 	particleSystem->Update();
 
 	// ゴールの更新
@@ -353,6 +358,9 @@ void GamePlayScene::Draw() {
 
 	/// === パーティクルの描画準備 === ///
 	particleCommon->SettingDrawing();
+
+	// パーティクルシステムの描画
+	particleManager_->Draw();
 
 	// パーティクルシステムの描画
 	particleSystem->Draw();
@@ -433,6 +441,8 @@ void GamePlayScene::ShowImGui() {
 	whiteFade_->ShowImGui();
 
 	filterManager_->ShowImGui();
+
+	particleManager_->ShowImGui();
 
 	particleSystem->ShowImGui("ParticleSystem");
 

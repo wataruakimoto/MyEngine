@@ -5,12 +5,14 @@
 #include "Collision/CollisionTypeIDDef.h"
 #include "Reticle/Reticle3D.h"
 #include "MathVector.h"
+#include "Easing.h"
 
 #include <list>
 #include <algorithm>
 #include <imgui.h>
 
 using namespace MathVector;
+using namespace Easing;
 
 void Player::Initialize() {
 
@@ -324,6 +326,31 @@ void Player::Fire() {
 
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddPlayerBullet(std::move(bullet));
+
+	// 射撃アニメーション開始
+	isFiring_ = true;
+	fireTimer_ = kFireDuration_; // タイマーをリセット
+	object->SetScale(fireScale_);
+}
+
+void Player::FireAnimationUpdate() {
+
+	// デルタタイム分デクリメント
+	fireTimer_ -= 1.0f / 60.0f;
+
+	float t = 1.0f - (fireTimer_ / kFireDuration_); // 経過割合を計算
+	float easedT = EaseOutCubic(t); // イージング適用
+	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
+
+	// スケールを設定
+	object->SetScale(newScale);
+
+	// タイマーが0以下になったら
+	if (fireTimer_ <= 0.0f) {
+
+		isFiring_ = false; // 射撃アニメーション終了
+		newScale = defaultScale_; // スケールをデフォルトに戻す
+	}
 }
 
 void Player::MoveToReticle() {
@@ -377,29 +404,25 @@ void Player::AutoPilotUpdate() {
 }
 
 void Player::ManualInitialize() {
-
-	// タイマーリセット
-	fireTimer = 60.0f * 0.4f;
 }
 
 void Player::ManualUpdate() {
 
 	// タイマーが0以下なら
-	if (fireTimer <= 0) {
+	if (fireTimer_ <= 0) {
 
 		// スペースキーが押されたら
 		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 
+			// 射撃7676
 			Fire();
-
-			// タイマーをリセット
-			fireTimer = 60.0f * 0.4f;
 		}
 	}
-	else {
+	
+	if (isFiring_) {
 
-		// タイマーをデクリメント
-		fireTimer--;
+		// 射撃アニメーション更新
+		FireAnimationUpdate();
 	}
 
 	// レティクルに向かって移動

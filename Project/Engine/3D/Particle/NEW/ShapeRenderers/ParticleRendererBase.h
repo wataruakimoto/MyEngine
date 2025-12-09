@@ -1,18 +1,19 @@
 #pragma once
 
+#include "Particle/New/ParticleData.h"
 #include "Data/VertexData.h"
-#include "Matrix4x4.h"
-#include "ParticleSystem.h"
 
+#include <list>
 #include <d3d12.h>
-#include <stdint.h>
 #include <wrl.h>
 
 /// === 前方宣言 === ///
 class DirectXUtility;
+class SrvManager;
+class TextureManager;
 
-/// === パーティクルタイプの基底クラス === ///
-class BaseParticleType {
+/// ===== パーティクル描画用の抽象基底クラス ===== ///
+class ParticleRendererBase {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -22,7 +23,7 @@ public:
 	/// <summary>
 	/// 仮想デストラクタ
 	/// </summary>
-	virtual ~BaseParticleType() = default;
+	virtual ~ParticleRendererBase() = default;
 
 	/// <summary>
 	/// 初期化
@@ -37,7 +38,10 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	virtual void Draw(ParticleGroup* group) = 0;
+	/// <param name="instanceCount">インスタンス数</param>
+	/// <param name="instanceSrvIndex">インスタンス用SRVインデックス</param>
+	/// <param name="texturePath">テクスチャパス</param>
+	virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) = 0;
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -64,6 +68,15 @@ protected:
 ///-------------------------------------------///
 protected:
 
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility = nullptr;
+
+	// SrvManagerのインスタンス
+	SrvManager* srvManager = nullptr;
+
+	// TextureManagerのインスタンス
+	TextureManager* textureManager = nullptr;
+
 	// 頂点リソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
 
@@ -87,7 +100,4 @@ protected:
 
 	// マテリアルデータ
 	Material* materialData = nullptr;
-
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility = nullptr;
 };

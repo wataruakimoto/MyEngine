@@ -110,6 +110,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Math\Easing.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\CylinderRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\CubeRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\Emitter.cpp" />
+    <ClCompile Include="Engine\Math\MathRandom.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
     <ClCompile Include="Engine\3D\Particle\CubeParticle.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
@@ -192,8 +197,19 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\UI\ResultUI.cpp" />
     <ClCompile Include="Engine\3D\Particle\SpherePariticle.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShardParticle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\ParticleManager.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\PlaneRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\RingRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\ShardRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Math\Easing.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\CylinderRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\CubeRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\Emitter.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\ParticleRendererBase.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ParticleData.h" />
+    <ClInclude Include="Engine\Math\MathRandom.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -293,6 +309,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\GraphicsPipelineCreater.h" />
     <ClInclude Include="Engine\3D\Particle\SpherePariticle.h" />
     <ClInclude Include="Engine\3D\Particle\ShardParticle.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ParticleManager.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\PlaneRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\RingRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\ShardRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -64,10 +64,6 @@ private:
 	/// </summary>
 	void AnimationUpdate();
 
-	static float EaseOutCubic(float t);
-
-	static float EaseInCubic(float t);
-
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///

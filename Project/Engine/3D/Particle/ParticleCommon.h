@@ -84,7 +84,7 @@ public:
 	/// <summary>
 	/// デフォルトカメラのセッター
 	/// </summary>
-	/// <param name="camera">カメラ</param>
+	/// <param effectName="camera">カメラ</param>
 	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
 
 ///-------------------------------------------/// 

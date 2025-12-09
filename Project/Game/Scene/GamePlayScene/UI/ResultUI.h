@@ -60,8 +60,6 @@ private:
 	/// </summary>
 	void AnimationUpdate();
 
-	static float EaseOutQuart(float t);
-
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///

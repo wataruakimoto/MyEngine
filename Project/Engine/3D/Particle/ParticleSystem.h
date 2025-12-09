@@ -5,6 +5,7 @@
 #include "Vector4.h"
 #include "Matrix4x4.h"
 #include "Particle.h"
+#include "NEW/ParticleData.h"
 
 #include <d3d12.h>
 #include <random>
@@ -25,16 +26,6 @@ struct ParticleForGPU {
 	Vector4 color;
 };
 
-// パーティクルの種類
-enum class ParticleType {
-	PLANE,
-	RING,
-	CYLINDER,
-	CUBE,
-	SPHERE,
-	SHARD,
-};
-
 // パーティクルグループ
 struct ParticleGroup {
 	std::string textureFilePath; // テクスチャファイルパス
@@ -43,7 +34,7 @@ struct ParticleGroup {
 	Microsoft::WRL::ComPtr <ID3D12Resource> particleResource; // パーティクルリソース
 	ParticleForGPU* particleData; // パーティクルデータ
 	uint32_t numInstance = 0; // インスタンスの数
-	ParticleType particleType; // パーティクルの種類
+	ParticleShape particleType; // パーティクルの種類
 	BaseParticleType* particleTypeClass; // パーティクルの種類クラス
 };
 
@@ -94,15 +85,15 @@ public:
 	/// <summary>
 	/// ImGui表示
 	/// </summary>
-	/// <param name="name"></param>
+	/// <param effectName="effectName"></param>
 	void ShowImGui(const char* name);
 
 	/// <summary>
 	/// パーティクルグループの生成
 	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="textureFilePath"></param>
-	void CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleType type);
+	/// <param effectName="effectName"></param>
+	/// <param effectName="textureFilePath"></param>
+	void CreateParticleGroup(const std::string name, const std::string textureFilePath, ParticleShape type);
 
 	/// <summary>
 	/// パーティクルの発生
@@ -140,7 +131,7 @@ public:
 	/// <summary>
 	/// カメラのセッター
 	/// </summary>
-	/// <param name="camera">カメラ</param>
+	/// <param effectName="camera">カメラ</param>
 	void SetCamera(Camera* camera) { this->camera = camera; }
 
 ///-------------------------------------------/// 
