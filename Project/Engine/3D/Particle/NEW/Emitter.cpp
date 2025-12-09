@@ -13,14 +13,14 @@ void Emitter::Initialize() {
 
 void Emitter::Update() {
 
-	// タイマー更新
-	timer += deltaTime;
-
-	// 発生頻度を超えたらパーティクル発生
-	if (timer >= frequency) {
-		Emit();
-		timer = 0.0f;
-	}
+	//// タイマー更新
+	//timer += deltaTime;
+	//
+	//// 発生頻度を超えたらパーティクル発生
+	//if (timer >= frequency) {
+	//	Emit();
+	//	timer = 0.0f;
+	//}
 
 	// ワールド変換の更新
 	worldTransform.UpdateMatrix();
@@ -71,12 +71,12 @@ void Emitter::Emit() {
 		if (setting->translateRandom) {
 
 			// 範囲からランダム生成
-			particle.translate = RandomVector3(setting->translateRange) + worldTransform.GetWorldPosition();
+			particle.translate = RandomVector3(setting->translateRange) + worldTransform.GetTranslate();
 		}
 		else {
 
 			// 固定値を代入
-			particle.translate = setting->translate + worldTransform.GetWorldPosition();
+			particle.translate = setting->translate + worldTransform.GetTranslate();
 		}
 
 		// 速度の設定

@@ -196,6 +196,49 @@ void ParticleManager::ShowImGui() {
 
 	ImGui::End();
 
+	ImGui::Begin("Particle Instances");
+
+	// グループコンテナのリスト
+	struct GroupContainerInfo {
+		const char* name;
+		std::unordered_map<std::string, ParticleGroupNew>* container;
+	} containers[] = {
+		{ "Plane", &planeGroups },
+		{ "Ring", &ringGroups },
+		{ "Cylinder", &cylinderGroups },
+		{ "Cube", &cubeGroups },
+		{ "Shard", &shardGroups },
+	};
+
+	for (const auto& containerInfo : containers) {
+		if (ImGui::TreeNode(containerInfo.name)) {
+			for (const auto& [textureKey, group] : *containerInfo.container) {
+				std::string groupLabel = textureKey + " (" + std::to_string(group.particles.size()) + " instances)";
+				if (ImGui::TreeNodeEx(groupLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+					int idx = 0;
+					for (const auto& inst : group.particles) {
+						std::string instLabel = "Instance " + std::to_string(idx);
+						if (ImGui::TreeNodeEx(instLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+							ImGui::Text("Scale:      (%.2f, %.2f, %.2f)", inst.scale.x, inst.scale.y, inst.scale.z);
+							ImGui::Text("Rotate:     (%.2f, %.2f, %.2f)", inst.rotate.x, inst.rotate.y, inst.rotate.z);
+							ImGui::Text("Translate:  (%.2f, %.2f, %.2f)", inst.translate.x, inst.translate.y, inst.translate.z);
+							ImGui::Text("Velocity:   (%.2f, %.2f, %.2f)", inst.velocity.x, inst.velocity.y, inst.velocity.z);
+							ImGui::Text("Acceleration:(%.2f, %.2f, %.2f)", inst.acceleration.x, inst.acceleration.y, inst.acceleration.z);
+							ImGui::Text("Color:      (%.2f, %.2f, %.2f, %.2f)", inst.color.x, inst.color.y, inst.color.z, inst.color.w);
+							ImGui::Text("LifeTime:   %.2f", inst.lifeTime);
+							ImGui::Text("CurrentTime:%.2f", inst.currentTime);
+							ImGui::TreePop();
+						}
+						++idx;
+					}
+					ImGui::TreePop();
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
+	ImGui::End();
+
 #endif // USE_IMGUI
 }
 
