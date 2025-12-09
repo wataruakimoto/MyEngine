@@ -33,8 +33,8 @@ void Enemy::Initialize() {
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemy));
 
 	// エミッタ生成
-	particleEmitterBlack = std::make_unique<Emitter>("EnemyDeathBlack", 0.0f, 40);
-	particleEmitterWhite = std::make_unique<Emitter>("EnemyDeathWhite", 0.0f, 10);
+	particleEmitterBlack = std::make_unique<ParticleEmitter>("EnemyDeathBlack", 0.0f, 40);
+	particleEmitterWhite = std::make_unique<ParticleEmitter>("EnemyDeathWhite", 0.0f, 10);
 }
 
 void Enemy::Update() {

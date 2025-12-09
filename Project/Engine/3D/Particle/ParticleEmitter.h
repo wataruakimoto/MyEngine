@@ -5,7 +5,7 @@
 #include <string>
 
 /// ===== パーティクルエミッター ===== ///
-class Emitter {
+class ParticleEmitter {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -16,7 +16,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="effectName">エフェクト名</param>
-	Emitter(std::string	effectName, float frequency, uint32_t count) :
+	ParticleEmitter(std::string	effectName, float frequency, uint32_t count) :
 		effectName(effectName),
 		frequency(frequency),
 		count(count) {

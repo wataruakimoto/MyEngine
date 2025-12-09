@@ -92,7 +92,7 @@ struct ParticleInstance {
 };
 
 // パーティクルのグループデータ
-struct ParticleGroupNew {
+struct ParticleGroup {
 
 	std::list<ParticleInstance> particles; // パーティクルのリスト
 	bool isResourceCreated = false; // リソースが作成済みかどうか

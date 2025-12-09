@@ -98,7 +98,7 @@
     <ClCompile Include="Engine\Base\GraphicsPipelineCreater.cpp" />
     <ClCompile Include="Engine\Math\MathRandom.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleManager.cpp" />
-    <ClCompile Include="Engine\3D\Particle\Emitter.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\RingRenderer.cpp" />
@@ -200,7 +200,7 @@
     <ClInclude Include="Engine\3D\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleData.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ParticleRendererBase.h" />
-    <ClInclude Include="Engine\3D\Particle\Emitter.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\RingRenderer.h" />

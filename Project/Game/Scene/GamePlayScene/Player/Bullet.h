@@ -4,7 +4,7 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
-#include "Particle/Emitter.h"
+#include "Particle/ParticleEmitter.h"
 #include "Data/Transform.h"
 
 #include <memory>
@@ -90,5 +90,5 @@ private:
 	bool isDead = false;
 
 	// エミッターのポインタ
-	std::unique_ptr <Emitter> particleEmitter = nullptr;
+	std::unique_ptr <ParticleEmitter> particleEmitter = nullptr;
 };

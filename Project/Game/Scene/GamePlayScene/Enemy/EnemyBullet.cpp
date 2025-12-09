@@ -29,7 +29,7 @@ void EnemyBullet::Initialize() {
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet));
 
 	// エミッターの生成
-	particleEmitter = std::make_unique<Emitter>("BulletRed", 0.2f, 20);
+	particleEmitter = std::make_unique<ParticleEmitter>("BulletRed", 0.2f, 20);
 	particleEmitter->Initialize();
 };
 
