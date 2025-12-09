@@ -97,7 +97,7 @@ void ParticleManager::Draw() {
 	for (auto& [textureFileName, group] : planeGroups) {
 
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// 板ポリレンダラーで描画
 		planeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
@@ -105,16 +105,20 @@ void ParticleManager::Draw() {
 
 	// リングのパーティクルコンテナの描画
 	for (auto& [textureFileName, group] : ringGroups) {
+
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
 		// リングレンダラーで描画
 		ringRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
 
 	// シリンダーのパーティクルコンテナの描画
 	for (auto& [textureFileName, group] : cylinderGroups) {
+
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
 		// シリンダーレンダラーで描画
 		cylinderRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
@@ -123,7 +127,7 @@ void ParticleManager::Draw() {
 	for (auto& [textureFileName, group] : cubeGroups) {
 
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// キューブレンダラーで描画
 		cubeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
@@ -131,8 +135,10 @@ void ParticleManager::Draw() {
 
 	// シャードのパーティクルコンテナの描画
 	for (auto& [textureFileName, group] : shardGroups) {
+
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
 		// シャードレンダラーで描画
 		shardRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
