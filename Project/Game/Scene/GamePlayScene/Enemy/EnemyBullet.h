@@ -90,11 +90,5 @@ private:
 	bool isDead = false;
 
 	// エミッターのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitter = nullptr;
-
-	// エミッタ変換データ
-	Transform emitterTransform = {};
-
-	// パーティクル設定
-	Particle particleSetting = {};
+	std::unique_ptr<ParticleEmitter> particleEmitter = nullptr;
 };

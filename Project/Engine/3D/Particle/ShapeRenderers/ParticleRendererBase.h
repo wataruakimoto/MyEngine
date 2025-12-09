@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Particle/New/ParticleData.h"
+#include "Particle/ParticleData.h"
 #include "Data/VertexData.h"
 
 #include <list>

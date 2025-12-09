@@ -97,7 +97,7 @@ void ParticleManager::Draw() {
 	for (auto& [textureFileName, group] : planeGroups) {
 
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// 板ポリレンダラーで描画
 		planeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
@@ -105,16 +105,20 @@ void ParticleManager::Draw() {
 
 	// リングのパーティクルコンテナの描画
 	for (auto& [textureFileName, group] : ringGroups) {
+
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
 		// リングレンダラーで描画
 		ringRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
 
 	// シリンダーのパーティクルコンテナの描画
 	for (auto& [textureFileName, group] : cylinderGroups) {
+
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
 		// シリンダーレンダラーで描画
 		cylinderRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
@@ -123,7 +127,7 @@ void ParticleManager::Draw() {
 	for (auto& [textureFileName, group] : cubeGroups) {
 
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// キューブレンダラーで描画
 		cubeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
@@ -131,8 +135,10 @@ void ParticleManager::Draw() {
 
 	// シャードのパーティクルコンテナの描画
 	for (auto& [textureFileName, group] : shardGroups) {
+
 		// リストが空なら描画しない
-		if (group.particles.empty()) continue;
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
 		// シャードレンダラーで描画
 		shardRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
@@ -194,6 +200,49 @@ void ParticleManager::ShowImGui() {
 	// ============================================================
 	ImGui::Columns(1);
 
+	ImGui::End();
+
+	ImGui::Begin("Particle Instances");
+
+	// グループコンテナのリスト
+	struct GroupContainerInfo {
+		const char* name;
+		std::unordered_map<std::string, ParticleGroup>* container;
+	} containers[] = {
+		{ "Plane", &planeGroups },
+		{ "Ring", &ringGroups },
+		{ "Cylinder", &cylinderGroups },
+		{ "Cube", &cubeGroups },
+		{ "Shard", &shardGroups },
+	};
+
+	for (const auto& containerInfo : containers) {
+		if (ImGui::TreeNode(containerInfo.name)) {
+			for (const auto& [textureKey, group] : *containerInfo.container) {
+				std::string groupLabel = textureKey + " (" + std::to_string(group.particles.size()) + " instances)";
+				if (ImGui::TreeNodeEx(groupLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+					int idx = 0;
+					for (const auto& inst : group.particles) {
+						std::string instLabel = "Instance " + std::to_string(idx);
+						if (ImGui::TreeNodeEx(instLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+							ImGui::Text("Scale:      (%.2f, %.2f, %.2f)", inst.scale.x, inst.scale.y, inst.scale.z);
+							ImGui::Text("Rotate:     (%.2f, %.2f, %.2f)", inst.rotate.x, inst.rotate.y, inst.rotate.z);
+							ImGui::Text("Translate:  (%.2f, %.2f, %.2f)", inst.translate.x, inst.translate.y, inst.translate.z);
+							ImGui::Text("Velocity:   (%.2f, %.2f, %.2f)", inst.velocity.x, inst.velocity.y, inst.velocity.z);
+							ImGui::Text("Acceleration:(%.2f, %.2f, %.2f)", inst.acceleration.x, inst.acceleration.y, inst.acceleration.z);
+							ImGui::Text("Color:      (%.2f, %.2f, %.2f, %.2f)", inst.color.x, inst.color.y, inst.color.z, inst.color.w);
+							ImGui::Text("LifeTime:   %.2f", inst.lifeTime);
+							ImGui::Text("CurrentTime:%.2f", inst.currentTime);
+							ImGui::TreePop();
+						}
+						++idx;
+					}
+					ImGui::TreePop();
+				}
+			}
+			ImGui::TreePop();
+		}
+	}
 	ImGui::End();
 
 #endif // USE_IMGUI
@@ -320,7 +369,7 @@ void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {
 	}
 }
 
-void ParticleManager::UpdateGroups(std::unordered_map<std::string, ParticleGroupNew>& groups) {
+void ParticleManager::UpdateGroups(std::unordered_map<std::string, ParticleGroup>& groups) {
 
 	for (auto& [key, group] : groups) {
 
@@ -727,7 +776,7 @@ void ParticleManager::LoadSettingsFromJSON(const std::string& filePath) {
 	settings[setting.effectName] = setting;
 }
 
-void ParticleManager::CreateGroupResource(ParticleGroupNew& group) {
+void ParticleManager::CreateGroupResource(ParticleGroup& group) {
 
 	// 既に作成済みなら何もしない
 	if (group.isResourceCreated) return;

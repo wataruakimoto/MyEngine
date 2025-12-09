@@ -91,10 +91,4 @@ private:
 
 	// エミッターのポインタ
 	std::unique_ptr <ParticleEmitter> particleEmitter = nullptr;
-
-	// エミッタ変換データ
-	Transform emitterTransform = {};
-
-	// パーティクル設定
-	Particle particleSetting = {};
 };

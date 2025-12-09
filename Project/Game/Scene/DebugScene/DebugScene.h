@@ -3,8 +3,8 @@
 #include "BaseScene.h"
 #include "Camera.h"
 #include "Particle/ParticleCommon.h"
-#include "Particle/NEW/ParticleManager.h"
-#include "Particle/NEW/Emitter.h"
+#include "Particle/ParticleManager.h"
+#include "Particle/ParticleEmitter.h"
 
 #include <memory>
 
@@ -56,6 +56,6 @@ private:
 	ParticleManager* particleManager = ParticleManager::GetInstance();
 
 	// エミッターのポインタ
-	std::unique_ptr<Emitter> particleEmitterRed = nullptr;
-	std::unique_ptr<Emitter> particleEmitterBlue = nullptr;
+	std::unique_ptr<ParticleEmitter> particleEmitterRed = nullptr;
+	std::unique_ptr<ParticleEmitter> particleEmitterBlue = nullptr;
 };

@@ -5,7 +5,6 @@
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleEmitter.h"
-#include "Data/Transform.h"
 
 #include <memory>
 
@@ -122,8 +121,4 @@ private:
 
 	// エミッターWhiteのポインタ
 	std::unique_ptr <ParticleEmitter> particleEmitterWhite = nullptr;
-
-	Transform EmitterTransform1 = {};
-
-	Particle particleSetting = {};
 };

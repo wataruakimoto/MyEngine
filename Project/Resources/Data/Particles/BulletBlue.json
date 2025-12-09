@@ -38,8 +38,8 @@
             "z": 0.0
         }
     },
-    "effectName": "BulletRed",
-    "lifeTime": 0.5,
+    "effectName": "BulletBlue",
+    "lifeTime": 1.0,
     "lifeTimeRandom": false,
     "lifeTimeRange": {
         "max": 0.0,
@@ -82,8 +82,8 @@
         }
     },
     "shape": "SHARD",
-    "textureFileName": "Red.png",
-    "textureFullPath": "Resources/Texture/Particles/Red.png",
+    "textureFileName": "Blue.png",
+    "textureFullPath": "Resources/Texture/Particles/Blue.png",
     "translate": {
         "x": 0.0,
         "y": 0.0,

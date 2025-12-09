@@ -95,7 +95,7 @@ private:
 	/// グループコンテナの更新
 	/// </summary>
 	/// <param name="groups"></param>
-	void UpdateGroups(std::unordered_map<std::string, ParticleGroupNew>& groups);
+	void UpdateGroups(std::unordered_map<std::string, ParticleGroup>& groups);
 
 	/// <summary>
 	/// JSONからパーティクル設定を全て読み込み
@@ -128,7 +128,7 @@ private:
 	/// グループのリソース作成
 	/// </summary>
 	/// <param name="group"></param>
-	void CreateGroupResource(ParticleGroupNew& group);
+	void CreateGroupResource(ParticleGroup& group);
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -180,11 +180,11 @@ private:
 	std::unordered_map<std::string, ParticleSetting> settings;
 
 	// グループコンテナ  エフェクト名、グループ
-	std::unordered_map<std::string, ParticleGroupNew> planeGroups;
-	std::unordered_map<std::string, ParticleGroupNew> ringGroups;
-	std::unordered_map<std::string, ParticleGroupNew> cylinderGroups;
-	std::unordered_map<std::string, ParticleGroupNew> cubeGroups;
-	std::unordered_map<std::string, ParticleGroupNew> shardGroups;
+	std::unordered_map<std::string, ParticleGroup> planeGroups;
+	std::unordered_map<std::string, ParticleGroup> ringGroups;
+	std::unordered_map<std::string, ParticleGroup> cylinderGroups;
+	std::unordered_map<std::string, ParticleGroup> cubeGroups;
+	std::unordered_map<std::string, ParticleGroup> shardGroups;
 
 	// Δt
 	const float kDeltaTime = 1.0f / 60.0f;

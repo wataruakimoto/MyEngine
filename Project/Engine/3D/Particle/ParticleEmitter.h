@@ -1,11 +1,10 @@
 #pragma once
 
-#include "Data/Transform.h"
-#include "Particle.h"
+#include "WorldTransform.h"
 
 #include <string>
 
-/// === パーティクル発生機 === ///
+/// ===== パーティクルエミッター ===== ///
 class ParticleEmitter {
 
 ///-------------------------------------------/// 
@@ -16,48 +15,60 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	ParticleEmitter(const std::string& name, const Transform& transform, uint32_t count, float frequency, Particle setting);
+	/// <param name="effectName">エフェクト名</param>
+	ParticleEmitter(std::string	effectName, float frequency, uint32_t count) :
+		effectName(effectName),
+		frequency(frequency),
+		count(count) {
+	};
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
 
 	/// <summary>
 	/// パーティクル発生
 	/// </summary>
 	void Emit();
 
-	void ShowImGui(const char* name);
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
 
-	void SetTransform(const Transform& transform) { this->transform = transform; }
-
-	void SetUseExplosion(bool useExplosion) { this->useExplosion = useExplosion; }
+	/// <summary>
+	/// 位置のセッター
+	/// </summary>
+	/// <param name="translate">位置</param>
+	void SetTranslate(const Vector3& translate) { worldTransform.SetTranslate(translate); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// 名前
-	std::string particleName;
+	// エフェクト名
+	std::string effectName;
 
-	// 位置
-	Transform transform;
+	// 発生頻度 (秒間)
+	float frequency = 0.0f;
 
-	// 発生数
-	uint32_t count;
+	// 発生用タイマー
+	float timer = 0.0f;
 
-	// 発生頻度
-	float frequency;
+	// デルタタイム
+	const float deltaTime = 1.0f / 60.0f;
 
-	// 頻度用時刻
-	float frequencyTime;
+	// 1回あたりの発生数
+	uint32_t count = 10;
 
-	// Δt
-	const float kDeltaTime = 1.0f / 60.0f;
-
-	// 設定項目
-	Particle settings;
-
-	// 爆発モードかどうか
-	bool useExplosion = false;
-
-	// 爆発の半径（球の大きさ）
-	float explosionRadius = 0.0f;
+	// ワールド変換情報
+	WorldTransform worldTransform;
 };
+

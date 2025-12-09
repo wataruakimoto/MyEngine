@@ -3,8 +3,7 @@
 #include "OffscreenRendering/FilterManager.h"
 #include "ImGuiManager.h"
 #include "Particle/ParticleCommon.h"
-#include "Particle/ParticleSystem.h"
-#include "Particle/NEW/ParticleManager.h"
+#include "Particle/ParticleManager.h"
 #include "SceneManager.h"
 #include "SceneFactory.h"
 
@@ -19,9 +18,6 @@ void MyGame::Initialize() {
 
 	// シーンマネージャに最初のシーンをセット
 	SceneManager::GetInstance()->ChangeScene("TITLE");
-
-	// パーティクルシステムの初期化
-	ParticleSystem::GetInstance()->Initialize();
 
 	// パーティクルマネージャの初期化
 	ParticleManager::GetInstance()->Initialize();
@@ -85,9 +81,6 @@ void MyGame::Finalize() {
 
 	// パーティクルマネージャの終了
 	ParticleManager::GetInstance()->Finalize();
-
-	// パーティクルシステムの終了
-	ParticleSystem::GetInstance()->Finalize();
 
 	// 基底クラス解放
 	Framework::Finalize();

@@ -245,12 +245,6 @@ private:
 	// エミッターBLUEのポインタ
 	std::unique_ptr <ParticleEmitter> particleEmitterBlue = nullptr;
 
-	// エミッタ変換データ
-	Transform emitterTransform = {};
-
-	// パーティクル設定
-	Particle particleSetting = {};
-
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;
 

@@ -2,9 +2,8 @@
 #include "BaseScene.h"
 #include "Collision/CollisionManager.h"
 #include "OffscreenRendering/FilterManager.h"
-#include "Particle/NEW/ParticleManager.h"
+#include "Particle/ParticleManager.h"
 #include "Particle/ParticleCommon.h"
-#include "Particle/ParticleSystem.h"
 #include "Player/Player.h"
 #include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
@@ -231,9 +230,6 @@ private:
 
 	// リザルトUI
 	std::unique_ptr<ResultUI> resultUI_ = nullptr;
-
-	// パーティクルシステムのインスタンス
-	ParticleSystem* particleSystem = ParticleSystem::GetInstance();
 
 	// パーティクル共通のインスタンス
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();

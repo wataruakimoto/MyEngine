@@ -155,10 +155,6 @@ void Player::ShowImGui() {
 
 	ImGui::End();
 
-	particleEmitterRed->ShowImGui("ParticleEmitterRed");
-
-	particleEmitterBlue->ShowImGui("ParticleEmitterBlue");
-
 #endif // USE_IMGUI
 }
 
@@ -443,21 +439,11 @@ void Player::DeadInitialize() {
 
 	isGroundHit_ = false;
 
-	// パーティクルの初期化
-	particleSetting.transform.scale = { 0.25f,0.25f,0.25f }; // スケール0.25f
-	particleSetting.lifeTime = 1.0f;					  // 1秒
-	particleSetting.useBillboard = false;				  // ビルボードを使わない
-	particleSetting.randomizeRotate = true;
-	particleSetting.randomRotateMin = { 0.0f, 0.0f, 0.0f };
-	particleSetting.randomRotateMax = { 1.0f, 1.0f, 1.0f };
-	particleSetting.randomizeVelocity = true;
-	particleSetting.randomVelocityMin = { -2.0f, 0.0f, -2.0f };
-	particleSetting.randomVelocityMax = { 2.0f, 2.0f, 2.0f };
 	isParticleEmitted_ = false;
 
 	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("Red", emitterTransform, 10, 0.0f, particleSetting);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("Blue", emitterTransform, 40, 0.0f, particleSetting);
+	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", 0.0f, 10);
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", 0.0f, 40);
 }
 
 void Player::DeadUpdate() {
@@ -511,11 +497,9 @@ void Player::DeadUpdate() {
 
 		if (!isParticleEmitted_) {
 
-			emitterTransform.translate = Translate;
-
 			// エミッターの位置を設定
-			particleEmitterRed->SetTransform(emitterTransform);
-			particleEmitterBlue->SetTransform(emitterTransform);
+			particleEmitterRed->SetTranslate(worldTransform_.GetWorldPosition());
+			particleEmitterBlue->SetTranslate(worldTransform_.GetWorldPosition());
 
 			// パーティクルを発生させる
 			particleEmitterRed->Emit();
