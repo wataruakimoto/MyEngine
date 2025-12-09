@@ -2,7 +2,7 @@
 #include "BaseScene.h"
 #include "Collision/CollisionManager.h"
 #include "OffscreenRendering/FilterManager.h"
-#include "Particle/NEW/ParticleManager.h"
+#include "Particle/ParticleManager.h"
 #include "Particle/ParticleCommon.h"
 #include "Player/Player.h"
 #include "Player/Bullet.h"

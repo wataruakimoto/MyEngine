@@ -3,8 +3,8 @@
 #include "BaseScene.h"
 #include "Camera.h"
 #include "Particle/ParticleCommon.h"
-#include "Particle/NEW/ParticleManager.h"
-#include "Particle/NEW/Emitter.h"
+#include "Particle/ParticleManager.h"
+#include "Particle/Emitter.h"
 
 #include <memory>
 

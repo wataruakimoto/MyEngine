@@ -4,7 +4,7 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
-#include "Particle/NEW/Emitter.h"
+#include "Particle/Emitter.h"
 
 #include <memory>
 
