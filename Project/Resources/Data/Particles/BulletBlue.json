@@ -1,0 +1,125 @@
+{
+    "acceleration": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "accelerationRandom": false,
+    "accelerationRange": {
+        "max": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "min": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "color": {
+        "w": 1.0,
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+    },
+    "colorRandom": false,
+    "colorRange": {
+        "max": {
+            "w": 0.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "min": {
+            "w": 0.0,
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "effectName": "BulletBlue",
+    "lifeTime": 1.0,
+    "lifeTimeRandom": false,
+    "lifeTimeRange": {
+        "max": 0.0,
+        "min": 0.0
+    },
+    "rotate": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotateRandom": true,
+    "rotateRange": {
+        "max": {
+            "x": 1.0,
+            "y": 1.0,
+            "z": 1.0
+        },
+        "min": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+    },
+    "scaleRandom": true,
+    "scaleRange": {
+        "max": {
+            "x": 0.30000001192092896,
+            "y": 0.30000001192092896,
+            "z": 0.30000001192092896
+        },
+        "min": {
+            "x": 0.20000000298023224,
+            "y": 0.20000000298023224,
+            "z": 0.20000000298023224
+        }
+    },
+    "shape": "SHARD",
+    "textureFileName": "Blue.png",
+    "textureFullPath": "Resources/Texture/Particles/Blue.png",
+    "translate": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "translateRandom": false,
+    "translateRange": {
+        "max": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        "min": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    },
+    "useBillboard": false,
+    "useGravity": false,
+    "velocity": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "velocityRandom": true,
+    "velocityRange": {
+        "max": {
+            "x": 0.20000000298023224,
+            "y": 0.20000000298023224,
+            "z": 0.20000000298023224
+        },
+        "min": {
+            "x": -0.20000000298023224,
+            "y": -0.20000000298023224,
+            "z": -0.20000000298023224
+        }
+    }
+}

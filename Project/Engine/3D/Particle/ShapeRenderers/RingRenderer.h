@@ -1,50 +1,31 @@
 #pragma once
 
-#include "BaseParticleType.h"
+#include "ParticleRendererBase.h"
 
 #include <numbers>
 
-/// === リング用のパーティクル === ///
-class RingParticle : public BaseParticleType {
+class RingRenderer : public ParticleRendererBase {
 
-///-------------------------------------------///
+///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
 	void Initialize() override;
 
-	/// <summary>
-	/// 更新
-	/// </summary>
 	void Update() override;
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw(ParticleGroup* group) override;
+	void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
 
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
 private:
 
-	/// <summary>
-	/// 頂点データ生成
-	/// </summary>
 	void GenerateVertexData() override;
 
-	/// <summary>
-	/// 参照データ生成
-	/// </summary>
 	void GenerateIndexData() override;
 
-	/// <summary>
-	/// マテリアルデータ生成
-	/// </summary>
 	void GenerateMaterialData() override;
 
 ///-------------------------------------------/// 
@@ -64,3 +45,4 @@ private:
 	// 1秒間のUVの移動量
 	float kUVSpeed = 0.1f; // 10秒で1周
 };
+

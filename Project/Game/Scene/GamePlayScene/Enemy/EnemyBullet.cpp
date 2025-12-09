@@ -27,6 +27,10 @@ void EnemyBullet::Initialize() {
 	Collider::Initialize();
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet));
+
+	// エミッターの生成
+	particleEmitter = std::make_unique<ParticleEmitter>("BulletRed", 0.2f, 20);
+	particleEmitter->Initialize();
 };
 
 void EnemyBullet::Update() {
@@ -84,10 +88,22 @@ void EnemyBullet::OnCollision(Collider* other) {
 	// 衝突相手が自機の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)) {
 
+		// エミッターの位置を設定
+		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
+
+		// パーティクル発生
+		particleEmitter->Emit();
+
 		isDead = true;
 	}
 	// 衝突相手が自機の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
+
+		// エミッターの位置を設定
+		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
+
+		// パーティクル発生
+		particleEmitter->Emit();
 
 		isDead = true;
 	}

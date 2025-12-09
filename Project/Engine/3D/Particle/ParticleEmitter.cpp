@@ -1,133 +1,133 @@
 #include "ParticleEmitter.h"
-#include "ParticleSystem.h"
+#include "ParticleManager.h"
+#include "MathVector.h"
 
-#include <imgui.h>
+using namespace MathVector;
+using namespace MathRandom;
 
-ParticleEmitter::ParticleEmitter(const std::string& name, const Transform& transform, uint32_t count, float frequency, Particle setting) {
+void ParticleEmitter::Initialize() {
 
-	// 名前
-	this->particleName = name;
+	// ワールド変換の初期化
+	worldTransform.Initialize();
+}
 
-	// 位置
-	this->transform = transform;
+void ParticleEmitter::Update() {
 
-	// 発生数
-	this->count = count;
+	//// タイマー更新
+	//timer += deltaTime;
+	//
+	//// 発生頻度を超えたらパーティクル発生
+	//if (timer >= frequency) {
+	//	Emit();
+	//	timer = 0.0f;
+	//}
 
-	// 発生頻度
-	this->frequency = frequency;
-
-	// 頻度用時刻
-	this->frequencyTime = 0.0f;
-
-	// 設定項目
-	this->settings = setting;
+	// ワールド変換の更新
+	worldTransform.UpdateMatrix();
 }
 
 void ParticleEmitter::Emit() {
+	
+	// マネージャーからパーティクル設定を取得
+	ParticleSetting* setting = ParticleManager::GetInstance()->GetSetting(effectName);
 
-	// 時間を進める
-	frequencyTime += kDeltaTime;
+	// 設定がなければ抜ける
+	if (!setting) return;
 
-	// 頻度より大きいなら発生
-	if (frequency <= frequencyTime) {
+	// パーティクルインスタンスを作成
+	for (uint32_t i = 0; i < count; ++i) {
 
-		// 発生処理
-		ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count, settings);
+		// 新しいインスタンスを作成
+		ParticleInstance particle;
 
-		// 余計に過ぎた時間も加味して頻度計算する
-		frequencyTime -= frequency;
-	}
-}
+		// 参照元を紐づけ
+		particle.setting = setting;
 
-void ParticleEmitter::ShowImGui(const char* name) {
+		// スケールの設定
+		if(setting->scaleRandom) {
 
-#ifdef USE_IMGUI
-	ImGui::Begin(name);
+			// 範囲からランダム生成
+			particle.scale = RandomVector3(setting->scaleRange);
+		}
+		else {
 
-	if (ImGui::TreeNode("Emitter")) {
-
-		ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
-		ImGui::DragFloat3("Rotate", &transform.rotate.x, 0.01f);
-		ImGui::DragFloat3("Position", &transform.translate.x, 0.01f);
-
-		ImGui::DragInt("Count", reinterpret_cast<int*>(&count), 1.0f, 1);
-
-		ImGui::DragFloat("Frequency", &frequency, 0.1f);
-		ImGui::DragFloat("FrequencyTime", &frequencyTime, 0.1f);
-
-		// ボタンを押したらパーティクル発生
-		if (ImGui::Button("Emit")) {
-			ParticleSystem::GetInstance()->Emit(particleName, transform.translate, count, settings);
+			// 固定値を代入
+			particle.scale = setting->scale;
 		}
 
-		ImGui::TreePop();
-	}
+		// 回転の設定
+		if (setting->rotateRandom) {
 
-	if (ImGui::TreeNode("Setting")) {
+			// 範囲からランダム生成
+			particle.rotate = RandomVector3(setting->rotateRange);
+		}
+		else {
 
-		// 設定項目
-		ImGui::DragFloat3("Scale", &settings.transform.scale.x, 0.01f);
-		ImGui::DragFloat3("Rotate", &settings.transform.rotate.x, 0.01f);
-		ImGui::DragFloat3("Position", &settings.transform.translate.x, 0.01f);
-		ImGui::DragFloat3("Velocity", &settings.velocity.x, 0.01f);
-		ImGui::ColorEdit4("Color", &settings.color.x);
-		ImGui::DragFloat("LifeTime", &settings.lifeTime, 0.1f);
-		ImGui::Checkbox("UseLifeTime", &settings.useLifeTime);
-		ImGui::Checkbox("UseBillboard", &settings.useBillboard);
-
-		// ランダム
-		if (ImGui::TreeNode("Randomize")) {
-
-			if (ImGui::TreeNode("Scale")) {
-				ImGui::Checkbox("Randomize", &settings.randomizeScale);
-				ImGui::DragFloat3("Min", &settings.randomScaleMin.x, 0.01f);
-				ImGui::DragFloat3("Max", &settings.randomScaleMax.x, 0.01f);
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNode("Rotate")) {
-				ImGui::Checkbox("Randomize", &settings.randomizeRotate);
-				ImGui::DragFloat3("Min", &settings.randomRotateMin.x, 0.01f);
-				ImGui::DragFloat3("Max", &settings.randomRotateMax.x, 0.01f);
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNode("Translate")) {
-				ImGui::Checkbox("Randomize", &settings.randomizeTranslate);
-				ImGui::DragFloat3("Min", &settings.randomTranslateMin.x, 0.01f);
-				ImGui::DragFloat3("Max", &settings.randomTranslateMax.x, 0.01f);
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNode("Velocity")) {
-				ImGui::Checkbox("Randomize", &settings.randomizeVelocity);
-				ImGui::DragFloat3("Min", &settings.randomVelocityMin.x, 0.01f);
-				ImGui::DragFloat3("Max", &settings.randomVelocityMax.x, 0.01f);
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNode("Color")) {
-				ImGui::Checkbox("Randomize", &settings.randomizeColor);
-				ImGui::DragFloat4("Min", &settings.randomColorMin.x, 0.01f);
-				ImGui::DragFloat4("Max", &settings.randomColorMax.x, 0.01f);
-				ImGui::TreePop();
-			}
-
-			if (ImGui::TreeNode("LifeTime")) {
-				ImGui::Checkbox("Randomize", &settings.randomizeLifeTime);
-				ImGui::DragFloat("Min", &settings.randomLifeTimeMin, 0.1f);
-				ImGui::DragFloat("Max", &settings.randomLifeTimeMax, 0.1f);
-				ImGui::TreePop();
-			}
-
-			ImGui::TreePop();
+			// 固定値を代入
+			particle.rotate = setting->rotate;
 		}
 
-		ImGui::TreePop();
+		// 位置の設定
+		if (setting->translateRandom) {
+
+			// 範囲からランダム生成
+			particle.translate = RandomVector3(setting->translateRange) + worldTransform.GetTranslate();
+		}
+		else {
+
+			// 固定値を代入
+			particle.translate = setting->translate + worldTransform.GetTranslate();
+		}
+
+		// 速度の設定
+		if (setting->velocityRandom) {
+
+			// 範囲からランダム生成
+			particle.velocity = RandomVector3(setting->velocityRange);
+		}
+		else {
+
+			// 固定値を代入
+			particle.velocity = setting->velocity;
+		}
+
+		// 加速度の設定
+		if (setting->accelerationRandom) {
+
+			// 範囲からランダム生成
+			particle.acceleration = RandomVector3(setting->accelerationRange);
+		}
+		else {
+
+			// 固定値を代入
+			particle.acceleration = setting->acceleration;
+		}
+
+		// 色の設定
+		if (setting->colorRandom) {
+
+			// 範囲からランダム生成
+			particle.color = RandomVector4(setting->colorRange);
+		}
+		else {
+
+			// 固定値を代入
+			particle.color = setting->color;
+		}
+
+		// 寿命の設定
+		if (setting->lifeTimeRandom) {
+
+			// 範囲からランダム生成
+			particle.lifeTime = RandomFloat(setting->lifeTimeRange);
+		}
+		else {
+
+			// 固定値を代入
+			particle.lifeTime = setting->lifeTime;
+		}
+
+		// マネージャーにインスタンスを追加
+		ParticleManager::GetInstance()->AddInstance(particle);
 	}
-
-	ImGui::End();
-
-#endif // USE_IMGUI
 }

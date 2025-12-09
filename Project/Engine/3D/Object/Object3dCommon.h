@@ -1,12 +1,9 @@
 #pragma once
 
-#include <d3d12.h>
-#include <dxcapi.h>
-#include <wrl.h>
+#include "GraphicsPipelineCreater.h"
 
 /// === 前方宣言 === ///
 class Camera;
-class DirectXUtility;
 
 /// === 3Dオブジェクト共通部 === ///
 class Object3dCommon {
@@ -52,7 +49,12 @@ public:
 	/// <summary>
 	/// 共通描画設定
 	/// </summary>
-	void SettingDrawing();
+	void SettingDrawingOpaque();
+
+	/// <summary>
+	/// 半透明オブジェクト用描画設定
+	/// </summary>
+	void SettingDrawingAlpha();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -68,36 +70,6 @@ private:
 	/// InputLayoutの生成
 	/// </summary>
 	void CreateInputLayout();
-
-	/// <summary>
-	/// BlendStateの生成
-	/// </summary>
-	void CreateBlendState();
-
-	/// <summary>
-	/// RasterizerStateの生成
-	/// </summary>
-	void CreateRasterizerState();
-
-	/// <summary>
-	/// VertexShaderの生成
-	/// </summary>
-	void CreateVertexShader();
-
-	/// <summary>
-	/// PixelShaderの生成
-	/// </summary>
-	void CreatePixelShader();
-
-	/// <summary>
-	/// DepthStencilStateの生成
-	/// </summary>
-	void CreateDepthStencilState();
-
-	/// <summary>
-	/// GraphicsPipelineの生成
-	/// </summary>
-	void CreateGraphicsPipeline();
 
 ///-------------------------------------------///
 /// セッター
@@ -126,8 +98,14 @@ public:
 ///-------------------------------------------///
 private:
 
-	// DirectXUtilityのポインタ
-	DirectXUtility* dxUtility_ = nullptr;
+	// DirectXUtilityのインスタンス
+	DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
+
+	// パイプラインクリエイター
+	GraphicsPipelineCreater pipelineCreaterOpaque_;
+
+	// 半透明用パイプラインクリエイター
+	GraphicsPipelineCreater pipelineCreaterAlpha_;
 
 	// RootSignature
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
@@ -135,24 +113,6 @@ private:
 	// InputLayout
 	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
-
-	// BlendState
-	D3D12_BLEND_DESC blendDesc{};
-
-	// RasterizerState
-	D3D12_RASTERIZER_DESC rasterizerDesc{};
-
-	// VertexShader
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = nullptr;
-
-	// PixelShader
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = nullptr;
-
-	// DepthStencilState
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
-
-	// GraphicsPipeline
-	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
 
 	// デフォルトカメラ
 	Camera* defaultCamera_ = nullptr;

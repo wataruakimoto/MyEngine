@@ -5,12 +5,14 @@
 #include "Collision/CollisionTypeIDDef.h"
 #include "Reticle/Reticle3D.h"
 #include "MathVector.h"
+#include "Easing.h"
 
 #include <list>
 #include <algorithm>
 #include <imgui.h>
 
 using namespace MathVector;
+using namespace Easing;
 
 void Player::Initialize() {
 
@@ -153,10 +155,6 @@ void Player::ShowImGui() {
 
 	ImGui::End();
 
-	particleEmitterRed->ShowImGui("ParticleEmitterRed");
-
-	particleEmitterBlue->ShowImGui("ParticleEmitterBlue");
-
 #endif // USE_IMGUI
 }
 
@@ -168,14 +166,22 @@ void Player::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// 死亡状態に変更をリクエスト
-		stateRequest_ = PlayerState::Dead;
+		// 状態が死亡状態でなければ
+		if (state_ != PlayerState::Dead) {
+
+			// 死亡状態に変更をリクエスト
+			stateRequest_ = PlayerState::Dead;
+		}
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
-		// 死亡状態に変更をリクエスト
-		stateRequest_ = PlayerState::Dead;
+		// 状態が死亡状態でなければ
+		if (state_ != PlayerState::Dead) {
+
+			// 死亡状態に変更をリクエスト
+			stateRequest_ = PlayerState::Dead;
+		}
 	}
 	// その他と衝突した場合
 	else {
@@ -316,6 +322,31 @@ void Player::Fire() {
 
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddPlayerBullet(std::move(bullet));
+
+	// 射撃アニメーション開始
+	isFiring_ = true;
+	fireTimer_ = kFireDuration_; // タイマーをリセット
+	object->SetScale(fireScale_);
+}
+
+void Player::FireAnimationUpdate() {
+
+	// デルタタイム分デクリメント
+	fireTimer_ -= 1.0f / 60.0f;
+
+	float t = 1.0f - (fireTimer_ / kFireDuration_); // 経過割合を計算
+	float easedT = EaseOutCubic(t); // イージング適用
+	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
+
+	// スケールを設定
+	object->SetScale(newScale);
+
+	// タイマーが0以下になったら
+	if (fireTimer_ <= 0.0f) {
+
+		isFiring_ = false; // 射撃アニメーション終了
+		newScale = defaultScale_; // スケールをデフォルトに戻す
+	}
 }
 
 void Player::MoveToReticle() {
@@ -369,29 +400,25 @@ void Player::AutoPilotUpdate() {
 }
 
 void Player::ManualInitialize() {
-
-	// タイマーリセット
-	fireTimer = 60.0f * 0.4f;
 }
 
 void Player::ManualUpdate() {
 
 	// タイマーが0以下なら
-	if (fireTimer <= 0) {
+	if (fireTimer_ <= 0) {
 
 		// スペースキーが押されたら
 		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 
+			// 射撃7676
 			Fire();
-
-			// タイマーをリセット
-			fireTimer = 60.0f * 0.4f;
 		}
 	}
-	else {
+	
+	if (isFiring_) {
 
-		// タイマーをデクリメント
-		fireTimer--;
+		// 射撃アニメーション更新
+		FireAnimationUpdate();
 	}
 
 	// レティクルに向かって移動
@@ -412,19 +439,11 @@ void Player::DeadInitialize() {
 
 	isGroundHit_ = false;
 
-	// パーティクルの初期化
-	particleSetting.transform.scale = { 0.5f,0.5f,0.5f }; // スケール0.5f
-	particleSetting.lifeTime = 2.0f;					  // 2秒
-	particleSetting.useBillboard = false;				  // ビルボードを使わない
-	particleSetting.randomizeRotate = true;
-	particleSetting.randomizeVelocity = true;
-	particleSetting.randomVelocityMin = { -2.0f, 0.0f, -2.0f };
-	particleSetting.randomVelocityMax = { 2.0f, 2.0f, 2.0f };
 	isParticleEmitted_ = false;
 
 	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("Red", emitterTransform, 5, 0.0f, particleSetting);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("Blue", emitterTransform, 25, 0.0f, particleSetting);
+	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", 0.0f, 10);
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", 0.0f, 40);
 }
 
 void Player::DeadUpdate() {
@@ -478,11 +497,9 @@ void Player::DeadUpdate() {
 
 		if (!isParticleEmitted_) {
 
-			emitterTransform.translate = Translate;
-
 			// エミッターの位置を設定
-			particleEmitterRed->SetTransform(emitterTransform);
-			particleEmitterBlue->SetTransform(emitterTransform);
+			particleEmitterRed->SetTranslate(worldTransform_.GetWorldPosition());
+			particleEmitterBlue->SetTranslate(worldTransform_.GetWorldPosition());
 
 			// パーティクルを発生させる
 			particleEmitterRed->Emit();

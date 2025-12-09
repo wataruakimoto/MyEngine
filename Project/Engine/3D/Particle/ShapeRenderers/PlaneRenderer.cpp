@@ -1,16 +1,21 @@
-#include "PlaneParticle.h"
+#include "PlaneRenderer.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Texture/TextureManager.h"
-#include "ParticleCommon.h"
 #include "MathMatrix.h"
 
 using namespace MathMatrix;
 
-void PlaneParticle::Initialize() {
+void PlaneRenderer::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
+
+	// TextureManagerのインスタンスを取得
+	textureManager = TextureManager::GetInstance();
+
+	// SrvManagerのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
 
 	// 頂点データ生成
 	GenerateVertexData();
@@ -22,10 +27,10 @@ void PlaneParticle::Initialize() {
 	GenerateMaterialData();
 }
 
-void PlaneParticle::Update() {
+void PlaneRenderer::Update() {
 }
 
-void PlaneParticle::Draw(ParticleGroup* group) {
+void PlaneRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -36,17 +41,17 @@ void PlaneParticle::Draw(ParticleGroup* group) {
 	// マテリアルCBufferの場所を設定
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
+	/// === InstanceDataのCBufferの場所を設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(instanceSrvIndex));
 
-	/// === パーティクルCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
+	// SRVのDescriptorTableの先頭を設定
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
 
 	// 描画(DrawCall)
-	dxUtility->GetCommandList()->DrawIndexedInstanced(6, group->numInstance, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(36, instanceCount, 0, 0, 0);
 }
 
-void PlaneParticle::GenerateVertexData() {
+void PlaneRenderer::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
 	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * 6);
@@ -81,7 +86,7 @@ void PlaneParticle::GenerateVertexData() {
 	vertexData[3].texcoord = { 1.0f, 0.0f };
 }
 
-void PlaneParticle::GenerateIndexData() {
+void PlaneRenderer::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
 	indexResource = dxUtility->CreateBufferResource(sizeof(uint32_t) * 6);
@@ -110,7 +115,7 @@ void PlaneParticle::GenerateIndexData() {
 	indexData[5] = 2; // 右下
 }
 
-void PlaneParticle::GenerateMaterialData() {
+void PlaneRenderer::GenerateMaterialData() {
 
 	/// === MaterialResourceを作る === ///
 	materialResource = dxUtility->CreateBufferResource(sizeof(Material));

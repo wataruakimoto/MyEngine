@@ -2,8 +2,11 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
-#include "Object/Object3dCommon.h"
-#include "Scene/GamePlayScene/Goal/Goal.h"
+#include "Particle/ParticleCommon.h"
+#include "Particle/ParticleManager.h"
+#include "Particle/ParticleEmitter.h"
+
+#include <memory>
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {
@@ -44,11 +47,15 @@ public:
 private:
 
 	// カメラのポインタ
-	std::unique_ptr <Camera> camera = nullptr;
+	std::unique_ptr<Camera> camera = nullptr;
 
-	// オブジェクト3D共通部のインスタンス
-	Object3dCommon* object3dCommon = Object3dCommon::GetInstance();
+	// パーティクル共通のインスタンス
+	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
 
-	// ゴールのポインタ
-	std::unique_ptr<Goal> goal = nullptr;
+	// パーティクルマネージャーのインスタンス
+	ParticleManager* particleManager = ParticleManager::GetInstance();
+
+	// エミッターのポインタ
+	std::unique_ptr<ParticleEmitter> particleEmitterRed = nullptr;
+	std::unique_ptr<ParticleEmitter> particleEmitterBlue = nullptr;
 };

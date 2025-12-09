@@ -2,11 +2,13 @@
 
 #include "TitleUI.h"
 #include "MathVector.h"
+#include "Easing.h"
 
 #include <algorithm>
 #include <imgui.h>
 
 using namespace MathVector;
+using namespace Easing;
 
 TitleUI::TitleUI() {
 
@@ -144,14 +146,4 @@ void TitleUI::AnimationUpdate() {
 		
 		animationStateRequest_ = std::nullopt;
 	}
-}
-
-float TitleUI::EaseOutCubic(float t) {
-
-	return 1.0f - powf(1.0f - t, 3);
-}
-
-float TitleUI::EaseInCubic(float t) {
-
-	return t * t * t;
 }

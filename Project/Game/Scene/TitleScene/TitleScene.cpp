@@ -12,6 +12,7 @@ void TitleScene::Initialize() {
 	// カメラの生成&初期化
 	camera_ = std::make_unique<Camera>();
 	camera_->Initialize();
+	camera_->SetFarClip(950.0f); // ファークリップを950に設定
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
@@ -177,10 +178,10 @@ void TitleScene::Draw() {
 	SkyboxCommon::GetInstance()->SettingDrawing();
 
 	// スカイボックスの描画
-	skyBox_->Draw();
+	//skyBox_->Draw();
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawing();
+	Object3dCommon::GetInstance()->SettingDrawingOpaque();
 
 	// シリンダーの描画
 	cylinder_->Draw();

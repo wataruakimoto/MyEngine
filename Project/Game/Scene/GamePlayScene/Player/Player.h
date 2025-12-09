@@ -79,6 +79,11 @@ private:
 	void Fire();
 
 	/// <summary>
+	/// 射撃アニメーション更新
+	/// </summary>
+	void FireAnimationUpdate();
+
+	/// <summary>
 	/// レティクルに向かって移動
 	/// </summary>
 	void MoveToReticle();
@@ -177,8 +182,6 @@ private:
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
-	float fireTimer = 60.0f * 0.4f;
-
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;
 
@@ -196,6 +199,16 @@ private:
 
 	// 状態変更リクエスト
 	std::optional<PlayerState> stateRequest_ = std::nullopt;
+
+	/// ===== 射撃アニメーション用 ===== ///
+
+	Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
+	Vector3 fireScale_ = { 0.85f, 0.85f, 0.85f };
+
+	float fireTimer_ = 0.0f; // カウントダウンタイマー
+	const float kFireDuration_ = 0.4f; // 射撃間隔 (秒)
+
+	bool isFiring_ = false;
 
 	/// ===== 死亡アニメーション用 ===== ///
 
@@ -231,12 +244,6 @@ private:
 
 	// エミッターBLUEのポインタ
 	std::unique_ptr <ParticleEmitter> particleEmitterBlue = nullptr;
-
-	// エミッタ変換データ
-	Transform emitterTransform = {};
-
-	// パーティクル設定
-	Particle particleSetting = {};
 
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;

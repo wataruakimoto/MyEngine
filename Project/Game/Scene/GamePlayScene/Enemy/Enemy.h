@@ -5,7 +5,6 @@
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleEmitter.h"
-#include "Data/Transform.h"
 
 #include <memory>
 
@@ -117,10 +116,9 @@ private:
 
 	bool isDead = false;
 
-	// パーティクル発生機
-	std::unique_ptr <ParticleEmitter> particleEmitter1 = nullptr;
+	// エミッターBlackのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterBlack = nullptr;
 
-	Transform EmitterTransform1 = {};
-
-	Particle particleSetting1 = {};
+	// エミッターWhiteのポインタ
+	std::unique_ptr <ParticleEmitter> particleEmitterWhite = nullptr;
 };

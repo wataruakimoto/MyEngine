@@ -110,8 +110,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Math\Easing.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
+    <ClCompile Include="Engine\Math\MathRandom.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
-    <ClCompile Include="Engine\3D\Particle\CubeParticle.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.cpp" />
@@ -122,9 +126,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DepthOutlineFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.cpp" />
-    <ClCompile Include="Engine\3D\Particle\CylinderParticle.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
-    <ClCompile Include="Engine\3D\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleCommon.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\PostEffect.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
@@ -165,15 +167,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\LockOn\LockOn.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Goal\Goal.cpp" />
+    <ClCompile Include="Engine\Base\GraphicsPipelineCreater.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
     <ClCompile Include="Engine\Scene\SceneManager.cpp" />
     <ClCompile Include="Game\Scene\System\SceneFactory.cpp" />
     <ClCompile Include="engine\base\SrvManager.cpp" />
-    <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
-    <ClCompile Include="Engine\3D\Particle\PlaneParticle.cpp" />
-    <ClCompile Include="Engine\3D\Particle\RingParticle.cpp" />
     <ClCompile Include="Engine\3D\Skybox\Skybox.cpp" />
     <ClCompile Include="Engine\3D\Skybox\SkyboxCommon.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\VignetteFilter.cpp" />
@@ -188,10 +188,21 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\RuleUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\ResultUI.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleManager.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\RingRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Math\Easing.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ParticleRendererBase.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleData.h" />
+    <ClInclude Include="Engine\Math\MathRandom.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
-    <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.h" />
@@ -205,14 +216,10 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BaseFilter.h" />
     <ClInclude Include="Engine\3D\Data\TransformationData.h" />
-    <ClInclude Include="Engine\3D\Particle\CylinderParticle.h" />
-    <ClInclude Include="Engine\3D\Particle\BaseParticleType.h" />
-    <ClInclude Include="Engine\3D\Particle\Particle.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
     <ClInclude Include="engine\3d\Data\ModelData.h" />
     <ClInclude Include="engine\3d\Data\Transform.h" />
-    <ClInclude Include="Engine\3D\Particle\ParticleSystem.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleCommon.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\PostEffect.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
@@ -261,9 +268,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\System\SceneFactory.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\3d\Data\VertexData.h" />
-    <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
-    <ClInclude Include="Engine\3D\Particle\PlaneParticle.h" />
-    <ClInclude Include="Engine\3D\Particle\RingParticle.h" />
     <ClInclude Include="Engine\Level\Loader.h" />
     <ClInclude Include="Engine\Level\LevelData.h" />
     <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
@@ -285,6 +289,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\NormaUI.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\ResultUI.h" />
+    <ClInclude Include="Engine\Base\GraphicsPipelineCreater.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleManager.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\RingRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

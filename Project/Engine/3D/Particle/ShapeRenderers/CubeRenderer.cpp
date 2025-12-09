@@ -1,16 +1,21 @@
-#include "CubeParticle.h"
+#include "CubeRenderer.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Texture/TextureManager.h"
-#include "ParticleCommon.h"
 #include "MathMatrix.h"
 
 using namespace MathMatrix;
 
-void CubeParticle::Initialize() {
+void CubeRenderer::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
+
+	// TextureManagerのインスタンスを取得
+	textureManager = TextureManager::GetInstance();
+
+	// SrvManagerのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
 
 	// 頂点データ生成
 	GenerateVertexData();
@@ -22,10 +27,10 @@ void CubeParticle::Initialize() {
 	GenerateMaterialData();
 }
 
-void CubeParticle::Update() {
+void CubeRenderer::Update() {
 }
 
-void CubeParticle::Draw(ParticleGroup* group) {
+void CubeRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -36,17 +41,17 @@ void CubeParticle::Draw(ParticleGroup* group) {
 	// マテリアルCBufferの場所を設定
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
+	/// === InstanceDataのCBufferの場所を設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(instanceSrvIndex));
 
-	/// === パーティクルCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
+	// SRVのDescriptorTableの先頭を設定
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
 
 	// 描画(DrawCall)
-	dxUtility->GetCommandList()->DrawIndexedInstanced(36, group->numInstance, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(36, instanceCount, 0, 0, 0);
 }
 
-void CubeParticle::GenerateVertexData() {
+void CubeRenderer::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
 	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * 8);
@@ -108,7 +113,7 @@ void CubeParticle::GenerateVertexData() {
 	vertexData[7].normal = { 0.0f, 0.0f, 0.0f };
 }
 
-void CubeParticle::GenerateIndexData() {
+void CubeRenderer::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
 	indexResource = dxUtility->CreateBufferResource(sizeof(uint32_t) * 36);
@@ -160,7 +165,7 @@ void CubeParticle::GenerateIndexData() {
 	indexData[33] = 0; indexData[34] = 5; indexData[35] = 1;
 }
 
-void CubeParticle::GenerateMaterialData() {
+void CubeRenderer::GenerateMaterialData() {
 
 	/// === MaterialResourceを作る === ///
 	materialResource = dxUtility->CreateBufferResource(sizeof(Material));

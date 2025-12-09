@@ -1,5 +1,4 @@
 #include "Object3dCommon.h"
-#include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Logger.h"
 #include "DebugCamera.h"
@@ -19,11 +18,29 @@ Object3dCommon* Object3dCommon::GetInstance() {
 
 void Object3dCommon::Initialize() {
 
-	// DirectXUtilityのインスタンスを取得
-	dxUtility_ = DirectXUtility::GetInstance();
+	// RootSignatureを生成
+	CreateRootSignature();
 
-	// グラフィックスパイプラインの生成
-	CreateGraphicsPipeline();
+	// RootSignatureをセット
+	pipelineCreaterOpaque_.SetRootSignature(rootSignature.Get());
+	pipelineCreaterAlpha_.SetRootSignature(rootSignature.Get());
+
+	// InputLayoutを生成
+	CreateInputLayout();
+
+	// InputLayoutをセット
+	pipelineCreaterOpaque_.SetInputLayoutDesc(inputLayoutDesc);
+	pipelineCreaterAlpha_.SetInputLayoutDesc(inputLayoutDesc);
+
+	// シェーダパスをセット
+	pipelineCreaterOpaque_.SetVSFileName(L"Object3d.VS.hlsl");
+	pipelineCreaterOpaque_.SetPSFileName(L"Object3d.PS.hlsl");
+	pipelineCreaterAlpha_.SetVSFileName(L"Object3d.VS.hlsl");
+	pipelineCreaterAlpha_.SetPSFileName(L"Object3d.PS.hlsl");
+
+	// パイプライン生成
+	pipelineCreaterOpaque_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadWrite);
+	pipelineCreaterAlpha_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadOnly);
 }
 
 void Object3dCommon::Finalize() {
@@ -31,13 +48,28 @@ void Object3dCommon::Finalize() {
 	instance = nullptr;
 }
 
-void Object3dCommon::SettingDrawing() {
+void Object3dCommon::SettingDrawingOpaque() {
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility_->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreaterOpaque_.GetGraphicsPipelineState().Get());
+
+	/// === プリミティブトポロジーをセットするコマンド === ///
+	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
+	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+}
+
+void Object3dCommon::SettingDrawingAlpha() {
+
+	/// === ルートシグネチャをセットするコマンド === ///
+	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+
+	/// === グラフィックスパイプラインステートをセットするコマンド === ///
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreaterOpaque_.GetGraphicsPipelineState().Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -166,97 +198,8 @@ void Object3dCommon::CreateInputLayout() {
 	inputElementDescs[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	inputElementDescs[2].AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
 
+	// InputLayoutに設定を
 	inputLayoutDesc.pInputElementDescs = inputElementDescs;
 	inputLayoutDesc.NumElements = _countof(inputElementDescs);
 }
 
-void Object3dCommon::CreateBlendState() {
-
-	// アルファブレンドで設定
-	blendDesc.RenderTarget[0].BlendEnable = true; // ブレンドを有効化
-	blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値
-	blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デストの(1-ソースアルファ)
-	blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD; // 加算
-	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE; // ソースのアルファ値そのまま
-	blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO; // デストのアルファ値は使わない
-	blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL; // RGBA全て書き込み
-}
-
-void Object3dCommon::CreateRasterizerState() {
-
-	// 裏面(時計回り)を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-	// 三角形の中を塗りつぶす
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-}
-
-void Object3dCommon::CreateVertexShader() {
-
-	vertexShaderBlob = dxUtility_->CompileShader(L"resources/shaders/Object3d.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
-}
-
-void Object3dCommon::CreatePixelShader() {
-
-	pixelShaderBlob = dxUtility_->CompileShader(L"resources/shaders/Object3d.PS.hlsl", L"ps_6_0");
-	assert(pixelShaderBlob != nullptr);
-}
-
-void Object3dCommon::CreateDepthStencilState() {
-
-	// Depthの機能を有効化する
-	depthStencilDesc.DepthEnable = true;
-	// 書き込みを無効にする
-	depthStencilDesc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ZERO;
-	// 比較関数はLessEqual。つまり、近ければ描画される
-	depthStencilDesc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-}
-
-void Object3dCommon::CreateGraphicsPipeline() {
-
-	// PSOを生成する
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
-
-	/// === RootSignature === ///
-	CreateRootSignature();
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
-
-	/// === InputLayout === ///
-	CreateInputLayout();
-	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
-
-	/// === BlendState === ///
-	CreateBlendState();
-	graphicsPipelineStateDesc.BlendState = blendDesc;
-
-	/// === RasterizerState === ///
-	CreateRasterizerState();
-	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
-
-	/// === VertexShader === ///
-	CreateVertexShader();
-	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize() };
-
-	/// === PixelShader === ///
-	CreatePixelShader();
-	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() };
-
-	/// === DepthStencilState === ///
-	CreateDepthStencilState();
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
-	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
-	// 書き込むRTVの情報
-	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	// 利用するトポロジ(形状)のタイプ。三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	// どのように画面に色を打ち込むかの設定(気にしなくて良い)
-	graphicsPipelineStateDesc.SampleDesc.Count = 1;
-	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	// 実際に生成
-	HRESULT hr = dxUtility_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&graphicsPipelineState));
-	assert(SUCCEEDED(hr));
-}

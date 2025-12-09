@@ -1,16 +1,21 @@
-#include "RingParticle.h"
+#include "RingRenderer.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Texture/TextureManager.h"
-#include "ParticleCommon.h"
 #include "MathMatrix.h"
 
 using namespace MathMatrix;
 
-void RingParticle::Initialize() {
+void RingRenderer::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
+
+	// TextureManagerのインスタンスを取得
+	textureManager = TextureManager::GetInstance();
+
+	// SrvManagerのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
 
 	// 頂点データ生成
 	GenerateVertexData();
@@ -22,7 +27,7 @@ void RingParticle::Initialize() {
 	GenerateMaterialData();
 }
 
-void RingParticle::Update() {
+void RingRenderer::Update() {
 
 	for (uint32_t index = 0; index < kRingDivide; ++index) {
 
@@ -44,7 +49,7 @@ void RingParticle::Update() {
 	}
 }
 
-void RingParticle::Draw(ParticleGroup* group) {
+void RingRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -55,17 +60,17 @@ void RingParticle::Draw(ParticleGroup* group) {
 	// マテリアルCBufferの場所を設定
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
 
-	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(group->textureFilePath));
+	/// === InstanceDataのCBufferの場所を設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(instanceSrvIndex));
 
-	/// === パーティクルCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(group->srvIndex));
+	// SRVのDescriptorTableの先頭を設定
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
 
 	// 描画(DrawCall)
-	dxUtility->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, group->numInstance, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, instanceCount, 0, 0, 0);
 }
 
-void RingParticle::GenerateVertexData() {
+void RingRenderer::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
 	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * 4 * kRingDivide);
@@ -112,7 +117,7 @@ void RingParticle::GenerateVertexData() {
 	}
 }
 
-void RingParticle::GenerateIndexData() {
+void RingRenderer::GenerateIndexData() {
 
 	/// === IndexResourceを作る === ///
 	indexResource = dxUtility->CreateBufferResource(sizeof(uint32_t) * 6 * kRingDivide);
@@ -144,7 +149,7 @@ void RingParticle::GenerateIndexData() {
 	}
 }
 
-void RingParticle::GenerateMaterialData() {
+void RingRenderer::GenerateMaterialData() {
 
 	/// === MaterialResourceを作る === ///
 	materialResource = dxUtility->CreateBufferResource(sizeof(Material));
