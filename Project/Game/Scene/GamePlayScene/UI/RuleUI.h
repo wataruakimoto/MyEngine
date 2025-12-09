@@ -62,10 +62,6 @@ private:
 	/// </summary>
 	void AnimationUpdate();
 
-	static float EaseOutBounce(float t);
-
-	static float EaseInOut(float t);
-
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///

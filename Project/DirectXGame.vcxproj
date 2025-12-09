@@ -110,6 +110,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\CylinderRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\CubeRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\NEW\Emitter.cpp" />
@@ -202,6 +203,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\ShardRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Math\Easing.h" />
     <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\CylinderRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\CubeRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\NEW\Emitter.h" />

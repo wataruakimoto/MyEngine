@@ -112,6 +112,7 @@
     <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\RingRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\CylinderRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\NEW\ShapeRenderers\ShardRenderer.cpp" />
+    <ClCompile Include="Engine\Math\Easing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\3D\Particle\CubeParticle.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\RingRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\CylinderRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\NEW\ShapeRenderers\ShardRenderer.h" />
+    <ClInclude Include="Engine\Math\Easing.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />

@@ -1,6 +1,9 @@
 #include "ResultUI.h"
+#include "Easing.h"
 
 #include <imgui.h>
+
+using namespace Easing;
 
 ResultUI::ResultUI() {
 
@@ -176,9 +179,4 @@ void ResultUI::AnimationUpdate() {
 
 		break;
 	}
-}
-
-float ResultUI::EaseOutQuart(float t) {
-	
-	return 1.0f - (1.0f - t) * (1.0f - t) * (1.0f - t) * (1.0f - t);
 }
