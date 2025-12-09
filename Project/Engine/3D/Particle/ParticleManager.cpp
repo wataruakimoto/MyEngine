@@ -207,7 +207,7 @@ void ParticleManager::ShowImGui() {
 	// グループコンテナのリスト
 	struct GroupContainerInfo {
 		const char* name;
-		std::unordered_map<std::string, ParticleGroupNew>* container;
+		std::unordered_map<std::string, ParticleGroup>* container;
 	} containers[] = {
 		{ "Plane", &planeGroups },
 		{ "Ring", &ringGroups },
@@ -369,7 +369,7 @@ void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {
 	}
 }
 
-void ParticleManager::UpdateGroups(std::unordered_map<std::string, ParticleGroupNew>& groups) {
+void ParticleManager::UpdateGroups(std::unordered_map<std::string, ParticleGroup>& groups) {
 
 	for (auto& [key, group] : groups) {
 
@@ -776,7 +776,7 @@ void ParticleManager::LoadSettingsFromJSON(const std::string& filePath) {
 	settings[setting.effectName] = setting;
 }
 
-void ParticleManager::CreateGroupResource(ParticleGroupNew& group) {
+void ParticleManager::CreateGroupResource(ParticleGroup& group) {
 
 	// 既に作成済みなら何もしない
 	if (group.isResourceCreated) return;

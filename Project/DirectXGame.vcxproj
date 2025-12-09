@@ -113,7 +113,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.cpp" />
-    <ClCompile Include="Engine\3D\Particle\Emitter.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\Math\MathRandom.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
@@ -198,7 +198,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Easing.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.h" />
-    <ClInclude Include="Engine\3D\Particle\Emitter.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ParticleRendererBase.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleData.h" />
     <ClInclude Include="Engine\Math\MathRandom.h" />

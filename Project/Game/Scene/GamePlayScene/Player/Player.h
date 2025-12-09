@@ -5,7 +5,7 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
-#include "Particle/Emitter.h"
+#include "Particle/ParticleEmitter.h"
 #include "Data/Transform.h"
 
 #include <list>
@@ -240,10 +240,10 @@ private:
 	/// ===== パーティクル用 ===== ///
 
 	// エミッターREDのポインタ
-	std::unique_ptr <Emitter> particleEmitterRed = nullptr;
+	std::unique_ptr <ParticleEmitter> particleEmitterRed = nullptr;
 
 	// エミッターBLUEのポインタ
-	std::unique_ptr <Emitter> particleEmitterBlue = nullptr;
+	std::unique_ptr <ParticleEmitter> particleEmitterBlue = nullptr;
 
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;

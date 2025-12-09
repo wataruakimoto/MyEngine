@@ -1,17 +1,17 @@
-#include "Emitter.h"
+#include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "MathVector.h"
 
 using namespace MathVector;
 using namespace MathRandom;
 
-void Emitter::Initialize() {
+void ParticleEmitter::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform.Initialize();
 }
 
-void Emitter::Update() {
+void ParticleEmitter::Update() {
 
 	//// タイマー更新
 	//timer += deltaTime;
@@ -26,7 +26,7 @@ void Emitter::Update() {
 	worldTransform.UpdateMatrix();
 }
 
-void Emitter::Emit() {
+void ParticleEmitter::Emit() {
 	
 	// マネージャーからパーティクル設定を取得
 	ParticleSetting* setting = ParticleManager::GetInstance()->GetSetting(effectName);
