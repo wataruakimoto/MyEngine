@@ -203,10 +203,12 @@ private:
 	/// ===== 射撃アニメーション用 ===== ///
 
 	Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
-	Vector3 fireScale_ = { 0.85f, 0.85f, 0.85f };
+	Vector3 fireScale_ = { 0.8f, 0.8f, 0.8f };
 
 	float fireTimer_ = 0.0f; // カウントダウンタイマー
+	float fireAnimationTimer_ = 0.0f; // 射撃アニメーション用カウントダウンタイマー
 	const float kFireDuration_ = 0.4f; // 射撃間隔 (秒)
+	const float kFireAnimationDuration_ = 0.2f; // 射撃アニメーション時間 (秒)
 
 	bool isFiring_ = false;
 
