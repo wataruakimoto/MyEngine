@@ -38,6 +38,17 @@ public:
 	void Emit();
 
 ///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// 位置のセッター
+	/// </summary>
+	/// <param name="translate">位置</param>
+	void SetTranslate(const Vector3& translate) { worldTransform.SetTranslate(translate); }
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:

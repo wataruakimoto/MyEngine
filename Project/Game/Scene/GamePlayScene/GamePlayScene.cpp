@@ -29,15 +29,6 @@ void GamePlayScene::Initialize() {
 
 	particleManager_->SetCamera(camera_.get());
 
-	// パーティクルシステムの初期化
-	particleSystem->SetCamera(camera_.get());
-	particleSystem->CreateParticleGroup("Red", "Resources/Red.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("Blue", "Resources/Blue.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("White", "Resources/White.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("Black", "Resources/Black.png", ParticleShape::CUBE);
-	particleSystem->CreateParticleGroup("Bullet", "Resources/Blue.png", ParticleShape::SHARD);
-	particleSystem->CreateParticleGroup("BulletEnemy", "Resources/Red.png", ParticleShape::SHARD);
-
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<CollisionManager>();
 
@@ -294,17 +285,14 @@ void GamePlayScene::Update() {
 	// 衝突マネージャの更新
 	collisionManager_->Update();
 
-	// パーティクルシステムの更新
-	particleManager_->Update();
-
-	// パーティクルシステムの更新
-	particleSystem->Update();
-
 	// ゴールの更新
 	goal_->Update();
 
 	// 衝突判定と応答
 	CheckAllCollisions();
+
+	// パーティクルマネージャの更新
+	particleManager_->Update();
 }
 
 void GamePlayScene::Draw() {
@@ -361,9 +349,6 @@ void GamePlayScene::Draw() {
 
 	// パーティクルシステムの描画
 	particleManager_->Draw();
-
-	// パーティクルシステムの描画
-	particleSystem->Draw();
 
 	/// === UIの描画準備 === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
@@ -443,8 +428,6 @@ void GamePlayScene::ShowImGui() {
 	filterManager_->ShowImGui();
 
 	particleManager_->ShowImGui();
-
-	particleSystem->ShowImGui("ParticleSystem");
 
 	goal_->ShowImGui();
 

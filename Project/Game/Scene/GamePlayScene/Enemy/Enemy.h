@@ -4,8 +4,7 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
-#include "Particle/ParticleEmitter.h"
-#include "Data/Transform.h"
+#include "Particle/Emitter.h"
 
 #include <memory>
 
@@ -118,12 +117,8 @@ private:
 	bool isDead = false;
 
 	// エミッターBlackのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitterBlack = nullptr;
+	std::unique_ptr <Emitter> particleEmitterBlack = nullptr;
 
 	// エミッターWhiteのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitterWhite = nullptr;
-
-	Transform EmitterTransform1 = {};
-
-	Particle particleSetting = {};
+	std::unique_ptr <Emitter> particleEmitterWhite = nullptr;
 };

@@ -38,8 +38,8 @@
             "z": 0.0
         }
     },
-    "effectName": "BulletRed",
-    "lifeTime": 0.5,
+    "effectName": "EnemyDeathWhite",
+    "lifeTime": 1.0,
     "lifeTimeRandom": false,
     "lifeTimeRange": {
         "max": 0.0,
@@ -64,26 +64,26 @@
         }
     },
     "scale": {
-        "x": 1.0,
-        "y": 1.0,
-        "z": 1.0
+        "x": 0.25,
+        "y": 0.25,
+        "z": 0.25
     },
-    "scaleRandom": true,
+    "scaleRandom": false,
     "scaleRange": {
         "max": {
-            "x": 0.30000001192092896,
-            "y": 0.30000001192092896,
-            "z": 0.30000001192092896
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
         },
         "min": {
-            "x": 0.20000000298023224,
-            "y": 0.20000000298023224,
-            "z": 0.20000000298023224
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
         }
     },
-    "shape": "SHARD",
-    "textureFileName": "Red.png",
-    "textureFullPath": "Resources/Texture/Particles/Red.png",
+    "shape": "CUBE",
+    "textureFileName": "White.png",
+    "textureFullPath": "Resources/Texture/Particles/White.png",
     "translate": {
         "x": 0.0,
         "y": 0.0,
