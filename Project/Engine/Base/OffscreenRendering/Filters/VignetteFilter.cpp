@@ -16,6 +16,9 @@ void VignetteFilter::Initialize() {
 
 	// パイプライン作成
 	CreateGraphicsPipeline();
+
+	// コンフィグデータの生成
+	CreateConfigData();
 }
 
 void VignetteFilter::Draw() {
@@ -35,6 +38,9 @@ void VignetteFilter::Draw() {
 	/// === SRVのDescriptorTableを設定 === ///
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
 
+	/// === CBufferの設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, configResource->GetGPUVirtualAddress());
+
 	// 3頂点を1回描画する
 	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
@@ -47,6 +53,12 @@ void VignetteFilter::ShowImGui() {
 
 		// 有効化フラグのチェックボックス
 		ImGui::Checkbox("IsActive", &isActive);
+
+		ImGui::ColorEdit3("Color", &configData->color.x);
+		ImGui::SliderFloat("Intensity", &configData->intensity, 0.0f, 5.0f);
+		ImGui::SliderFloat("Scale", &configData->scale, 0.0f, 32.0f);
+		ImGui::SliderFloat("Range", &configData->range, 0.0f, 2.0f);
+
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
@@ -70,13 +82,18 @@ void VignetteFilter::CreateRootSignature() {
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
 	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	D3D12_ROOT_PARAMETER rootParameters[2] = {};
 
 	// gTexture SRV t0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // Tableの中身の配列を指定
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
+
+	// コンフィグデータ CBV b0
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[1].Descriptor.RegisterSpace = 0; // レジスタ番号0を使う
 
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
@@ -199,5 +216,20 @@ void VignetteFilter::CreateGraphicsPipeline() {
 	hr = dxUtility->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
 		IID_PPV_ARGS(&graphicsPipelineState));
 	assert(SUCCEEDED(hr));
+}
+
+void VignetteFilter::CreateConfigData() {
+	
+	// リソースを生成
+	configResource = dxUtility->CreateBufferResource(sizeof(Config));
+
+	// リソースにデータをマッピング
+	configResource->Map(0, nullptr, reinterpret_cast<void**>(&configData));
+
+	// データの初期化
+	configData->color = Vector3(0.0f, 0.0f, 0.0f);
+	configData->intensity = 0.8f;
+	configData->scale = 16.0f;
+	configData->range = 1.0f;
 }
 

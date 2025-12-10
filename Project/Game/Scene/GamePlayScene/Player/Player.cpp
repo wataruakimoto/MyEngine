@@ -169,8 +169,20 @@ void Player::OnCollision(Collider* other) {
 		// 状態が死亡状態でなければ
 		if (state_ != PlayerState::Dead) {
 
-			// 死亡状態に変更をリクエスト
-			stateRequest_ = PlayerState::Dead;
+			// HPを減らす
+			if (hp_ > 0) {
+				hp_--;
+
+				// シーンにダメージを通知
+				if (gamePlayScene_) {
+					gamePlayScene_->OnPlayerDamaged(hp_);
+				}
+			}
+
+			// HPが0なら死亡状態に変更をリクエスト
+			if (hp_ == 0) {
+				stateRequest_ = PlayerState::Dead;
+			}
 		}
 	}
 	// 衝突相手が敵の弾の場合
@@ -179,8 +191,20 @@ void Player::OnCollision(Collider* other) {
 		// 状態が死亡状態でなければ
 		if (state_ != PlayerState::Dead) {
 
-			// 死亡状態に変更をリクエスト
-			stateRequest_ = PlayerState::Dead;
+			// HPを減らす
+			if (hp_ > 0) {
+				hp_--;
+
+				// シーンにダメージを通知
+				if (gamePlayScene_) {
+					gamePlayScene_->OnPlayerDamaged(hp_);
+				}
+			}
+
+			// HPが0なら死亡状態に変更をリクエスト
+			if (hp_ == 0) {
+				stateRequest_ = PlayerState::Dead;
+			}
 		}
 	}
 	// その他と衝突した場合

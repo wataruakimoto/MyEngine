@@ -115,6 +115,12 @@ public:
 	/// <returns></returns>
 	Vector2 GetScreenPos() { return screenPos_; }
 
+	/// <summary>
+	/// HPのゲッター
+	/// </summary>
+	/// <returns></returns>
+	uint16_t GetHP() const { return hp_; }
+
 	float GetMoveSpeedTitle() { return moveSpeedAuto; }
 
 	float GetMoveSpeedPlay() { return moveSpeedManual; }
@@ -167,20 +173,13 @@ public:
 ///-------------------------------------------///
 private:
 
+	/// ===== ポインタ・インスタンス ===== ///
+
 	// モデルのポインタ
 	std::unique_ptr<Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
-
-	float moveSpeedAuto = 0.5f;
-
-	float moveSpeedManual = 0.5f;
-
-	Vector2 screenPos_ = { 0.0f, 0.0f };
-
-	// 速度
-	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;
@@ -193,12 +192,6 @@ private:
 
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;
-
-	// 状態
-	PlayerState state_ = PlayerState::Manual;
-
-	// 状態変更リクエスト
-	std::optional<PlayerState> stateRequest_ = std::nullopt;
 
 	/// ===== 射撃アニメーション用 ===== ///
 
@@ -250,7 +243,26 @@ private:
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;
 
+	/// ===== パラメータ等 ===== ///
+
+	uint16_t hp_ = 5;
+
+	float moveSpeedAuto = 0.5f;
+
+	float moveSpeedManual = 0.5f;
+
+	Vector2 screenPos_ = { 0.0f, 0.0f };
+
+	// 速度
+	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+
 	// 移動範囲の制限
 	const Vector2 kMoveMin = { -20.0f, 0.0f }; // X,Yの最小値 左下
 	const Vector2 kMoveMax = { 20.0f, 20.0f }; // X,Yの最大値 右上
+
+	// 状態
+	PlayerState state_ = PlayerState::Manual;
+
+	// 状態変更リクエスト
+	std::optional<PlayerState> stateRequest_ = std::nullopt;
 };
