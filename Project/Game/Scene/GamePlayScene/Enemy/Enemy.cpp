@@ -117,6 +117,8 @@ void Enemy::OnCollision(Collider* other) {
 		particleEmitterWhite->Emit();
 		particleEmitterBlack->Emit();
 
+		gamePlayScene_->OnEnemyDefeated();
+
 		// 死亡
 		isDead = true;
 	}

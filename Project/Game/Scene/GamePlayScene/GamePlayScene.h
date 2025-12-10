@@ -96,6 +96,11 @@ public:
 	void OnPlayerDamaged(uint16_t currentHP);
 
 	/// <summary>
+	/// 敵を倒したときの処理
+	/// </summary>
+	void OnEnemyDefeated();
+
+	/// <summary>
 	/// ビネットエフェクトの更新
 	/// </summary>
 	void UpdateVignetteEffect();

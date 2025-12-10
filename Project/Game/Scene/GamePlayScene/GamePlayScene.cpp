@@ -497,6 +497,14 @@ void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
 	}
 }
 
+void GamePlayScene::OnEnemyDefeated() {
+
+	// カメラシェイクを開始
+	if (cameraController_) {
+		dynamic_cast<FollowCameraController*>(cameraController_.get())->StartShake(0.5f, 0.1f);
+	}
+}
+
 void GamePlayScene::UpdateVignetteEffect() {
 
 	if (!vignetteFilter_ || !player_) {
