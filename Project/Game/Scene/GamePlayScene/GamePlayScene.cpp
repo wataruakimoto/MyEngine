@@ -8,8 +8,11 @@
 #include "SceneManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "CameraControll/RailCamera/RailCameraController.h"
+#include "Easing.h"
 
 #include <imgui.h>
+
+using namespace Easing;
 
 void GamePlayScene::Initialize() {
 
@@ -95,6 +98,12 @@ void GamePlayScene::Initialize() {
 
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
+
+	// ビネットフィルターをフィルターマネージャから受け取っとく
+	vignetteFilter_ = filterManager_->GetVignetteFilter();
+
+	// プレイヤーのHPをもらう
+	previousHP_ = player_->GetHP();
 
 	// ルールUIの生成&初期化
 	ruleUI_ = std::make_unique<RuleUI>();
@@ -282,11 +291,11 @@ void GamePlayScene::Update() {
 	// スカイボックスの更新
 	skyBox_->Update();
 
-	// 衝突マネージャの更新
-	collisionManager_->Update();
-
 	// ゴールの更新
 	goal_->Update();
+
+	// 衝突マネージャの更新
+	collisionManager_->Update();
 
 	// 衝突判定と応答
 	CheckAllCollisions();
@@ -476,6 +485,101 @@ void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
 	enemyBullets_.push_back(std::move(bullet));
 }
 
+void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
+
+	// ダメージ時の一時ビネットを開始
+	isDamageVignetteActive_ = true;
+	damageVignetteTimer_ = 0;
+
+	// ビネットフィルターを有効化
+	if (vignetteFilter_) {
+		vignetteFilter_->SetIsActive(true);
+	}
+}
+
+void GamePlayScene::OnEnemyDefeated() {
+
+	// カメラシェイクを開始
+	if (cameraController_) {
+		dynamic_cast<FollowCameraController*>(cameraController_.get())->StartShake(0.5f, 0.1f);
+	}
+}
+
+void GamePlayScene::UpdateVignetteEffect() {
+
+	if (!vignetteFilter_ || !player_) {
+		return;
+	}
+
+	uint16_t currentHP = player_->GetHP();
+	PlayerState playerState = player_->GetState();
+
+	// プレイヤーが死亡状態の場合は常時赤いビネットを表示
+	if (playerState == PlayerState::Dead) {
+
+		// ビネットフィルターの設定
+		vignetteFilter_->SetIsActive(true);
+		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
+		vignetteFilter_->SetIntensity(0.7f);
+		vignetteFilter_->SetScale(18.0f);
+		vignetteFilter_->SetRange(1.0f);
+
+		// ダメージ時の一時ビネットはリセット
+		isDamageVignetteActive_ = false;
+		return;
+	}
+
+	// HPが1の場合は常時赤いビネットを表示
+	if (currentHP == 1) {
+
+		// ビネットフィルターの設定
+		vignetteFilter_->SetIsActive(true);
+		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
+		vignetteFilter_->SetIntensity(0.7f);
+		vignetteFilter_->SetScale(18.0f);
+		vignetteFilter_->SetRange(1.0f);
+
+		// ダメージ時の一時ビネットはリセット
+		isDamageVignetteActive_ = false;
+		return;
+	}
+
+	// ダメージ時の一時ビネット処理
+	if (isDamageVignetteActive_) {
+
+		// タイマー更新
+		damageVignetteTimer_ += 1.0f / 60.0f; // 60FPS換算
+
+		// 線形補間で徐々にフェードアウト
+		float t = damageVignetteTimer_ / kDamageVignetteDuration_;
+		float easeT = EaseOutQuad(t); // イージング適用
+		float fadeOut = Lerp(1.0f, 0.0f, easeT); // 1から0へ線形補間
+
+		// ビネットフィルターの設定
+		vignetteFilter_->SetColor({ 1.0f * fadeOut, 0.0f, 0.0f });
+		vignetteFilter_->SetIntensity(0.6f);
+		vignetteFilter_->SetScale(20.0f);
+		vignetteFilter_->SetRange(1.0f);
+
+		// 継続時間が終了したら元に戻す
+		if (damageVignetteTimer_ >= kDamageVignetteDuration_) {
+			isDamageVignetteActive_ = false;
+			vignetteFilter_->SetIsActive(false);
+
+			// デフォルト値に戻す
+			vignetteFilter_->SetColor({ 0.0f, 0.0f, 0.0f });
+			vignetteFilter_->SetIntensity(0.8f);
+			vignetteFilter_->SetScale(16.0f);
+			vignetteFilter_->SetRange(1.0f);
+		}
+	}
+	// HP2以上でダメージビネットも無効な場合はビネットを非表示
+	else if (currentHP >= 2) {
+
+		vignetteFilter_->SetIsActive(false);
+	}
+}
+
 void GamePlayScene::LoadEnemyPopData() {
 
 	// ファイルを開く
@@ -659,6 +763,9 @@ void GamePlayScene::PlayInitialize() {
 
 void GamePlayScene::PlayUpdate() {
 
+	// ビネットエフェクトの更新
+	UpdateVignetteEffect();
+
 	// ノルマUIに目標値を設定
 	normaUI_->SetTargetValue(kClearNorma_);
 	// ノルマUIに現在値を設定
@@ -756,6 +863,11 @@ void GamePlayScene::WhiteFadeUpdate() {
 }
 
 void GamePlayScene::BlackFadeInitialize() {
+
+	// ビネットフィルターをオフにする
+	if (vignetteFilter_) {
+		vignetteFilter_->SetIsActive(false);
+	}
 
 	// プレイヤーが生存していたら
 	if (!player_->IsDead()) {

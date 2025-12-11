@@ -10,8 +10,6 @@ void DebugScene::Initialize() {
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,0.0f,-20.0f });
 
-	// パーティクルマネージャー初期化
-	particleManager->Initialize();
 	// カメラのセット
 	particleManager->SetCamera(camera.get());
 
@@ -22,6 +20,9 @@ void DebugScene::Initialize() {
 	// エミッターの初期化
 	particleEmitterRed->Initialize();
 	particleEmitterBlue->Initialize();
+
+	// フィルターマネージャの取得
+	filterManager = FilterManager::GetInstance();
 }
 
 void DebugScene::Update() {
@@ -47,9 +48,6 @@ void DebugScene::Draw() {
 }
 
 void DebugScene::Finalize() {
-
-	// パーティクルマネージャーの終了
-	particleManager->Finalize();
 }
 
 void DebugScene::ShowImGui() {
@@ -59,4 +57,7 @@ void DebugScene::ShowImGui() {
 
 	// パーティクルマネージャーのImGui表示
 	particleManager->ShowImGui();
+
+	// フィルターマネージャーのImGui表示
+	filterManager->ShowImGui();
 }

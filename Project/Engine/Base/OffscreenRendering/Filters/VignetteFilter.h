@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseFilter.h"
+#include "Vector3.h"
 
 /// ===== ビネットフィルター ===== ///
 class VignetteFilter : public BaseFilter {
@@ -70,9 +71,51 @@ private:
 	/// </summary>
 	void CreateGraphicsPipeline() override;
 
+	/// <summary>
+	/// コンフィグデータの生成
+	/// </summary>
+	void CreateConfigData();
+
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	void SetColor(const Vector3& color) { configData->color = color; }
+
+	void SetIntensity(float intensity) { configData->intensity = intensity; }
+
+	void SetScale(float scale) { configData->scale = scale; }
+
+	void SetRange(float range) { configData->range = range; }
+
+///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
+public:
+
+	struct Config {
+
+		Vector3 color; // 色
+		float intensity; // 強さ
+		float scale; // スケール
+		float range; // 範囲
+	};
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// コンフィグデータ
+	Config* configData = nullptr;
+
+	// コンフィグ用リソース
+	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 };
 

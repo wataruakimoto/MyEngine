@@ -65,6 +65,11 @@ private:
 	/// </summary>
 	void Fire();
 
+	/// <summary>
+	/// 射撃アニメーション更新
+	/// </summary>
+	void FireAnimationUpdate();
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -112,8 +117,6 @@ private:
 
 	float moveSpeed = 0.2f;
 
-	float fireTimer = 60.0f;
-
 	bool isDead = false;
 
 	// エミッターBlackのポインタ
@@ -121,4 +124,16 @@ private:
 
 	// エミッターWhiteのポインタ
 	std::unique_ptr <ParticleEmitter> particleEmitterWhite = nullptr;
+
+	/// ===== 射撃アニメーション用 ===== ///
+
+	Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
+	Vector3 fireScale_ = { 0.8f, 0.8f, 0.8f };
+
+	float fireTimer_ = 0.0f; // カウントダウンタイマー
+	float fireAnimationTimer_ = 0.0f; // 射撃アニメーション用カウントダウンタイマー
+	const float kFireDuration_ = 1.0f; // 射撃間隔 (秒)
+	const float kFireAnimationDuration_ = 0.2f; // 射撃アニメーション間隔 (秒)
+
+	bool isFiring_ = false;
 };

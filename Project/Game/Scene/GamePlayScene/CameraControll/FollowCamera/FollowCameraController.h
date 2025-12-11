@@ -3,6 +3,7 @@
 #include "CameraControll/ICameraController.h"
 #include "WorldTransform.h"
 #include "Camera.h"
+#include "MathRandom.h"
 
 #include <memory>
 
@@ -29,6 +30,13 @@ public:
 	/// </summary>
 	void ShowImGui() override;
 
+	/// <summary>
+	/// カメラシェイクを開始
+	/// </summary>
+	/// <param name="intensity">シェイクの強度</param>
+	/// <param name="duration">シェイクの持続時間（秒）</param>
+	void StartShake(float intensity, float duration);
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -50,5 +58,14 @@ private:
 
 	// 追従対象のオフセット
 	Vector3 baseOffset = { 0.0f, 3.0f, -25.0f };
+
+	/// ===== シェイク用のパラメータ ===== ///
+
+	bool isShaking_ = false;           // シェイク中かどうか
+	float shakeTimer_ = 0.0f;          // シェイクタイマー
+	float shakeDuration_ = 0.0f;       // シェイク持続時間
+	float shakeIntensity_ = 0.0f;      // シェイク強度
+	Vector3 shakeOffset_ = { 0.0f, 0.0f, 0.0f }; // シェイクオフセット
+	Vector3Range shakeRange_ = { {-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f} }; // シェイク範囲
 };
 

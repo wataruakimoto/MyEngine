@@ -25,21 +25,14 @@ Vector4 Easing::Lerp(const Vector4& start, const Vector4& end, float t) {
 	return start + (end - start) * t;
 }
 
-float Easing::EaseInOut(float t) {
-	
-	if (t < 0.5f) {
-
-		return 2.0f * t * t;
-	}
-	else {
-
-		return -1.0f + (4.0f - 2.0f * t) * t;
-	}
-}
-
 float Easing::EaseInCubic(float t) {
 	
 	return t * t * t;
+}
+
+float Easing::EaseOutQuad(float t) {
+	
+	return 1.0f - (1.0f - t) * (1.0f - t);
 }
 
 float Easing::EaseOutCubic(float t) {
@@ -72,5 +65,17 @@ float Easing::EaseOutBounce(float t) {
 	else {
 
 		return n1 * (t -= 2.625f / d1) * t + 0.984375f;
+	}
+}
+
+float Easing::EaseInOutQuad(float t) {
+
+	if (t < 0.5f) {
+
+		return 2.0f * t * t;
+	}
+	else {
+
+		return -1.0f + (4.0f - 2.0f * t) * t;
 	}
 }

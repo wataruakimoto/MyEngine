@@ -5,6 +5,7 @@
 #include "Particle/ParticleCommon.h"
 #include "Particle/ParticleManager.h"
 #include "Particle/ParticleEmitter.h"
+#include "OffscreenRendering/FilterManager.h"
 
 #include <memory>
 
@@ -58,4 +59,7 @@ private:
 	// エミッターのポインタ
 	std::unique_ptr<ParticleEmitter> particleEmitterRed = nullptr;
 	std::unique_ptr<ParticleEmitter> particleEmitterBlue = nullptr;
+
+	// フィルターマネージャのインスタンス
+	FilterManager* filterManager;
 };
