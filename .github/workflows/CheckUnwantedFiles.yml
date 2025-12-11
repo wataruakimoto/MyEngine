@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 不要なファイルとディレクトリを検索(bash)
-        run: 
+        run: |
           # ディレクトリ条件を構築(最初の不要な -o を後で削除)
           DiR_CONDITIONS=()
           for pattern in $UNWANTED_DIR_PATTERNS; do
@@ -39,7 +39,7 @@ jobs:
           # 1. .git を除外
           # 2. 不要なディレクトリを検索(-type d)し、見つけたらパスを出力(-print)し、その中身を枝刈り(-prune)
           # 3. または(-o)不要なファイルを検索(-type f)し、パスを出力(-print)
-          UNWANTED_LIST=$(find . -path "./git" -prune -o \
+          UNWANTED_LIST=$(find . -path "./.git" -prune -o \
             \( \( "${DiR_CONDITIONS[@]}" \) -a -type d -print -prune \) -o \
             \( \( "${NAME_CONDITIONS[@]}" \) -a -type f -print \) \
           )
