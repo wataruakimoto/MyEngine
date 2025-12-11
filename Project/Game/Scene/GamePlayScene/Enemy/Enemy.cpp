@@ -1,14 +1,16 @@
 #include "Enemy.h"
-#include "MathVector.h"
 #include "Collision/CollisionTypeIDDef.h"
 #include "Player/Player.h"
 #include "GamePlayScene.h"
 #include "EnemyBullet.h"
+#include "MathVector.h"
+#include "Easing.h"
 
 #include <numbers>
 #include <imgui.h>
 
 using namespace MathVector;
+using namespace Easing;
 
 void Enemy::Initialize() {
 
@@ -43,7 +45,7 @@ void Enemy::Update() {
 	AimToPlayer();
 
 	// 射撃
-	if (fireTimer <= 0) {
+	if (fireTimer_ <= 0) {
 
 		// プレイヤーより手前にいたら
 		if (worldTransform_.GetTranslate().z > player->GetWorldTransform().GetTranslate().z) {
@@ -51,14 +53,21 @@ void Enemy::Update() {
 			// プレイヤーがマニュアル操作中なら
 			if (player->GetState() == PlayerState::Manual) {
 
+				// 射撃
 				Fire();
-				fireTimer = 60.0f;
 			}
 		}
 	}
 	else {
 
-		fireTimer--;
+		// タイマーをデクリメント
+		fireTimer_ -= 1.0f / 60.0f;
+	}
+
+	if (isFiring_) {
+
+		// 射撃アニメーション更新
+		FireAnimationUpdate();
 	}
 
 	object->SetTranslate(worldTransform_.GetTranslate());
@@ -107,6 +116,8 @@ void Enemy::OnCollision(Collider* other) {
 		// パーティクル発生
 		particleEmitterWhite->Emit();
 		particleEmitterBlack->Emit();
+
+		gamePlayScene_->OnEnemyDefeated();
 
 		// 死亡
 		isDead = true;
@@ -164,4 +175,33 @@ void Enemy::Fire() {
 
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddEnemyBullet(std::move(bullet));
+
+	// 射撃間隔タイマーをリセット
+	fireTimer_ = kFireDuration_;
+
+	// 射撃アニメーション開始
+	isFiring_ = true;
+	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
+	object->SetScale(fireScale_);
+	object->SetScale(fireScale_);
+}
+
+void Enemy::FireAnimationUpdate() {
+
+	// デルタタイム分デクリメント
+	fireAnimationTimer_ -= 1.0f / 60.0f;
+
+	float t = 1.0f - (fireAnimationTimer_ / kFireAnimationDuration_); // 経過割合を計算
+	float easedT = EaseOutCubic(t); // イージング適用
+	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
+
+	// スケールを設定
+	object->SetScale(newScale);
+
+	// タイマーが0以下になったら
+	if (fireAnimationTimer_ <= 0.0f) {
+
+		isFiring_ = false; // 射撃アニメーション終了
+		newScale = defaultScale_; // スケールをデフォルトに戻す
+	}
 }

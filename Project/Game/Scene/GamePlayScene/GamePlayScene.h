@@ -89,6 +89,22 @@ public:
 	/// <param name="bullet"></param>
 	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
 
+	/// <summary>
+	/// プレイヤーがダメージを受けたときの処理
+	/// </summary>
+	/// <param name="currentHP">現在のHP</param>
+	void OnPlayerDamaged(uint16_t currentHP);
+
+	/// <summary>
+	/// 敵を倒したときの処理
+	/// </summary>
+	void OnEnemyDefeated();
+
+	/// <summary>
+	/// ビネットエフェクトの更新
+	/// </summary>
+	void UpdateVignetteEffect();
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///
@@ -215,6 +231,15 @@ private:
 
 	// ブラーの最小値
 	const float kMinBlurStrength = 0.0f;
+
+	// ビネットフィルター借りポインタ
+	VignetteFilter* vignetteFilter_ = nullptr;
+
+	// ビネットエフェクト用変数
+	bool isDamageVignetteActive_ = false; // ダメージ時の一時ビネット有効フラグ
+	float damageVignetteTimer_ = 0.0f; // ダメージビネットのタイマー
+	const float kDamageVignetteDuration_ = 0.5f; // ダメージビネットの持続時間 (秒)
+	uint16_t previousHP_ = 0; // 前フレームのHP
 
 	// プレイヤーの移動速度
 	float playerMoveSpeed_ = 4.0f;

@@ -195,7 +195,7 @@ void RuleUI::AnimationUpdate() {
 		if (animationFrame_ <= scaleDownDuration_) {
 
 			float t = static_cast<float>(animationFrame_) / static_cast<float>(scaleDownDuration_);
-			float easedT = EaseInOut(t);
+			float easedT = EaseInOutQuad(t);
 
 			currentScale = {
 				maxScale_.x + (endScale_.x - maxScale_.x) * easedT,
@@ -270,7 +270,7 @@ void RuleUI::AnimationUpdate() {
 		if (animationFrame_ <= scaleDownDuration_) {
 
 			float t = static_cast<float>(animationFrame_) / static_cast<float>(scaleDownDuration_);
-			float easedT = EaseInOut(t);
+			float easedT = EaseInOutQuad(t);
 
 			currentScale = {
 				maxScale_.x + (endScale_.x - maxScale_.x) * easedT,

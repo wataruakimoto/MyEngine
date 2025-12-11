@@ -83,6 +83,12 @@ public:
 	Camera* GetCamera() const { return camera; }
 
 	/// <summary>
+	/// ビネットフィルターのゲッター
+	/// </summary>
+	/// <returns></returns>
+	VignetteFilter* GetVignetteFilter() const { return static_cast<VignetteFilter*>(filters_.at("Vignette").get()); }
+
+	/// <summary>
 	/// ラジアルブラーのゲッター
 	/// </summary>
 	/// <returns></returns>

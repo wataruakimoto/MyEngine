@@ -169,8 +169,20 @@ void Player::OnCollision(Collider* other) {
 		// 状態が死亡状態でなければ
 		if (state_ != PlayerState::Dead) {
 
-			// 死亡状態に変更をリクエスト
-			stateRequest_ = PlayerState::Dead;
+			// HPを減らす
+			if (hp_ > 0) {
+				hp_--;
+
+				// シーンにダメージを通知
+				if (gamePlayScene_) {
+					gamePlayScene_->OnPlayerDamaged(hp_);
+				}
+			}
+
+			// HPが0なら死亡状態に変更をリクエスト
+			if (hp_ == 0) {
+				stateRequest_ = PlayerState::Dead;
+			}
 		}
 	}
 	// 衝突相手が敵の弾の場合
@@ -179,8 +191,20 @@ void Player::OnCollision(Collider* other) {
 		// 状態が死亡状態でなければ
 		if (state_ != PlayerState::Dead) {
 
-			// 死亡状態に変更をリクエスト
-			stateRequest_ = PlayerState::Dead;
+			// HPを減らす
+			if (hp_ > 0) {
+				hp_--;
+
+				// シーンにダメージを通知
+				if (gamePlayScene_) {
+					gamePlayScene_->OnPlayerDamaged(hp_);
+				}
+			}
+
+			// HPが0なら死亡状態に変更をリクエスト
+			if (hp_ == 0) {
+				stateRequest_ = PlayerState::Dead;
+			}
 		}
 	}
 	// その他と衝突した場合
@@ -323,18 +347,22 @@ void Player::Fire() {
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddPlayerBullet(std::move(bullet));
 
+	// 射撃間隔タイマーをリセット
+	fireTimer_ = kFireDuration_;
+
 	// 射撃アニメーション開始
 	isFiring_ = true;
-	fireTimer_ = kFireDuration_; // タイマーをリセット
+	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
+	object->SetScale(fireScale_);
 	object->SetScale(fireScale_);
 }
 
 void Player::FireAnimationUpdate() {
 
 	// デルタタイム分デクリメント
-	fireTimer_ -= 1.0f / 60.0f;
+	fireAnimationTimer_ -= 1.0f / 60.0f;
 
-	float t = 1.0f - (fireTimer_ / kFireDuration_); // 経過割合を計算
+	float t = 1.0f - (fireAnimationTimer_ / kFireAnimationDuration_); // 経過割合を計算
 	float easedT = EaseOutCubic(t); // イージング適用
 	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
 
@@ -342,7 +370,7 @@ void Player::FireAnimationUpdate() {
 	object->SetScale(newScale);
 
 	// タイマーが0以下になったら
-	if (fireTimer_ <= 0.0f) {
+	if (fireAnimationTimer_ <= 0.0f) {
 
 		isFiring_ = false; // 射撃アニメーション終了
 		newScale = defaultScale_; // スケールをデフォルトに戻す
@@ -410,9 +438,14 @@ void Player::ManualUpdate() {
 		// スペースキーが押されたら
 		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 
-			// 射撃7676
+			// 射撃
 			Fire();
 		}
+	}
+	else {
+
+		// タイマーをデクリメント
+		fireTimer_ -= 1.0f / 60.0f;
 	}
 	
 	if (isFiring_) {
