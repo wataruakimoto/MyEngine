@@ -22,6 +22,21 @@ void ImGuiManager::Initialize(WinApp* winApp, SwapChain* swapChain) {
 	// コンテキストの生成
 	ImGui::CreateContext();
 
+	// IO設定の取得
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+
+	// フォントのフルパスを作成
+	std::string fontFullPath = fontResourcePath_ + fontFileName_;
+
+	// フォントの読み込み
+	io.Fonts->AddFontFromFileTTF(
+		fontFullPath.c_str(), // フルパスから指定
+		18.0f, // フォントサイズ
+		nullptr,
+		io.Fonts->GetGlyphRangesJapanese() // 日本語対応
+	);
+
 	// スタイルの設定
 	ImGui::StyleColorsDark();
 
