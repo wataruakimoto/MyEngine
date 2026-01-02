@@ -35,7 +35,4 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
-
-	// 遷移マネージャのインスタンス
-	TransitionManager* transitionManager_ = TransitionManager::GetInstance();
 };
