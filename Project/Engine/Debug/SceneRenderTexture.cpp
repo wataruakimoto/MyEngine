@@ -1,11 +1,11 @@
-#include "PostEffect.h"
-#include "WinApp.h"
+#include "SceneRenderTexture.h"
 #include "DirectXUtility.h"
+#include "WinApp.h"
 #include "SrvManager.h"
 
-using namespace Microsoft::WRL;
+#include <imgui.h>
 
-void PostEffect::Initialize() {
+void SceneRenderTexture::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
@@ -29,7 +29,10 @@ void PostEffect::Initialize() {
 	ScissoringRectInitialize();
 }
 
-void PostEffect::PreDraw() {
+void SceneRenderTexture::PreDraw() {
+
+	// コマンドリストをDirectXUtilityから取得A
+	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get();
 
 	/// === レンダーテクスチャ用のバリアの設定 === ///
 
@@ -46,7 +49,7 @@ void PostEffect::PreDraw() {
 	// 全部まとめて変える
 	renderTextureBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
+	commandList->ResourceBarrier(1, &renderTextureBarrier);
 
 	/// === 深度ステンシル用のバリアの設定 === ///
 
@@ -63,32 +66,33 @@ void PostEffect::PreDraw() {
 	// 全部まとめて変える
 	depthStencilBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
+	commandList->ResourceBarrier(1, &depthStencilBarrier);
 
 	/// ===== RTVとDSVの設定 ===== ///
 
-	// 描画先のRTVとDSVを指定する
-	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, &dsvHandle);
+	// レンダーターゲットと深度ステンシルビューを設定
+	commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
 
 	/// ===== 画面のクリア ===== ///
 
-	// 画面全体の色をクリア
+	// 色をクリア
 	float clearColor[] = { kRenderTargetClearValue.x, kRenderTargetClearValue.y, kRenderTargetClearValue.z, kRenderTargetClearValue.w };
-	dxUtility->GetCommandList()->ClearRenderTargetView(rtvHandles[0], clearColor, 0, nullptr);
-
-	// 画面全体の震度をクリア
-	dxUtility->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	// 深度をクリア
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, kDepthClearValue, 0, 0, nullptr);
 
 	/// ===== ビューポートとシザーの設定 ===== ///
 
 	// ビューポート矩形の設定
-	dxUtility->GetCommandList()->RSSetViewports(1, &viewportRect);
-
+	commandList->RSSetViewports(1, &viewportRect);
 	// シザリング矩形の設定
-	dxUtility->GetCommandList()->RSSetScissorRects(1, &scissorRect);
+	commandList->RSSetScissorRects(1, &scissorRect);
 }
 
-void PostEffect::PostDraw() {
+void SceneRenderTexture::PostDraw() {
+
+	// コマンドリストをDirectXUtilityから取得
+	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get();
 
 	/// === レンダーテクスチャ用のバリアの設定 === ///
 
@@ -97,7 +101,7 @@ void PostEffect::PostDraw() {
 	// 遷移後のResouceState
 	renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
 	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
+	commandList->ResourceBarrier(1, &renderTextureBarrier);
 
 	/// === 深度ステンシル用のバリアの設定 === ///
 
@@ -106,25 +110,39 @@ void PostEffect::PostDraw() {
 	// 遷移後のResouceState
 	depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
 	// TransitionBarrierを張る
-	dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
+	commandList->ResourceBarrier(1, &depthStencilBarrier);
 }
 
-void PostEffect::DescriptorHeapGenerate() {
+void SceneRenderTexture::CreateSceneView() {
 
-	// RTV用のデスクリプタサイズを取得
-	rtvDescriptorSize = dxUtility->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	ImGui::Begin("シーンビュー");
 
-	// RTV用のデスクリプタヒープを生成
-	rtvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 2, false); // 数は2 シェーダで使わない
+	// ウィンドウサイズの設定
+	ImVec2 windowSize = ImGui::GetContentRegionAvail(); // とりあえず利用可能なサイズを取得
+	ImGui::Image((ImTextureID)SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex).ptr, windowSize);
 
-	// DSV用のデスクリプタサイズを取得
-	dsvDescriptorSize = dxUtility->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	ImGui::End();
+}
 
-	// DSV用のデスクリプタヒープを生成
+void SceneRenderTexture::DescriptorHeapGenerate() {
+
+	// DeviceをDirectXUtilityから取得
+	ID3D12Device* device = dxUtility->GetDevice().Get();
+
+	// RTV用のディスクリプタサイズを取得
+	rtvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	// RTV用のディスクリプタヒープを生成
+	rtvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_RTV, 1, false); // 数は1 シェーダで使わない
+
+	// DSV用のディスクリプタサイズを取得
+	dsvDescriptorSize = device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+	// DSV用のディスクリプタヒープを生成
 	dsvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false); // 数は1 シェーダで使わない
 }
 
-void PostEffect::RenderTargetViewInitialize() {
+void SceneRenderTexture::RenderTargetViewInitialize() {
 
 	// Resourceの生成
 	renderTextureResource = dxUtility->CreateRenderTextureResource(
@@ -138,30 +156,14 @@ void PostEffect::RenderTargetViewInitialize() {
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // フォーマット
 	rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D; // 2Dテクスチャ
 
-	// デスクリプタヒープの先頭を取得
-	D3D12_CPU_DESCRIPTOR_HANDLE startHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
+	// RTVハンドルを取得
+	rtvHandle = rtvDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
 
-	for (uint32_t i = 0; i < 2; ++i) {
-
-		// RTVハンドルを取得
-		rtvHandles[i] = startHandle;
-		rtvHandles[i].ptr += rtvDescriptorSize * i;
-
-		// RTV生成
-		dxUtility->GetDevice()->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandles[i]);
-	}
+	// RTV生成
+	dxUtility->GetDevice()->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandle);
 }
 
-void PostEffect::ShaderResourceViewInitialize() {
-
-	// SRV確保
-	srvIndex = SrvManager::GetInstance()->Allocate();
-
-	// SRV作成
-	SrvManager::GetInstance()->CreateSRVforRenderTexture(srvIndex, renderTextureResource.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
-}
-
-void PostEffect::DepthStencilViewInitialize() {
+void SceneRenderTexture::DepthStencilViewInitialize() {
 
 	// Resourceの生成
 	depthStencilResource = dxUtility->CreateDepthStencilResource(
@@ -180,29 +182,30 @@ void PostEffect::DepthStencilViewInitialize() {
 
 	// DSV生成
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
-
-	// SRV確保
-	depthSrvIndex = SrvManager::GetInstance()->Allocate();
-
-	// SRV作成
-	SrvManager::GetInstance()->CreateSRVforDepthStencil(depthSrvIndex, depthStencilResource.Get(), DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
 }
 
-void PostEffect::ViewportRectInitialize() {
+void SceneRenderTexture::ShaderResourceViewInitialize() {
 
-	// ----------ビューポート矩形の設定----------
+	// SRV確保
+	srvIndex = SrvManager::GetInstance()->Allocate();
+
+	// SRV作成
+	SrvManager::GetInstance()->CreateSRVforRenderTexture(srvIndex, renderTextureResource.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+}
+
+void SceneRenderTexture::ViewportRectInitialize() {
+
 	// クライアント領域のサイズと一緒にして画面全体に表示
-	viewportRect.Width = WinApp::kClientWidth;
-	viewportRect.Height = WinApp::kClientHeight;
+	viewportRect.Width = (float)WinApp::kClientWidth;
+	viewportRect.Height = (float)WinApp::kClientHeight;
 	viewportRect.TopLeftX = 0;
 	viewportRect.TopLeftY = 0;
 	viewportRect.MinDepth = 0.0f;
 	viewportRect.MaxDepth = 1.0f;
 }
 
-void PostEffect::ScissoringRectInitialize() {
+void SceneRenderTexture::ScissoringRectInitialize() {
 
-	// ----------シザリング矩形の設定----------
 	// 基本的にビューポートと同じ矩形が構成されるようにする
 	scissorRect.left = 0;
 	scissorRect.right = WinApp::kClientWidth;

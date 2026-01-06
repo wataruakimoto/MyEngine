@@ -45,6 +45,9 @@ void MyGame::Update() {
 		// シーンのImGui表示
 		SceneManager::GetInstance()->ShowImGui();
 
+		// シーンビュー作成
+		sceneRenderTexture->CreateSceneView();
+
 		/// === ImGui終了 === ///
 		ImGuiManager::GetInstance()->End();
 	}
@@ -52,28 +55,40 @@ void MyGame::Update() {
 
 void MyGame::Draw() {
 
-	/// === レンダーテクスチャ描画開始=== ///
-	postEffect->PreDraw();
+	/// ===== ゲームシーンの描画 ===== ///
+
+	// ポストエフェクトの描画前処理
+	postEffect->PreDraw(); // RENDER_TARGET
 
 	// シーンマネージャの描画
 	SceneManager::GetInstance()->Draw();
 
-	/// === レンダーテクスチャ描画処理 === ///
-	postEffect->PostDraw();
+	// ポストエフェクトの描画後処理
+	postEffect->PostDraw();  // PIXEL_SHADER_RESOURCE
 
-	/// === スワップチェイン描画開始 === ///
-	swapChain->PreDraw();
+	/// ===== フィルターへの描画 ===== ///
+
+	// シーンレンダーテクスチャの描画前処理
+	sceneRenderTexture->PreDraw(); // RENDER_TARGET
 
 	// フィルターマネージャの描画
 	FilterManager::GetInstance()->Draw();
 
-	/// === ImGui描画 === ///
+	// シーンレンダーテクスチャの描画後処理
+	sceneRenderTexture->PostDraw(); // PIXEL_SHADER_RESOURCE
+
+	/// ===== 画面への描画 ===== ///
+
+	// スワップチェイン描画前処理
+	swapChain->PreDraw(); // RENDER_TARGET
+
+	// ImGuiの描画
 	ImGuiManager::GetInstance()->Draw();
 
-	/// === スワップチェイン描画処理 === ///
-	swapChain->PostDraw();
+	// スワップチェイン描画後処理
+	swapChain->PostDraw(); // PRESENT
 
-	/// === DirectX描画処理 === ///
+	// DirectXユーティリティの描画後処理
 	DirectXUtility::GetInstance()->PostDraw();
 }
 

@@ -29,9 +29,6 @@ void ImGuiManager::Initialize(WinApp* winApp, SwapChain* swapChain) {
 	// ドッキングを有効化
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-	// マルチビューを有効化
-	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
 	// フォントのフルパスを作成
 	std::string fontFullPath = fontResourcePath_ + fontFileName_;
 
@@ -109,17 +106,6 @@ void ImGuiManager::Draw() {
 
 	// 実際のcommandListのImGuiの描画コマンドを積む
 	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList);
-
-	//// マルチビュー用の描画処理
-	//ImGuiIO& io = ImGui::GetIO();
-	//
-	//if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-	//
-	//	// 描画コンテキストの保存
-	//	ImGui::UpdatePlatformWindows();
-	//	// メインのコマンドリストを渡して、サブウィンドウを描画
-	//	ImGui::RenderPlatformWindowsDefault(nullptr, (void*)commandList);
-	//}
 
 #endif // USE_IMGUI
 }

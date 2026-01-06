@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Vector4.h"
+
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <dxcapi.h>
@@ -174,6 +176,26 @@ public:
 	/// <param name="texture"></param>
 	/// <param name="mipImages"></param>
 	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
+
+	/// <summary>
+	/// レンダーテクスチャ生成 
+	/// </summary>
+	/// <param name="width"></param>
+	/// <param name="height"></param>
+	/// <param name="format"></param>
+	/// <param name="clearColor"></param>
+	/// <returns></returns>
+	Microsoft::WRL::ComPtr <ID3D12Resource> CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+
+	/// <summary>
+	/// 深度ステンシルリソース生成
+	/// </summary>
+	/// <param name="width"></param>
+	/// <param name="height"></param>
+	/// <param name="format"></param>
+	/// <param name="clearDepth"></param>
+	/// <returns></returns>
+	Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth);
 
 ///-------------------------------------------/// 
 /// メンバ変数
