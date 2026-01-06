@@ -11,6 +11,7 @@
 #include <list>
 #include <memory>
 #include <optional>
+#include <numbers>
 
 /// === 前方宣言 === ///
 class GamePlayScene;
@@ -22,6 +23,7 @@ class Camera;
 enum class PlayerState {
 	AutoPilot,
 	Manual,
+	Rolling, // バレルロール
 	Dead,
 };
 
@@ -69,11 +71,6 @@ public:
 private:
 
 	/// <summary>
-	/// 移動
-	/// </summary>
-	void Move();
-
-	/// <summary>
 	/// 射撃
 	/// </summary>
 	void Fire();
@@ -88,6 +85,12 @@ private:
 	/// </summary>
 	void MoveToReticle();
 
+	/// <summary>
+	/// ダメージを受けたときの処理
+	/// </summary>
+	/// <param name="damage">ダメージ</param>
+	void DamageProcess(uint16_t damage);
+
 ///-------------------------------------------/// 
 /// 状態ごとの処理
 ///-------------------------------------------///
@@ -99,6 +102,10 @@ private:
 	void ManualInitialize();
 
 	void ManualUpdate();
+
+	void RollingInitialize();
+
+	void RollingUpdate();
 
 	void DeadInitialize();
 
@@ -204,6 +211,18 @@ private:
 	const float kFireAnimationDuration_ = 0.2f; // 射撃アニメーション時間 (秒)
 
 	bool isFiring_ = false;
+
+	/// ===== バレルロール用 ===== ///
+
+	float rollTimer_ = 0.0f;    // 経過時間タイマー
+	float rollDuration_ = 0.5f; // ロールにかかる時間（秒）
+	int rollDirection_ = 0;     // 回転方向 (-1:左, 1:右)
+
+	const float kRollMoveSpeed_ = 0.4f; // 移動速度
+	const float kMaxRollAngle_ = 2.0f * std::numbers::pi_v<float>; // 最大傾き角度 (ラジアン)
+
+	float rollCooldownTimer_ = 0.0f; // クールダウンタイマー
+	const float kRollCooldownDuration_ = 0.5f; // クールダウン時間 (秒)
 
 	/// ===== 死亡アニメーション用 ===== ///
 
