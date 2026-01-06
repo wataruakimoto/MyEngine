@@ -67,26 +67,6 @@ private:
 	/// </summary>
 	void ScissoringRectInitialize();
 
-	/// <summary>
-	/// レンダーテクスチャ生成
-	/// </summary>
-	/// <param name="width"></param>
-	/// <param name="height"></param>
-	/// <param name="format"></param>
-	/// <param name="clearColor"></param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr <ID3D12Resource> CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
-
-	/// <summary>
-	/// 深度ステンシルリソース生成
-	/// </summary>
-	/// <param name="width"></param>
-	/// <param name="height"></param>
-	/// <param name="format"></param>
-	/// <param name="clearDepth"></param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth);
-
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
@@ -152,17 +132,11 @@ private:
 	// シザー矩形
 	D3D12_RECT scissorRect{};
 
-	//  レンダーテクスチャ用のTrainsitionBarrier
+	// レンダーテクスチャ用のTrainsitionBarrier
 	D3D12_RESOURCE_BARRIER renderTextureBarrier{};
-
-	// レンダーテクスチャ用のバリアの状態
-	D3D12_RESOURCE_STATES renderTextureState = D3D12_RESOURCE_STATE_RENDER_TARGET;
 
 	// 深度ステンシル用のTrainsitionBarrier
 	D3D12_RESOURCE_BARRIER depthStencilBarrier{};
-
-	// 深度ステンシル用のバリアの状態
-	D3D12_RESOURCE_STATES depthStencilState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
 
 	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;

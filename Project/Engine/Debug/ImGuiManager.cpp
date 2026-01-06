@@ -22,6 +22,41 @@ void ImGuiManager::Initialize(WinApp* winApp, SwapChain* swapChain) {
 	// コンテキストの生成
 	ImGui::CreateContext();
 
+	// IO設定の取得
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+
+	// ドッキングを有効化
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+	// フォントのフルパスを作成
+	std::string fontFullPath = fontResourcePath_ + fontFileName_;
+
+	// フォントの読み込み
+	io.Fonts->AddFontFromFileTTF(
+		fontFullPath.c_str(), // フルパスから指定
+		13.0f, // フォントサイズ
+		nullptr,
+		io.Fonts->GetGlyphRangesJapanese() // 日本語対応
+	);
+
+	// フォントアトラスのビルドを明示的に呼ぶ
+	io.Fonts->Build();
+
+	ImGuiStyle& style = ImGui::GetStyle();
+
+	// 丸みの調整 (数値を大きくすると丸くなる)
+	style.WindowRounding = 5.0f;    // ウィンドウの角丸
+	style.FrameRounding = 4.0f;     // 入力欄やボタンの角丸
+	style.GrabRounding = 4.0f;      // スライダーのツマミの角丸
+	style.PopupRounding = 4.0f;     // ポップアップの角丸
+	style.ChildRounding = 4.0f;
+
+	// 余白の調整
+	style.WindowPadding = ImVec2(10, 10);
+	style.FramePadding = ImVec2(5, 5);
+	style.ItemSpacing = ImVec2(8, 6);
+
 	// スタイルの設定
 	ImGui::StyleColorsDark();
 
@@ -52,6 +87,13 @@ void ImGuiManager::Begin() {
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+	// ドッキングスペースの作成
+	ImGui::DockSpaceOverViewport(
+		ImGui::GetMainViewport()->ID,
+		ImGui::GetMainViewport(),
+		ImGuiDockNodeFlags_PassthruCentralNode
+	);
 
 #endif // USE_IMGUI
 }

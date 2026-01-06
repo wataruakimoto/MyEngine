@@ -3,6 +3,7 @@
 #include "WinApp.h"
 #include "OffscreenRendering/PostEffect.h"
 #include "SwapChain.h"
+#include "Debug/SceneRenderTexture.h"
 #include "AbstractSceneFactory.h"
 
 #include <memory>
@@ -63,6 +64,9 @@ protected:
 
 	// スワップチェインのポインタ
 	std::unique_ptr<SwapChain> swapChain = nullptr;
+
+	// シーンビュー用のレンダーテクスチャのポインタ
+	std::unique_ptr<SceneRenderTexture> sceneRenderTexture = nullptr;
 
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;

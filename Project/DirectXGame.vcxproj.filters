@@ -105,6 +105,7 @@
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
+    <ClCompile Include="Engine\Debug\SceneRenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
+    <ClInclude Include="Engine\Debug\SceneRenderTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />
