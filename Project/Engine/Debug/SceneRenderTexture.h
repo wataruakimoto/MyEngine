@@ -23,6 +23,11 @@ public:
 	void Initialize();
 
 	/// <summary>
+	/// シーンビュー作成
+	/// </summary>
+	void CreateSceneView();
+
+	/// <summary>
 	/// 描画前処理
 	/// </summary>
 	void PreDraw();
@@ -31,11 +36,6 @@ public:
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
-
-	/// <summary>
-	/// シーンビュー作成
-	/// </summary>
-	void CreateSceneView();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -95,7 +95,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
 	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 0.5f, 0.5f, 0.5f, 0.5f }; // グレーに設定
+	const Vector4 kRenderTargetClearValue = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白に設定
 
 	/// ===== DSV用の変数 ===== ///
 

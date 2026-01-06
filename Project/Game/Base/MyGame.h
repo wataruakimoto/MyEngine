@@ -35,4 +35,11 @@ public:
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// エディットモードフラグ
+#ifdef _DEBUG
+	bool isEditMode_ = true;
+#else
+	bool isEditMode_ = false;
+#endif
 };

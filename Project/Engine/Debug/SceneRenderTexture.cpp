@@ -29,6 +29,56 @@ void SceneRenderTexture::Initialize() {
 	ScissoringRectInitialize();
 }
 
+void SceneRenderTexture::CreateSceneView() {
+
+#ifdef USE_IMGUI
+
+	// ウィンドウのパディングをなくす（見た目をスッキリさせるため）
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+	ImGui::Begin("シーンビュー");
+
+	// 1. 今使えるウィンドウの中身のサイズを取得 (タブバーなどは除外されている)
+	ImVec2 windowSize = ImGui::GetContentRegionAvail();
+
+	// 2. ターゲットのアスペクト比 (16:9)
+	float targetAspect = 16.0f / 9.0f;
+
+	// 3. 現在のウィンドウのアスペクト比
+	float currentAspect = windowSize.x / windowSize.y;
+
+	ImVec2 imageSize = windowSize;
+
+	// 4. 比率に合わせてサイズを調整 (レターボックス計算)
+	if (currentAspect > targetAspect) {
+		// ウィンドウが「横長」すぎる場合 -> 横幅を縮める (左右に黒帯)
+		imageSize.x = windowSize.y * targetAspect;
+		imageSize.y = windowSize.y;
+	}
+	else {
+		// ウィンドウが「縦長」すぎる場合 -> 高さを縮める (上下に黒帯)
+		imageSize.x = windowSize.x;
+		imageSize.y = windowSize.x / targetAspect;
+	}
+
+	// 5. 画像を中央に配置するためのカーソル位置調整
+	ImVec2 cursorPos = ImGui::GetCursorPos(); // 現在の描画開始位置
+	cursorPos.x += (windowSize.x - imageSize.x) * 0.5f;
+	cursorPos.y += (windowSize.y - imageSize.y) * 0.5f;
+	ImGui::SetCursorPos(cursorPos);
+
+	// 6. 画像描画
+	ImGui::Image(
+		(ImTextureID)SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex).ptr,
+		imageSize
+	);
+
+	ImGui::End();
+	ImGui::PopStyleVar();
+
+#endif // USE_IMGUI
+}
+
 void SceneRenderTexture::PreDraw() {
 
 	// コマンドリストをDirectXUtilityから取得A
@@ -111,17 +161,6 @@ void SceneRenderTexture::PostDraw() {
 	depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
 	// TransitionBarrierを張る
 	commandList->ResourceBarrier(1, &depthStencilBarrier);
-}
-
-void SceneRenderTexture::CreateSceneView() {
-
-	ImGui::Begin("シーンビュー");
-
-	// ウィンドウサイズの設定
-	ImVec2 windowSize = ImGui::GetContentRegionAvail(); // とりあえず利用可能なサイズを取得
-	ImGui::Image((ImTextureID)SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex).ptr, windowSize);
-
-	ImGui::End();
 }
 
 void SceneRenderTexture::DescriptorHeapGenerate() {

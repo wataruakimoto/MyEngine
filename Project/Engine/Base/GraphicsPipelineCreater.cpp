@@ -77,8 +77,8 @@ void GraphicsPipelineCreater::CreateBlendState(BlendMode blendMode) {
 		blendDesc.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA; // ソースのアルファ値
 		blendDesc.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デストの(1-ソースアルファ)
 		blendDesc.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD; // 加算
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE; // ソースのアルファ値そのまま
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO; // デストのアルファ値は使わない
+		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ZERO; // ソースのアルファ値は使わない
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ONE; // デストのアルファ値はそのまま
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD; // 加算
 
 		break;
