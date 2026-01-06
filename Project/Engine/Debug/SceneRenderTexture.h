@@ -95,7 +95,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
 	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白に設定
+	const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 0.0f }; // 白に設定
 
 	/// ===== DSV用の変数 ===== ///
 
