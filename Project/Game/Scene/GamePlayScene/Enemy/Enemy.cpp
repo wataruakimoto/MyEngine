@@ -56,37 +56,51 @@ void Enemy::Initialize() {
 
 void Enemy::Update() {
 
+	Vector3 playerPos = player->GetWorldTransform().GetWorldPosition();
+	Vector3 myPos = worldTransform_.GetWorldPosition();
+
+	// 距離を計算
+	float distanceToPlayer = Distance(playerPos, myPos);
+
+	// 行動開始距離
+	const float kActiveDistance = 150.0f;
+
 	switch (enemyType_) {
+
 	case EnemyType::Normal:
 	default:
 
 		// 自機の方に向ける
 		AimToPlayer();
 
-		// 射撃
-		if (fireTimer_ <= 0) {
+		// プレイヤーからの距離が一定以内の場合
+		if (distanceToPlayer <= kActiveDistance) {
 
-			// プレイヤーより奥にいたら
-			if (worldTransform_.GetTranslate().z > player->GetWorldTransform().GetTranslate().z) {
+			// 射撃
+			if (fireTimer_ <= 0) {
 
-				// プレイヤーがマニュアル操作中なら
-				if (player->GetState() == PlayerState::Manual) {
+				// プレイヤーより奥にいたら
+				if (worldTransform_.GetTranslate().z > player->GetWorldTransform().GetTranslate().z) {
 
-					// 射撃
-					Fire();
+					// プレイヤーがマニュアル操作中なら
+					if (player->GetState() == PlayerState::Manual) {
+
+						// 射撃
+						Fire();
+					}
 				}
 			}
-		}
-		else {
+			else {
 
-			// タイマーをデクリメント
-			fireTimer_ -= 1.0f / 60.0f;
-		}
+				// タイマーをデクリメント
+				fireTimer_ -= 1.0f / 60.0f;
+			}
 
-		if (isFiring_) {
+			if (isFiring_) {
 
-			// 射撃アニメーション更新
-			FireAnimationUpdate();
+				// 射撃アニメーション更新
+				FireAnimationUpdate();
+			}
 		}
 
 		break;
