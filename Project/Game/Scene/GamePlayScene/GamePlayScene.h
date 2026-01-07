@@ -199,12 +199,6 @@ private:
 	// 敵を倒した数
 	int killCount = 0;
 
-	// クリアのノルマ
-	const int kClearNorma_ = 5; // とりあえず5体に設定
-
-	// ゴールラインのZ座標
-	float goalLineZ_ = 1700.0f;
-
 	// 敵発生コマンド
 	std::stringstream enemyPopCommands;
 

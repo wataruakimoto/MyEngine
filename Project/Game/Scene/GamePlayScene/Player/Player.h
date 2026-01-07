@@ -65,6 +65,11 @@ public:
 	/// </summary>
 	void OnCollision(Collider* other) override;
 
+	/// <summary>
+	/// ゲート衝突時の処理
+	/// </summary>
+	void OnGateCollision();
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///

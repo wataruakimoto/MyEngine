@@ -96,6 +96,12 @@ void GamePlayScene::Initialize() {
 	// プレイヤーを設定
 	skyBox_->SetPlayer(player_.get());
 
+	// ゴールの生成&初期化
+	goal_ = std::make_unique<Goal>();
+	goal_->Initialize();
+	// プレイヤーをゴールに設定
+	goal_->SetPlayer(player_.get());
+
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
 
@@ -113,7 +119,7 @@ void GamePlayScene::Initialize() {
 	normaUI_ = std::make_unique<NormaUI>();
 	normaUI_->Initialize();
 	// ノルマUIに目標値を設定
-	normaUI_->SetTargetValue(kClearNorma_);
+	normaUI_->SetTargetValue(goal_->GetNormaCount());
 	// ノルマUIに現在値を設定
 	normaUI_->SetCurrentValue(0);
 
@@ -133,13 +139,6 @@ void GamePlayScene::Initialize() {
 
 	// 状態リクエストに減速を設定
 	stateRequest_ = PlayFlowState::SpeedDown;
-
-	// ゴールの生成&初期化
-	goal_ = std::make_unique<Goal>();
-	goal_->Initialize();
-
-	// ゴールラインを設定
-	goalLineZ_ = goal_->GetWorldTransform().GetTranslate().z;
 }
 
 void GamePlayScene::Update() {
@@ -293,6 +292,9 @@ void GamePlayScene::Update() {
 
 	// ゴールの更新
 	goal_->Update();
+
+	// ゴールとプレイヤーの衝突判定
+	goal_->CheckGateCollision(killCount);
 
 	// 衝突マネージャの更新
 	collisionManager_->Update();
@@ -643,8 +645,14 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 			getline(line_stream, word, ',');
 			float z = (float)std::atof(word.c_str());
 
+			// 生成する敵の種類
+			int type = 0; // デフォルトは0(Normal)
+			getline(line_stream, word, ',');
+			type = std::atoi(word.c_str()); // 数字に変換
+
 			// 敵の生成&初期化
 			std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+			enemy->SetEnemyType(static_cast<EnemyType>(type));
 			enemy->Initialize();
 			enemy->GetWorldTransform().SetTranslate({ x, y, z });
 			enemy->SetGamePlayScene(this);
@@ -767,7 +775,7 @@ void GamePlayScene::PlayUpdate() {
 	UpdateVignetteEffect();
 
 	// ノルマUIに目標値を設定
-	normaUI_->SetTargetValue(kClearNorma_);
+	normaUI_->SetTargetValue(goal_->GetNormaCount());
 	// ノルマUIに現在値を設定
 	normaUI_->SetCurrentValue(killCount);
 
@@ -778,7 +786,7 @@ void GamePlayScene::PlayUpdate() {
 	UpdateEnemyPopCommands();
 
 	// ゴールライン到達の判定
-	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goalLineZ_;
+	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goal_->GetWorldTransform().GetTranslate().z;
 
 	// プレイヤーのデスフラグを取得
 	bool isPlayerDead = player_->IsDead();
@@ -800,7 +808,7 @@ void GamePlayScene::PlayUpdate() {
 void GamePlayScene::ResultInitialize() {
 
 	// ノルマクリアの判定
-	bool isNormaClear = killCount >= kClearNorma_;
+	bool isNormaClear = killCount >= goal_->GetNormaCount();
 
 	// ノルマクリアしていたら
 	if (isNormaClear) {
@@ -828,7 +836,7 @@ void GamePlayScene::ResultUpdate() {
 	if (resultUI_->IsAnimationFinished()) {
 
 		// ノルマクリアの判定
-		bool isNormaClear = killCount >= kClearNorma_;
+		bool isNormaClear = killCount >= goal_->GetNormaCount();
 
 		// ノルマクリアしていたら
 		if (isNormaClear) {
