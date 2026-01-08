@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 /// === 前方宣言 === ///
 class WinApp;
 class DirectXUtility;
@@ -79,4 +81,10 @@ private:
 
 	// SwapChainの借りポインタ
 	SwapChain* swapChain_ = nullptr;
+
+	// フォントのリソースデータのパス
+	std::string fontResourcePath_ = "Resources/Fonts/";
+
+	// フォントファイル名
+	std::string fontFileName_ = "FirgeConsole-Regular.ttf";
 };

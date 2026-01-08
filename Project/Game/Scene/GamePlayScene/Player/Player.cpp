@@ -63,6 +63,13 @@ void Player::Update() {
 
 			break;
 
+		case PlayerState::Rolling:
+
+			// バレルロールモードの初期化処理
+			RollingInitialize();
+
+			break;
+
 		case PlayerState::Dead:
 
 			// 死亡モードの初期化処理
@@ -93,6 +100,13 @@ void Player::Update() {
 
 		// マニュアルモードの更新
 		ManualUpdate();
+
+		break;
+
+	case PlayerState::Rolling:
+
+		// バレルロールモードの更新
+		RollingUpdate();
 
 		break;
 
@@ -163,49 +177,40 @@ void Player::OnCollision(Collider* other) {
 	// 衝突相手の種別IDを取得
 	uint32_t typeID = other->GetTypeID();
 
+	// 状態がバレルロール中の場合
+	if (state_ == PlayerState::Rolling) {
+
+		// 衝突相手が敵の場合
+		if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+		}
+		// 衝突相手が敵の弾の場合
+		else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
+
+			// 何もしない
+			return;
+		}
+		// その他と衝突した場合
+		else {
+
+			// 何もしない
+			return;
+		}
+	}
+
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// 状態が死亡状態でなければ
-		if (state_ != PlayerState::Dead) {
-
-			// HPを減らす
-			if (hp_ > 0) {
-				hp_--;
-
-				// シーンにダメージを通知
-				if (gamePlayScene_) {
-					gamePlayScene_->OnPlayerDamaged(hp_);
-				}
-			}
-
-			// HPが0なら死亡状態に変更をリクエスト
-			if (hp_ == 0) {
-				stateRequest_ = PlayerState::Dead;
-			}
-		}
+		// 1ダメージを受ける
+		DamageProcess(1);
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
-		// 状態が死亡状態でなければ
-		if (state_ != PlayerState::Dead) {
-
-			// HPを減らす
-			if (hp_ > 0) {
-				hp_--;
-
-				// シーンにダメージを通知
-				if (gamePlayScene_) {
-					gamePlayScene_->OnPlayerDamaged(hp_);
-				}
-			}
-
-			// HPが0なら死亡状態に変更をリクエスト
-			if (hp_ == 0) {
-				stateRequest_ = PlayerState::Dead;
-			}
-		}
+		// 1ダメージを受ける
+		DamageProcess(1);
 	}
 	// その他と衝突した場合
 	else {
@@ -215,90 +220,13 @@ void Player::OnCollision(Collider* other) {
 	}
 }
 
-void Player::Move() {
+void Player::OnGateCollision() {
 
-	// ゲームパッドの状態を得る変数(XINPUT)
-	XINPUT_STATE joyState = {};
+	// すでにやられていたら何もしない
+	if (state_ == PlayerState::Dead) return;
 
-	// ゲームパッドが接続されている場合
-	if (XInputGetState(0, &joyState) == ERROR_SUCCESS) {
-
-		// 左スティックがデッドゾーンを超えていたら
-		if (Input::GetInstance()->IsLeftThumbStickOutDeadZone()) {
-
-			velocity_.x = (float)joyState.Gamepad.sThumbLX / SHRT_MAX * moveSpeedManual;
-			velocity_.y = (float)joyState.Gamepad.sThumbLY / SHRT_MAX * moveSpeedManual;
-		}
-		else { // 左スティックがデッドゾーン内だったら
-
-			// 速度を0にする
-			velocity_.x = 0.0f;
-			velocity_.y = 0.0f;
-		}
-	}
-	else { // ゲームパッドが接続されていない場合
-
-		bool w = Input::GetInstance()->PushKey(DIK_W); // Wキーが押されたか確認
-		bool s = Input::GetInstance()->PushKey(DIK_S); // Sキーが押されたか確認
-		bool a = Input::GetInstance()->PushKey(DIK_A); // Aキーが押されたか確認
-		bool d = Input::GetInstance()->PushKey(DIK_D); // Dキーが押されたか確認
-
-		if (w && !s) { // Wキーだけ押された場合
-
-			// 速度を上向きに加算
-			velocity_.y = moveSpeedManual;
-		}
-		else if (s && !w) { // Sキーだけ押された場合
-
-			// 速度を下向きに加算
-			velocity_.y = -moveSpeedManual;
-		}
-		else if (w && s) { // 同時に押されていた場合
-
-			// 速度を0にする
-			velocity_.y = 0.0f;
-		}
-		else { // WキーもSキーも押されていない場合
-
-			// 速度を0にする
-			velocity_.y = 0.0f;
-
-		}
-
-		if (a && !d) { // Aキーだけ押された場合
-
-			// 速度を左向きに加算
-			velocity_.x = -moveSpeedManual;
-		}
-		else if (d && !a) { // Dキーだけ押された場合
-
-			// 速度を右向きに加算
-			velocity_.x = moveSpeedManual;
-		}
-		else if (a && d) { // 同時に押されていた場合
-
-			// 速度を0にする
-			velocity_.x = 0.0f;
-		}
-		else { // AキーもDキーも押されていない場合
-
-			// 速度を0にする
-			velocity_.x = 0.0f;
-		}
-	}
-
-	// 速度の長さを計算
-	float length = Length(Vector2(velocity_.x, velocity_.y));
-
-	// 長さが速さを超えていたら
-	if (length > moveSpeedManual) {
-
-		// 速度を正規化して速さを掛ける
-		velocity_ = Normalize(velocity_) * moveSpeedManual;
-	}
-
-	// 速度をワールド変換に加算
-	worldTransform_.AddTranslate(velocity_);
+	// 死亡状態に変更をリクエスト
+	stateRequest_ = PlayerState::Dead;
 }
 
 void Player::Fire() {
@@ -418,25 +346,77 @@ void Player::MoveToReticle() {
 	worldTransform_.SetTranslate(currentPos);
 }
 
+void Player::DamageProcess(uint16_t damage) {
+
+	// 状態が死亡状態でなければ
+	if (state_ != PlayerState::Dead) {
+
+		// HPが0より大きいなら
+		if (hp_ > 0) {
+			
+			// ダメージ分HPを減らす
+			hp_ -= damage;
+
+			// シーンにダメージを通知
+			if (gamePlayScene_) {
+				gamePlayScene_->OnPlayerDamaged(hp_);
+			}
+		}
+
+		// HPが0なら死亡状態に変更をリクエスト
+		if (hp_ == 0) {
+			stateRequest_ = PlayerState::Dead;
+		}
+	}
+}
+
 void Player::AutoPilotInitialize() {
 }
 
 void Player::AutoPilotUpdate() {
+
+	// 現在の回転を取得
+	Vector3 currentRotate = worldTransform_.GetRotate();
+	Vector3 targetRotate = { 0.0f, 0.0f, 0.0f }; // 正面を向く
+
+	// 回転を補間
+	currentRotate = Lerp(currentRotate, targetRotate, 0.1f);
+
+	// ほとんど目標回転に近づいたら
+	if (Length(currentRotate - targetRotate) < 0.01f) {
+		currentRotate = targetRotate; // 目標回転に設定
+	}
+
+	// 回転を設定
+	worldTransform_.SetRotate(currentRotate);
 
 	// Z方向のみの移動
 	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeedAuto });
 }
 
 void Player::ManualInitialize() {
+
+	// 射撃のクールタイマーをリセット
+	fireTimer_ = kFireDuration_;
+
+	// バレルロールのクールタイマーをリセット
+	rollCooldownTimer_ = kRollCooldownDuration_;
 }
 
 void Player::ManualUpdate() {
+
+	// 各キーの入力の状態
+	bool isSpacePush = Input::GetInstance()->PushKey(DIK_SPACE); // スペースキー
+	bool isAPush = Input::GetInstance()->PushKey(DIK_A); // Aキー
+	bool isDPush = Input::GetInstance()->PushKey(DIK_D); // Dキー
+
+	/// ===== 射撃処理 ===== ///
 
 	// タイマーが0以下なら
 	if (fireTimer_ <= 0) {
 
 		// スペースキーが押されたら
-		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
+		if (isSpacePush) {
 
 			// 射撃
 			Fire();
@@ -447,15 +427,115 @@ void Player::ManualUpdate() {
 		// タイマーをデクリメント
 		fireTimer_ -= 1.0f / 60.0f;
 	}
-	
+
 	if (isFiring_) {
 
 		// 射撃アニメーション更新
 		FireAnimationUpdate();
 	}
 
+	/// ===== バレルロール処理 ===== ///
+
+	// タイマーが0以下なら
+	if (rollCooldownTimer_ <= 0.0f) {
+
+		// Aキーだけ押された場合
+		if (isAPush && !isDPush) {
+
+			rollDirection_ = -1; // 左回り
+
+			// 状態変更をリクエスト
+			stateRequest_ = PlayerState::Rolling;
+		}
+		// Dキーだけ押された場合
+		else if (isDPush && !isAPush) {
+
+			rollDirection_ = 1; // 右回り
+
+			// 状態変更をリクエスト
+			stateRequest_ = PlayerState::Rolling;
+		}
+	}
+	else {
+
+		// タイマーをデクリメント
+		rollCooldownTimer_ -= 1.0f / 60.0f;
+	}
+
+	/// ===== 移動処理 ===== ///
+
 	// レティクルに向かって移動
 	MoveToReticle();
+}
+
+void Player::RollingInitialize() {
+
+	rollTimer_ = 0.0f;
+
+	velocity_ = { 0.0f, 0.0f, 0.0f };
+}
+
+void Player::RollingUpdate() {
+
+	// タイマーを進める
+	rollTimer_ += 1.0f / 60.0f; // デルタタイム加算
+
+	// 進行度を計算
+	float t = rollTimer_ / rollDuration_;
+
+	// タイマーが最大値に達したら
+	if (t >= 1.0f) {
+
+		// ロール完了
+		t = 1.0f;
+
+		// 状態をマニュアルに戻す
+		stateRequest_ = PlayerState::Manual;
+
+		// 回転をリセット
+		Vector3 currentRotate = worldTransform_.GetRotate();
+		currentRotate.z = 0.0f;
+		worldTransform_.SetRotate(currentRotate);
+
+		return; // 以降の処理をスキップ
+	}
+	
+	/// ===== 回転の計算 ===== ///
+
+	// イージング適用
+	float easeT = EaseOutCubic(t);
+
+	// 現在の回転角度を計算
+	float currentAngle = (float)rollDirection_ * -1.0f * kMaxRollAngle_ * easeT; // -1.0fをかけて回転方向を反転
+
+	// 回転を設定
+	Vector3 currentRotate = worldTransform_.GetRotate();
+	currentRotate.z = currentAngle;
+	worldTransform_.SetRotate(currentRotate);
+
+	/// ===== 移動の計算 ===== ///
+
+	// 強制的に横移動する
+	velocity_.x = (float)rollDirection_ * kRollMoveSpeed_; // 横移動速度を設定
+	velocity_.y = 0.0f; // 縦移動速度は0
+	velocity_.z = kRollMoveSpeed_; // 前進速度を設定
+
+	// 座標の更新
+	worldTransform_.AddTranslate(velocity_);
+
+	/// ===== 画面外に出ないようにする処理 ===== ///
+
+	// 大きさを取得
+	Vector3 scale = worldTransform_.GetScale();
+
+	// 加算後の座標を取得
+	Vector3 currentPos = worldTransform_.GetTranslate();
+
+	// X軸のクランプ
+	currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.y);
+
+	// クランプ後の座標を設定
+	worldTransform_.SetTranslate(currentPos);
 }
 
 void Player::DeadInitialize() {

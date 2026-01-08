@@ -193,6 +193,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\RingRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.cpp" />
+    <ClCompile Include="Engine\Debug\SceneRenderTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Math\Easing.h" />
@@ -295,6 +296,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\RingRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.h" />
+    <ClInclude Include="Engine\Debug\SceneRenderTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -39,6 +39,14 @@ void PostEffect::PreDraw() {
 	renderTextureBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	// バリアを張る対象はレンダーテクスチャリソース
 	renderTextureBarrier.Transition.pResource = renderTextureResource.Get();
+	// 遷移前(現在)のResouceState
+	renderTextureBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+	// 遷移後のResouceState
+	renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+	// 全部まとめて変える
+	renderTextureBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	// TransitionBarrierを張る
+	dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
 
 	/// === 深度ステンシル用のバリアの設定 === ///
 
@@ -48,44 +56,30 @@ void PostEffect::PreDraw() {
 	depthStencilBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 	// バリアを張る対象は深度ステンシルリソース
 	depthStencilBarrier.Transition.pResource = depthStencilResource.Get();
+	// 遷移前(現在)のResouceState
+	depthStencilBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+	// 遷移後のResouceState
+	depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+	// 全部まとめて変える
+	depthStencilBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+	// TransitionBarrierを張る
+	dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
 
-	// バリアの状態がレンダーターゲットではなかったらバリアを張る
-	if (renderTextureState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
-
-		// 遷移前(現在)のResouceState
-		renderTextureBarrier.Transition.StateBefore = renderTextureState;
-		// 遷移後のResouceState
-		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		// TransitionBarrierを張る
-		dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
-
-		// 状態をレンダーターゲットにしておく
-		renderTextureState = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	}
+	/// ===== RTVとDSVの設定 ===== ///
 
 	// 描画先のRTVとDSVを指定する
 	dxUtility->GetCommandList()->OMSetRenderTargets(1, &rtvHandles[0], false, &dsvHandle);
+
+	/// ===== 画面のクリア ===== ///
 
 	// 画面全体の色をクリア
 	float clearColor[] = { kRenderTargetClearValue.x, kRenderTargetClearValue.y, kRenderTargetClearValue.z, kRenderTargetClearValue.w };
 	dxUtility->GetCommandList()->ClearRenderTargetView(rtvHandles[0], clearColor, 0, nullptr);
 
-	// バリアの状態が深度書き込みではなかったらバリアを張る
-	if (depthStencilState != D3D12_RESOURCE_STATE_DEPTH_WRITE) {
-	
-		// 遷移前(現在)のResouceState
-		depthStencilBarrier.Transition.StateBefore = depthStencilState;
-		// 遷移後のResouceState
-		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-		// TransitionBarrierを張る
-		dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
-
-		// 状態を深度書き込みにしておく
-		depthStencilState = D3D12_RESOURCE_STATE_DEPTH_WRITE;
-	}
-
 	// 画面全体の震度をクリア
 	dxUtility->GetCommandList()->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	/// ===== ビューポートとシザーの設定 ===== ///
 
 	// ビューポート矩形の設定
 	dxUtility->GetCommandList()->RSSetViewports(1, &viewportRect);
@@ -96,33 +90,23 @@ void PostEffect::PreDraw() {
 
 void PostEffect::PostDraw() {
 
-	// バリアの状態がピクセルシェーダーではなかったらバリアを張る
-	if (renderTextureState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
+	/// === レンダーテクスチャ用のバリアの設定 === ///
 
-		// 遷移前(現在)のResouceState
-		renderTextureBarrier.Transition.StateBefore = renderTextureState;
-		// 遷移後のResouceState
-		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-		// TransitionBarrierを張る
-		dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
+	// 遷移前(現在)のResouceState
+	renderTextureBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+	// 遷移後のResouceState
+	renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+	// TransitionBarrierを張る
+	dxUtility->GetCommandList()->ResourceBarrier(1, &renderTextureBarrier);
 
-		// 状態をピクセルシェーダーにしておく
-		renderTextureState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	}
+	/// === 深度ステンシル用のバリアの設定 === ///
 
-	// バリアの状態がピクセルシェーダーではなかったらバリアを張る
-	if (depthStencilState != D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE) {
-
-		// 遷移前(現在)のResouceState
-		depthStencilBarrier.Transition.StateBefore = depthStencilState;
-		// 遷移後のResouceState
-		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-		// TransitionBarrierを張る
-		dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
-
-		// 状態をピクセルシェーダーにしておく
-		depthStencilState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
-	}
+	// 遷移前(現在)のResouceState
+	depthStencilBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+	// 遷移後のResouceState
+	depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+	// TransitionBarrierを張る
+	dxUtility->GetCommandList()->ResourceBarrier(1, &depthStencilBarrier);
 }
 
 void PostEffect::DescriptorHeapGenerate() {
@@ -141,9 +125,9 @@ void PostEffect::DescriptorHeapGenerate() {
 }
 
 void PostEffect::RenderTargetViewInitialize() {
-	
+
 	// Resourceの生成
-	renderTextureResource = CreateRenderTextureResource(
+	renderTextureResource = dxUtility->CreateRenderTextureResource(
 		WinApp::kClientWidth, // クライアント領域の幅
 		WinApp::kClientHeight, // クライアント領域の高さ
 		DXGI_FORMAT_R8G8B8A8_UNORM_SRGB, // フォーマット
@@ -162,7 +146,7 @@ void PostEffect::RenderTargetViewInitialize() {
 		// RTVハンドルを取得
 		rtvHandles[i] = startHandle;
 		rtvHandles[i].ptr += rtvDescriptorSize * i;
-		
+
 		// RTV生成
 		dxUtility->GetDevice()->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandles[i]);
 	}
@@ -180,7 +164,7 @@ void PostEffect::ShaderResourceViewInitialize() {
 void PostEffect::DepthStencilViewInitialize() {
 
 	// Resourceの生成
-	depthStencilResource = CreateDepthStencilResource(
+	depthStencilResource = dxUtility->CreateDepthStencilResource(
 		WinApp::kClientWidth, // クライアント領域の幅
 		WinApp::kClientHeight, // クライアント領域の高さ
 		DXGI_FORMAT_D24_UNORM_S8_UINT, // フォーマット
@@ -224,81 +208,4 @@ void PostEffect::ScissoringRectInitialize() {
 	scissorRect.right = WinApp::kClientWidth;
 	scissorRect.top = 0;
 	scissorRect.bottom = WinApp::kClientHeight;
-}
-
-ComPtr<ID3D12Resource> PostEffect::CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor) {
-
-	// Resourceの設定
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-	resourceDesc.Width = width; // Textureの幅
-	resourceDesc.Height = height; // Textureの高さ
-	resourceDesc.DepthOrArraySize = 1; // 2Dテクスチャの配列に合わせるが通常1
-	resourceDesc.MipLevels = 1; // mipmapの数
-	resourceDesc.Format = format; // Textureのフォーマット
-	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET; // RenderTargetとして使う
-
-	// Heapの設定
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // VRAM上に作る
-
-	// ClearValueの設定
-	D3D12_CLEAR_VALUE clearValue{};
-	clearValue.Format = format;
-	clearValue.Color[0] = clearColor.x;
-	clearValue.Color[1] = clearColor.y;
-	clearValue.Color[2] = clearColor.z;
-	clearValue.Color[3] = clearColor.w;
-
-	// Resourceの生成
-	ComPtr <ID3D12Resource> resource = nullptr;
-
-	dxUtility->GetDevice()->CreateCommittedResource(
-		&heapProperties, // Heapの設定
-		D3D12_HEAP_FLAG_NONE, // Heapの特殊な設定。特になし
-		&resourceDesc, // Resourceの設定
-		D3D12_RESOURCE_STATE_RENDER_TARGET, // RenderTargetとして使う
-		&clearValue, // Clear最適値。ClearRenderTargetをこの色でClearする。最適化なので高速
-		IID_PPV_ARGS(&resource) // 作成するResourceポインタへのポインタ
-	);
-
-	return resource;
-}
-
-Microsoft::WRL::ComPtr<ID3D12Resource> PostEffect::CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth) {
-	
-	// Resourceの設定
-	D3D12_RESOURCE_DESC resourceDesc{};
-	resourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D; // 2次元
-	resourceDesc.Width = width; // Textureの幅
-	resourceDesc.Height = height; // Textureの高さ
-	resourceDesc.DepthOrArraySize = 1; // 奥行きor配列Textureの配列数
-	resourceDesc.MipLevels = 1; // mipmapの数
-	resourceDesc.Format = format; // Textureのフォーマット
-	resourceDesc.SampleDesc.Count = 1; // サンプリングカウント。1固定
-	resourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL; // DepthStencilとして使う
-
-	// Heapの設定
-	D3D12_HEAP_PROPERTIES heapProperties{};
-	heapProperties.Type = D3D12_HEAP_TYPE_DEFAULT; // VRAM上に作る
-
-	// ClearValueの設定
-	D3D12_CLEAR_VALUE clearValue{};
-	clearValue.Format = format;
-	clearValue.DepthStencil.Depth = clearDepth;
-
-	// Resourceの生成
-	ComPtr <ID3D12Resource> resource = nullptr;
-
-	dxUtility->GetDevice()->CreateCommittedResource(
-		&heapProperties, // Heapの設定
-		D3D12_HEAP_FLAG_NONE, // Heapの特殊な設定。特になし
-		&resourceDesc, // Resourceの設定
-		D3D12_RESOURCE_STATE_DEPTH_WRITE, // DepthStencilとして使う
-		&clearValue, // Clear最適値。
-		IID_PPV_ARGS(&resource) // 作成するResourceポインタへのポインタ
-	);
-
-	return resource;
 }

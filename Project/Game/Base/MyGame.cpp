@@ -6,6 +6,7 @@
 #include "Particle/ParticleManager.h"
 #include "SceneManager.h"
 #include "SceneFactory.h"
+#include "Input.h"
 
 void MyGame::Initialize() {
 
@@ -31,7 +32,19 @@ void MyGame::Update() {
 		// ゲームループを抜ける
 		endRequest_ = true;
 
-	} else {
+	}
+	else {
+
+#ifdef _DEBUG
+
+		// Tabキーが押されたら
+		if (Input::GetInstance()->TriggerKey(DIK_TAB)) {
+
+			// エディットモード切り替え
+			isEditMode_ = !isEditMode_;
+		}
+
+#endif // _DEBUG
 
 		// 基底クラス更新
 		Framework::Update();
@@ -45,6 +58,9 @@ void MyGame::Update() {
 		// シーンのImGui表示
 		SceneManager::GetInstance()->ShowImGui();
 
+		// シーンビュー作成
+		sceneRenderTexture->CreateSceneView();
+
 		/// === ImGui終了 === ///
 		ImGuiManager::GetInstance()->End();
 	}
@@ -52,28 +68,57 @@ void MyGame::Update() {
 
 void MyGame::Draw() {
 
-	/// === レンダーテクスチャ描画開始=== ///
+	/// ===== ゲームシーンの描画 ===== ///
+
+	// ポストエフェクトの描画前処理
 	postEffect->PreDraw();
 
 	// シーンマネージャの描画
 	SceneManager::GetInstance()->Draw();
 
-	/// === レンダーテクスチャ描画処理 === ///
+	// ポストエフェクトの描画後処理
 	postEffect->PostDraw();
 
-	/// === スワップチェイン描画開始 === ///
-	swapChain->PreDraw();
+	// エディットモードなら
+	if (isEditMode_) {
 
-	// フィルターマネージャの描画
-	FilterManager::GetInstance()->Draw();
+		/// ===== フィルターへの描画 ===== ///
 
-	/// === ImGui描画 === ///
-	ImGuiManager::GetInstance()->Draw();
+		// シーンレンダーテクスチャの描画前処理
+		sceneRenderTexture->PreDraw();
 
-	/// === スワップチェイン描画処理 === ///
-	swapChain->PostDraw();
+		// フィルターマネージャの描画
+		FilterManager::GetInstance()->Draw();
 
-	/// === DirectX描画処理 === ///
+		// シーンレンダーテクスチャの描画後処理
+		sceneRenderTexture->PostDraw();
+
+		/// ===== 画面への描画 ===== ///
+
+		// スワップチェイン描画前処理
+		swapChain->PreDraw();
+
+		// ImGuiの描画
+		ImGuiManager::GetInstance()->Draw();
+
+		// スワップチェイン描画後処理
+		swapChain->PostDraw();
+	}
+	else {
+
+		/// ===== 画面への描画 ===== ///
+
+		// スワップチェイン描画前処理
+		swapChain->PreDraw();
+
+		// フィルターマネージャの描画
+		FilterManager::GetInstance()->Draw();
+
+		// スワップチェイン描画後処理
+		swapChain->PostDraw();
+	}
+
+	// DirectXユーティリティの描画後処理
 	DirectXUtility::GetInstance()->PostDraw();
 }
 

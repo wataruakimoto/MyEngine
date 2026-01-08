@@ -36,6 +36,10 @@ public:
 ///-------------------------------------------///
 private:
 
-	// 遷移マネージャのインスタンス
-	TransitionManager* transitionManager_ = TransitionManager::GetInstance();
+	// エディットモードフラグ
+#ifdef _DEBUG
+	bool isEditMode_ = true;
+#else
+	bool isEditMode_ = false;
+#endif
 };

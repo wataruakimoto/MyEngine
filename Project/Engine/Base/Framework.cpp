@@ -64,6 +64,10 @@ void Framework::Initialize() {
 	swapChain = std::make_unique <SwapChain>();
 	swapChain->Initialize(winApp.get());
 
+	// シーンビュー用のレンダーテクスチャ初期化
+	sceneRenderTexture = std::make_unique<SceneRenderTexture>();
+	sceneRenderTexture->Initialize();
+
 	// ImGuiの初期化
 	ImGuiManager::GetInstance()->Initialize(winApp.get(), swapChain.get());
 }

@@ -12,6 +12,12 @@
 class Player;
 class GamePlayScene;
 
+// 敵の種類
+enum class EnemyType {
+	Normal,     // 通常（弾を撃つ）
+	Kamikaze,   // 特攻（プレイヤーに突っ込む）
+};
+
 /// ===== 敵 ===== ///
 class Enemy : public Basecharacter {
 
@@ -70,6 +76,11 @@ private:
 	/// </summary>
 	void FireAnimationUpdate();
 
+	/// <summary>
+	/// 前進
+	/// </summary>
+	void MoveForward();
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -86,6 +97,8 @@ public:
 	/// </summary>
 	/// <param name="scene"></param>
 	void SetGamePlayScene(GamePlayScene* scene) { this->gamePlayScene_ = scene; }
+
+	void SetEnemyType(EnemyType type) { enemyType_ = type; }
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -136,4 +149,11 @@ private:
 	const float kFireAnimationDuration_ = 0.2f; // 射撃アニメーション間隔 (秒)
 
 	bool isFiring_ = false;
+
+	EnemyType enemyType_ = EnemyType::Normal;
+
+	// ドリル回転用
+	float drillRotation_ = 0.0f; // ドリル回転角度（ラジアン）
+
+	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 };
