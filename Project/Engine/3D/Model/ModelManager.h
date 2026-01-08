@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Model/Model.h"
 #include "Data/ModelData.h"
 
 #include <assimp/Importer.hpp>
@@ -56,51 +55,46 @@ public:
 	void Finalize();
 
 	/// <summary>
-	/// モデルファイル読み込み
+	/// モデルデータの読み込み
 	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void LoadModel(const std::string& filePath);
-
-	/// <summary>
-	/// モデルの検索
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	/// <returns>モデル</returns>
-	Model* FindModel(const std::string& filePath);
-
-	/// <summary>
-	/// .mtlファイル読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns></returns>
-	static MaterialData LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename);
-
-	/// <summary>
-	/// モデルデータ読み込み
-	/// </summary>
-	/// <param name="directoryPath">ディレクトリパス</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns></returns>
-	void LoadModelData(const std::string& directoryPath, const std::string& filename);
+	/// <param name="directoryName">ディレクトリ名</param>
+	/// <param name="fileName">ファイル名</param>
+	void LoadModelData(const std::string& directoryName, const std::string& fileName);
 
 	/// <summary>
 	/// モデルデータを検索
 	/// </summary>
-	/// <param name="directoryPath"></param>
-	/// <param name="filename"></param>
-	/// <returns></returns>
-	ModelData* FindModelData(const std::string& directoryPath, const std::string& filename);
+	/// <param name="directoryName">ディレクトリ名</param>
+	/// <param name="fileName">ファイル名</param>
+	/// <returns>モデルデータ</returns>
+	ModelData* FindModelData(const std::string& directoryName, const std::string& fileName);
 
 	static Node ReadNode(aiNode* node);
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
+	/// 画像ファイルの探索
+	/// </summary>
+	/// <param name="directoryName">ディレクトリ名</param>
+	/// <param name="filename">ファイル名</param>
+	/// <returns></returns>
+	std::string FindTextureFilePath(const std::string& directoryName, const std::string& filename);
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// モデルデータ
-	std::map<std::string, std::unique_ptr<Model>> models;
-
+	// モデルデータのマップコンテナ キー : ディレクトリ + ファイル名
 	std::map<std::string, std::unique_ptr<ModelData>> modelDatas;
+
+	// ベースのディレクトリパス
+	const std::string baseDirectoryPath = "Resources/Models";
+
+	// テクスチャのベースディレクトリパス
+	const std::string textureBaseDirectoryPath = "Resources/Textures";
 };

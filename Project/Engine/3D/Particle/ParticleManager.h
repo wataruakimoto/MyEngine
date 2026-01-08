@@ -208,7 +208,7 @@ private:
 	const std::string DataFolderPath = "Resources/Data/Particles/";
 
 	// 画像データを入れておくフォルダパス
-	const std::string TextureFolderPath = "Resources/Texture/Particles/";
+	const std::string TextureFolderPath = "Resources/Textures/Particles/";
 
 	// エディタで選択中のエフェクト名
 	std::string currentEditName = "";
