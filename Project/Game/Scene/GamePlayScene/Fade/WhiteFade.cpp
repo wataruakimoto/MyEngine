@@ -6,9 +6,6 @@
 #include <algorithm>
 
 WhiteFade::WhiteFade() {
-
-	// テクスチャの読み込み
-	textureManager_->LoadTexture("Resources/white1280x720.png");
 }
 
 void WhiteFade::Initialize() {
@@ -16,7 +13,7 @@ void WhiteFade::Initialize() {
 	// スプライトの生成
 	sprite_ = std::make_unique<Sprite>();
 	// スプライトの初期化
-	sprite_->Initialize("Resources/white1280x720.png");
+	sprite_->Initialize("White1280x720.png");
 	// 画面左上に配置
 	sprite_->SetPosition({ 0.0f, 0.0f });
 	// 初期は完全透明

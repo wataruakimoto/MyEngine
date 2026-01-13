@@ -2,12 +2,9 @@
 
 void GameOverScene::Initialize() {
 
-	// テクスチャ読み込み
-	textureManager_->LoadTexture("Resources/GameOver.png");
-
 	// スプライトの生成&初期化
 	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("Resources/GameOver.png");
+	sprite_->Initialize("GameOver.png");
 }
 
 void GameOverScene::Update() {

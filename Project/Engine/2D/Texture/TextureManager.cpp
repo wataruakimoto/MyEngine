@@ -29,8 +29,6 @@ void TextureManager::Finalize() {
 	instance = nullptr;
 }
 
-uint32_t TextureManager::kSRVIndexTop = 1;
-
 void TextureManager::LoadTexture(const std::string& filePath) {
 
 	/// === ファイル読み込み === ///
@@ -108,6 +106,15 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	}
 }
 
+void TextureManager::LoadTextureRelative(const std::string& relativePath) {
+
+	// フルパスを生成
+	std::string fullPath = baseDirectoryPath + "/" + relativePath;
+
+	// テクスチャ読み込み
+	LoadTexture(fullPath);
+}
+
 uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath) {
 
 	// 読み込み済みテクスチャを検索
@@ -126,6 +133,12 @@ D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVGPUHandle(const std::string& f
 
 	TextureData& textureData = textureDatas[filePath];
 	return textureData.srvHandleGPU;
+}
+
+D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVGPUHandle(const uint32_t srvIndex) {
+
+	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle = SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex);
+	return GPUHandle;
 }
 
 const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& filePath) {

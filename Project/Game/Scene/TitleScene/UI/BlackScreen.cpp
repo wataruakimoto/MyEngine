@@ -1,9 +1,6 @@
 #include "BlackScreen.h"
 
 BlackScreen::BlackScreen() {
-
-	// テクスチャの読み込み
-	textureManager_->LoadTexture("Resources/BlackScreen.png");
 }
 
 void BlackScreen::Initialize() {
@@ -12,7 +9,7 @@ void BlackScreen::Initialize() {
 	sprite_ = std::make_unique<Sprite>();
 
 	// スプライトの初期化
-	sprite_->Initialize("Resources/BlackScreen.png");
+	sprite_->Initialize("BlackScreen.png");
 }
 
 void BlackScreen::Update() {

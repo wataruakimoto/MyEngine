@@ -205,7 +205,7 @@ private:
 	std::unique_ptr<ShardRenderer> shardRenderer = nullptr;
 
 	// Jsonデータを入れておくフォルダパス
-	const std::string DataFolderPath = "Resources/Data/Particles/";
+	const std::string DataFolderPath = "Resources/Datas/Particles/";
 
 	// 画像データを入れておくフォルダパス
 	const std::string TextureFolderPath = "Resources/Textures/Particles/";

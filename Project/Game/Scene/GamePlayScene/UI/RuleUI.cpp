@@ -9,10 +9,6 @@
 using namespace Easing;
 
 RuleUI::RuleUI() {
-
-	// テクスチャの読み込み
-	TextureManager::GetInstance()->LoadTexture("Resources/Rule/Rule.png");
-	TextureManager::GetInstance()->LoadTexture("Resources/Rule/Operation.png");
 }
 
 void RuleUI::Initialize() {
@@ -21,8 +17,8 @@ void RuleUI::Initialize() {
 	ruleSprite_ = std::make_unique<Sprite>();
 	operationSprite_ = std::make_unique<Sprite>();
 	// スプライトの初期化
-	ruleSprite_->Initialize("Resources/Rule/Rule.png");
-	operationSprite_->Initialize("Resources/Rule/Operation.png");
+	ruleSprite_->Initialize("Rule/Rule.png");
+	operationSprite_->Initialize("Rule/Operation.png");
 	// スプライトの位置を画面中央に設定
 	ruleSprite_->SetPosition({ 640.0f,300.0f });
 	operationSprite_->SetPosition({ 640.0f,300.0f });

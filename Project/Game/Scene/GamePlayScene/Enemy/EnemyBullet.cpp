@@ -13,7 +13,7 @@ void EnemyBullet::Initialize() {
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("resources/EnemyBullet", "EnemyBullet.obj");
+	model->Initialize("EnemyBullet", "EnemyBullet.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();

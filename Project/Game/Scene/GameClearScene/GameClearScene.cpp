@@ -2,12 +2,9 @@
 
 void GameClearScene::Initialize() {
 
-	// テクスチャ読み込み
-	textureManager_->LoadTexture("Resources/GameClear.png");
-
 	// スプライトの生成&初期化
 	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("Resources/GameClear.png");
+	sprite_->Initialize("GameClear.png");
 }
 
 void GameClearScene::Update() {

@@ -7,7 +7,7 @@ void SkyBoxGame::Initialize() {
 
 	// スカイボックスの生成
 	skybox = std::make_unique<Skybox>();
-	skybox->Initialize("Resources/", "rostock_laage_airport_4k.dds");
+	skybox->Initialize("rostock_laage_airport_4k.dds");
 
 	// 大きくしとく
 	skybox->SetScale({ 500.0f, 500.0f, 500.0f });

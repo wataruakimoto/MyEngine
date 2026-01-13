@@ -15,7 +15,7 @@ void Reticle3D::Initialize() {
 
 	// モデルの生成・初期化
 	model_ = std::make_unique<Model>();
-	model_->Initialize("resources/reticle", "reticle.obj");
+	model_->Initialize("Reticle", "Reticle.obj");
 
 	// オブジェクトの生成・初期化
 	object_ = std::make_unique<Object3d>();

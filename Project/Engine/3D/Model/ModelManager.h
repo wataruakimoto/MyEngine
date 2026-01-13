@@ -94,7 +94,4 @@ private:
 
 	// ベースのディレクトリパス
 	const std::string baseDirectoryPath = "Resources/Models";
-
-	// テクスチャのベースディレクトリパス
-	const std::string textureBaseDirectoryPath = "Resources/Textures";
 };

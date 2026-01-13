@@ -1,4 +1,5 @@
 #include "ModelManager.h"
+#include "Texture/TextureManager.h"
 #include "Logger.h"
 
 #include <fstream>
@@ -105,6 +106,9 @@ void ModelManager::LoadModelData(const std::string& directoryName, const std::st
 			// テクスチャファイルを探索
 			std::string foundTextureFilePath = FindTextureFilePath(directoryName, filename);
 
+			// テクスチャ読み込み
+			TextureManager::GetInstance()->LoadTexture(foundTextureFilePath);
+
 			// 見つかったテクスチャファイルパスをモデルデータに格納
 			modelData->material.textureFilePath = foundTextureFilePath;
 		}
@@ -160,6 +164,9 @@ Node ModelManager::ReadNode(aiNode* node) {
 
 std::string ModelManager::FindTextureFilePath(const std::string& directoryName, const std::string& filename) {
 
+	// TextureManagerのベースディレクトリパスを取得
+	std::string textureBaseDirectoryPath = TextureManager::GetInstance()->GetBaseDirectoryPath();
+
 	// パターン１： Textures/ディレクトリ名/ファイル名
 	std::string path1 = textureBaseDirectoryPath + "/" + directoryName + "/" + filename;
 
@@ -178,5 +185,5 @@ std::string ModelManager::FindTextureFilePath(const std::string& directoryName, 
 	// ファイルが存在したらパスを返す
 	if (std::filesystem::exists(path3)) return path3;
 
-	return ""; // 見つからなかったら空文字を返す
+	return textureBaseDirectoryPath + "/" + "White.png"; // 見つからなかったら
 }

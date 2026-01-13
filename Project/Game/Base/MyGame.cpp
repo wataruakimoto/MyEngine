@@ -7,11 +7,21 @@
 #include "SceneManager.h"
 #include "SceneFactory.h"
 #include "Input.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
 
 void MyGame::Initialize() {
 
 	// 基底クラス初期化
 	Framework::Initialize();
+
+	// テクスチャマネージャのインスタンス取得
+	textureManager = TextureManager::GetInstance();
+
+	// モデルマネージャのインスタンス取得
+	modelManager = ModelManager::GetInstance();
+
+	LoadAllResource();
 
 	// シーンファクトリーを生成
 	sceneFactory_ = std::make_unique <SceneFactory>();
@@ -129,4 +139,41 @@ void MyGame::Finalize() {
 
 	// 基底クラス解放
 	Framework::Finalize();
+}
+
+void MyGame::LoadAllResource() {
+
+	/// ===== テクスチャの読み込み ===== ///
+
+	textureManager->LoadTextureRelative("BlackScreen.png");
+	textureManager->LoadTextureRelative("start.png");
+	textureManager->LoadTextureRelative("title.png");
+	textureManager->LoadTextureRelative("White1280x720.png");
+	textureManager->LoadTextureRelative("Black1280x720.png");
+	textureManager->LoadTextureRelative("LockOn.png");
+	textureManager->LoadTextureRelative("2DReticle.png");
+	textureManager->LoadTextureRelative("Rule/Rule.png");
+	textureManager->LoadTextureRelative("Rule/Operation.png");
+	textureManager->LoadTextureRelative("Norma/NormaText.png");
+	textureManager->LoadTextureRelative("Norma/Slash.png");
+	textureManager->LoadTextureRelative("Numbers.png");
+	textureManager->LoadTextureRelative("Result/Clear.png");
+	textureManager->LoadTextureRelative("Result/GameOver.png");
+	textureManager->LoadTextureRelative("GameClear.png");
+	textureManager->LoadTextureRelative("GameOver.png");
+
+	textureManager->LoadTextureRelative("rostock_laage_airport_4k.dds");
+
+	/// ===== モデルの読み込み ===== ///
+
+	modelManager->LoadModelData("Player", "player.obj");
+	modelManager->LoadModelData("Cylinder", "cylinder.obj");
+	modelManager->LoadModelData("Floor", "floor.obj");
+	modelManager->LoadModelData("PlayerBullet", "PlayerBullet.obj");
+	modelManager->LoadModelData("Enemy", "enemy.obj");
+	modelManager->LoadModelData("Enemy", "Kamikaze.obj");
+	modelManager->LoadModelData("EnemyBullet", "EnemyBullet.obj");
+	modelManager->LoadModelData("Goal", "Goal.obj");
+	modelManager->LoadModelData("Gate", "Gate.obj");
+	modelManager->LoadModelData("Reticle", "Reticle.obj");
 }
