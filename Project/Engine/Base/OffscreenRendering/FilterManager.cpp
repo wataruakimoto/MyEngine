@@ -51,7 +51,7 @@ void FilterManager::Initialize() {
 	dissolveFilter_ = std::make_unique<DissolveFilter>();
 	dissolveFilter_->Initialize();
 	// マスクテクスチャのファイルパスを設定
-	dissolveFilter_->SetMaskTextureFilePath("Resources", "noise0.png");
+	dissolveFilter_->SetMaskTextureFilePath("noise0.png");
 	filters_["Dissolve"] = std::move(dissolveFilter_);
 	filterOrder.push_back("Dissolve");
 

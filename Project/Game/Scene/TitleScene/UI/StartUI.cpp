@@ -3,9 +3,6 @@
 #include <numbers>
 
 StartUI::StartUI() {
-
-	// テクスチャの読み込み
-	textureManager_->LoadTexture("Resources/start.png");
 }
 
 void StartUI::Initialize() {
@@ -13,7 +10,7 @@ void StartUI::Initialize() {
 	// スプライトの生成
 	sprite_ = std::make_unique<Sprite>();
 	// スプライトの初期化
-	sprite_->Initialize("Resources/start.png");
+	sprite_->Initialize("start.png");
 	sprite_->SetPosition({ 640.0f,600.0f }); // 画面中央に表示
 	sprite_->SetAnchorPoint({ 0.5f,0.5f }); // 中心を基準に表示
 

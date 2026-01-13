@@ -13,7 +13,7 @@ void Bullet::Initialize() {
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("resources/PlayerBullet", "PlayerBullet.obj");
+	model->Initialize("PlayerBullet", "PlayerBullet.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();

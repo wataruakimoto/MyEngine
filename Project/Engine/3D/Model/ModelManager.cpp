@@ -1,10 +1,12 @@
 #include "ModelManager.h"
+#include "Texture/TextureManager.h"
 #include "Logger.h"
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include <filesystem>
 
 using namespace Logger;
 
@@ -26,89 +28,28 @@ void ModelManager::Finalize() {
 	instance = nullptr;
 }
 
-void ModelManager::LoadModel(const std::string& filePath) {
+void ModelManager::LoadModelData(const std::string& directoryName, const std::string& fileName) {
 
-	// 読み込み済みモデルを検索
-	if (models.contains(filePath)) {
+	// マップコンテナに登録するためのキーを作成
+	std::string key = directoryName + "/" + fileName; // キー
 
-		// 読み込み済みなら早期return
-		return;
-	}
+	// 読み込み済みなら早期return
+	if (modelDatas.contains(key)) return;
 
-	// モデルの生成とファイル読み込み、初期化
-	std::unique_ptr<Model> model = std::make_unique<Model>();
-	model->Initialize("resources", filePath);
-
-	// モデルをmapコンテナに格納する
-	models.insert(std::make_pair(filePath, std::move(model)));
-}
-
-Model* ModelManager::FindModel(const std::string& filePath) {
-
-	// 読み込み済みモデルを検索
-	if (models.contains(filePath)) {
-
-		// 読み込み済みなら早期return
-		return models.at(filePath).get();
-	}
-
-	// ファイル名一致なし
-	return nullptr;
-}
-
-MaterialData ModelManager::LoadMaterialTemplateFile(const std::string& directoryPath, const std::string& filename) {
-
-	// 1. 中で必要となる変数の宣言
-	MaterialData materialData; // 構築するMaterialData
-	std::string line; // ファイルから読んだ1行を格納するもの
-
-	// 2. ファイルを開く
-	std::ifstream file(directoryPath + "/" + filename); //ファイルを開く
-	assert(file.is_open()); // とりあえず開けなかったら止める
-
-	// 3. 実際にファイルを読み、MaterialDataを構築していく
-	while (std::getline(file, line)) {
-		std::string identifier;
-		std::istringstream s(line);
-		s >> identifier;
-
-		// identifierに応じた処理
-		if (identifier == "map_Kd") {
-
-			std::string textureFilename;
-			s >> textureFilename;
-			// 連結してファイルパスにする
-			materialData.textureFilePath = directoryPath + "/" + textureFilename;
-		}
-	}
-
-	// 4. MaterialDataを返す
-	return materialData;
-}
-
-void ModelManager::LoadModelData(const std::string& directoryPath, const std::string& filename) {
-
-	// ファイルパスを作成
-	std::string filePath = directoryPath + "/" + filename;
+	// モデルのファイルまでのフルパスを作成
+	std::string fullPath = baseDirectoryPath + "/" + directoryName + "/" + fileName; // フルパス
 
 	// ファイルが存在するか確認
-	std::ifstream file(filePath);
+	std::ifstream file(fullPath);
 	assert(file.is_open()); // ファイルが開けなかったら止める
-
-	// 読み込み済みかモデルを検索
-	if (modelDatas.contains(filePath)) {
-
-		// 読み込み済みなら早期return
-		return;
-	}
-
-	// モデルデータを読み込む
-	std::unique_ptr<ModelData> modelData = std::make_unique<ModelData>();
 
 	// assimpを使ってファイルを読み込む
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(filePath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
+	const aiScene* scene = importer.ReadFile(fullPath.c_str(), aiProcess_FlipWindingOrder | aiProcess_FlipUVs);
 	assert(scene->HasMeshes()); // meshがないのは対応しない
+
+	// モデルデータを作成
+	std::unique_ptr<ModelData> modelData = std::make_unique<ModelData>();
 
 	// meshを解析する
 	for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex) {
@@ -152,32 +93,47 @@ void ModelManager::LoadModelData(const std::string& directoryPath, const std::st
 
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) != 0) {
 
+			// テクスチャファイルパスを取得
 			aiString textureFilePath;
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &textureFilePath);
-			modelData->material.textureFilePath = directoryPath + "/" + textureFilePath.C_Str();
+
+			// 文字列に変換
+			std::string textureFileName = textureFilePath.C_Str();
+
+			// ファイル名だけを抽出
+			std::string filename = std::filesystem::path(textureFileName).filename().string();
+
+			// テクスチャファイルを探索
+			std::string foundTextureFilePath = FindTextureFilePath(directoryName, filename);
+
+			// テクスチャ読み込み
+			TextureManager::GetInstance()->LoadTexture(foundTextureFilePath);
+
+			// 見つかったテクスチャファイルパスをモデルデータに格納
+			modelData->material.textureFilePath = foundTextureFilePath;
 		}
 	}
 
 	modelData->rootNode = ReadNode(scene->mRootNode);
 
 	// モデルデータをmapコンテナに格納する
-	modelDatas.insert(std::make_pair(filePath, std::move(modelData)));
+	modelDatas.insert(std::make_pair(key, std::move(modelData)));
 }
 
-ModelData* ModelManager::FindModelData(const std::string& directoryPath, const std::string& filename) {
+ModelData* ModelManager::FindModelData(const std::string& directoryName, const std::string& fileName) {
 
-	// ファイルパスを作成
-	std::string filePath = directoryPath + "/" + filename;
+	// マップコンテナから検索するためのキーを作成
+	std::string key = directoryName + "/" + fileName; // キー
 	
 	// 読み込み済みモデルを検索
-	if (modelDatas.contains(filePath)) {
+	if (modelDatas.contains(key)) {
 
-		// 読み込み済みなら早期return
-		return modelDatas.at(filePath).get();
+		// 一致したらモデルデータを返す
+		return modelDatas.at(key).get();
 	}
 
-	// ファイル名一致なしならログを出す
-	Log("ModelManager::FindModelData: Model data not found for " + filePath + "\n");
+	// キーと一致するモデルデータが見つからなかったらログ出してnullptrを返す
+	Log("ModelManager::FindModelData: Model data not found for " + key + "\n");
 	return nullptr;
 }
 
@@ -204,4 +160,30 @@ Node ModelManager::ReadNode(aiNode* node) {
 	}
 
 	return result;
+}
+
+std::string ModelManager::FindTextureFilePath(const std::string& directoryName, const std::string& filename) {
+
+	// TextureManagerのベースディレクトリパスを取得
+	std::string textureBaseDirectoryPath = TextureManager::GetInstance()->GetBaseDirectoryPath();
+
+	// パターン１： Textures/ディレクトリ名/ファイル名
+	std::string path1 = textureBaseDirectoryPath + "/" + directoryName + "/" + filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path1)) return path1;
+
+	// パターン２： Textures/ファイル名
+	std::string path2 = textureBaseDirectoryPath + "/" + filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path2)) return path2;
+
+	// パターン3 : Models/ディレクトリ名/ファイル名
+	std::string path3 = baseDirectoryPath + "/" + directoryName + "/" + filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path3)) return path3;
+
+	return textureBaseDirectoryPath + "/" + "White.png"; // 見つからなかったら
 }

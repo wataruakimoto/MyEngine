@@ -278,9 +278,3 @@ void Object3d::InitializeCameraData() {
 		*cameraData = camera->GetWorldPosition();
 	}
 }
-
-void Object3d::SetModel(const std::string& filePath) {
-
-	// モデルを検索してセットする
-	model = ModelManager::GetInstance()->FindModel(filePath);
-}

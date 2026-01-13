@@ -38,7 +38,9 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(const std::string& directorypath, const std::string& filename);
+	/// <param name="directoryName">ディレクトリ名</param>
+	/// <param name="fileName">ファイル名</param>
+	void Initialize(const std::string& directoryName, const std::string& fileName);
 
 	/// <summary>
 	/// 描画
@@ -134,7 +136,7 @@ private:
 	Material* materialData = nullptr;
 
 	// 環境マップ用のファイルパス
-	std::string environmentMapFilePath = "Resources/rostock_laage_airport_4k.dds";
+	std::string environmentMapFilePath = "Resources/Textures/rostock_laage_airport_4k.dds";
 
 	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;

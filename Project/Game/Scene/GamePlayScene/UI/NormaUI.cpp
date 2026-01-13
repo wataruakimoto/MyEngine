@@ -6,36 +6,31 @@
 #include <imgui.h>
 
 NormaUI::NormaUI() {
-
-	// テクスチャ読み込み
-	textureManager_->GetInstance()->LoadTexture("Resources/Norma/NormaText.png");
-	textureManager_->GetInstance()->LoadTexture("Resources/Norma/Slash.png");
-	textureManager_->GetInstance()->LoadTexture("Resources/Numbers.png");
 }
 
 void NormaUI::Initialize() {
 
 	// 固定テキストスプライトの生成
 	normaTextSprite_ = std::make_unique<Sprite>();
-	normaTextSprite_->Initialize("Resources/Norma/NormaText.png");
+	normaTextSprite_->Initialize("Norma/NormaText.png");
 	normaTextSprite_->SetAnchorPoint({ 0.5f, 0.5f }); // 左中央揃え
 
 	slashSprite_ = std::make_unique<Sprite>();
-	slashSprite_->Initialize("Resources/Norma/Slash.png");
+	slashSprite_->Initialize("Norma/Slash.png");
 	slashSprite_->SetAnchorPoint({ 0.5f, 0.5f }); // 中央揃え
 
 	// 数字用スプライトの事前準備（最大桁数分を確保）
 	for (int i = 0; i < kMaxDigits; ++i) {
 		// 現在値用スプライト
 		auto currentSprite = std::make_unique<Sprite>();
-		currentSprite->Initialize("Resources/Numbers.png");
+		currentSprite->Initialize("Numbers.png");
 		currentSprite->SetAnchorPoint({ 0.5f, 0.5f });
 		currentSprite->SetSize(digitSize_);
 		CurrentNumSprites_.push_back(std::move(currentSprite));
 
 		// ノルマ値用スプライト
 		auto normaSprite = std::make_unique<Sprite>();
-		normaSprite->Initialize("Resources/Numbers.png");
+		normaSprite->Initialize("Numbers.png");
 		normaSprite->SetAnchorPoint({ 0.5f, 0.5f });
 		normaSprite->SetSize(digitSize_);
 		NormaNumSprites_.push_back(std::move(normaSprite));

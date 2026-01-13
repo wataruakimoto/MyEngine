@@ -24,13 +24,13 @@ void Enemy::Initialize() {
 	case EnemyType::Normal:
 	default:
 
-		model->Initialize("resources/enemy", "enemy.obj");
+		model->Initialize("Enemy", "enemy.obj");
 
 		break;
 
 	case EnemyType::Kamikaze:
 
-		model->Initialize("resources/enemy", "Kamikaze.obj");
+		model->Initialize("Enemy", "Kamikaze.obj");
 
 		break;
 	}

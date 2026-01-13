@@ -22,7 +22,7 @@ void Player::Initialize() {
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("resources/player", "player.obj");
+	model->Initialize("Player", "player.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();

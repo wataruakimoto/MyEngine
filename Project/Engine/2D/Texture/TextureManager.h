@@ -54,8 +54,14 @@ public:
 	/// <summary>
 	/// DirectXTexでテクスチャを読む
 	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void LoadTexture(const std::string& filePath);
+	/// <param name="fullPath">フルパス</param>
+	void LoadTexture(const std::string& fullPath);
+
+	/// <summary>
+	/// 相対パスでテクスチャを読み込み
+	/// </summary>
+	/// <param name="relativePath"相対パス></param>
+	void LoadTextureRelative(const std::string& relativePath);
 
 	/// <summary>
 	/// SRVインデックスの開始番号
@@ -72,11 +78,29 @@ public:
 	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const std::string& filePath);
 
 	/// <summary>
+	/// SRVインデックスからGPUハンドルを取得
+	/// </summary>
+	/// <param name="srvIndex"></param>
+	/// <returns></returns>
+	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const uint32_t srvIndex);
+
+	/// <summary>
 	/// メタデータを取得
 	/// </summary>
 	/// <param name="filePath">ファイルパス</param>
 	/// <returns></returns>
 	const DirectX::TexMetadata& GetMetadata(const std::string& filePath);
+	
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// ベースディレクトリパスのゲッター
+	/// </summary>
+	/// <returns></returns>
+	const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
 
 ///-------------------------------------------/// 
 /// 構造体
@@ -104,6 +128,6 @@ private:
 	// テクスチャデータ
 	std::unordered_map<std::string,TextureData> textureDatas;
 
-	// SRVインデックスの開始番号
-	static uint32_t kSRVIndexTop;
+	// ベースのディレクトリパス
+	const std::string baseDirectoryPath = "Resources/Textures";
 };
