@@ -7,35 +7,19 @@
 
 using namespace MathMatrix;
 
-void Model::Initialize(const std::string& directorypath, const std::string& filename) {
+void Model::Initialize(const std::string& directoryName, const std::string& fileName) {
 
 	// DXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
 	// モデルデータを検索
-	modelData = ModelManager::GetInstance()->FindModelData(directorypath, filename);
-
-	// モデルデータが見つからなかったら
-	if (modelData == nullptr) {
-		
-		// モデルデータを読み込む
-		ModelManager::GetInstance()->LoadModelData(directorypath, filename);
-
-		// 再度モデルデータを検索
-		modelData = ModelManager::GetInstance()->FindModelData(directorypath, filename);
-	}
+	modelData = ModelManager::GetInstance()->FindModelData(directoryName, fileName);
 
 	// 頂点データ初期化
 	InitializeVertexData();
 
 	// マテリアルデータ初期化
 	InitializeMaterialData();
-
-	// .objの参照しているテクスチャファイル読み込み
-	TextureManager::GetInstance()->LoadTexture(modelData->material.textureFilePath);
-
-	// 環境マップのテクスチャファイルを読み込む
-	TextureManager::GetInstance()->LoadTexture(environmentMapFilePath);
 
 	// 読み込んだテクスチャの番号を取得し、メンバ変数に書き込む
 	modelData->material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData->material.textureFilePath);
@@ -64,6 +48,7 @@ void Model::ShowImGui() {
 #ifdef USE_IMGUI
 
 	if (ImGui::TreeNode("Model")) {
+		ImGui::Text("FilePath: %s", modelData->material.textureFilePath.c_str());
 		ImGui::ColorEdit4("Color", &materialData->color.x);
 		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0EnvironmentMap\0");
 		ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);

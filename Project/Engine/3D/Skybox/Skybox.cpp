@@ -9,13 +9,13 @@
 
 using namespace MathMatrix;
 
-void Skybox::Initialize(std::string directoryPath, std::string fileName) {
+void Skybox::Initialize(const std::string relativePath) {
 
-	// 引数からファイルパスを作成
-	filePath = directoryPath + "/" + fileName;
+	// TextureManagerからベースディレクトリパスを取得してフルパスを作成
+	std::string fullPath = TextureManager::GetInstance()->GetBaseDirectoryPath() + "/" + relativePath;
 
-	// テクスチャを読み込む
-	TextureManager::GetInstance()->LoadTexture(filePath);
+	// TextureManagerからSRVインデックスを取得
+	textureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(fullPath);
 
 	// 頂点データの初期化
 	InitializeVertexData();
@@ -57,7 +57,7 @@ void Skybox::Draw() {
 	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの場所を設定
-	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(filePath));
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureSrvIndex));
 
 	// 描画(DrawCall)
 	dxUtility_->GetCommandList()->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
@@ -68,8 +68,6 @@ void Skybox::ShowImGui(const char* name) {
 #ifdef USE_IMGUI
 
 	ImGui::Begin(name);
-	// スカイボックスのファイルパスを表示
-	ImGui::Text("FilePath: %s", filePath.c_str());
 	ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
 	ImGui::SliderAngle("Rotate X", &transform.rotate.x, -180.0f, 180.0f);
 	ImGui::SliderAngle("Rotate Y", &transform.rotate.y, -180.0f, 180.0f);

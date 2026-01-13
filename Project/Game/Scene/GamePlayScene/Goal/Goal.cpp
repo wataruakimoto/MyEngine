@@ -16,7 +16,7 @@ void Goal::Initialize() {
 
 	// モデルの生成・初期化
 	model_ = std::make_unique<Model>();
-	model_->Initialize("Resources/Goal", "Goal.obj");
+	model_->Initialize("Goal", "Goal.obj");
 	model_->SetColor({ 1.0f, 1.0f, 1.0f, 0.9f });
 
 	// 3Dオブジェクトの生成・初期化
@@ -33,7 +33,7 @@ void Goal::Initialize() {
 
 	// ゲート用のモデルの生成・初期化
 	gateModel_ = std::make_unique<Model>();
-	gateModel_->Initialize("Resources/Gate", "Gate.obj");
+	gateModel_->Initialize("Gate", "Gate.obj");
 
 	// ゲート用の3Dオブジェクトの生成・初期化
 	gateObject_ = std::make_unique<Object3d>();

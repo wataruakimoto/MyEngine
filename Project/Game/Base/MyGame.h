@@ -3,6 +3,10 @@
 #include "Framework.h"
 #include "Scene/System/TransitionManager.h"
 
+/// ===== 前方宣言 ===== ///
+class TextureManager;
+class ModelManager;
+
 /// === ゲーム関連 === ///
 class MyGame : public Framework {
 
@@ -32,6 +36,16 @@ public:
 	void Finalize() override;
 
 ///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
+	/// 全リソースの読み込み
+	/// </summary>
+	void LoadAllResource();
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
@@ -42,4 +56,12 @@ private:
 #else
 	bool isEditMode_ = false;
 #endif
+
+	/// ===== インスタンス ===== ///
+
+	// テクスチャマネージャのインスタンス
+	TextureManager* textureManager = nullptr;
+
+	// モデルマネージャのインスタンス
+	ModelManager* modelManager = nullptr;
 };

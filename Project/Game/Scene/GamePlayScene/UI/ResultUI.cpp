@@ -6,10 +6,6 @@
 using namespace Easing;
 
 ResultUI::ResultUI() {
-
-	// テクスチャの読み込み
-	textureManager_->LoadTexture("Resources/Result/Clear.png");
-	textureManager_->LoadTexture("Resources/Result/GameOver.png");
 }
 
 void ResultUI::Initialize() {
@@ -19,8 +15,8 @@ void ResultUI::Initialize() {
 	gameOverSprite_ = std::make_unique<Sprite>();
 
 	// スプライトの初期化
-	clearSprite_->Initialize("Resources/Result/Clear.png");
-	gameOverSprite_->Initialize("Resources/Result/GameOver.png");
+	clearSprite_->Initialize("Result/Clear.png");
+	gameOverSprite_->Initialize("Result/GameOver.png");
 
 	// スプライトの位置を画面中央に設定
 	clearSprite_->SetPosition({ 640.0f,360.0f });

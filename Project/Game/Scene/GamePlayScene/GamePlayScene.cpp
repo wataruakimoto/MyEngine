@@ -586,7 +586,7 @@ void GamePlayScene::LoadEnemyPopData() {
 
 	// ファイルを開く
 	std::ifstream file;
-	file.open("./resources/gameData/enemyPop.csv");
+	file.open("./Resources/Datas/gameData/enemyPop.csv");
 	assert(file.is_open());
 
 	// ファイルの内容を文字列ストリームにコピー

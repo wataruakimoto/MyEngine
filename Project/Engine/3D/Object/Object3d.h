@@ -156,12 +156,6 @@ public:
 	void SetModel(Model* model) { this->model = model; }
 
 	/// <summary>
-	/// モデルのセッター
-	/// </summary>
-	/// <param name="filePath"></param>
-	void SetModel(const std::string& filePath);
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera">カメラ</param>

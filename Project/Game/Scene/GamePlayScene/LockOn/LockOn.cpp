@@ -10,16 +10,13 @@
 using namespace MathVector;
 
 LockOn::LockOn() {
-
-	// テクスチャ読み込み
-	textureManager_->LoadTexture("resources/LockOn.png");
 }
 
 void LockOn::Initialize() {
 
 	// スプライトの生成・初期化
 	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("resources/LockOn.png");
+	sprite_->Initialize("LockOn.png");
 	sprite_->SetAnchorPoint({ 0.5f, 0.5f }); // アンカーを中心に設定
 }
 

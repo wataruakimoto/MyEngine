@@ -11,9 +11,6 @@ using namespace MathVector;
 using namespace Easing;
 
 TitleUI::TitleUI() {
-
-	// テクスチャの読み込み
-	textureManager_->LoadTexture("Resources/title.png");
 }
 
 void TitleUI::Initialize() {
@@ -21,7 +18,7 @@ void TitleUI::Initialize() {
 	// スプライトの生成
 	sprite_ = std::make_unique<Sprite>();
 	// スプライトの初期化
-	sprite_->Initialize("Resources/title.png");
+	sprite_->Initialize("title.png");
 	sprite_->SetPosition({ 640.0f,180.0f }); // 画面中央に表示
 	sprite_->SetAnchorPoint({ 0.5f,0.5f }); // 中心を基準に表示
 }

@@ -13,9 +13,6 @@ using namespace MathVector;
 using namespace MathMatrix;
 
 Reticle2D::Reticle2D() {
-
-	// 画像の読み込み
-	TextureManager::GetInstance()->LoadTexture("resources/2DReticle.png");
 }
 
 void Reticle2D::Initialize() {
@@ -25,7 +22,7 @@ void Reticle2D::Initialize() {
 
 	// スプライトの生成・初期化
 	spriteReticle_ = std::make_unique<Sprite>();
-	spriteReticle_->Initialize("resources/2DReticle.png");
+	spriteReticle_->Initialize("2DReticle.png");
 	spriteReticle_->SetAnchorPoint({ 0.5f, 0.5f });
 	spriteReticle_->SetPosition(reticlePosition_);
 }

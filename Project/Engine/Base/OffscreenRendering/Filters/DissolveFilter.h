@@ -84,11 +84,10 @@ private:
 public:
 
 	/// <summary>
-	/// maskテクスチャのファイルパスを設定する
+	/// maskテクスチャの設定
 	/// </summary>
-	/// <param name="directoryPath"></param>
-	/// <param name="fileName"></param>
-	void SetMaskTextureFilePath(std::string directoryPath, std::string fileName);
+	/// <param name="relativePath">相対パス</param>
+	void SetMaskTextureFilePath(const std::string relativePath);
 
 ///-------------------------------------------/// 
 /// 構造体
@@ -108,8 +107,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	// maskテクスチャのファイルパス
-	std::string maskTextureFilePath = "";
+	// maskテクスチャのフルパス
+	std::string maskTextureFullPath = "";
 
 	// マスクテクスチャのSRVインデックス
 	uint32_t maskTextureSrvIndex = 0;

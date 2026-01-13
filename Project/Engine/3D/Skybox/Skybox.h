@@ -25,7 +25,8 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(std::string directoryPath, std::string fileName);
+	/// <param name="relativePath">相対パス</param>
+	void Initialize(const std::string relativePath);
 
 	/// <summary>
 	/// 更新
@@ -67,17 +68,6 @@ private:
 	/// マテリアルデータの初期化
 	/// </summary>
 	void InitializeMaterialData();
-
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// ファイルパスのゲッター
-	/// </summary>
-	/// <returns></returns>
-	const std::string& GetFilePath() const { return filePath; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -156,8 +146,8 @@ private:
 	// インデックス数 6頂点 * 6面 = 36頂点
 	uint32_t indexCount = 36;
 
-	// ファイルパス
-	std::string filePath = "";
+	// テクスチャのSRVインデックス
+	uint32_t textureSrvIndex = 0;
 
 	// 変換データ
 	Transform transform = {};
