@@ -48,7 +48,7 @@ void MyGame::Update() {
 #ifdef _DEBUG
 
 		// Tabキーが押されたら
-		if (Input::GetInstance()->TriggerKey(DIK_TAB)) {
+		if (Input::GetInstance()->TriggerKey(VK_TAB)) {
 
 			// エディットモード切り替え
 			isEditMode_ = !isEditMode_;

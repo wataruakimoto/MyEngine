@@ -9,6 +9,7 @@
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "CameraControll/RailCamera/RailCameraController.h"
 #include "Easing.h"
+#include "WinApp.h"
 
 #include <imgui.h>
 

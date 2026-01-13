@@ -315,7 +315,7 @@ void TitleScene::WaitInputInitialize() {
 void TitleScene::WaitInputUpdate() {
 
 	// スペースキーを押したら
-	if (input_->TriggerKey(DIK_SPACE)) {
+	if (input_->TriggerKey(VK_SPACE)) {
 
 		// 状態をUI上に移動に変更
 		stateRequest_ = TitleFlowState::MoveUp;
