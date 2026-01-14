@@ -161,6 +161,12 @@ void MyGame::LoadAllResource() {
 	textureManager->LoadTextureRelative("Result/GameOver.png");
 	textureManager->LoadTextureRelative("GameClear.png");
 	textureManager->LoadTextureRelative("GameOver.png");
+	textureManager->LoadTextureRelative("Guide/Mouse.png");
+	textureManager->LoadTextureRelative("Guide/MouseClick.png");
+	textureManager->LoadTextureRelative("Guide/ButtonA.png");
+	textureManager->LoadTextureRelative("Guide/ButtonD.png");
+	textureManager->LoadTextureRelative("Guide/PushA.png");
+	textureManager->LoadTextureRelative("Guide/PushD.png");
 
 	textureManager->LoadTextureRelative("rostock_laage_airport_4k.dds");
 

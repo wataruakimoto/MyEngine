@@ -19,6 +19,7 @@
 #include "UI/RuleUI.h"
 #include "UI/NormaUI.h"
 #include "UI/ResultUI.h"
+#include "UI/GuideUI.h"
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
 #include "Goal/Goal.h"
@@ -249,6 +250,9 @@ private:
 
 	// リザルトUI
 	std::unique_ptr<ResultUI> resultUI_ = nullptr;
+
+	// ガイドUI
+	std::unique_ptr<GuideUI> guideUI_ = nullptr;
 
 	// パーティクル共通のインスタンス
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
