@@ -13,7 +13,7 @@ void GameOverScene::Update() {
 	sprite_->Update();
 
 	// スペースキーでシーン切り替え
-	if (input_->TriggerKey(DIK_SPACE)) {
+	if (input_->TriggerKey(VK_SPACE)) {
 		sceneManager_->ChangeScene("TITLE");
 	}
 }

@@ -29,24 +29,8 @@ void Reticle2D::Initialize() {
 
 void Reticle2D::Update() {
 
-	// ゲームパッドの状態を得る変数(XINPUT)
-	XINPUT_STATE joyState = {};
-
-	// ゲームパッドが接続されているか確認
-	if (XInputGetState(0, &joyState) == ERROR_SUCCESS) {
-
-		// ジョイスティック状態取得
-		if (Input::GetInstance()->IsRightThumbStickOutDeadZone()) {
-			reticlePosition_.x += (float)joyState.Gamepad.sThumbRX / SHRT_MAX * 2.0f;
-			reticlePosition_.y -= (float)joyState.Gamepad.sThumbRY / SHRT_MAX * 2.0f;
-		}
-	}
-	// ゲームパッドが接続されていない場合
-	else {
-
-		// マウスの位置をレティクルの位置に設定
-		reticlePosition_ = Input::GetInstance()->GetMousePosition();
-	}
+	// マウスの位置をレティクルの位置に設定
+	reticlePosition_ = Input::GetInstance()->GetMousePosition();
 
 	// スプライトの座標変更を反映
 	spriteReticle_->SetPosition(reticlePosition_);

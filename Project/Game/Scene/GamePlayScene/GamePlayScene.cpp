@@ -9,6 +9,7 @@
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "CameraControll/RailCamera/RailCameraController.h"
 #include "Easing.h"
+#include "WinApp.h"
 
 #include <imgui.h>
 
@@ -126,6 +127,10 @@ void GamePlayScene::Initialize() {
 	// リザルトUIの生成&初期化
 	resultUI_ = std::make_unique<ResultUI>();
 	resultUI_->Initialize();
+
+	// ガイドUIの生成&初期化
+	guideUI_ = std::make_unique<GuideUI>();
+	guideUI_->Initialize();
 
 	// 白フェードの初期化
 	whiteFade_ = std::make_unique<WhiteFade>();
@@ -381,6 +386,9 @@ void GamePlayScene::Draw() {
 	// リザルトUIの描画
 	resultUI_->Draw();
 
+	// ガイドUIの描画
+	guideUI_->Draw();
+
 	// 白フェードの描画
 	whiteFade_->Draw();
 
@@ -433,6 +441,8 @@ void GamePlayScene::ShowImGui() {
 	normaUI_->ShowImGui();
 
 	resultUI_->ShowImGui();
+
+	guideUI_->ShowImGui();
 
 	whiteFade_->ShowImGui();
 
@@ -781,6 +791,9 @@ void GamePlayScene::PlayUpdate() {
 
 	// ノルマUIの更新
 	normaUI_->Update();
+
+	// ガイドUIの更新
+	guideUI_->Update();
 
 	// 敵発生コマンドの更新
 	UpdateEnemyPopCommands();

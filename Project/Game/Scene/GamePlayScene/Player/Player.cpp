@@ -406,9 +406,9 @@ void Player::ManualInitialize() {
 void Player::ManualUpdate() {
 
 	// 各キーの入力の状態
-	bool isSpacePush = Input::GetInstance()->PushKey(DIK_SPACE); // スペースキー
-	bool isAPush = Input::GetInstance()->PushKey(DIK_A); // Aキー
-	bool isDPush = Input::GetInstance()->PushKey(DIK_D); // Dキー
+	bool isMousePush = Input::GetInstance()->PushMouseButton(MouseButton::Left); // 左クリック
+	bool isAPush = Input::GetInstance()->PushKey('A'); // Aキー
+	bool isDPush = Input::GetInstance()->PushKey('D'); // Dキー
 
 	/// ===== 射撃処理 ===== ///
 
@@ -416,7 +416,7 @@ void Player::ManualUpdate() {
 	if (fireTimer_ <= 0) {
 
 		// スペースキーが押されたら
-		if (isSpacePush) {
+		if (isMousePush) {
 
 			// 射撃
 			Fire();
