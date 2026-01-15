@@ -33,6 +33,17 @@ public:
 	void PreDraw();
 
 	/// <summary>
+	/// 3D用描画前処理
+	/// </summary>
+	void PreDrawFor3D();
+
+	/// <summary>
+	/// 2D用描画前処理
+	/// </summary>
+	/// <param name="shouldClearDepth">深度をクリアするかどうか</param>
+	void PreDrawFor2D(bool shouldClearDepth);
+
+	/// <summary>
 	/// 描画後処理
 	/// </summary>
 	void PostDraw();
@@ -133,8 +144,14 @@ private:
 	// レンダーテクスチャ用のTrainsitionBarrier
 	D3D12_RESOURCE_BARRIER renderTextureBarrier{};
 
+	// レンダーテクスチャ用のバリアの現在のリソースステート
+	D3D12_RESOURCE_STATES currentRtvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+
 	// 深度ステンシル用のTrainsitionBarrier
 	D3D12_RESOURCE_BARRIER depthStencilBarrier{};
+
+	// 深度ステンシル用のバリアの現在のリソースステート	
+	D3D12_RESOURCE_STATES currentDsvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
 	/// ===== 借りポインタ ===== ///
 

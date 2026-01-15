@@ -79,44 +79,60 @@ void SceneRenderTexture::CreateSceneView() {
 #endif // USE_IMGUI
 }
 
-void SceneRenderTexture::PreDraw() {
+void SceneRenderTexture::PreDrawFor3D() {
 
-	// コマンドリストをDirectXUtilityから取得A
-	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get();
+	// コマンドリストをDirectXUtilityから取得
+	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get(); // コマンドリスト
 
 	/// === レンダーテクスチャ用のバリアの設定 === ///
 
-	// バリアはTransition
-	renderTextureBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにしておく
-	renderTextureBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを張る対象はレンダーテクスチャリソース
-	renderTextureBarrier.Transition.pResource = renderTextureResource.Get();
-	// 遷移前(現在)のResouceState
-	renderTextureBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
-	// 遷移後のResouceState
-	renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
-	// 全部まとめて変える
-	renderTextureBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	// TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &renderTextureBarrier);
+	// 描き込み状態でなければ
+	if (currentRtvState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
+
+		// バリアはTransition
+		renderTextureBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		renderTextureBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象はレンダーテクスチャリソース
+		renderTextureBarrier.Transition.pResource = renderTextureResource.Get();
+		// 遷移前(現在)のResourceState
+		renderTextureBarrier.Transition.StateBefore = currentRtvState; // 読む
+		// 遷移後のResourceState
+		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+		// 全部まとめて変える
+		renderTextureBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &renderTextureBarrier);
+
+		// 現在のリソースステートを更新
+		currentRtvState = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+	}
 
 	/// === 深度ステンシル用のバリアの設定 === ///
 
-	// バリアはTransition
-	depthStencilBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	// Noneにしておく
-	depthStencilBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-	// バリアを張る対象は深度ステンシルリソース
-	depthStencilBarrier.Transition.pResource = depthStencilResource.Get();
-	// 遷移前(現在)のResouceState
-	depthStencilBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
-	// 遷移後のResouceState
-	depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
-	// 全部まとめて変える
-	depthStencilBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	// TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &depthStencilBarrier);
+	// 書き込み状態でなければ
+	if (currentDsvState != D3D12_RESOURCE_STATE_DEPTH_WRITE) {
+
+		// バリアはTransition
+		depthStencilBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		depthStencilBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象は深度ステンシルリソース
+		depthStencilBarrier.Transition.pResource = depthStencilResource.Get();
+		// 遷移前(現在)のResourceState
+		depthStencilBarrier.Transition.StateBefore = currentDsvState; // 読む
+		// 遷移後のResourceState
+		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+		// 全部まとめて変える
+		depthStencilBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &depthStencilBarrier);
+
+		// 現在のリソースステートを更新
+		currentDsvState = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+	}
 
 	/// ===== RTVとDSVの設定 ===== ///
 
@@ -128,8 +144,88 @@ void SceneRenderTexture::PreDraw() {
 	// 色をクリア
 	float clearColor[] = { kRenderTargetClearValue.x, kRenderTargetClearValue.y, kRenderTargetClearValue.z, kRenderTargetClearValue.w };
 	commandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+
 	// 深度をクリア
 	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, kDepthClearValue, 0, 0, nullptr);
+
+	/// ===== ビューポートとシザーの設定 ===== ///
+
+	// ビューポート矩形の設定
+	commandList->RSSetViewports(1, &viewportRect);
+	// シザリング矩形の設定
+	commandList->RSSetScissorRects(1, &scissorRect);
+}
+
+void SceneRenderTexture::PreDrawFor2D(bool shouldClearDepth) {
+
+	// コマンドリストをDirectXUtilityから取得
+	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get(); // コマンドリスト
+
+	/// === レンダーテクスチャ用のバリアの設定 === ///
+
+	// 描き込み状態でなければ
+	if (currentRtvState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
+
+		// バリアはTransition
+		renderTextureBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		renderTextureBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象はレンダーテクスチャリソース
+		renderTextureBarrier.Transition.pResource = renderTextureResource.Get();
+		// 遷移前(現在)のResourceState
+		renderTextureBarrier.Transition.StateBefore = currentRtvState; // 読む
+		// 遷移後のResourceState
+		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+		// 全部まとめて変える
+		renderTextureBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &renderTextureBarrier);
+
+		// 現在のリソースステートを更新
+		currentRtvState = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+	}
+
+	/// === 深度ステンシル用のバリアの設定 === ///
+
+	// 書き込み状態でなければ
+	if (currentDsvState != D3D12_RESOURCE_STATE_DEPTH_WRITE) {
+
+		// バリアはTransition
+		depthStencilBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		depthStencilBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象は深度ステンシルリソース
+		depthStencilBarrier.Transition.pResource = depthStencilResource.Get();
+		// 遷移前(現在)のResourceState
+		depthStencilBarrier.Transition.StateBefore = currentDsvState; // 読む
+		// 遷移後のResourceState
+		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+		// 全部まとめて変える
+		depthStencilBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &depthStencilBarrier);
+
+		// 現在のリソースステートを更新
+		currentDsvState = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+	}
+
+	/// ===== RTVとDSVの設定 ===== ///
+
+	// レンダーターゲットと深度ステンシルビューを設定
+	commandList->OMSetRenderTargets(1, &rtvHandle, false, &dsvHandle);
+
+	/// ===== 画面のクリア ===== ///
+
+	// ※重ね掛けするので色はクリアしない
+
+	// 深度をクリアするかどうか
+	if (shouldClearDepth) {
+
+		// 深度をクリア
+		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, kDepthClearValue, 0, 0, nullptr);
+	}
 
 	/// ===== ビューポートとシザーの設定 ===== ///
 
@@ -142,25 +238,41 @@ void SceneRenderTexture::PreDraw() {
 void SceneRenderTexture::PostDraw() {
 
 	// コマンドリストをDirectXUtilityから取得
-	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get();
+	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get(); // コマンドリスト
 
 	/// === レンダーテクスチャ用のバリアの設定 === ///
 
-	// 遷移前(現在)のResouceState
-	renderTextureBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
-	// 遷移後のResouceState
-	renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
-	// TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &renderTextureBarrier);
+	// 描き込み状態であれば
+	if (currentRtvState == D3D12_RESOURCE_STATE_RENDER_TARGET) {
+
+		// 遷移前(現在)のResourceState
+		renderTextureBarrier.Transition.StateBefore = currentRtvState; // 描く
+		// 遷移後のResourceState
+		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &renderTextureBarrier);
+
+		// 現在のリソースステートを更新
+		currentRtvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+	}
 
 	/// === 深度ステンシル用のバリアの設定 === ///
 
-	// 遷移前(現在)のResouceState
-	depthStencilBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
-	// 遷移後のResouceState
-	depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
-	// TransitionBarrierを張る
-	commandList->ResourceBarrier(1, &depthStencilBarrier);
+	// 書き込み状態であれば
+	if (currentDsvState) {
+
+		// 遷移前(現在)のResourceState
+		depthStencilBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+		// 遷移後のResourceState
+		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &depthStencilBarrier);
+
+		// 現在のリソースステートを更新
+		currentDsvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
+	}
 }
 
 void SceneRenderTexture::DescriptorHeapGenerate() {
