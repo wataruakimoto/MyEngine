@@ -34,7 +34,6 @@
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.cpp" />
     <ClCompile Include="engine\base\DirectXUtility.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleCommon.cpp" />
-    <ClCompile Include="Engine\Base\OffscreenRendering\PostEffect.cpp" />
     <ClCompile Include="Engine\Base\SwapChain.cpp" />
     <ClCompile Include="engine\camera\DebugCamera.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FullScreenFilter.cpp" />
@@ -61,7 +60,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\Enemy.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\GamePlayScene.cpp" />
-    <ClCompile Include="Engine\Base\Framework.cpp" />
+    <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Bullet.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Player.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Reticle\Reticle2D.cpp" />
@@ -105,8 +104,9 @@
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
-    <ClCompile Include="Engine\Debug\SceneRenderTexture.cpp" />
+    <ClCompile Include="Engine\Base\SceneBuffer.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\GuideUI.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -127,7 +127,6 @@
     <ClInclude Include="engine\3d\Data\ModelData.h" />
     <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleCommon.h" />
-    <ClInclude Include="Engine\Base\OffscreenRendering\PostEffect.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
     <ClInclude Include="Engine\Scene\AbstractSceneFactory.h" />
@@ -167,7 +166,7 @@
     <ClInclude Include="engine\winApp\WinApp.h" />
     <ClInclude Include="engine\debug\ImGuiManager.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\GamePlayScene.h" />
-    <ClInclude Include="Engine\Base\Framework.h" />
+    <ClInclude Include="Engine\Framework\Framework.h" />
     <ClInclude Include="Game\Base\MyGame.h" />
     <ClInclude Include="Game\Scene\TitleScene\TitleScene.h" />
     <ClInclude Include="Engine\Scene\SceneManager.h" />
@@ -209,8 +208,9 @@
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
-    <ClInclude Include="Engine\Debug\SceneRenderTexture.h" />
+    <ClInclude Include="Engine\Base\SceneBuffer.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />

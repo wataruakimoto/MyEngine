@@ -172,13 +172,7 @@ void TitleScene::Update() {
 	blackScreen_->Update();
 }
 
-void TitleScene::Draw() {
-
-	/// === スカイボックスの描画準備 === ///
-	SkyboxCommon::GetInstance()->SettingDrawing();
-
-	// スカイボックスの描画
-	//skyBox_->Draw();
+void TitleScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawingOpaque();
@@ -191,6 +185,9 @@ void TitleScene::Draw() {
 
 	// プレイヤー描画
 	player_->Draw();
+}
+
+void TitleScene::DrawUnfiltered() {
 
 	/// === 2Dオブジェクトの描画準備(最前面) === ///
 	SpriteCommon::GetInstance()->SettingDrawing();

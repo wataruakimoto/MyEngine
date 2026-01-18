@@ -17,7 +17,8 @@
 #include <memory>
 
 /// ===== 前方宣言 ===== ///
-class PostEffect;
+class SceneBuffer;
+class PostProcessBuffer;
 class Camera;
 
 /// ===== フィルター管理クラス ===== ///
@@ -53,7 +54,15 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	/// <param name="scene">シーンバッファ</param>
+	/// <param name="postProcess">ポストプロセスバッファ</param>
+	void Draw(SceneBuffer* scene, PostProcessBuffer* postProcess);
+
+	/// <summary>
+	/// テクスチャ描画
+	/// </summary>
+	/// <param name="srvIndex">SRVインデックス</param>
+	void DrawTexture(uint32_t srvIndex);
 
 	/// <summary>
 	/// 終了
@@ -98,12 +107,6 @@ public:
 /// セッター
 ///-------------------------------------------///
 public:
-	
-	/// <summary>
-	/// PostEffectのセッター
-	/// </summary>
-	/// <param name="postEffect"></param>
-	void SetPostEffect(PostEffect* postEffect) { this->postEffect = postEffect; }
 
 	/// <summary>
 	/// カメラのセット
@@ -151,9 +154,6 @@ private:
 
 	// ランダムフィルター
 	std::unique_ptr<RandomFilter> randomFilter_ = nullptr;
-
-	// PostEffectの借りポインタ
-	PostEffect* postEffect = nullptr;
 
 	// カメラの借りポインタ
 	Camera* camera = nullptr;

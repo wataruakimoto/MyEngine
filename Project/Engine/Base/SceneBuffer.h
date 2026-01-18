@@ -8,9 +8,10 @@
 
 /// ===== 前方宣言 ===== ///
 class DirectXUtility;
+class SrvManager;
 
-/// ===== ImGuiを用いたシーンビュー ===== ///
-class SceneRenderTexture {
+/// ===== シーン用のバッファ ===== ///
+class SceneBuffer {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -28,20 +29,19 @@ public:
 	void CreateSceneView();
 
 	/// <summary>
-	/// 描画前処理
+	/// フィルター適応のある描画前処理
 	/// </summary>
-	void PreDraw();
+	void PreDrawFiltered();
 
 	/// <summary>
-	/// 3D用描画前処理
+	/// フィルター適応のない描画前処理
 	/// </summary>
-	void PreDrawFor3D();
+	void PreDrawUnfiltered();
 
 	/// <summary>
-	/// 2D用描画前処理
+	/// 書き戻し用の描画前処理
 	/// </summary>
-	/// <param name="shouldClearDepth">深度をクリアするかどうか</param>
-	void PreDrawFor2D(bool shouldClearDepth);
+	void PreDrawResolve();
 
 	/// <summary>
 	/// 描画後処理
@@ -84,6 +84,23 @@ private:
 	void ScissoringRectInitialize();
 
 ///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+	
+	/// <summary>
+	/// SRVインデックスを取得
+	/// </summary>
+	/// <returns>SRVインデックス</returns>
+	uint32_t GetSrvIndex() const { return srvIndex; }
+
+	/// <summary>
+	/// 深度用SRVインデックスを取得
+	/// </summary>
+	/// <returns>深度用SRVインデックス</returns>
+	uint32_t GetDepthSrvIndex() const { return depthSrvIndex; }
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
@@ -106,7 +123,7 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
 	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 0.0f }; // 白に設定
+	const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
 
 	/// ===== DSV用の変数 ===== ///
 
@@ -133,6 +150,9 @@ private:
 	// SRVインデックス
 	uint32_t srvIndex = 0;
 
+	// 深度用SRVインデックス
+	uint32_t depthSrvIndex = 0;
+
 	/// ===== その他の変数 ===== ///
 
 	// ビューポート矩形
@@ -157,5 +177,8 @@ private:
 
 	// DirectXユーティリティのポインタ
 	DirectXUtility* dxUtility = nullptr;
+
+	// SRVマネージャのポインタ
+	SrvManager* srvManager = nullptr;
 };
 

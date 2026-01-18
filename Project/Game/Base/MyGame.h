@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Framework.h"
-#include "Scene/System/TransitionManager.h"
 
 /// ===== 前方宣言 ===== ///
 class TextureManager;

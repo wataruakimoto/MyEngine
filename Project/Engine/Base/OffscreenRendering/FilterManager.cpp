@@ -1,6 +1,7 @@
 #include "FilterManager.h"
 #include "Filters/BaseFilter.h"
-#include "PostEffect.h"
+#include "SceneBuffer.h"
+#include "PostProcessBuffer.h"
 
 #include <imgui.h>
 
@@ -59,44 +60,125 @@ void FilterManager::Initialize() {
 	randomFilter_->Initialize();
 	filters_["Random"] = std::move(randomFilter_);
 	filterOrder.push_back("Random");
+}
 
-	// SRVインデックスをPostEffectから取得
-	uint32_t srvIndex = postEffect->GetSRVIndex();
-	uint32_t depthSrvIndex = postEffect->GetDepthSRVIndex();
+void FilterManager::Draw(SceneBuffer* scene, PostProcessBuffer* postProcess) {
 
-	// フィルターのPostEffectのセット
+	/// ===== 1つもフィルターが有効じゃなかったら ===== ///
+
+	// 有効なフィルターがあるかどうかのフラグ
+	bool isAnyFilterActive = false;
+
+	// フィルターを順番にチェック
 	for (const auto& key : filterOrder) {
 
-		filters_[key]->SetSrvIndex(srvIndex);
+		// 有効なフィルターが見つかったら
+		if (filters_[key]->GetIsActive()) {
 
-		// 深度アウトラインフィルターのとき
-		if (key == "DepthOutline") {
+			// 有効なフィルターがあった
+			isAnyFilterActive = true;
 
-			// 深度用SRVインデックスをセット
-			static_cast<DepthOutlineFilter*>(filters_[key].get())->SetDepthSrvIndex(depthSrvIndex);
+			// チェック終了
+			break;
 		}
+	}
+
+	// 有効なフィルターが一つもなかったら終了
+	if (!isAnyFilterActive) return;
+
+	/// ===== 描画準備 ===== ///
+
+	// それぞれのSRVインデックスを取得
+	uint32_t currentSrvIndex = scene->GetSrvIndex();    // 現在のSRVインデックス
+	uint32_t depthSrvIndex = scene->GetDepthSrvIndex(); // 深度用SRVインデックス
+
+	// シーンバッファからの結果かどうか
+	bool isResultFromScene = true;
+
+	/// ===== 全フィルターを回す ===== ///
+
+	for(const auto& key : filterOrder) {
+		
+		// フィルターが無効ならスキップ
+		if (!filters_[key]->GetIsActive()) continue;
+
+		// シーンバッファからの結果なら
+		if (isResultFromScene) {
+
+			// 描画前処理
+			postProcess->PreDraw();
+
+			// SRVインデックスをセット (シーンのはず)
+			filters_[key]->SetSrvIndex(currentSrvIndex);
+
+			// 深度アウトラインフィルターのとき
+			if (key == "DepthOutline") {
+
+				// 深度用SRVインデックスをセット
+				auto* outline = static_cast<DepthOutlineFilter*>(filters_[key].get());
+				outline->SetDepthSrvIndex(depthSrvIndex);
+			}
+
+			// 描画
+			filters_[key]->Draw();
+
+			// 描画後処理
+			postProcess->PostDraw();
+
+			// 次はポストプロセスバッファからになる
+			currentSrvIndex = postProcess->GetSrvIndex();
+			isResultFromScene = false;
+		}
+		// ポストプロセスバッファからの結果なら
+		else {
+
+			// 描画前処理
+			scene->PreDrawResolve();
+
+			// SRVインデックスをセット (ポストプロセスのはず)
+			filters_[key]->SetSrvIndex(currentSrvIndex);
+
+			// 描画
+			filters_[key]->Draw();
+
+			// 描画後処理
+			scene->PostDraw();
+
+			// 次はシーンバッファからになる
+			currentSrvIndex = scene->GetSrvIndex();
+			isResultFromScene = true;
+		}
+	}
+
+	/// ===== シーンにコピー ===== ///
+
+	// 最後の結果がシーンバッファからでなければ
+	if (!isResultFromScene) {
+
+		// 描画前処理
+		scene->PreDrawResolve();
+
+		// フルスクリーンフィルターのSRVインデックスをセット (ポストプロセスのはず)
+		filters_["FullScreen"]->SetSrvIndex(currentSrvIndex);
+
+		// 描画
+		filters_["FullScreen"]->Draw();
+
+		// 描画後処理
+		scene->PostDraw();
 	}
 }
 
-void FilterManager::Draw() {
+void FilterManager::DrawTexture(uint32_t srvIndex) {
 
-	for (const auto& key : filterOrder) {
+	// "FullScreen" フィルターが存在するか確認
+	if (filters_.find("FullScreen") != filters_.end()) {
 
-		// 深度アウトラインフィルターのとき
-		if (key == "DepthOutline") {
+		// 指定された画像をセット
+		filters_["FullScreen"]->SetSrvIndex(srvIndex);
 
-			// カメラのセット
-			static_cast<DepthOutlineFilter*>(filters_[key].get())->SetCamera(camera);
-		}
-
-		// フィルターがアクティブでない場合は
-		if (!filters_[key]->GetIsActive()) {
-
-			// スキップ
-			continue;
-		}
-
-		filters_[key]->Draw();
+		// 描画実行 (今のRTVに向かって描かれます)
+		filters_["FullScreen"]->Draw();
 	}
 }
 

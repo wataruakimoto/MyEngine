@@ -18,7 +18,10 @@ void GameClearScene::Update() {
 	}
 }
 
-void GameClearScene::Draw() {
+void GameClearScene::DrawFiltered() {
+}
+
+void GameClearScene::DrawUnfiltered() {
 
 	// スプライトコモンの描画準備
 	spriteCommon_->SettingDrawing();

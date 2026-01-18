@@ -69,7 +69,7 @@ void MyGame::Update() {
 		SceneManager::GetInstance()->ShowImGui();
 
 		// シーンビュー作成
-		sceneRenderTexture->CreateSceneView();
+		sceneBuffer->CreateSceneView();
 
 		/// === ImGui終了 === ///
 		ImGuiManager::GetInstance()->End();
@@ -78,55 +78,46 @@ void MyGame::Update() {
 
 void MyGame::Draw() {
 
-	/// ===== ゲームシーンの描画 ===== ///
+	/// ========== ゲームシーンの描画開始 ========== ///
 
-	// ポストエフェクトの描画前処理
-	postEffect->PreDraw();
+	/// ===== フィルター適応のある描画 ===== ///
 
-	// シーンマネージャの描画
-	SceneManager::GetInstance()->Draw();
+	sceneBuffer->PreDrawFiltered();
 
-	// ポストエフェクトの描画後処理
-	postEffect->PostDraw();
+	SceneManager::GetInstance()->DrawFiltered();
 
-	// エディットモードなら
+	sceneBuffer->PostDraw();
+
+	FilterManager::GetInstance()->Draw(sceneBuffer.get(), postProcessBuffer.get());
+
+	/// ===== フィルター適応のない描画 ===== ///
+
+	sceneBuffer->PreDrawUnfiltered();
+
+	SceneManager::GetInstance()->DrawUnfiltered();
+
+	sceneBuffer->PostDraw();
+
+	/// ========== ゲームシーンの描画終了 ========== ///
+
+	/// ========== 画面への描画開始 ========== ///
+
+	swapChain->PreDraw();
+
+	// エディットモードの場合
 	if (isEditMode_) {
 
-		/// ===== フィルターへの描画 ===== ///
-
-		// シーンレンダーテクスチャの描画前処理
-		sceneRenderTexture->PreDraw();
-
-		// フィルターマネージャの描画
-		FilterManager::GetInstance()->Draw();
-
-		// シーンレンダーテクスチャの描画後処理
-		sceneRenderTexture->PostDraw();
-
-		/// ===== 画面への描画 ===== ///
-
-		// スワップチェイン描画前処理
-		swapChain->PreDraw();
-
-		// ImGuiの描画
 		ImGuiManager::GetInstance()->Draw();
-
-		// スワップチェイン描画後処理
-		swapChain->PostDraw();
 	}
+	// エディットモードでない場合
 	else {
 
-		/// ===== 画面への描画 ===== ///
-
-		// スワップチェイン描画前処理
-		swapChain->PreDraw();
-
-		// フィルターマネージャの描画
-		FilterManager::GetInstance()->Draw();
-
-		// スワップチェイン描画後処理
-		swapChain->PostDraw();
+		FilterManager::GetInstance()->DrawTexture(sceneBuffer->GetSrvIndex());
 	}
+
+	/// ========== 画面への描画終了 ========== ///
+
+	swapChain->PostDraw();
 
 	// DirectXユーティリティの描画後処理
 	DirectXUtility::GetInstance()->PostDraw();

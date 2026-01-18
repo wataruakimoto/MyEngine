@@ -1,14 +1,17 @@
-#include "SceneRenderTexture.h"
+#include "SceneBuffer.h"
 #include "DirectXUtility.h"
-#include "WinApp.h"
 #include "SrvManager.h"
+#include "WinApp.h"
 
 #include <imgui.h>
 
-void SceneRenderTexture::Initialize() {
+void SceneBuffer::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
+
+	// SRVマネージャのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
 
 	// ディスクリプタヒープの生成
 	DescriptorHeapGenerate();
@@ -29,7 +32,7 @@ void SceneRenderTexture::Initialize() {
 	ScissoringRectInitialize();
 }
 
-void SceneRenderTexture::CreateSceneView() {
+void SceneBuffer::CreateSceneView() {
 
 #ifdef USE_IMGUI
 
@@ -69,7 +72,7 @@ void SceneRenderTexture::CreateSceneView() {
 
 	// 6. 画像描画
 	ImGui::Image(
-		(ImTextureID)SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex).ptr,
+		(ImTextureID)srvManager->GetGPUDescriptorHandle(srvIndex).ptr,
 		imageSize
 	);
 
@@ -79,7 +82,7 @@ void SceneRenderTexture::CreateSceneView() {
 #endif // USE_IMGUI
 }
 
-void SceneRenderTexture::PreDrawFor3D() {
+void SceneBuffer::PreDrawFiltered() {
 
 	// コマンドリストをDirectXUtilityから取得
 	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get(); // コマンドリスト
@@ -156,7 +159,7 @@ void SceneRenderTexture::PreDrawFor3D() {
 	commandList->RSSetScissorRects(1, &scissorRect);
 }
 
-void SceneRenderTexture::PreDrawFor2D(bool shouldClearDepth) {
+void SceneBuffer::PreDrawUnfiltered() {
 
 	// コマンドリストをDirectXUtilityから取得
 	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get(); // コマンドリスト
@@ -220,12 +223,8 @@ void SceneRenderTexture::PreDrawFor2D(bool shouldClearDepth) {
 
 	// ※重ね掛けするので色はクリアしない
 
-	// 深度をクリアするかどうか
-	if (shouldClearDepth) {
-
-		// 深度をクリア
-		commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, kDepthClearValue, 0, 0, nullptr);
-	}
+	// 深度をクリア
+	commandList->ClearDepthStencilView(dsvHandle, D3D12_CLEAR_FLAG_DEPTH, kDepthClearValue, 0, 0, nullptr);
 
 	/// ===== ビューポートとシザーの設定 ===== ///
 
@@ -235,7 +234,60 @@ void SceneRenderTexture::PreDrawFor2D(bool shouldClearDepth) {
 	commandList->RSSetScissorRects(1, &scissorRect);
 }
 
-void SceneRenderTexture::PostDraw() {
+void SceneBuffer::PreDrawResolve() {
+
+	// コマンドリストをDirectXUtilityから取得
+	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get(); // コマンドリスト
+
+	/// === レンダーテクスチャ用のバリアの設定 === ///
+
+	// 描き込み状態でなければ
+	if (currentRtvState != D3D12_RESOURCE_STATE_RENDER_TARGET) {
+
+		// バリアはTransition
+		renderTextureBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+		// Noneにしておく
+		renderTextureBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+		// バリアを張る対象はレンダーテクスチャリソース
+		renderTextureBarrier.Transition.pResource = renderTextureResource.Get();
+		// 遷移前(現在)のResourceState
+		renderTextureBarrier.Transition.StateBefore = currentRtvState; // 読む
+		// 遷移後のResourceState
+		renderTextureBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+		// 全部まとめて変える
+		renderTextureBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+
+		// TransitionBarrierを張る
+		commandList->ResourceBarrier(1, &renderTextureBarrier);
+
+		// 現在のリソースステートを更新
+		currentRtvState = D3D12_RESOURCE_STATE_RENDER_TARGET; // 描く
+	}
+
+	/// === 深度ステンシル用のバリアの設定 === ///
+
+	// ※深度の状態は読むのままなのでバリアは張らない
+
+	/// ===== RTVとDSVの設定 ===== ///
+
+	// レンダーターゲットと深度ステンシルビューを設定
+	commandList->OMSetRenderTargets(1, &rtvHandle, false, nullptr);
+
+	/// ===== 画面のクリア ===== ///
+
+	// ※重ね掛けするので色はクリアしない
+
+	// ※深度は使わないのでクリアしない
+
+	/// ===== ビューポートとシザーの設定 ===== ///
+
+	// ビューポート矩形の設定
+	commandList->RSSetViewports(1, &viewportRect);
+	// シザリング矩形の設定
+	commandList->RSSetScissorRects(1, &scissorRect);
+}
+
+void SceneBuffer::PostDraw() {
 
 	// コマンドリストをDirectXUtilityから取得
 	ID3D12GraphicsCommandList* commandList = dxUtility->GetCommandList().Get(); // コマンドリスト
@@ -260,10 +312,10 @@ void SceneRenderTexture::PostDraw() {
 	/// === 深度ステンシル用のバリアの設定 === ///
 
 	// 書き込み状態であれば
-	if (currentDsvState) {
+	if (currentDsvState == D3D12_RESOURCE_STATE_DEPTH_WRITE) {
 
 		// 遷移前(現在)のResourceState
-		depthStencilBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_DEPTH_WRITE; // 書く
+		depthStencilBarrier.Transition.StateBefore = currentDsvState; // 書く
 		// 遷移後のResourceState
 		depthStencilBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE; // 読む
 
@@ -275,7 +327,7 @@ void SceneRenderTexture::PostDraw() {
 	}
 }
 
-void SceneRenderTexture::DescriptorHeapGenerate() {
+void SceneBuffer::DescriptorHeapGenerate() {
 
 	// DeviceをDirectXUtilityから取得
 	ID3D12Device* device = dxUtility->GetDevice().Get();
@@ -293,7 +345,7 @@ void SceneRenderTexture::DescriptorHeapGenerate() {
 	dsvDescriptorHeap = dxUtility->CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE_DSV, 1, false); // 数は1 シェーダで使わない
 }
 
-void SceneRenderTexture::RenderTargetViewInitialize() {
+void SceneBuffer::RenderTargetViewInitialize() {
 
 	// Resourceの生成
 	renderTextureResource = dxUtility->CreateRenderTextureResource(
@@ -314,7 +366,7 @@ void SceneRenderTexture::RenderTargetViewInitialize() {
 	dxUtility->GetDevice()->CreateRenderTargetView(renderTextureResource.Get(), &rtvDesc, rtvHandle);
 }
 
-void SceneRenderTexture::DepthStencilViewInitialize() {
+void SceneBuffer::DepthStencilViewInitialize() {
 
 	// Resourceの生成
 	depthStencilResource = dxUtility->CreateDepthStencilResource(
@@ -335,16 +387,22 @@ void SceneRenderTexture::DepthStencilViewInitialize() {
 	dxUtility->GetDevice()->CreateDepthStencilView(depthStencilResource.Get(), &dsvDesc, dsvHandle);
 }
 
-void SceneRenderTexture::ShaderResourceViewInitialize() {
+void SceneBuffer::ShaderResourceViewInitialize() {
 
 	// SRV確保
-	srvIndex = SrvManager::GetInstance()->Allocate();
+	srvIndex = srvManager->Allocate();
 
 	// SRV作成
-	SrvManager::GetInstance()->CreateSRVforRenderTexture(srvIndex, renderTextureResource.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+	srvManager->CreateSRVforRenderTexture(srvIndex, renderTextureResource.Get(), DXGI_FORMAT_R8G8B8A8_UNORM_SRGB);
+
+	// SRV確保
+	depthSrvIndex = SrvManager::GetInstance()->Allocate();
+
+	// SRV作成
+	SrvManager::GetInstance()->CreateSRVforDepthStencil(depthSrvIndex, depthStencilResource.Get(), DXGI_FORMAT_R24_UNORM_X8_TYPELESS);
 }
 
-void SceneRenderTexture::ViewportRectInitialize() {
+void SceneBuffer::ViewportRectInitialize() {
 
 	// クライアント領域のサイズと一緒にして画面全体に表示
 	viewportRect.Width = (float)WinApp::kClientWidth;
@@ -355,7 +413,7 @@ void SceneRenderTexture::ViewportRectInitialize() {
 	viewportRect.MaxDepth = 1.0f;
 }
 
-void SceneRenderTexture::ScissoringRectInitialize() {
+void SceneBuffer::ScissoringRectInitialize() {
 
 	// 基本的にビューポートと同じ矩形が構成されるようにする
 	scissorRect.left = 0;
