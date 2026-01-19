@@ -115,6 +115,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Engine\Math\MathRandom.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FogFilter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
@@ -204,6 +205,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ParticleRendererBase.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleData.h" />
     <ClInclude Include="Engine\Math\MathRandom.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FogFilter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
@@ -326,6 +328,12 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Dissolve.PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Resources\Shaders\Fog.PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

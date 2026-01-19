@@ -45,7 +45,6 @@ void GamePlayScene::Initialize() {
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player_->GetWorldTransform());
-	//player->GetWorldTransform().SetParent(&cameraController_->GetWorldTransform());
 
 	// 敵の生成
 	LoadEnemyPopData();
@@ -102,6 +101,9 @@ void GamePlayScene::Initialize() {
 	goal_->Initialize();
 	// プレイヤーをゴールに設定
 	goal_->SetPlayer(player_.get());
+
+	// カメラをフィルターマネージャに設定
+	filterManager_->SetCamera(camera_.get());
 
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();

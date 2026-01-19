@@ -8,7 +8,6 @@
 /// ===== 前方宣言 ===== ///
 class DirectXUtility;
 class SrvManager;
-class PostEffect;
 class Camera;
 
 /// ===== フィルター基底クラス ===== ///
@@ -119,6 +118,9 @@ protected:
 
 	// DirectXUtilityのインスタンス
 	DirectXUtility* dxUtility = nullptr;
+
+	// SrvManagerのインスタンス
+	SrvManager* srvManager = nullptr;
 
 	// HRESULT
 	HRESULT hr;

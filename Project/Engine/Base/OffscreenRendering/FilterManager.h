@@ -11,6 +11,7 @@
 #include "Filters/RadialBlurFilter.h"
 #include "Filters/DissolveFilter.h"
 #include "Filters/RandomFilter.h"
+#include "Filters/FogFilter.h"
 
 #include <unordered_map>
 #include <vector>
@@ -103,6 +104,12 @@ public:
 	/// <returns></returns>
 	RadialBlurFilter* GetRadialBlurFilter() const { return static_cast<RadialBlurFilter*>(filters_.at("RadialBlur").get()); }
 
+	/// <summary>
+	/// フォグフィルターのゲッター
+	/// </summary>
+	/// <returns></returns>
+	FogFilter* GetFogFilter() const { return static_cast<FogFilter*>(filters_.at("Fog").get()); }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -154,6 +161,9 @@ private:
 
 	// ランダムフィルター
 	std::unique_ptr<RandomFilter> randomFilter_ = nullptr;
+
+	// フォグフィルター
+	std::unique_ptr<FogFilter> fogFilter_ = nullptr;
 
 	// カメラの借りポインタ
 	Camera* camera = nullptr;

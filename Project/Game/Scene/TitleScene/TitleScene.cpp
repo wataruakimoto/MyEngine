@@ -59,9 +59,17 @@ void TitleScene::Initialize() {
 	// スタートUIの生成&初期化
 	startUI_ = std::make_unique<StartUI>();
 	startUI_->Initialize();
+	
+	// フィルターマネージャにカメラを設定
+	filterManager_->SetCamera(camera_.get());
 
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
+
+	// フォグをフィルターマネージャから受け取っとく
+	fogFilter_ = filterManager_->GetFogFilter();
+	fogFilter_->SetStartDistance(500.0f); // フォグ開始距離を500に設定
+	fogFilter_->SetIsActive(true);    // フォグを有効化
 
 	// 状態リクエストにブラックアウトを設定
 	stateRequest_ = TitleFlowState::Blackout;

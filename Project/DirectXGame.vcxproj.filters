@@ -20,6 +20,7 @@
     <FxCompile Include="resources\shaders\Sprite.VS.hlsl" />
     <FxCompile Include="resources\shaders\FullScreen.PS.hlsl" />
     <FxCompile Include="resources\shaders\Vignette.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Fog.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
@@ -107,6 +108,7 @@
     <ClCompile Include="Engine\Base\SceneBuffer.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\GuideUI.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FogFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -211,6 +213,7 @@
     <ClInclude Include="Engine\Base\SceneBuffer.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FogFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />

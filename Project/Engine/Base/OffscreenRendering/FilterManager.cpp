@@ -60,6 +60,39 @@ void FilterManager::Initialize() {
 	randomFilter_->Initialize();
 	filters_["Random"] = std::move(randomFilter_);
 	filterOrder.push_back("Random");
+
+	fogFilter_ = std::make_unique<FogFilter>();
+	fogFilter_->Initialize();
+	filters_["Fog"] = std::move(fogFilter_);
+	filterOrder.push_back("Fog");
+
+	/// ===== 描画順序の設定 ===== ///
+
+	// 一旦クリア
+	filterOrder.clear();
+
+	filterOrder = {
+
+		// エッジ検出系
+		"Dissolve",
+		"DepthOutline",
+		"LuminanceOutline",
+
+		// 色調補正やノイズ
+		"Grayscale",
+		"Random",
+
+		// ブラー系
+		"BoxBlur",
+		"GaussianBlur",
+		"RadialBlur",
+
+		// その他
+		"Vignette",
+		"Fog",
+
+		"FullScreen" // 最後にフルスクリーンフィルターでシーンに書き戻す
+	};
 }
 
 void FilterManager::Draw(SceneBuffer* scene, PostProcessBuffer* postProcess) {
@@ -111,12 +144,19 @@ void FilterManager::Draw(SceneBuffer* scene, PostProcessBuffer* postProcess) {
 			// SRVインデックスをセット (シーンのはず)
 			filters_[key]->SetSrvIndex(currentSrvIndex);
 
-			// 深度アウトラインフィルターのとき
+			// 深度アウトラインフィルターかフォグのとき
 			if (key == "DepthOutline") {
 
 				// 深度用SRVインデックスをセット
 				auto* outline = static_cast<DepthOutlineFilter*>(filters_[key].get());
 				outline->SetDepthSrvIndex(depthSrvIndex);
+				outline->SetCamera(camera);
+			}
+			else if (key == "Fog") {
+
+				auto* fog = static_cast<FogFilter*>(filters_[key].get());
+				fog->SetDepthSrvIndex(depthSrvIndex);
+				fog->SetCamera(camera);
 			}
 
 			// 描画
@@ -185,7 +225,7 @@ void FilterManager::DrawTexture(uint32_t srvIndex) {
 void FilterManager::Finalize() {
 
 	// フィルターを全て解放
-	filters_.clear();
+	//filters_.clear();
 
 	// インスタンスの解放
 	delete instance;

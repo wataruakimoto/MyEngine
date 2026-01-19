@@ -148,6 +148,9 @@ private:
     // ラジアルブラー借りポインタ
     RadialBlurFilter* radialBlurFilter_ = nullptr;
 
+	// フォグの借りポインタ
+	FogFilter* fogFilter_ = nullptr;
+
     // ブラーの中心座標
     Vector2 blurCenter_ = { 0.5f, 0.5f };
 
