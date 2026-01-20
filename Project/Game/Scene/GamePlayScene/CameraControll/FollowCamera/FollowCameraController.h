@@ -59,6 +59,9 @@ private:
 	// 追従対象のオフセット
 	Vector3 baseOffset = { 0.0f, 3.0f, -25.0f };
 
+	// 追従の補間
+	float followLerp_ = 0.1f;
+
 	/// ===== シェイク用のパラメータ ===== ///
 
 	bool isShaking_ = false;           // シェイク中かどうか

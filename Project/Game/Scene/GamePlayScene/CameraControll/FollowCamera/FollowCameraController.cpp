@@ -3,12 +3,14 @@
 #include "MathVector.h"
 #include "MathMatrix.h"
 #include "MathRandom.h"
+#include "Easing.h"
 
 #include <imgui.h>
 
 using namespace MathVector;
 using namespace MathMatrix;
 using namespace MathRandom;
+using namespace Easing;
 
 void FollowCameraController::Initialize() {
 
@@ -51,9 +53,15 @@ void FollowCameraController::Update() {
 	
 		// 座標をコピーしてオフセット分ずらす
 		Vector3 targetPosition = target->GetTranslate() + offset + shakeOffset_;
+
+		// 現在地を取得
+		Vector3 currentPosition = worldTransform.GetTranslate();
+
+		// Lerpで追従を滑らかにする
+		Vector3 newPosition = Lerp(currentPosition, targetPosition, followLerp_);
 	
 		// ワールド変換の平行移動を設定
-		worldTransform.SetTranslate(targetPosition);
+		worldTransform.SetTranslate(newPosition);
 	}
 
 	// ワールド変換の更新

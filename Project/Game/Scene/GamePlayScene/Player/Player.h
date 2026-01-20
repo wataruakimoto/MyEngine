@@ -23,7 +23,6 @@ class Camera;
 enum class PlayerState {
 	AutoPilot,
 	Manual,
-	Rolling, // バレルロール
 	Dead,
 };
 
@@ -86,9 +85,19 @@ private:
 	void FireAnimationUpdate();
 
 	/// <summary>
+	/// バレルロール
+	/// </summary>
+	void Rolling();
+
+	/// <summary>
 	/// レティクルに向かって移動
 	/// </summary>
 	void MoveToReticle();
+	
+	/// <summary>
+	/// 位置の制限
+	/// </summary>
+	void ClampPosition();
 
 	/// <summary>
 	/// ダメージを受けたときの処理
@@ -107,10 +116,6 @@ private:
 	void ManualInitialize();
 
 	void ManualUpdate();
-
-	void RollingInitialize();
-
-	void RollingUpdate();
 
 	void DeadInitialize();
 
@@ -205,6 +210,22 @@ private:
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;
 
+///-------------------------------------------/// 
+/// オートパイロット用変数
+///-------------------------------------------///
+
+	float moveSpeedAuto = 0.5f;
+
+///-------------------------------------------/// 
+/// マニュアル操作用変数
+///-------------------------------------------///
+
+	float moveSpeedManual = 0.5f;
+
+	// 移動範囲の制限
+	const Vector2 kMoveMin = { -20.0f, 0.0f }; // X,Yの最小値 左下
+	const Vector2 kMoveMax = { 20.0f, 20.0f }; // X,Yの最大値 右上
+
 	/// ===== 射撃アニメーション用 ===== ///
 
 	Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
@@ -219,15 +240,25 @@ private:
 
 	/// ===== バレルロール用 ===== ///
 
-	float rollTimer_ = 0.0f;    // 経過時間タイマー
-	float rollDuration_ = 0.5f; // ロールにかかる時間（秒）
+	bool isRolling_ = false; // ロール中フラグ
+
+	float rollTimer_ = 0.0f;    // バレルロール用カウントアップタイマー
+	const float rollDuration_ = 0.5f; // ロールにかかる時間（秒）
+
+	float rollCooldownTimer_ = 0.0f; // バレルロールのクールダウン用カウントダウンタイマー
+	const float kRollCooldownDuration_ = 0.5f; // クールダウン時間 (秒)
+
 	int rollDirection_ = 0;     // 回転方向 (-1:左, 1:右)
 
-	const float kRollMoveSpeed_ = 0.4f; // 移動速度
 	const float kMaxRollAngle_ = 2.0f * std::numbers::pi_v<float>; // 最大傾き角度 (ラジアン)
 
-	float rollCooldownTimer_ = 0.0f; // クールダウンタイマー
-	const float kRollCooldownDuration_ = 0.5f; // クールダウン時間 (秒)
+	const float kMaxRollMove_ = 5.0f; // 最大移動距離
+
+	float preEaseT_ = 0.0f;
+
+///-------------------------------------------/// 
+/// 死亡用変数
+///-------------------------------------------///
 
 	/// ===== 死亡アニメーション用 ===== ///
 
@@ -267,22 +298,18 @@ private:
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;
 
+///-------------------------------------------/// 
+/// 全体用
+///-------------------------------------------///
+
 	/// ===== パラメータ等 ===== ///
 
 	uint16_t hp_ = 5;
-
-	float moveSpeedAuto = 0.5f;
-
-	float moveSpeedManual = 0.5f;
 
 	Vector2 screenPos_ = { 0.0f, 0.0f };
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
-
-	// 移動範囲の制限
-	const Vector2 kMoveMin = { -20.0f, 0.0f }; // X,Yの最小値 左下
-	const Vector2 kMoveMax = { 20.0f, 20.0f }; // X,Yの最大値 右上
 
 	// 状態
 	PlayerState state_ = PlayerState::Manual;

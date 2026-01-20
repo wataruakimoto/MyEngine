@@ -63,13 +63,6 @@ void Player::Update() {
 
 			break;
 
-		case PlayerState::Rolling:
-
-			// バレルロールモードの初期化処理
-			RollingInitialize();
-
-			break;
-
 		case PlayerState::Dead:
 
 			// 死亡モードの初期化処理
@@ -100,13 +93,6 @@ void Player::Update() {
 
 		// マニュアルモードの更新
 		ManualUpdate();
-
-		break;
-
-	case PlayerState::Rolling:
-
-		// バレルロールモードの更新
-		RollingUpdate();
 
 		break;
 
@@ -178,7 +164,7 @@ void Player::OnCollision(Collider* other) {
 	uint32_t typeID = other->GetTypeID();
 
 	// 状態がバレルロール中の場合
-	if (state_ == PlayerState::Rolling) {
+	if (isRolling_) {
 
 		// 衝突相手が敵の場合
 		if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
@@ -305,6 +291,65 @@ void Player::FireAnimationUpdate() {
 	}
 }
 
+void Player::Rolling() {
+
+	// ロール中フラグが立っていなければ終了
+	if (!isRolling_) return;
+
+	/// ===== タイマー処理 ===== ///
+
+	// タイマーを進める
+	rollTimer_ += 1.0f / 60.0f; // デルタタイム加算
+
+	// 進行度を計算
+	float t = rollTimer_ / rollDuration_;
+
+	// イージング適用
+	float easeT = EaseOutCubic(t);
+
+	/// ===== 終了処理 ===== ///
+
+	// タイマーが最大値に達したら
+	if (t >= 1.0f) {
+
+		// ロール完了
+		t = 1.0f;
+
+		// ロール中フラグを下ろす
+		isRolling_ = false;
+
+		// クールダウンタイマーをリセット
+		rollCooldownTimer_ = kRollCooldownDuration_;
+
+		// 以降の処理をスキップ
+		return;
+	}
+
+	/// ===== 回転の計算 ===== ///
+
+	// 現在の回転角度を計算
+	float currentAngle = rollDirection_ * -1.0f * kMaxRollAngle_ * easeT;
+
+	// 回転をZのみ設定
+	Vector3 currentRotate = worldTransform_.GetRotate();
+	currentRotate.z = currentAngle;
+	worldTransform_.SetRotate(currentRotate);
+
+	/// ===== 位置の計算 ===== ///
+
+	// 1フレーム分の差分を求める
+	float deltaT = easeT - preEaseT_; // 前回とのイージング値の差分
+
+	// 移動量の計算
+	Vector3 velocity = { rollDirection_ * kMaxRollMove_ * deltaT, 0.0f, 0.0f };
+
+	// 位置に加算
+	worldTransform_.AddTranslate(velocity);
+
+	// 次回のために値を上書き
+	preEaseT_ = easeT;
+}
+
 void Player::MoveToReticle() {
 
 	// レティクルの位置を取得
@@ -330,6 +375,9 @@ void Player::MoveToReticle() {
 
 	// 座標に速度を加算
 	worldTransform_.AddTranslate(toReticle * moveSpeedManual);
+}
+
+void Player::ClampPosition() {
 
 	// 大きさを取得
 	Vector3 scale = worldTransform_.GetScale();
@@ -338,7 +386,7 @@ void Player::MoveToReticle() {
 	Vector3 currentPos = worldTransform_.GetTranslate();
 
 	// X軸のクランプ
-	currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.y);
+	currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.x);
 	// Y軸のクランプ
 	currentPos.y = std::clamp(currentPos.y, kMoveMin.y + scale.y, kMoveMax.y - scale.y);
 
@@ -353,7 +401,7 @@ void Player::DamageProcess(uint16_t damage) {
 
 		// HPが0より大きいなら
 		if (hp_ > 0) {
-			
+
 			// ダメージ分HPを減らす
 			hp_ -= damage;
 
@@ -436,24 +484,30 @@ void Player::ManualUpdate() {
 
 	/// ===== バレルロール処理 ===== ///
 
-	// タイマーが0以下なら
-	if (rollCooldownTimer_ <= 0.0f) {
+	// タイマーが0以下かつロール中でなければ
+	if (rollCooldownTimer_ <= 0.0f && !isRolling_) {
 
 		// Aキーだけ押された場合
 		if (isAPush && !isDPush) {
 
 			rollDirection_ = -1; // 左回り
 
-			// 状態変更をリクエスト
-			stateRequest_ = PlayerState::Rolling;
+			rollTimer_ = 0.0f; // タイマーリセット
+
+			preEaseT_ = 0.0f; // 
+
+			isRolling_ = true; // ロール中フラグを立てる
 		}
 		// Dキーだけ押された場合
 		else if (isDPush && !isAPush) {
 
 			rollDirection_ = 1; // 右回り
 
-			// 状態変更をリクエスト
-			stateRequest_ = PlayerState::Rolling;
+			rollTimer_ = 0.0f; // タイマーリセット
+
+			preEaseT_ = 0.0f; // 
+
+			isRolling_ = true; // ロール中フラグを立てる
 		}
 	}
 	else {
@@ -462,80 +516,16 @@ void Player::ManualUpdate() {
 		rollCooldownTimer_ -= 1.0f / 60.0f;
 	}
 
+	// バレルロール処理
+	Rolling();
+
 	/// ===== 移動処理 ===== ///
 
 	// レティクルに向かって移動
-	MoveToReticle();
-}
+	//MoveToReticle();
 
-void Player::RollingInitialize() {
-
-	rollTimer_ = 0.0f;
-
-	velocity_ = { 0.0f, 0.0f, 0.0f };
-}
-
-void Player::RollingUpdate() {
-
-	// タイマーを進める
-	rollTimer_ += 1.0f / 60.0f; // デルタタイム加算
-
-	// 進行度を計算
-	float t = rollTimer_ / rollDuration_;
-
-	// タイマーが最大値に達したら
-	if (t >= 1.0f) {
-
-		// ロール完了
-		t = 1.0f;
-
-		// 状態をマニュアルに戻す
-		stateRequest_ = PlayerState::Manual;
-
-		// 回転をリセット
-		Vector3 currentRotate = worldTransform_.GetRotate();
-		currentRotate.z = 0.0f;
-		worldTransform_.SetRotate(currentRotate);
-
-		return; // 以降の処理をスキップ
-	}
-	
-	/// ===== 回転の計算 ===== ///
-
-	// イージング適用
-	float easeT = EaseOutCubic(t);
-
-	// 現在の回転角度を計算
-	float currentAngle = (float)rollDirection_ * -1.0f * kMaxRollAngle_ * easeT; // -1.0fをかけて回転方向を反転
-
-	// 回転を設定
-	Vector3 currentRotate = worldTransform_.GetRotate();
-	currentRotate.z = currentAngle;
-	worldTransform_.SetRotate(currentRotate);
-
-	/// ===== 移動の計算 ===== ///
-
-	// 強制的に横移動する
-	velocity_.x = (float)rollDirection_ * kRollMoveSpeed_; // 横移動速度を設定
-	velocity_.y = 0.0f; // 縦移動速度は0
-	velocity_.z = kRollMoveSpeed_; // 前進速度を設定
-
-	// 座標の更新
-	worldTransform_.AddTranslate(velocity_);
-
-	/// ===== 画面外に出ないようにする処理 ===== ///
-
-	// 大きさを取得
-	Vector3 scale = worldTransform_.GetScale();
-
-	// 加算後の座標を取得
-	Vector3 currentPos = worldTransform_.GetTranslate();
-
-	// X軸のクランプ
-	currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.y);
-
-	// クランプ後の座標を設定
-	worldTransform_.SetTranslate(currentPos);
+	// 画面外に出ないように位置をクランプ
+	ClampPosition();
 }
 
 void Player::DeadInitialize() {
