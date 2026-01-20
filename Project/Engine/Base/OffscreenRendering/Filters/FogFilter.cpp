@@ -1,23 +1,37 @@
-#include "LuminanceOutlineFilter.h"
+#include "FogFilter.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
+#include "Camera.h"
 #include "Logger.h"
 
-#include <imgui.h>
+#include <algorithm>
+#include <ImGui.h>
+
+#undef max
 
 using namespace Microsoft::WRL;
 using namespace Logger;
 
-void LuminanceOutlineFilter::Initialize() {
+void FogFilter::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
+	// SrvManagerのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
+
 	// パイプライン作成
 	CreateGraphicsPipeline();
+
+	// コンフィグデータの生成
+	CreateConfigData();
 }
 
-void LuminanceOutlineFilter::Draw() {
+void FogFilter::Draw() {
+
+	// カメラからNear/Farを取得してCBufferにセット
+	configData->start = ConvertDistanceToDepth(startDistance);
+	configData->end = 1.0f;
 
 	/// === ルートシグネチャをセットするコマンド === ///
 	dxUtility->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
@@ -28,39 +42,48 @@ void LuminanceOutlineFilter::Draw() {
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
+	ID3D12DescriptorHeap* descriptorHeaps[] = { srvManager->GetDescriptorHeap().Get() };
 	dxUtility->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 
 	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager->GetGPUDescriptorHandle(srvIndex));
+
+	/// === 深度用SRVのDescriptorTableを設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(depthSrvIndex));
+
+	/// === CBufferの設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, configResource->GetGPUVirtualAddress());
 
 	// 3頂点を1回描画する
 	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
-void LuminanceOutlineFilter::ShowImGui() {
+void FogFilter::ShowImGui() {
 
-#ifdef USE_IMGUI
+	if (ImGui::TreeNode("FogFilter")) {
 
-	if (ImGui::TreeNode("LuminanceOutlineFilter")) {
+		ImGui::Checkbox("Active", &isActive);
 
-		// 有効化フラグのチェックボックス
-		ImGui::Checkbox("IsActive", &isActive);
-		// ImGuiのツリーを閉じる
+		ImGui::ColorEdit4("Color", &configData->color.x);
+
+		ImGui::DragFloat("Start", &configData->start, 0.01f);
+
+		ImGui::DragFloat("End", &configData->end, 0.01f);
+		
+		ImGui::DragFloat("Start Distance", &startDistance, 1.0f,nearClip, farClip);
+
 		ImGui::TreePop();
 	}
-
-#endif // USE_IMGUI
 }
 
-void LuminanceOutlineFilter::CreateRootSignature() {
+void FogFilter::CreateRootSignature() {
 
 	// RootSignatureを生成する
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
 	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	// DescriptorRangeを作成
-	D3D12_DESCRIPTOR_RANGE descriptorRange[1] = {};
+	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
 
 	// gTexture SRV t0
 	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
@@ -68,14 +91,31 @@ void LuminanceOutlineFilter::CreateRootSignature() {
 	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
 	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
 
+	// gDepthTexture SRV t1
+	descriptorRange[1].BaseShaderRegister = 1; // 1から始まる
+	descriptorRange[1].NumDescriptors = 1; // 数は1つ
+	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
+	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
+
 	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	D3D12_ROOT_PARAMETER rootParameters[3] = {};
 
 	// gTexture SRV t0
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
 	rootParameters[0].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // Tableの中身の配列を指定
 	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
+
+	// gDepthTexture SRV t1
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[1]; // Tableの中身の配列を指定
+	rootParameters[1].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
+
+	// gConfig CBV b0
+	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
+	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
+	rootParameters[2].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
 
 	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
@@ -85,9 +125,9 @@ void LuminanceOutlineFilter::CreateRootSignature() {
 
 	// gSampler s0
 	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_CLAMP; // 端を伸ばす
+	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
+	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_CLAMP;
 	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
 	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
 	staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
@@ -111,20 +151,20 @@ void LuminanceOutlineFilter::CreateRootSignature() {
 	assert(SUCCEEDED(hr));
 }
 
-void LuminanceOutlineFilter::CreateInputLayout() {
+void FogFilter::CreateInputLayout() {
 
 	// InputLayoutの設定をしない 頂点にはデータを入力しないから
 	inputLayoutDesc.pInputElementDescs = nullptr;
 	inputLayoutDesc.NumElements = 0;
 }
 
-void LuminanceOutlineFilter::CreateBlendState() {
+void FogFilter::CreateBlendState() {
 
 	// すべての色要素を書き込む
 	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 }
 
-void LuminanceOutlineFilter::CreateRasterizerState() {
+void FogFilter::CreateRasterizerState() {
 
 	// 裏面(時計回り)を表示しない
 	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
@@ -132,27 +172,27 @@ void LuminanceOutlineFilter::CreateRasterizerState() {
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
 }
 
-void LuminanceOutlineFilter::CreateVertexShader() {
+void FogFilter::CreateVertexShader() {
 
 	// シェーダコンパイルを行う
 	vertexShaderBlob = dxUtility->CompileShader(L"resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
 	assert(vertexShaderBlob != nullptr);
 }
 
-void LuminanceOutlineFilter::CreatePixelShader() {
+void FogFilter::CreatePixelShader() {
 
 	// シェーダコンパイルを行う
-	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/LuminanceOutline.PS.hlsl", L"ps_6_0");
+	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/Fog.PS.hlsl", L"ps_6_0");
 	assert(pixelShaderBlob != nullptr);
 }
 
-void LuminanceOutlineFilter::CreateDepthStencilState() {
+void FogFilter::CreateDepthStencilState() {
 
 	// 全画面に対して処理を行うので、比較や書き込みの必要がない
 	depthStencilDesc.DepthEnable = false;
 }
 
-void LuminanceOutlineFilter::CreateGraphicsPipeline() {
+void FogFilter::CreateGraphicsPipeline() {
 
 	// PSOを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -200,3 +240,35 @@ void LuminanceOutlineFilter::CreateGraphicsPipeline() {
 	assert(SUCCEEDED(hr));
 }
 
+void FogFilter::CreateConfigData() {
+
+	// リソースを生成
+	configResource = dxUtility->CreateBufferResource(sizeof(Config));
+
+	// リソースにデータをマッピング
+	configResource->Map(0, nullptr, reinterpret_cast<void**>(&configData));
+
+	// データの初期化
+	configData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 霧の色
+	configData->start = 5.0f;                 // フォグ開始距離
+	configData->end = 20.0f;                  // フォグ終了距離
+}
+
+float FogFilter::ConvertDistanceToDepth(float distance) {
+
+	nearClip = camera->GetNearClip();
+	farClip = camera->GetFarClip();
+	
+	float safeDistance = std::max(distance, nearClip + 0.001f); // ニアクリップ面より手前に行かないようにする
+
+	// ファーより奥なら
+	if(safeDistance >= camera->GetFarClip()) {
+
+		// 深度値1.0を返す
+		return 1.0f;
+	}
+
+	float result = (farClip / (farClip - nearClip)) * (1.0f - (nearClip / safeDistance));
+
+	return result;
+}

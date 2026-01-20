@@ -11,13 +11,15 @@
 #include "Filters/RadialBlurFilter.h"
 #include "Filters/DissolveFilter.h"
 #include "Filters/RandomFilter.h"
+#include "Filters/FogFilter.h"
 
 #include <unordered_map>
 #include <vector>
 #include <memory>
 
 /// ===== 前方宣言 ===== ///
-class PostEffect;
+class SceneBuffer;
+class PostProcessBuffer;
 class Camera;
 
 /// ===== フィルター管理クラス ===== ///
@@ -53,7 +55,15 @@ public:
 	/// <summary>
 	/// 描画
 	/// </summary>
-	void Draw();
+	/// <param name="scene">シーンバッファ</param>
+	/// <param name="postProcess">ポストプロセスバッファ</param>
+	void Draw(SceneBuffer* scene, PostProcessBuffer* postProcess);
+
+	/// <summary>
+	/// テクスチャ描画
+	/// </summary>
+	/// <param name="srvIndex">SRVインデックス</param>
+	void DrawTexture(uint32_t srvIndex);
 
 	/// <summary>
 	/// 終了
@@ -94,16 +104,16 @@ public:
 	/// <returns></returns>
 	RadialBlurFilter* GetRadialBlurFilter() const { return static_cast<RadialBlurFilter*>(filters_.at("RadialBlur").get()); }
 
+	/// <summary>
+	/// フォグフィルターのゲッター
+	/// </summary>
+	/// <returns></returns>
+	FogFilter* GetFogFilter() const { return static_cast<FogFilter*>(filters_.at("Fog").get()); }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
 public:
-	
-	/// <summary>
-	/// PostEffectのセッター
-	/// </summary>
-	/// <param name="postEffect"></param>
-	void SetPostEffect(PostEffect* postEffect) { this->postEffect = postEffect; }
 
 	/// <summary>
 	/// カメラのセット
@@ -152,8 +162,8 @@ private:
 	// ランダムフィルター
 	std::unique_ptr<RandomFilter> randomFilter_ = nullptr;
 
-	// PostEffectの借りポインタ
-	PostEffect* postEffect = nullptr;
+	// フォグフィルター
+	std::unique_ptr<FogFilter> fogFilter_ = nullptr;
 
 	// カメラの借りポインタ
 	Camera* camera = nullptr;

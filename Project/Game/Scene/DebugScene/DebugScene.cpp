@@ -38,13 +38,16 @@ void DebugScene::Update() {
 	particleManager->Update();
 }
 
-void DebugScene::Draw() {
+void DebugScene::DrawFiltered() {
 
 	/// === パーティクルの描画準備 === ///
 	particleCommon->SettingDrawing();
 
 	// パーティクルシステムの描画
 	particleManager->Draw();
+}
+
+void DebugScene::DrawUnfiltered() {
 }
 
 void DebugScene::Finalize() {

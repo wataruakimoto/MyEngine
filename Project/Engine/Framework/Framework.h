@@ -1,9 +1,9 @@
 #pragma once
 
 #include "WinApp.h"
-#include "OffscreenRendering/PostEffect.h"
 #include "SwapChain.h"
-#include "Debug/SceneRenderTexture.h"
+#include "SceneBuffer.h"
+#include "OffscreenRendering/PostProcessBuffer.h"
 #include "AbstractSceneFactory.h"
 
 #include <memory>
@@ -59,14 +59,14 @@ protected:
 	// WindowsAPIのポインタ
 	std::unique_ptr<WinApp> winApp = nullptr;
 
-	// レンダーテクスチャのポインタ
-	std::unique_ptr<PostEffect> postEffect = nullptr;
-
 	// スワップチェインのポインタ
 	std::unique_ptr<SwapChain> swapChain = nullptr;
 
-	// シーンビュー用のレンダーテクスチャのポインタ
-	std::unique_ptr<SceneRenderTexture> sceneRenderTexture = nullptr;
+	// シーンバッファのポインタ
+	std::unique_ptr<SceneBuffer> sceneBuffer = nullptr;
+
+	// ポストプロセスバッファのポインタ
+	std::unique_ptr<PostProcessBuffer> postProcessBuffer = nullptr;
 
 	// シーンファクトリー
 	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;

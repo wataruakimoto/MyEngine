@@ -40,9 +40,14 @@ public:
 	void Update();
 
 	/// <summary>
-	/// 描画
+	/// フィルター適応のある描画
 	/// </summary>
-	void Draw();
+	void DrawFiltered();
+
+	/// <summary>
+	/// フィルター適応のない描画
+	/// </summary>
+	void DrawUnfiltered();
 
 	/// <summary>
 	/// 終了

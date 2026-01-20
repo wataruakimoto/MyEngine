@@ -6,11 +6,12 @@
 #include <wrl.h>
 #include <stdint.h>
 
-/// === 前方宣言 === ///
+/// ===== 前方宣言 ===== ///
 class DirectXUtility;
+class SrvManager;
 
-/// === ポストエフェクト処理 === ///
-class PostEffect {
+/// ===== ポストプロセス用バッファ ===== ///
+class PostProcessBuffer {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -23,7 +24,7 @@ public:
 	void Initialize();
 
 	/// <summary>
-	/// 描画前処理
+	/// 3D用描画前処理
 	/// </summary>
 	void PreDraw();
 
@@ -43,19 +44,14 @@ private:
 	void DescriptorHeapGenerate();
 
 	/// <summary>
-	/// レンダーターゲットビュー初期化
+	/// RTV初期化
 	/// </summary>
 	void RenderTargetViewInitialize();
 
 	/// <summary>
-	/// シェーダーリソースビュー初期化
+	/// SRV初期化
 	/// </summary>
 	void ShaderResourceViewInitialize();
-
-	/// <summary>
-	/// 深度ステンシルビュー初期化
-	/// </summary>
-	void DepthStencilViewInitialize();
 
 	/// <summary>
 	/// ビューポート矩形の初期化
@@ -72,20 +68,18 @@ private:
 ///-------------------------------------------///
 public:
 
-	uint32_t GetSRVIndex() const { return srvIndex; } // SRVインデックスのゲッター
-
-	uint32_t GetDepthSRVIndex() const { return depthSrvIndex; } // 深度用SRVインデックスのゲッター
+	/// <summary>
+	/// SRVインデックスを取得
+	/// </summary>
+	/// <returns>SRVインデックス</returns>
+	uint32_t GetSrvIndex() const { return srvIndex; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// HRESULT
-	HRESULT hr;
-
-	// SRVインデックス
-	uint32_t srvIndex = 0;
+	/// ===== RTV用の変数 ===== ///
 
 	// レンダーテクスチャリソース
 	Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
@@ -100,45 +94,36 @@ private:
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
 	// RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
 	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 0.5f, 0.5f, 0.5f, 0.5f }; // グレーに設定
+	const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
 
-	// Depth用SRVインデックス
-	uint32_t depthSrvIndex = 0;
+	/// ===== SRV用の変数 ===== ///
 
-	// 深度バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
+	// SRVインデックス
+	uint32_t srvIndex = 0;
 
-	// DSV用デスクリプタサイズ
-	uint32_t dsvDescriptorSize;
-
-	// DSV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
-
-	// DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
-
-	// DSVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle;
-
-	// クリアする深度
-	const float kDepthClearValue = 1.0f;
+	/// ===== その他の変数 ===== ///
 
 	// ビューポート矩形
 	D3D12_VIEWPORT viewportRect{};
 
-	// シザー矩形
+	// シザリング矩形
 	D3D12_RECT scissorRect{};
 
 	// レンダーテクスチャ用のTrainsitionBarrier
 	D3D12_RESOURCE_BARRIER renderTextureBarrier{};
 
-	// 深度ステンシル用のTrainsitionBarrier
-	D3D12_RESOURCE_BARRIER depthStencilBarrier{};
+	// レンダーテクスチャ用のバリアの現在のリソースステート
+	D3D12_RESOURCE_STATES currentRtvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
-	// DirectXUtilityのインスタンス
+	/// ===== 借りポインタ ===== ///
+
+	// DirectXユーティリティのポインタ
 	DirectXUtility* dxUtility = nullptr;
+
+	// SRVマネージャのポインタ
+	SrvManager* srvManager = nullptr;
 };
 

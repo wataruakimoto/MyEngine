@@ -45,7 +45,6 @@ void GamePlayScene::Initialize() {
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player_->GetWorldTransform());
-	//player->GetWorldTransform().SetParent(&cameraController_->GetWorldTransform());
 
 	// 敵の生成
 	LoadEnemyPopData();
@@ -102,6 +101,9 @@ void GamePlayScene::Initialize() {
 	goal_->Initialize();
 	// プレイヤーをゴールに設定
 	goal_->SetPlayer(player_.get());
+
+	// カメラをフィルターマネージャに設定
+	filterManager_->SetCamera(camera_.get());
 
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
@@ -311,14 +313,8 @@ void GamePlayScene::Update() {
 	particleManager_->Update();
 }
 
-void GamePlayScene::Draw() {
-
-	/// === スカイボックスの描画準備 === ///
-	SkyboxCommon::GetInstance()->SettingDrawing();
-
-	// スカイボックスの描画
-	//skyBox_->Draw();
-
+void GamePlayScene::DrawFiltered() {
+	
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawingOpaque();
 
@@ -365,7 +361,10 @@ void GamePlayScene::Draw() {
 
 	// パーティクルシステムの描画
 	particleManager_->Draw();
+}
 
+void GamePlayScene::DrawUnfiltered() {
+	
 	/// === UIの描画準備 === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
 

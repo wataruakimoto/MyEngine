@@ -48,9 +48,14 @@ public:
     void Update() override;
 
     /// <summary>
-    /// 描画
+    /// フィルター適応のある描画
     /// </summary>
-    void Draw() override;
+    void DrawFiltered() override;
+
+    /// <summary>
+    /// フィルター適応のない描画
+    /// </summary>
+    void DrawUnfiltered() override;
 
     /// <summary>
     /// 終了
@@ -142,6 +147,9 @@ private:
 
     // ラジアルブラー借りポインタ
     RadialBlurFilter* radialBlurFilter_ = nullptr;
+
+	// フォグの借りポインタ
+	FogFilter* fogFilter_ = nullptr;
 
     // ブラーの中心座標
     Vector2 blurCenter_ = { 0.5f, 0.5f };

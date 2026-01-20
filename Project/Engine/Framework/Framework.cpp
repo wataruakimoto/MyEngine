@@ -52,21 +52,20 @@ void Framework::Initialize() {
 	// Skybox共通部初期化
 	SkyboxCommon::GetInstance()->Initialize();
 
-	// レンダーテクスチャ初期化
-	postEffect = std::make_unique <PostEffect>();
-	postEffect->Initialize();
-
-	// フィルターマネージャ初期化
-	FilterManager::GetInstance()->SetPostEffect(postEffect.get());
-	FilterManager::GetInstance()->Initialize();
-
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
 	swapChain->Initialize(winApp.get());
 
-	// シーンビュー用のレンダーテクスチャ初期化
-	sceneRenderTexture = std::make_unique<SceneRenderTexture>();
-	sceneRenderTexture->Initialize();
+	// シーンバッファ初期化
+	sceneBuffer = std::make_unique<SceneBuffer>();
+	sceneBuffer->Initialize();
+
+	// ポストプロセスバッファ初期化
+	postProcessBuffer = std::make_unique<PostProcessBuffer>();
+	postProcessBuffer->Initialize();
+
+	// フィルターマネージャ初期化
+	FilterManager::GetInstance()->Initialize();
 
 	// ImGuiの初期化
 	ImGuiManager::GetInstance()->Initialize(winApp.get(), swapChain.get());

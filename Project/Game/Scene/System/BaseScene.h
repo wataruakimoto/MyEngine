@@ -24,9 +24,14 @@ public:
 	virtual void Update() = 0;
 
 	/// <summary>
-	/// 描画
+	/// フィルター適応のある描画
 	/// </summary>
-	virtual void Draw() = 0;
+	virtual void DrawFiltered() = 0;
+
+	/// <summary>
+	/// フィルター適応のない描画
+	/// </summary>
+	virtual void DrawUnfiltered() = 0;
 
 	/// <summary>
 	/// 終了
