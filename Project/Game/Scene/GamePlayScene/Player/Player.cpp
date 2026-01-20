@@ -336,7 +336,7 @@ void Player::Rolling() {
 	worldTransform_.SetRotate(currentRotate);
 
 	/// ===== 位置の計算 ===== ///
-
+	
 	// 1フレーム分の差分を求める
 	float deltaT = easeT - preEaseT_; // 前回とのイージング値の差分
 
@@ -370,8 +370,15 @@ void Player::MoveToReticle() {
 	// ピッチ(X軸回りの回転)を求める
 	float pitch = atan2f(-toReticle.y, xzLength);
 
+	// 回転を取得
+	Vector3 currentRotate = worldTransform_.GetRotate();
+
+	// 回転させる
+	currentRotate.x = pitch;
+	currentRotate.y = yaw;
+
 	// 回転を設定
-	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+	worldTransform_.SetRotate(currentRotate);
 
 	// 座標に速度を加算
 	worldTransform_.AddTranslate(toReticle * moveSpeedManual);
@@ -522,7 +529,7 @@ void Player::ManualUpdate() {
 	/// ===== 移動処理 ===== ///
 
 	// レティクルに向かって移動
-	//MoveToReticle();
+	MoveToReticle();
 
 	// 画面外に出ないように位置をクランプ
 	ClampPosition();
