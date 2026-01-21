@@ -27,7 +27,7 @@ enum class PlayerState {
 };
 
 /// ===== プレイヤー ===== ///
-class Player : public Basecharacter {
+class Player : public BaseCharacter {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -146,6 +146,10 @@ public:
 	
 	bool IsDead() { return isDead_; }
 
+	float GetSpeedRate() { return speedRate_; }
+
+	const Vector3& GetVelocity() const { return velocity_; }
+
 ///-------------------------------------------/// 
 /// セッター
 ///-------------------------------------------///
@@ -223,8 +227,8 @@ private:
 	float moveSpeedManual = 0.5f;
 
 	// 移動範囲の制限
-	const Vector2 kMoveMin = { -20.0f, 0.0f }; // X,Yの最小値 左下
-	const Vector2 kMoveMax = { 20.0f, 20.0f }; // X,Yの最大値 右上
+	const Vector2 kMoveMin = { -25.0f, 0.0f }; // X,Yの最小値 左下
+	const Vector2 kMoveMax = { 25.0f, 25.0f }; // X,Yの最大値 右上
 
 	/// ===== 射撃アニメーション用 ===== ///
 
@@ -252,7 +256,7 @@ private:
 
 	const float kMaxRollAngle_ = 2.0f * std::numbers::pi_v<float>; // 最大傾き角度 (ラジアン)
 
-	const float kMaxRollMove_ = 5.0f; // 最大移動距離
+	const float kMaxRollMove_ = 10.0f; // 最大移動距離
 
 	float preEaseT_ = 0.0f;
 
@@ -310,6 +314,9 @@ private:
 
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+
+	// 速度倍率
+	float speedRate_ = 1.0f;
 
 	// 状態
 	PlayerState state_ = PlayerState::Manual;

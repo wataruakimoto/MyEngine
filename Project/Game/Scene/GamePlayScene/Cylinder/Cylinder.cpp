@@ -22,39 +22,28 @@ void Cylinder::Initialize() {
 
 void Cylinder::Update() {
 
-	// 削除対象のインデックスを記録
-	std::vector<size_t> removeIndices;
+	// リストの最後のオブジェクトのZスケールを取得
+	float objectScaleZ = objects_.back()->GetScale().z;
 
-	// カメラより後ろか判定
-	for (size_t i = 0; i < objects_.size(); ++i) {
-		float objectZ = objects_[i]->GetTranslate().z + objects_[i]->GetScale().z;
-		if (objectZ < cameraTranslate_.z) {
-			removeIndices.push_back(i);
-		}
-	}
+	// リストの最後のオブジェクトのZ座標を取得
+	float lastObjectZ = objects_.back()->GetTranslate().z;
 
-	// 最後尾のZ座標
-	float lastZ = 0.0f;
-	// 最後尾のZ座標を取得するためにループ
-	for (const auto& obj : objects_) {
+	// 足し合わせて床の末端Z座標を計算
+	float endFloorZ = lastObjectZ + objectScaleZ;
 
-		// 最後尾のZ座標を取得
-		lastZ = obj->GetTranslate().z + obj->GetScale().z;
-	}
+	// カメラと末端Z座標の距離を計算
+	float distance = endFloorZ - cameraTranslate_.z;
 
-	// 削除と追加
-	for (auto ite = removeIndices.rbegin(); ite != removeIndices.rend(); ++ite) {
+	// 距離が一定以下なら
+	if (distance <= kCylinderLength) {
 
-		// 削除
-		objects_.erase(objects_.begin() + *ite);
-
-		// 新規作成
-		auto newObject = std::make_unique<Object3d>();
-		newObject->Initialize();
-		newObject->SetModel(model_.get());
-		newObject->SetScale({ 50.0f, 50.0f, 50.0f });
-		newObject->SetTranslate({ 0.0f, 0.0f, lastZ });
-		objects_.push_back(std::move(newObject));
+		// 床を1枚作成
+		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
+		object->Initialize();							 // 初期化
+		object->SetModel(model_.get());					 // モデルセット
+		object->SetScale({ 50.0f, 50.0f, 50.0f });		 // スケールセット
+		object->SetTranslate({ 0.0f, 0.0f, endFloorZ }); // 位置セット
+		objects_.push_back(std::move(object));			 // リストに追加
 	}
 
 	// オブジェクトの更新

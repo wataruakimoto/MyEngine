@@ -60,6 +60,9 @@ void FogFilter::Draw() {
 
 void FogFilter::ShowImGui() {
 
+#ifdef USE_IMGUI
+
+
 	if (ImGui::TreeNode("FogFilter")) {
 
 		ImGui::Checkbox("Active", &isActive);
@@ -74,6 +77,8 @@ void FogFilter::ShowImGui() {
 
 		ImGui::TreePop();
 	}
+
+#endif // USE_IMGUI
 }
 
 void FogFilter::CreateRootSignature() {

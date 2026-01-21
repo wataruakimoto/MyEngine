@@ -18,7 +18,7 @@ void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetTranslate({ 0.0f, 4.0f, 0.0f });
+	worldTransform_.SetTranslate({ 0.0f, 5.0f, 0.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -341,10 +341,10 @@ void Player::Rolling() {
 	float deltaT = easeT - preEaseT_; // 前回とのイージング値の差分
 
 	// 移動量の計算
-	Vector3 velocity = { rollDirection_ * kMaxRollMove_ * deltaT, 0.0f, 0.0f };
+	Vector3 rollVelocity = { rollDirection_ * kMaxRollMove_ * deltaT, 0.0f, 0.0f };
 
-	// 位置に加算
-	worldTransform_.AddTranslate(velocity);
+	// 速度に加算
+	velocity_ += rollVelocity;
 
 	// 次回のために値を上書き
 	preEaseT_ = easeT;
@@ -360,6 +360,8 @@ void Player::MoveToReticle() {
 
 	// 正規化
 	toReticle = Normalize(toReticle);
+
+	/// ===== 回転の処理 ===== ///
 
 	// 横軸の長さを求める
 	float xzLength = Length(toReticle.x, toReticle.z);
@@ -380,8 +382,13 @@ void Player::MoveToReticle() {
 	// 回転を設定
 	worldTransform_.SetRotate(currentRotate);
 
-	// 座標に速度を加算
-	worldTransform_.AddTranslate(toReticle * moveSpeedManual);
+	/// ===== 位置の処理 ===== ///
+
+	// 移動速度を計算
+	Vector3 moveVelocity = toReticle * moveSpeedManual;
+
+	// 速度を加算
+	velocity_ += moveVelocity;
 }
 
 void Player::ClampPosition() {
@@ -447,6 +454,12 @@ void Player::AutoPilotUpdate() {
 
 	// Z方向のみの移動
 	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeedAuto });
+
+	// 速度倍率を計算
+	speedRate_ = moveSpeedAuto / 5.0f;
+
+	// 1.0fを超えないようにクランプ
+	speedRate_ = std::clamp(speedRate_, 0.0f, 1.0f);
 }
 
 void Player::ManualInitialize() {
@@ -464,6 +477,9 @@ void Player::ManualUpdate() {
 	bool isMousePush = Input::GetInstance()->PushMouseButton(MouseButton::Left); // 左クリック
 	bool isAPush = Input::GetInstance()->PushKey('A'); // Aキー
 	bool isDPush = Input::GetInstance()->PushKey('D'); // Dキー
+
+	// 速度をリセット
+	velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	/// ===== 射撃処理 ===== ///
 
@@ -530,6 +546,9 @@ void Player::ManualUpdate() {
 
 	// レティクルに向かって移動
 	MoveToReticle();
+
+	// 速度を加算
+	worldTransform_.AddTranslate(velocity_);
 
 	// 画面外に出ないように位置をクランプ
 	ClampPosition();

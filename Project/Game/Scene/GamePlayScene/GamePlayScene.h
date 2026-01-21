@@ -126,6 +126,17 @@ private:
 	/// </summary>
 	void UpdateEnemyPopCommands();
 
+	/// <summary>
+	/// オリジンシフトの確認と実行
+	/// </summary>
+	void CheckOriginShift();
+
+	/// <summary>
+	/// オブジェクトを手前にずらす
+	/// </summary>
+	/// <param name="shiftZ">手前にずらす量</param>
+	void ShiftWorld(float shiftZ);
+
 	/// ===== 各状態の処理 ===== ///
 
 	void SpeedDownInitialize();
@@ -246,6 +257,9 @@ private:
 
 	// プレイ時のプレイヤーの移動速度
 	const float kPlayerMoveSpeedPlay = 0.5f;
+
+	// ループする距離
+	const float kLoopDistance = 1000.0f;
 
 	// ルールUI
 	std::unique_ptr<RuleUI> ruleUI_ = nullptr;

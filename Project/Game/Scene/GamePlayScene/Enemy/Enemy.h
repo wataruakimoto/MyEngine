@@ -19,7 +19,7 @@ enum class EnemyType {
 };
 
 /// ===== 敵 ===== ///
-class Enemy : public Basecharacter {
+class Enemy : public BaseCharacter {
 
 ///-------------------------------------------/// 
 /// メンバ関数

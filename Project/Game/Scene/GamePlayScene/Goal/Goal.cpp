@@ -62,7 +62,7 @@ void Goal::Update() {
 	/// === 移動の更新 === ///
 
 	// 現在のゲートのY座標
-	float gatePosY = gateWorldTransform_.GetWorldPosition().y;
+	Vector3 gatePos = gateWorldTransform_.GetTranslate();
 
 	// プレイヤーからY座標を取得
 	float playerPosY = player_->GetWorldTransform().GetWorldPosition().y;
@@ -70,10 +70,10 @@ void Goal::Update() {
 	float followSpeed = 0.1f;
 
 	// ゲートのY座標をプレイヤーのY座標に近づける
-	gatePosY = Lerp(gatePosY, playerPosY, followSpeed);
+	gatePos.y = Lerp(gatePos.y, playerPosY, followSpeed);
 
-	// ゲートのY座標をプレイヤーのY座標に合わせる
-	gateWorldTransform_.SetTranslate({ 0.0f, gatePosY, 1650.0f });
+	// ゲートの座標を更新
+	gateWorldTransform_.SetTranslate(gatePos);
 
 	// ゲート用のワールド変換の更新
 	gateWorldTransform_.UpdateMatrix();
@@ -123,9 +123,10 @@ void Goal::ShowImGui() {
 #ifdef USE_IMGUI
 
 	ImGui::Begin("Goal");
+
 	worldTransform_.ShowImGui();
-	object_->ShowImGui();
-	model_->ShowImGui();
+	gateWorldTransform_.ShowImGui();
+
 	ImGui::End();
 
 #endif // USE_IMGUI

@@ -44,7 +44,7 @@ void GamePlayScene::Initialize() {
 	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
-	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player_->GetWorldTransform());
+	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
 
 	// 敵の生成
 	LoadEnemyPopData();
@@ -137,7 +137,8 @@ void GamePlayScene::Initialize() {
 	// 白フェードの初期化
 	whiteFade_ = std::make_unique<WhiteFade>();
 	whiteFade_->Initialize();
-	whiteFade_->SetFadeDuration(3.0f); // フェード時間を3秒に設定
+	whiteFade_->StartFadeAnimation(FadeType::Out);
+	whiteFade_->SetFadeDuration(1.5f); // 少しゆっくり晴れると雰囲気が出ます
 
 	// 黒フェードの初期化
 	blackFade_ = std::make_unique<BlackFade>();
@@ -246,6 +247,9 @@ void GamePlayScene::Update() {
 	// デスフラグが立った敵の弾を削除
 	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
 
+	// オリジンシフトの確認と実行
+	CheckOriginShift();
+
 	// カメラコントローラの更新
 	cameraController_->Update();
 
@@ -300,21 +304,21 @@ void GamePlayScene::Update() {
 	// ゴールの更新
 	goal_->Update();
 
-	// ゴールとプレイヤーの衝突判定
-	goal_->CheckGateCollision(killCount);
-
 	// 衝突マネージャの更新
 	collisionManager_->Update();
 
 	// 衝突判定と応答
 	CheckAllCollisions();
 
+	// ゴールとプレイヤーの衝突判定
+	goal_->CheckGateCollision(killCount);
+
 	// パーティクルマネージャの更新
 	particleManager_->Update();
 }
 
 void GamePlayScene::DrawFiltered() {
-	
+
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawingOpaque();
 
@@ -364,7 +368,7 @@ void GamePlayScene::DrawFiltered() {
 }
 
 void GamePlayScene::DrawUnfiltered() {
-	
+
 	/// === UIの描画準備 === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
 
@@ -690,6 +694,41 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 	}
 }
 
+void GamePlayScene::CheckOriginShift() {
+
+	float playerZ = player_->GetWorldTransform().GetWorldPosition().z;
+
+	// プレイヤーのZ座標がループ距離を超えたら
+	if (playerZ >= kLoopDistance) {
+
+		// ワールドを手前にずらす
+		ShiftWorld(kLoopDistance);
+	}
+}
+
+void GamePlayScene::ShiftWorld(float shiftZ) {
+
+	// プレイヤーを手前にずらす
+	player_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+
+	// 敵を手前にずらす
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
+		enemy->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+	}
+
+	// 弾を手前にずらす
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
+		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+	}
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+	}
+
+	// ゴールを手前にずらす
+	goal_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+	goal_->GetGateWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+}
+
 void GamePlayScene::SpeedDownInitialize() {
 
 	// 移動速度を取得
@@ -706,6 +745,9 @@ void GamePlayScene::SpeedDownInitialize() {
 }
 
 void GamePlayScene::SpeedDownUpdate() {
+
+	// フェード更新
+	whiteFade_->Update();
 
 	// ブラーの中心を計算
 	blurCenter_.x = player_->GetScreenPos().x / WinApp::kClientWidth;
@@ -724,7 +766,7 @@ void GamePlayScene::SpeedDownUpdate() {
 
 		// 0を下回らないようにする
 		blurStrength_ = 0.0f;
-		
+
 		// ラジアルブラーをオフにする
 		radialBlurFilter_->SetIsActive(false);
 	}
@@ -765,7 +807,7 @@ void GamePlayScene::ShowUIUpdate() {
 	ruleUI_->Update();
 
 	// エンターキーが押されたら
-	if(ruleUI_->IsAnimationFinished()) {
+	if (ruleUI_->IsAnimationFinished()) {
 
 		// 状態をプレイに変更
 		stateRequest_ = PlayFlowState::Play;
@@ -811,7 +853,7 @@ void GamePlayScene::PlayUpdate() {
 	}
 	// プレイヤーがデスフラグが立っていたら
 	else if (isPlayerDead) {
-		
+
 		// 黒フェード状態に変更
 		stateRequest_ = PlayFlowState::BlackFade;
 	}
@@ -829,7 +871,7 @@ void GamePlayScene::ResultInitialize() {
 		resultUI_->StartAnimation(ResultType::Clear);
 	}
 	else {
-		
+
 		// リザルトUIにゲームオーバーアニメーションを開始させる
 		resultUI_->StartAnimation(ResultType::GameOver);
 	}
@@ -867,7 +909,7 @@ void GamePlayScene::ResultUpdate() {
 void GamePlayScene::WhiteFadeInitialize() {
 
 	// 白フェードアニメーション開始
-	whiteFade_->StartFadeAnimation();
+	whiteFade_->StartFadeAnimation(FadeType::In);
 }
 
 void GamePlayScene::WhiteFadeUpdate() {

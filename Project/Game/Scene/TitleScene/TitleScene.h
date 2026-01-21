@@ -13,6 +13,7 @@
 #include "UI/TitleUI.h"
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
+#include "Fade/WhiteFade.h"
 
 #include <memory>
 #include <optional>
@@ -27,6 +28,7 @@ enum class TitleFlowState {
     WaitInput,	// 入力待ち
     MoveUp,		// UI上に移動
     SpeedUp, 	// 自機を加速させる
+	WhiteFade,  // 白フェード
 };
 
 /// ===== タイトルシーン ===== ///
@@ -72,6 +74,11 @@ public:
 ///-------------------------------------------///
 private:
 
+    /// <summary>
+	/// プレイヤーをループさせる
+    /// </summary>
+    void PlayerLoop();
+
     // 各状態の初期化と更新
 
     void BlackoutInitialize();
@@ -97,6 +104,10 @@ private:
     void SpeedUpInitialize();
 
     void SpeedUpUpdate();
+
+	void WhiteFadeInitialize();
+
+	void WhiteFadeUpdate();
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -133,6 +144,9 @@ private:
     // 黒画面UI
     std::unique_ptr<BlackScreen> blackScreen_ = nullptr;
 
+    // 白フェード
+    std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
+
     // タイトルUI
     std::unique_ptr<TitleUI> titleUI_ = nullptr;
 
@@ -165,4 +179,7 @@ private:
 
     // プレイヤーの移動速度
 	float playerMoveSpeed_ = 0.0f;
+
+    // ループさせる距離
+	const float kLoopDistance = 1000.0f;
 };
