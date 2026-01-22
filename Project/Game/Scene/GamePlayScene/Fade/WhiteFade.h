@@ -5,6 +5,11 @@
 
 #include <memory>
 
+enum class FadeType {
+	In,
+	Out,
+};
+
 /// ===== 白フェード ===== ///
 class WhiteFade {
 
@@ -41,7 +46,7 @@ public:
 	/// <summary>
 	/// 白フェードアニメーション開始
 	/// </summary>
-	void StartFadeAnimation();
+	void StartFadeAnimation(FadeType type);
 
 	/// <summary>
 	/// フェードアニメーションリセット
@@ -82,6 +87,8 @@ public:
 	/// <param name="duration">フェード時間（秒）</param>
 	void SetFadeDuration(float duration) { fadeDuration_ = duration; }
 
+	void SetAlpha(float alpha) { alpha_ = alpha; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -110,5 +117,8 @@ private:
 
 	// デルタタイム
 	const float kDeltaTime = 1.0f / 60.0f;
+
+	// フェードタイプ
+	FadeType fadeType_ = FadeType::In;
 };
 

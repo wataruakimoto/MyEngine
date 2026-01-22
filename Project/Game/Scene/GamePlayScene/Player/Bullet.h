@@ -10,7 +10,7 @@
 #include <memory>
 
 /// ===== 弾 ===== ///
-class Bullet : public Basecharacter {
+class Bullet : public BaseCharacter {
 
 ///-------------------------------------------/// 
 /// メンバ関数

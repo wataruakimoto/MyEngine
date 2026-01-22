@@ -159,6 +159,12 @@ public:
 	/// <returns>ファークリップ距離</returns>
 	const float& GetFarClip() const { return farClip; }
 
+	/// <summary>
+	/// 水平方向視野のゲッター
+	/// </summary>
+	/// <returns>水平方向視野</returns>
+	const float& GetFovY() const { return fovY; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///

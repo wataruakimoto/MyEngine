@@ -31,8 +31,18 @@ void WhiteFade::Update() {
 		// タイマーを進める
 		fadeTimer_ += kDeltaTime;
 
-		// アルファ値を計算
-		alpha_ = std::min(fadeTimer_ / fadeDuration_, 1.0f);
+		// 進行度を計算（0.0f ～ 1.0f）
+		float t = std::clamp(fadeTimer_ / fadeDuration_, 0.0f, 1.0f);
+
+		// タイプによってアルファ値の計算を変える
+		if (fadeType_ == FadeType::In) {
+
+			alpha_ = t;          // 0 -> 1
+		}
+		else {
+
+			alpha_ = 1.0f - t;   // 1 -> 0
+		}
 
 		// スプライトの色を更新
 		sprite_->SetColor({ 1.0f, 1.0f, 1.0f, alpha_ });
@@ -73,9 +83,11 @@ void WhiteFade::ShowImGui() {
 	// フェード時間の調整
 	ImGui::SliderFloat("Fade Duration", &fadeDuration_, 0.5f, 10.0f);
 
-	// フェード開始ボタン
-	if (ImGui::Button("Start Fade")) {
-		StartFadeAnimation();
+	if (ImGui::Button("Start Fade To White")) {
+		StartFadeAnimation(FadeType::In);
+	}
+	if (ImGui::Button("Start Fade From White")) {
+		StartFadeAnimation(FadeType::Out);
 	}
 
 	// フェードリセットボタン
@@ -91,16 +103,24 @@ void WhiteFade::ShowImGui() {
 #endif // USE_IMGUI
 }
 
-void WhiteFade::StartFadeAnimation() {
+void WhiteFade::StartFadeAnimation(FadeType type) {
 
 	// フェード状態をリセット
 	fadeTimer_ = 0.0f;
-	alpha_ = 0.0f;
 	isFading_ = true;
 	isFadeFinished_ = false;
+	fadeType_ = type;
 
-	// スプライトの色を初期化
-	sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+	if(fadeType_ == FadeType::In) {
+		// スプライトの色を透明に設定
+		sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+		alpha_ = 0.0f;
+	}
+	else {
+		// スプライトの色を不透明に設定
+		sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		alpha_ = 1.0f;
+	}
 }
 
 void WhiteFade::ResetFade() {

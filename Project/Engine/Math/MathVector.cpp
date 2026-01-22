@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <numbers>
 
 Vector2 MathVector::Add(const Vector2& v1, const Vector2& v2) {
 
@@ -217,6 +218,16 @@ Vector3 MathVector::ConvertScreenToWorld(const Vector2& screenPos, const Matrix4
 	Vector3 resultPosition = nearWorld + Normalize(farWorld - nearWorld);
 
 	return resultPosition;
+}
+
+float MathVector::ConvertDegreesToRadians(float degrees) {
+	
+	return degrees * (std::numbers::pi_v<float> / 180.0f);
+}
+
+float MathVector::ConvertRadiansToDegrees(float radians) {
+	
+	return radians * (180.0f / std::numbers::pi_v<float>);
 }
 
 Vector2 MathVector::operator+(const Vector2& v1, const Vector2& v2) {
