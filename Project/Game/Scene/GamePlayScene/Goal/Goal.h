@@ -36,7 +36,9 @@ public:
 ///-------------------------------------------///
 public:
 
-	const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+	WorldTransform& GetWorldTransform() { return worldTransform_; }
+
+	WorldTransform& GetGateWorldTransform() { return gateWorldTransform_; }
 
 	const int GetNormaCount() const { return kNormaCount; }
 

@@ -52,6 +52,12 @@ namespace MathVector {
 	// スクリーン座標→ワールド座標
 	Vector3 ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float nearZ, float farZ);
 
+	// 角度をラジアンに変換
+	float ConvertDegreesToRadians(float degrees);
+
+	// ラジアンを角度に変換
+	float ConvertRadiansToDegrees(float radians);
+
 ///-------------------------------------------/// 
 /// オペレーター演算子
 ///-------------------------------------------///

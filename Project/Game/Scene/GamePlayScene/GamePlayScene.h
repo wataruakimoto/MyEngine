@@ -19,6 +19,7 @@
 #include "UI/RuleUI.h"
 #include "UI/NormaUI.h"
 #include "UI/ResultUI.h"
+#include "UI/GuideUI.h"
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
 #include "Goal/Goal.h"
@@ -58,9 +59,14 @@ public:
 	void Update() override;
 
 	/// <summary>
-	/// 描画
+	/// フィルター適応のある描画
 	/// </summary>
-	void Draw() override;
+	void DrawFiltered() override;
+
+	/// <summary>
+	/// フィルター適応のない描画
+	/// </summary>
+	void DrawUnfiltered() override;
 
 	/// <summary>
 	/// 終了
@@ -119,6 +125,17 @@ private:
 	/// 敵発生コマンドの更新
 	/// </summary>
 	void UpdateEnemyPopCommands();
+
+	/// <summary>
+	/// オリジンシフトの確認と実行
+	/// </summary>
+	void CheckOriginShift();
+
+	/// <summary>
+	/// オブジェクトを手前にずらす
+	/// </summary>
+	/// <param name="shiftZ">手前にずらす量</param>
+	void ShiftWorld(float shiftZ);
 
 	/// ===== 各状態の処理 ===== ///
 
@@ -241,6 +258,9 @@ private:
 	// プレイ時のプレイヤーの移動速度
 	const float kPlayerMoveSpeedPlay = 0.5f;
 
+	// ループする距離
+	const float kLoopDistance = 1000.0f;
+
 	// ルールUI
 	std::unique_ptr<RuleUI> ruleUI_ = nullptr;
 
@@ -249,6 +269,9 @@ private:
 
 	// リザルトUI
 	std::unique_ptr<ResultUI> resultUI_ = nullptr;
+
+	// ガイドUI
+	std::unique_ptr<GuideUI> guideUI_ = nullptr;
 
 	// パーティクル共通のインスタンス
 	ParticleCommon* particleCommon = ParticleCommon::GetInstance();

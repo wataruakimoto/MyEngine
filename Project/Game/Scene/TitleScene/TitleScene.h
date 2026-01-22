@@ -13,6 +13,7 @@
 #include "UI/TitleUI.h"
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
+#include "Fade/WhiteFade.h"
 
 #include <memory>
 #include <optional>
@@ -27,6 +28,7 @@ enum class TitleFlowState {
     WaitInput,	// 入力待ち
     MoveUp,		// UI上に移動
     SpeedUp, 	// 自機を加速させる
+	WhiteFade,  // 白フェード
 };
 
 /// ===== タイトルシーン ===== ///
@@ -48,9 +50,14 @@ public:
     void Update() override;
 
     /// <summary>
-    /// 描画
+    /// フィルター適応のある描画
     /// </summary>
-    void Draw() override;
+    void DrawFiltered() override;
+
+    /// <summary>
+    /// フィルター適応のない描画
+    /// </summary>
+    void DrawUnfiltered() override;
 
     /// <summary>
     /// 終了
@@ -66,6 +73,11 @@ public:
 /// クラス内関数
 ///-------------------------------------------///
 private:
+
+    /// <summary>
+	/// プレイヤーをループさせる
+    /// </summary>
+    void PlayerLoop();
 
     // 各状態の初期化と更新
 
@@ -92,6 +104,10 @@ private:
     void SpeedUpInitialize();
 
     void SpeedUpUpdate();
+
+	void WhiteFadeInitialize();
+
+	void WhiteFadeUpdate();
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -128,6 +144,9 @@ private:
     // 黒画面UI
     std::unique_ptr<BlackScreen> blackScreen_ = nullptr;
 
+    // 白フェード
+    std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
+
     // タイトルUI
     std::unique_ptr<TitleUI> titleUI_ = nullptr;
 
@@ -143,6 +162,9 @@ private:
     // ラジアルブラー借りポインタ
     RadialBlurFilter* radialBlurFilter_ = nullptr;
 
+	// フォグの借りポインタ
+	FogFilter* fogFilter_ = nullptr;
+
     // ブラーの中心座標
     Vector2 blurCenter_ = { 0.5f, 0.5f };
 
@@ -157,4 +179,7 @@ private:
 
     // プレイヤーの移動速度
 	float playerMoveSpeed_ = 0.0f;
+
+    // ループさせる距離
+	const float kLoopDistance = 1000.0f;
 };

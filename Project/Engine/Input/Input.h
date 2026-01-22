@@ -1,25 +1,25 @@
 #pragma once
 
-// hInstance,hwndを使うため
-#include <Windows.h>
-// Comptrを使うため
-#include <wrl.h>
-// DirectInputの定義
-#define DIRECTINPUT_VERSION 0x0800 // DirectInputのバージョン指定
-#include <dinput.h>
-// WindowsAPIを使うため
-#include "WinApp.h"
-
-#include <Xinput.h>
-
 #include "Vector2.h"
 
-// 入力
-class Input {
+#include <Windows.h> // WindowsAPIを使うため
+#include <wrl.h> // Comptrを使うため
+#include <Xinput.h> // XInputを使うため
 
-public:
-	// namespace省略 エイリアステンプレート
-	template<class T>using ComPtr = Microsoft::WRL::ComPtr<T>;
+/// ===== 列挙型 ===== ///
+
+// マウスボタン
+enum class MouseButton {
+	Left = 0, // 左クリック
+	Right,	  // 右クリック
+	Middle,	  // 中クリック(ホイールクリック)
+};
+
+/// ===== 前方宣言 ===== ///
+class WinApp;
+
+/// ===== 入力 ===== ///
+class Input {
 
 ///-------------------------------------------/// 
 /// シングルトン
@@ -28,6 +28,7 @@ private:
 
 	// インスタンス
 	static Input* instance;
+
 	// コンストラクタの隠蔽
 	Input() = default;
 	// デストラクタの隠蔽
@@ -41,12 +42,6 @@ private:
 /// メンバ関数
 ///-------------------------------------------///
 public:
-
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static Input* GetInstance();
 
 	/// <summary>
 	/// 初期化
@@ -68,6 +63,10 @@ public:
 	/// </summary>
 	void ShowImgui();
 
+///-------------------------------------------/// 
+/// キーボード操作関数
+///-------------------------------------------///
+
 	/// <summary>
 	/// キーの押下をチェック
 	/// </summary>
@@ -83,47 +82,79 @@ public:
 	bool TriggerKey(BYTE keyNumber);
 
 	/// <summary>
+	/// キーのリリースをチェック
+	/// </summary>
+	/// <param name="keyNumber">キー番号</param>
+	/// <returns>リリースしているか</returns>
+	bool ReleaseKey(BYTE keyNumber);
+
+///-------------------------------------------///
+/// マウス操作関数
+///-------------------------------------------///
+
+	/// <summary>
 	/// マウスカーソルの位置を取得
 	/// </summary>
 	/// <returns></returns>
-	Vector2 GetMousePosition();
+	const Vector2& GetMousePosition() const;
 
 	/// <summary>
-	/// コントローラーの状態を取得
+	/// マウスの移動量を取得
 	/// </summary>
 	/// <returns></returns>
-	XINPUT_STATE GetControllerState();
+	const Vector2& GetMouseMove() const;
+
+	/// <summary>
+	/// マウスボタンの押下をチェック
+	/// </summary>
+	/// <param name="button">マウスボタン</param>
+	/// <returns></returns>
+	bool PushMouseButton(MouseButton button);
+
+	/// <summary>
+	/// マウスボタンのトリガーをチェック
+	/// </summary>
+	/// <param name="button">マウスボタン</param>
+	/// <returns></returns>
+	bool TriggerMouseButton(MouseButton button);
+
+	/// <summary>
+	/// マウスボタンのリリースをチェック
+	/// </summary>
+	/// <param name="button">マウスボタン</param>
+	/// <returns></returns>
+	bool ReleaseMouseButton(MouseButton button);
+
+///-------------------------------------------///
+/// コントローラー操作関数
+///-------------------------------------------///
+
+	/// <summary>
+	/// コントローラーが接続されているか
+	/// </summary>
+	/// <returns></returns>
+	bool IsControllerConnected() const;
 
 	/// <summary>
 	/// コントローラーの押下をチェック
 	/// </summary>
-	/// <param name="button"></param>
+	/// <param name="button">ボタン</param>
 	/// <returns></returns>
 	bool PushButton(WORD button);
 
 	/// <summary>
 	/// コントローラーのトリガーをチェック
 	/// </summary>
-	/// <param name="button"></param>
+	/// <param name="button">ボタン</param>
 	/// <returns></returns>
 	bool TriggerButton(WORD button);
 
 	/// <summary>
-	/// 右スティックがデッドゾーンを超えているか
+	/// コントローラーのリリースをチェック
 	/// </summary>
+	/// <param name="button">ボタン</param>
 	/// <returns></returns>
-	bool IsRightThumbStickOutDeadZone();
-
-	/// <summary>
-	/// 左スティックがデッドゾーンを超えているか
-	/// </summary>
-	/// <returns></returns>
-	bool IsLeftThumbStickOutDeadZone();
-
-	/// <summary>
-	/// 右スティックの値を取得
-	/// </summary>
-	Vector2 GetRightThumbStick();
+	bool ReleaseButton(WORD button);
 
 	/// <summary>
 	/// 左スティックの値を取得
@@ -131,40 +162,100 @@ public:
 	Vector2 GetLeftThumbStick();
 
 	/// <summary>
-	/// 右スティックのデッドゾーンの値の設定
+	/// 右スティックの値を取得
 	/// </summary>
-	/// <param name="deadZone"></param>
-	/// <returns></returns>
-	void SetDeadZoneR(float deadZone);
+	Vector2 GetRightThumbStick();
 
 	/// <summary>
-	/// 左スティックのデッドゾーンの値の設定
+	/// デッドゾーンの設定(0.0f ~ 1.0f)
 	/// </summary>
-	/// <param name="deadZone"></param>
+	/// <param name="left">左のデッドゾーン</param>
+	/// <param name="right">右のデッドゾーン</param>
+	void SetDeadZone(float left, float right);
+	
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
+	/// キーボードの初期化
+	/// </summary>
+	void InitializeKeyboard();
+
+	/// <summary>
+	/// キーボードの更新
+	/// </summary>
+	void UpdateKeyboard();
+
+	/// <summary>
+	/// マウスの更新
+	/// </summary>
+	void UpdateMouse();
+
+	/// <summary>
+	/// コントローラーの初期化
+	/// </summary>
+	void InitializeController();
+
+	/// <summary>
+	/// コントローラーの更新
+	/// </summary>
+	void UpdateController();
+
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
 	/// <returns></returns>
-	void SetDeadZoneL(float deadZone);
+	static Input* GetInstance();
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
-	// DirectInputのインスタンス
-	ComPtr<IDirectInput8> directInput;
-	// キーボードのデバイス
-	ComPtr<IDirectInputDevice8> keyboard;
+
+	/// ===== キーボード用変数 ===== ///
+
 	// 全キーの状態
 	BYTE key[256] = {};
 	// 前のフレームの全キーの状態
 	BYTE keyPre[256] = {};
-	// WindowsAPI
-	WinApp* winApp_ = nullptr;
+
+	/// ===== マウス用変数 ===== ///
+
+	// マウスカーソルの座標
+	Vector2 mousePosition = {};
+	// 前のフレームのマウスカーソルの座標
+	Vector2 mousePositionPre = {};
+	// 移動量
+	Vector2 mouseMove = {};
+
+	// マウスボタンの状態
+	bool mouseButton[3] = {};
+	// 前のフレームのマウスボタンの状態
+	bool mouseButtonPre[3] = {};
+
+	/// ===== コントローラー用変数 ===== ///
+
+	// コントローラーが接続フラグ
+	bool isConnected = false;
 
 	// 現在のコントローラーの状態
-	XINPUT_STATE controllerStateCurrent;
+	XINPUT_STATE controllerState;
 	// 前のフレームのコントローラーの状態
 	XINPUT_STATE controllerStatePre;
 
-	// デッドゾーンの値
-	float deadZoneR = XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE; // 右の値
-	float deadZoneL = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE; // 左の値
+	// デッドゾーンの値 (0.0f ~ 1.0f)
+	float deadZoneL = 0.24f; // 左のデッドゾーン
+	float deadZoneR = 0.26f; // 右のデッドゾーン
+
+	/// ===== 借りポインタ・インスタンス ===== ///
+
+	// WindowsAPIの借りポインタ
+	WinApp* winApp_ = nullptr;
 };

@@ -36,9 +36,14 @@ void SceneManager::Update() {
 	scene_->Update();
 }
 
-void SceneManager::Draw() {
+void SceneManager::DrawFiltered() {
 
-	scene_->Draw();
+	scene_->DrawFiltered();
+}
+
+void SceneManager::DrawUnfiltered() {
+
+	scene_->DrawUnfiltered();
 }
 
 void SceneManager::Finalize() {

@@ -28,9 +28,14 @@ public:
 	void Update() override;
 
 	/// <summary>
-	/// 描画
+	/// フィルター適応のある描画
 	/// </summary>
-	void Draw() override;
+	void DrawFiltered() override;
+
+	/// <summary>
+	/// フィルター適応のない描画
+	/// </summary>
+	void DrawUnfiltered() override;
 
 	/// <summary>
 	/// 終了

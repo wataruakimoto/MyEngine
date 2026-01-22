@@ -65,5 +65,8 @@ private:
 
 	// カメラの借りポインタ
 	Vector3 cameraTranslate_ = {};
+
+	// 50.0fの壁が20枚で1000で予定
+	const float kCylinderLength = 50.0f * 20.0f; // 壁の長さ
 };
 

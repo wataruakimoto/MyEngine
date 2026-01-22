@@ -30,7 +30,7 @@ void TitleScene::Initialize() {
 	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
-	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetTarget(&player_->GetWorldTransform());
+	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
@@ -52,6 +52,11 @@ void TitleScene::Initialize() {
 	blackScreen_ = std::make_unique<BlackScreen>();
 	blackScreen_->Initialize();
 
+	// 白フェードの生成&初期化
+	whiteFade_ = std::make_unique<WhiteFade>();
+	whiteFade_->Initialize();
+	whiteFade_->SetAlpha(0.0f);
+
 	// タイトルUIの生成&初期化
 	titleUI_ = std::make_unique<TitleUI>();
 	titleUI_->Initialize();
@@ -59,9 +64,17 @@ void TitleScene::Initialize() {
 	// スタートUIの生成&初期化
 	startUI_ = std::make_unique<StartUI>();
 	startUI_->Initialize();
+	
+	// フィルターマネージャにカメラを設定
+	filterManager_->SetCamera(camera_.get());
 
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
+
+	// フォグをフィルターマネージャから受け取っとく
+	fogFilter_ = filterManager_->GetFogFilter();
+	fogFilter_->SetStartDistance(500.0f); // フォグ開始距離を500に設定
+	fogFilter_->SetIsActive(true);    // フォグを有効化
 
 	// 状態リクエストにブラックアウトを設定
 	stateRequest_ = TitleFlowState::Blackout;
@@ -102,6 +115,10 @@ void TitleScene::Update() {
 			SpeedUpInitialize();
 			break;
 
+		case TitleFlowState::WhiteFade:
+			WhiteFadeInitialize();
+			break;
+
 		default:
 			break;
 		}
@@ -137,9 +154,16 @@ void TitleScene::Update() {
 		SpeedUpUpdate();
 		break;
 
+	case TitleFlowState::WhiteFade:
+		WhiteFadeUpdate();
+		break;
+
 	default:
 		break;
 	}
+
+	// プレイヤーループ処理
+	PlayerLoop();
 
 	// カメラコントローラの更新
 	cameraController_->Update();
@@ -172,13 +196,7 @@ void TitleScene::Update() {
 	blackScreen_->Update();
 }
 
-void TitleScene::Draw() {
-
-	/// === スカイボックスの描画準備 === ///
-	SkyboxCommon::GetInstance()->SettingDrawing();
-
-	// スカイボックスの描画
-	//skyBox_->Draw();
+void TitleScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawingOpaque();
@@ -191,6 +209,9 @@ void TitleScene::Draw() {
 
 	// プレイヤー描画
 	player_->Draw();
+}
+
+void TitleScene::DrawUnfiltered() {
 
 	/// === 2Dオブジェクトの描画準備(最前面) === ///
 	SpriteCommon::GetInstance()->SettingDrawing();
@@ -203,6 +224,9 @@ void TitleScene::Draw() {
 
 	// タイトルUIの描画
 	titleUI_->Draw();
+
+	// 白フェードの描画
+	whiteFade_->Draw();
 }
 
 void TitleScene::Finalize() {
@@ -231,6 +255,9 @@ void TitleScene::ShowImGui() {
 	// スタートUIのImGui表示
 	startUI_->ShowImGui();
 
+	// WhiteFadeのImGui表示
+	whiteFade_->ShowImGui();
+
 	filterManager_->ShowImGui();
 
 #ifdef USE_IMGUI
@@ -239,10 +266,29 @@ void TitleScene::ShowImGui() {
 	ImGui::Text("TitleFlowState");
 	ImGui::Text("%d", static_cast<int>(titleFlowState_));
 
-
 	ImGui::End();
 
 #endif // USE_IMGUI
+}
+
+void TitleScene::PlayerLoop() {
+
+	// プレイヤーの座標を取得
+	Vector3 playerPos = player_->GetWorldTransform().GetWorldPosition();
+
+	// プレイヤーがループさせる距離を超えたら
+	if (playerPos.z > kLoopDistance) {
+
+		// プレイヤーのZ座標だけを距離分戻す
+		playerPos.z -= kLoopDistance;
+		player_->GetWorldTransform().SetTranslate(playerPos);
+
+		// カメラの座標を取得
+		Vector3 cameraPos = camera_->GetTranslate();
+		// カメラのZ座標だけを距離分戻す
+		cameraPos.z -= kLoopDistance;
+		camera_->SetTranslate(cameraPos);
+	}
 }
 
 void TitleScene::BlackoutInitialize() {
@@ -315,7 +361,7 @@ void TitleScene::WaitInputInitialize() {
 void TitleScene::WaitInputUpdate() {
 
 	// スペースキーを押したら
-	if (input_->TriggerKey(DIK_SPACE)) {
+	if (input_->TriggerKey(VK_SPACE)) {
 
 		// 状態をUI上に移動に変更
 		stateRequest_ = TitleFlowState::MoveUp;
@@ -365,40 +411,49 @@ void TitleScene::SpeedUpUpdate() {
 	// ブラーの中心を設定
 	radialBlurFilter_->SetCenter(blurCenter_);
 
-	// ブラーの強さが最大値に達していなかったら
+	// ブラーを徐々に強くする
 	if (blurStrength_ < kMaxBlurStrength) {
 
-		// ブラーの強さを徐々に増加
-		blurStrength_ += 0.001f;
-	}
-	else {
-
-		// 最大値を超えたら最大値に固定
-		blurStrength_ = kMaxBlurStrength;
+		blurStrength_ += 0.0005f;
 	}
 
 	// ブラーの強さを変更
 	radialBlurFilter_->SetBlurStrength(blurStrength_);
 
-	// プレイヤーの移動速度が最大値に達していなかったら
-	if (playerMoveSpeed_ < kMaxPlayerMoveSpeed) {
-
-		// プレイヤーの移動速度を徐々に増加
-		playerMoveSpeed_ += 0.02f;
-	}
-	else {
-
-		// 最大値を超えたら最大値に固定
-		playerMoveSpeed_ = kMaxPlayerMoveSpeed;
-	}
+	// プレイヤーの移動速度を徐々に上げる
+	playerMoveSpeed_ += 0.02f;
 
 	// プレイヤーの移動速度を設定
 	player_->SetMoveSpeedAuto(playerMoveSpeed_);
 
-	// ブラーの強さとプレイヤーの移動速度が最大値に達していたら
-	if (blurStrength_ >= kMaxBlurStrength && playerMoveSpeed_ >= kMaxPlayerMoveSpeed) {
+	// ブラーの強さが最大値付近になったら
+	if (blurStrength_ >= kMaxBlurStrength - 0.01f) {
 
-		// ゲームプレイシーンに切り替え
-		sceneManager_->ChangeScene("PLAY");
+		// 状態を白フェードに変更
+		stateRequest_ = TitleFlowState::WhiteFade;
+	}
+}
+
+void TitleScene::WhiteFadeInitialize() {
+	
+	whiteFade_->StartFadeAnimation(FadeType::In);
+}
+
+void TitleScene::WhiteFadeUpdate() {
+
+	// 背景で加速演出は継続させる（止まると違和感があるため）
+	playerMoveSpeed_ += 0.02f; // さらに加速
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
+
+	// ブラーも最大値を維持
+	radialBlurFilter_->SetBlurStrength(kMaxBlurStrength);
+
+	// 白フェード更新
+	whiteFade_->Update();
+
+	if (whiteFade_->IsFadeFinished()) {
+
+		// ゲームプレイシーンへ
+		SceneManager::GetInstance()->ChangeScene("PLAY");
 	}
 }

@@ -13,12 +13,15 @@ void GameOverScene::Update() {
 	sprite_->Update();
 
 	// スペースキーでシーン切り替え
-	if (input_->TriggerKey(DIK_SPACE)) {
+	if (input_->TriggerKey(VK_SPACE)) {
 		sceneManager_->ChangeScene("TITLE");
 	}
 }
 
-void GameOverScene::Draw() {
+void GameOverScene::DrawFiltered() {
+}
+
+void GameOverScene::DrawUnfiltered() {
 
 	// スプライトコモンの描画準備
 	spriteCommon_->SettingDrawing();

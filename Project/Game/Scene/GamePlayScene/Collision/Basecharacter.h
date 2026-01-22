@@ -6,7 +6,7 @@
 ///-------------------------------------------/// 
 /// キャラクター基底クラス
 ///-------------------------------------------///
-class Basecharacter : public Collider {
+class BaseCharacter : public Collider {
 
 public:
 
