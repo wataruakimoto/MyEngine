@@ -32,8 +32,6 @@
 class RadialBlurFilter;
 
 enum class PlayFlowState {
-	SpeedDown,	// 自機を減速させる
-	ShowUI,		// UI表示
 	Play,		// プレイ
 	Result,     // 結果表示
 	WhiteFade,	// 白フェード
@@ -111,11 +109,6 @@ public:
 	/// </summary>
 	void UpdateVignetteEffect();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
-
 	/// <summary>
 	/// 敵発生データの読み込み
 	/// </summary>
@@ -125,6 +118,11 @@ private:
 	/// 敵発生コマンドの更新
 	/// </summary>
 	void UpdateEnemyPopCommands();
+
+///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
 
 	/// <summary>
 	/// オリジンシフトの確認と実行
@@ -138,14 +136,6 @@ private:
 	void ShiftWorld(float shiftZ);
 
 	/// ===== 各状態の処理 ===== ///
-
-	void SpeedDownInitialize();
-
-	void SpeedDownUpdate();
-
-	void ShowUIInitialize();
-
-	void ShowUIUpdate();
 
 	void PlayInitialize();
 
@@ -162,6 +152,27 @@ private:
 	void BlackFadeInitialize();
 
 	void BlackFadeUpdate();
+
+///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	Player* GetPlayer() { return player_.get(); }
+
+	RuleUI* GetRuleUI() { return ruleUI_.get(); }
+
+	Goal* GetGoal() { return goal_.get(); }
+
+	Reticle3D* GetReticle3D() { return reticle3D_.get(); }
+
+	Reticle2D* GetReticle2D() { return reticle2D_.get(); }
+
+	LockOn* GetLockOn() { return lockOn_.get(); }
+
+	NormaUI* GetNormaUI() { return normaUI_.get(); }
+
+	GuideUI* GetGuideUI() { return guideUI_.get(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -226,7 +237,7 @@ private:
 	int32_t standbyTimer_ = 0;
 
 	// プレイの流れの状態
-	PlayFlowState playFlowState_ = PlayFlowState::SpeedDown;
+	PlayFlowState playFlowState_ = PlayFlowState::Play;
 
 	// 状態リクエスト
 	std::optional<PlayFlowState> stateRequest_ = std::nullopt;

@@ -46,9 +46,6 @@ void GamePlayScene::Initialize() {
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
 
-	// 敵の生成
-	LoadEnemyPopData();
-
 	// 3Dレティクルの生成
 	reticle3D_ = std::make_unique<Reticle3D>();
 	reticle3D_->Initialize();
@@ -146,82 +143,10 @@ void GamePlayScene::Initialize() {
 	blackFade_->SetFadeDuration(3.0f); // フェード時間を3秒に設定
 
 	// 状態リクエストに減速を設定
-	stateRequest_ = PlayFlowState::SpeedDown;
+	stateRequest_ = PlayFlowState::Play;
 }
 
 void GamePlayScene::Update() {
-
-	// 状態の変更がリクエストされていたら
-	if (stateRequest_) {
-
-		// 状態を変更
-		playFlowState_ = stateRequest_.value();
-
-		// 各状態を初期化
-		switch (playFlowState_) {
-
-		case PlayFlowState::SpeedDown:
-			SpeedDownInitialize();
-			break;
-
-		case PlayFlowState::ShowUI:
-			ShowUIInitialize();
-			break;
-
-		case PlayFlowState::Play:
-			PlayInitialize();
-			break;
-
-		case PlayFlowState::Result:
-			ResultInitialize();
-			break;
-
-		case PlayFlowState::WhiteFade:
-			WhiteFadeInitialize();
-			break;
-
-		case PlayFlowState::BlackFade:
-			BlackFadeInitialize();
-			break;
-
-		default:
-			break;
-		}
-
-		// リクエストをクリア
-		stateRequest_ = std::nullopt;
-	}
-
-	// 各状態の更新
-	switch (playFlowState_) {
-
-	case PlayFlowState::SpeedDown:
-		SpeedDownUpdate();
-		break;
-
-	case PlayFlowState::ShowUI:
-		ShowUIUpdate();
-		break;
-
-	case PlayFlowState::Play:
-		PlayUpdate();
-		break;
-
-	case PlayFlowState::Result:
-		ResultUpdate();
-		break;
-
-	case PlayFlowState::WhiteFade:
-		WhiteFadeUpdate();
-		break;
-
-	case PlayFlowState::BlackFade:
-		BlackFadeUpdate();
-		break;
-
-	default:
-		break;
-	}
 
 	// デスフラグの立った敵を削除
 	for (auto ite = enemies_.begin(); ite != enemies_.end(); ) {
@@ -253,39 +178,6 @@ void GamePlayScene::Update() {
 	// カメラコントローラの更新
 	cameraController_->Update();
 
-	// プレイヤー更新
-	player_->Update();
-
-	// 弾の更新
-	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
-
-		bullet->Update();
-	}
-
-	// 敵キャラの更新
-	for (std::unique_ptr<Enemy>& enemy : enemies_) {
-
-		// プレイヤーを敵にセット
-		enemy->SetPlayer(player_.get());
-
-		// 敵更新
-		enemy->Update();
-	}
-
-	// 敵の弾の更新
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-		bullet->Update();
-	}
-
-	// 3Dレティクルの更新
-	reticle3D_->Update();
-
-	// 2Dレティクルの更新
-	reticle2D_->Update();
-
-	// ロックオンの更新
-	lockOn_->Update();
-
 	// カメラの座標をフロアに設定
 	floor_->SetCameraTranslate(camera_->GetWorldPosition());
 
@@ -300,9 +192,6 @@ void GamePlayScene::Update() {
 
 	// スカイボックスの更新
 	skyBox_->Update();
-
-	// ゴールの更新
-	goal_->Update();
 
 	// 衝突マネージャの更新
 	collisionManager_->Update();
@@ -457,8 +346,28 @@ void GamePlayScene::ShowImGui() {
 
 #ifdef USE_IMGUI
 
-	ImGui::Begin("GamePlayScene");
-	ImGui::Text("PlayFlowState: %d", static_cast<int>(playFlowState_));
+	ImGui::Begin("プレイシーン");
+
+	ImGui::Text("現在の状態: %d", static_cast<int>(playFlowState_));
+
+	// 各状態に切り替えるボタン
+	ImGui::SameLine();
+	if (ImGui::Button("Play")) {
+		stateRequest_ = PlayFlowState::Play;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Result")) {
+		stateRequest_ = PlayFlowState::Result;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("WhiteFade")) {
+		stateRequest_ = PlayFlowState::WhiteFade;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("BlackFade")) {
+		stateRequest_ = PlayFlowState::BlackFade;
+	}
+
 	ImGui::End();
 
 #endif // USE_IMGUI
@@ -729,115 +638,10 @@ void GamePlayScene::ShiftWorld(float shiftZ) {
 	goal_->GetGateWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 }
 
-void GamePlayScene::SpeedDownInitialize() {
-
-	// 移動速度を取得
-	playerMoveSpeed_ = 5.0f;
-
-	// プレイヤーの速度を設定
-	player_->SetMoveSpeedAuto(playerMoveSpeed_);
-
-	// ブラーの強さを取得
-	blurStrength_ = radialBlurFilter_->GetBlurStrength();
-
-	// ブラーの強さを設定
-	radialBlurFilter_->SetBlurStrength(blurStrength_);
-}
-
-void GamePlayScene::SpeedDownUpdate() {
-
-	// フェード更新
-	whiteFade_->Update();
-
-	// ブラーの中心を計算
-	blurCenter_.x = player_->GetScreenPos().x / WinApp::kClientWidth;
-	blurCenter_.y = player_->GetScreenPos().y / WinApp::kClientHeight;
-
-	// ブラーの中心を設定
-	radialBlurFilter_->SetCenter(blurCenter_);
-
-	// ブラーの強さが0に達していなければ
-	if (blurStrength_ > 0.0f) {
-
-		// ブラーの強さを徐々に減らす
-		blurStrength_ -= 0.001f;
-	}
-	else {
-
-		// 0を下回らないようにする
-		blurStrength_ = 0.0f;
-
-		// ラジアルブラーをオフにする
-		radialBlurFilter_->SetIsActive(false);
-	}
-
-	// ブラーの強さを設定
-	radialBlurFilter_->SetBlurStrength(blurStrength_);
-
-	// プレイヤーの速度を徐々に落とす
-	if (player_->GetMoveSpeedTitle() > 0.0f) {
-
-		playerMoveSpeed_ -= 0.02f;
-	}
-	else {
-
-		playerMoveSpeed_ = 0.0f;
-	}
-
-	// プレイヤーの速度を設定
-	player_->SetMoveSpeedAuto(playerMoveSpeed_);
-
-	// プレイヤーの速度が0.5fで ブラーがオフだったら
-	if (playerMoveSpeed_ == 0.0f && radialBlurFilter_->GetIsActive() == false) {
-
-		// 状態をプレイに変更
-		stateRequest_ = PlayFlowState::ShowUI;
-	}
-}
-
-void GamePlayScene::ShowUIInitialize() {
-
-	// 警告UIのバウンスアニメーション開始
-	ruleUI_->StartBounceAnimation();
-}
-
-void GamePlayScene::ShowUIUpdate() {
-
-	// 警告UIの更新
-	ruleUI_->Update();
-
-	// エンターキーが押されたら
-	if (ruleUI_->IsAnimationFinished()) {
-
-		// 状態をプレイに変更
-		stateRequest_ = PlayFlowState::Play;
-	}
-}
-
-void GamePlayScene::PlayInitialize() {
-
-	// プレイヤーモードをゲームプレイに変更
-	player_->SetPlayerState(PlayerState::Manual);
-}
-
 void GamePlayScene::PlayUpdate() {
 
 	// ビネットエフェクトの更新
 	UpdateVignetteEffect();
-
-	// ノルマUIに目標値を設定
-	normaUI_->SetTargetValue(goal_->GetNormaCount());
-	// ノルマUIに現在値を設定
-	normaUI_->SetCurrentValue(killCount);
-
-	// ノルマUIの更新
-	normaUI_->Update();
-
-	// ガイドUIの更新
-	guideUI_->Update();
-
-	// 敵発生コマンドの更新
-	UpdateEnemyPopCommands();
 
 	// ゴールライン到達の判定
 	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goal_->GetWorldTransform().GetTranslate().z;

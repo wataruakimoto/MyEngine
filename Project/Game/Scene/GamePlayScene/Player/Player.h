@@ -138,7 +138,7 @@ public:
 	/// <returns></returns>
 	uint16_t GetHP() const { return hp_; }
 
-	float GetMoveSpeedTitle() { return moveSpeedAuto; }
+	float GetMoveSpeedAuto() { return moveSpeedAuto; }
 
 	float GetMoveSpeedPlay() { return moveSpeedManual; }
 
