@@ -140,6 +140,9 @@ void Player::ShowImGui() {
 
 	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
 
+	ImGui::Checkbox("isDead", &isDead_);
+	ImGui::Checkbox("isGroundHit", &isGroundHit_);
+
 	// 状態の表示
 	ImGui::Text("State: %s", (state_ == PlayerState::AutoPilot) ? "AutoPilot" :
 		(state_ == PlayerState::Manual) ? "Manual" :
@@ -580,12 +583,6 @@ void Player::DeadUpdate() {
 	// タイマーを進める
 	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
 
-	// 5秒経過したらタイトルシーンに戻る
-	if (deathTimer_ >= 2.0f) {
-		isDead_ = true;
-		return; // 以降の処理をスキップ
-	}
-
 	// 回転速度の加算
 	deathRotateVelocity_.x += kRollAcceleration;
 	deathRotateVelocity_.z += kRollAcceleration * 0.5f;
@@ -621,9 +618,6 @@ void Player::DeadUpdate() {
 		// Y座標を地面の高さに揃える
 		worldTransform_.SetTranslate(Translate);
 
-		// フラグを立てる
-		isGroundHit_ = true;
-
 		if (!isParticleEmitted_) {
 
 			// エミッターの位置を設定
@@ -635,6 +629,21 @@ void Player::DeadUpdate() {
 			particleEmitterBlue->Emit();
 
 			isParticleEmitted_ = true;
+		}
+
+		if (!isGroundHit_) {
+
+			// フラグを立てる
+			isGroundHit_ = true;
+
+			// 床に当たったときの時間を保存
+			groundHitTime_ = deathTimer_;
+		}
+
+		// 地面に当たってから2秒経過したら
+		if(deathTimer_- groundHitTime_ >= 2.0f) {
+
+			isDead_ = true;
 		}
 	}
 }

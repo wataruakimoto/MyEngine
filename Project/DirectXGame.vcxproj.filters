@@ -108,6 +108,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\UI\GuideUI.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FogFilter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\PlayState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -212,6 +213,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FogFilter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\PlayState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\FullScreen.hlsli" />
