@@ -6,6 +6,7 @@
 #include "Skybox/SkyboxCommon.h"
 #include "Vector3.h"
 #include "SceneManager.h"
+#include "OffscreenRendering/FilterManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "CameraControll/RailCamera/RailCameraController.h"
 #include "Easing.h"
@@ -30,6 +31,7 @@ void GamePlayScene::Initialize() {
 	// カメラの設定
 	SkyboxCommon::GetInstance()->SetDefaultCamera(camera_.get());
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+	FilterManager::GetInstance()->SetCamera(camera_.get());
 
 	particleManager_->SetCamera(camera_.get());
 
@@ -40,7 +42,7 @@ void GamePlayScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
 	player_->SetGamePlayScene(this);
-	player_->SetPlayerState(PlayerState::AutoPilot); // オートパイロットに設定
+	player_->SetMoveSpeedAuto(6.0f);
 	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
@@ -99,18 +101,6 @@ void GamePlayScene::Initialize() {
 	// プレイヤーをゴールに設定
 	goal_->SetPlayer(player_.get());
 
-	// カメラをフィルターマネージャに設定
-	filterManager_->SetCamera(camera_.get());
-
-	// ラジアルブラーをフィルターマネージャから受け取っとく
-	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
-
-	// ビネットフィルターをフィルターマネージャから受け取っとく
-	vignetteFilter_ = filterManager_->GetVignetteFilter();
-
-	// プレイヤーのHPをもらう
-	previousHP_ = player_->GetHP();
-
 	// ルールUIの生成&初期化
 	ruleUI_ = std::make_unique<RuleUI>();
 	ruleUI_->Initialize();
@@ -134,46 +124,21 @@ void GamePlayScene::Initialize() {
 	// 白フェードの初期化
 	whiteFade_ = std::make_unique<WhiteFade>();
 	whiteFade_->Initialize();
-	whiteFade_->StartFadeAnimation(FadeType::Out);
-	whiteFade_->SetFadeDuration(1.5f); // 少しゆっくり晴れると雰囲気が出ます
+	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::Out);
+	whiteFade_->SetFadeDuration(1.5f);
 
 	// 黒フェードの初期化
 	blackFade_ = std::make_unique<BlackFade>();
 	blackFade_->Initialize();
-	blackFade_->SetFadeDuration(3.0f); // フェード時間を3秒に設定
 
-	// 状態リクエストに減速を設定
-	stateRequest_ = PlayFlowState::Play;
+	// 敵発生データの読み込み
+	LoadEnemyPopData();
+
+	// 初期状態をイントロに設定
+	ChangeState(std::make_unique<IntroState>());
 }
 
 void GamePlayScene::Update() {
-
-	// デスフラグの立った敵を削除
-	for (auto ite = enemies_.begin(); ite != enemies_.end(); ) {
-
-		if ((*ite)->IsDead()) {
-
-			// 敵を削除
-			ite = enemies_.erase(ite);
-
-			// 倒した数をカウントアップ
-			killCount++;
-		}
-		else {
-
-			// 次の敵へ
-			++ite;
-		}
-	}
-
-	// デスフラグが立った弾を削除
-	playerBullets_.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
-
-	// デスフラグが立った敵の弾を削除
-	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
-
-	// オリジンシフトの確認と実行
-	CheckOriginShift();
 
 	// カメラコントローラの更新
 	cameraController_->Update();
@@ -193,17 +158,27 @@ void GamePlayScene::Update() {
 	// スカイボックスの更新
 	skyBox_->Update();
 
-	// 衝突マネージャの更新
-	collisionManager_->Update();
+	// オリジンシフトの確認と実行
+	CheckOriginShift();
 
-	// 衝突判定と応答
-	CheckAllCollisions();
+	// 状態の更新
+	state_->Update();
 
-	// ゴールとプレイヤーの衝突判定
-	goal_->CheckGateCollision(killCount);
+	// 状態の処理が終了していたら
+	if (state_->IsFinished()) {
 
-	// パーティクルマネージャの更新
-	particleManager_->Update();
+		if (dynamic_cast<IntroState*>(state_.get())) {
+			// イントロ状態からプレイ状態へ変更
+			ChangeState(std::make_unique<PlayState>());
+		}
+		else if (dynamic_cast<PlayState*>(state_.get())) {
+			// プレイ状態からリザルト状態へ変更
+			ChangeState(std::make_unique<EndingState>());
+		}
+		else if (dynamic_cast<EndingState*>(state_.get())) {
+			// エンディング状態は何もしない (シーン移行はフェード終了時に行う)
+		}
+	}
 }
 
 void GamePlayScene::DrawFiltered() {
@@ -239,9 +214,6 @@ void GamePlayScene::DrawFiltered() {
 
 	// プレイヤー描画
 	player_->Draw();
-
-	// 衝突マネージャの描画
-	collisionManager_->Draw();
 
 	/// === 半透明オブジェクトの描画準備 === ///
 	Object3dCommon::GetInstance()->SettingDrawingAlpha();
@@ -338,39 +310,11 @@ void GamePlayScene::ShowImGui() {
 
 	whiteFade_->ShowImGui();
 
-	filterManager_->ShowImGui();
+	FilterManager::GetInstance()->ShowImGui();
 
 	particleManager_->ShowImGui();
 
 	goal_->ShowImGui();
-
-#ifdef USE_IMGUI
-
-	ImGui::Begin("プレイシーン");
-
-	ImGui::Text("現在の状態: %d", static_cast<int>(playFlowState_));
-
-	// 各状態に切り替えるボタン
-	ImGui::SameLine();
-	if (ImGui::Button("Play")) {
-		stateRequest_ = PlayFlowState::Play;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Result")) {
-		stateRequest_ = PlayFlowState::Result;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("WhiteFade")) {
-		stateRequest_ = PlayFlowState::WhiteFade;
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("BlackFade")) {
-		stateRequest_ = PlayFlowState::BlackFade;
-	}
-
-	ImGui::End();
-
-#endif // USE_IMGUI
 }
 
 void GamePlayScene::CheckAllCollisions() {
@@ -397,6 +341,15 @@ void GamePlayScene::CheckAllCollisions() {
 	collisionManager_->CheckAllCollisions();
 }
 
+void GamePlayScene::ChangeState(std::unique_ptr<IPlayState> newState) {
+
+	// 状態を変更
+	state_ = std::move(newState);
+
+	// 新しい状態の初期化
+	state_->Initialize(this);
+}
+
 void GamePlayScene::AddPlayerBullet(std::unique_ptr<Bullet> bullet) {
 
 	// 弾をリストに登録
@@ -407,101 +360,6 @@ void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
 
 	// 弾をリストに登録
 	enemyBullets_.push_back(std::move(bullet));
-}
-
-void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
-
-	// ダメージ時の一時ビネットを開始
-	isDamageVignetteActive_ = true;
-	damageVignetteTimer_ = 0;
-
-	// ビネットフィルターを有効化
-	if (vignetteFilter_) {
-		vignetteFilter_->SetIsActive(true);
-	}
-}
-
-void GamePlayScene::OnEnemyDefeated() {
-
-	// カメラシェイクを開始
-	if (cameraController_) {
-		dynamic_cast<FollowCameraController*>(cameraController_.get())->StartShake(0.5f, 0.1f);
-	}
-}
-
-void GamePlayScene::UpdateVignetteEffect() {
-
-	if (!vignetteFilter_ || !player_) {
-		return;
-	}
-
-	uint16_t currentHP = player_->GetHP();
-	PlayerState playerState = player_->GetState();
-
-	// プレイヤーが死亡状態の場合は常時赤いビネットを表示
-	if (playerState == PlayerState::Dead) {
-
-		// ビネットフィルターの設定
-		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
-		vignetteFilter_->SetIntensity(0.7f);
-		vignetteFilter_->SetScale(18.0f);
-		vignetteFilter_->SetRange(1.0f);
-
-		// ダメージ時の一時ビネットはリセット
-		isDamageVignetteActive_ = false;
-		return;
-	}
-
-	// HPが1の場合は常時赤いビネットを表示
-	if (currentHP == 1) {
-
-		// ビネットフィルターの設定
-		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
-		vignetteFilter_->SetIntensity(0.7f);
-		vignetteFilter_->SetScale(18.0f);
-		vignetteFilter_->SetRange(1.0f);
-
-		// ダメージ時の一時ビネットはリセット
-		isDamageVignetteActive_ = false;
-		return;
-	}
-
-	// ダメージ時の一時ビネット処理
-	if (isDamageVignetteActive_) {
-
-		// タイマー更新
-		damageVignetteTimer_ += 1.0f / 60.0f; // 60FPS換算
-
-		// 線形補間で徐々にフェードアウト
-		float t = damageVignetteTimer_ / kDamageVignetteDuration_;
-		float easeT = EaseOutQuad(t); // イージング適用
-		float fadeOut = Lerp(1.0f, 0.0f, easeT); // 1から0へ線形補間
-
-		// ビネットフィルターの設定
-		vignetteFilter_->SetColor({ 1.0f * fadeOut, 0.0f, 0.0f });
-		vignetteFilter_->SetIntensity(0.6f);
-		vignetteFilter_->SetScale(20.0f);
-		vignetteFilter_->SetRange(1.0f);
-
-		// 継続時間が終了したら元に戻す
-		if (damageVignetteTimer_ >= kDamageVignetteDuration_) {
-			isDamageVignetteActive_ = false;
-			vignetteFilter_->SetIsActive(false);
-
-			// デフォルト値に戻す
-			vignetteFilter_->SetColor({ 0.0f, 0.0f, 0.0f });
-			vignetteFilter_->SetIntensity(0.8f);
-			vignetteFilter_->SetScale(16.0f);
-			vignetteFilter_->SetRange(1.0f);
-		}
-	}
-	// HP2以上でダメージビネットも無効な場合はビネットを非表示
-	else if (currentHP >= 2) {
-
-		vignetteFilter_->SetIsActive(false);
-	}
 }
 
 void GamePlayScene::LoadEnemyPopData() {
@@ -603,6 +461,63 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 	}
 }
 
+void GamePlayScene::UpdateListObjects() {
+
+	// デスフラグの立った敵を削除
+	for (auto ite = enemies_.begin(); ite != enemies_.end(); ) {
+
+		if ((*ite)->IsDead()) {
+
+			// 敵を削除
+			ite = enemies_.erase(ite);
+		}
+		else {
+
+			// プレイヤーを敵にセット
+			(*ite)->SetPlayer(player_.get());
+
+			// 敵更新
+			(*ite)->Update();
+
+			// 次の敵へ
+			++ite;
+		}
+	}
+
+	// デスフラグが立った弾を削除
+	playerBullets_.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
+
+	// 弾の更新
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
+
+		bullet->Update();
+	}
+
+	// デスフラグが立った敵の弾を削除
+	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
+
+	// 敵の弾の更新
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+		bullet->Update();
+	}
+}
+
+void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
+
+	if (auto playState = dynamic_cast<PlayState*>(state_.get())) {
+
+		playState->OnPlayerDamaged(currentHP);
+	}
+}
+
+void GamePlayScene::OnEnemyDefeated() {
+
+	if (auto playState = dynamic_cast<PlayState*>(state_.get())) {
+
+		playState->OnEnemyDefeated();
+	}
+}
+
 void GamePlayScene::CheckOriginShift() {
 
 	float playerZ = player_->GetWorldTransform().GetWorldPosition().z;
@@ -638,123 +553,3 @@ void GamePlayScene::ShiftWorld(float shiftZ) {
 	goal_->GetGateWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 }
 
-void GamePlayScene::PlayUpdate() {
-
-	// ビネットエフェクトの更新
-	UpdateVignetteEffect();
-
-	// ゴールライン到達の判定
-	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goal_->GetWorldTransform().GetTranslate().z;
-
-	// プレイヤーのデスフラグを取得
-	bool isPlayerDead = player_->IsDead();
-
-	// ゴールラインに到達していたら
-	if (isReachedGoalLine) {
-
-		// 状態を結果表示に変更
-		stateRequest_ = PlayFlowState::Result;
-	}
-	// プレイヤーがデスフラグが立っていたら
-	else if (isPlayerDead) {
-
-		// 黒フェード状態に変更
-		stateRequest_ = PlayFlowState::BlackFade;
-	}
-}
-
-void GamePlayScene::ResultInitialize() {
-
-	// ノルマクリアの判定
-	bool isNormaClear = killCount >= goal_->GetNormaCount();
-
-	// ノルマクリアしていたら
-	if (isNormaClear) {
-
-		// リザルトUIにクリアアニメーションを開始させる
-		resultUI_->StartAnimation(ResultType::Clear);
-	}
-	else {
-
-		// リザルトUIにゲームオーバーアニメーションを開始させる
-		resultUI_->StartAnimation(ResultType::GameOver);
-	}
-
-	// プレイヤーの操作を無効化
-	player_->SetPlayerState(PlayerState::AutoPilot);
-	player_->SetMoveSpeedAuto(0.5f);
-}
-
-void GamePlayScene::ResultUpdate() {
-
-	// リザルトUIの更新
-	resultUI_->Update();
-
-	// リザルトUIのアニメーションが完了していたら
-	if (resultUI_->IsAnimationFinished()) {
-
-		// ノルマクリアの判定
-		bool isNormaClear = killCount >= goal_->GetNormaCount();
-
-		// ノルマクリアしていたら
-		if (isNormaClear) {
-
-			// 状態を白フェードに変更
-			stateRequest_ = PlayFlowState::WhiteFade;
-		}
-		else {
-
-			// 状態を黒フェードに変更
-			stateRequest_ = PlayFlowState::BlackFade;
-		}
-	}
-}
-
-void GamePlayScene::WhiteFadeInitialize() {
-
-	// 白フェードアニメーション開始
-	whiteFade_->StartFadeAnimation(FadeType::In);
-}
-
-void GamePlayScene::WhiteFadeUpdate() {
-
-	// 白フェードの更新
-	whiteFade_->Update();
-
-	// フェードが完了していたら
-	if (whiteFade_->IsFadeFinished()) {
-		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("CLEAR");
-	}
-}
-
-void GamePlayScene::BlackFadeInitialize() {
-
-	// ビネットフィルターをオフにする
-	if (vignetteFilter_) {
-		vignetteFilter_->SetIsActive(false);
-	}
-
-	// プレイヤーが生存していたら
-	if (!player_->IsDead()) {
-
-		// プレイヤーの操作を無効化
-		player_->SetPlayerState(PlayerState::AutoPilot);
-		player_->SetMoveSpeedAuto(0.5f);
-	}
-
-	// 黒フェードアニメーション開始
-	blackFade_->StartFadeAnimation();
-}
-
-void GamePlayScene::BlackFadeUpdate() {
-
-	// 黒フェードの更新
-	blackFade_->Update();
-
-	// フェードが完了していたら
-	if (blackFade_->IsFadeFinished()) {
-		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("OVER");
-	}
-}

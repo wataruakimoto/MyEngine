@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseScene.h"
+#include "PlayState.h"
 #include "Collision/CollisionManager.h"
-#include "OffscreenRendering/FilterManager.h"
 #include "Particle/ParticleManager.h"
 #include "Particle/ParticleCommon.h"
 #include "Player/Player.h"
@@ -28,15 +28,6 @@
 #include <sstream>
 #include <memory>
 #include <optional>
-
-class RadialBlurFilter;
-
-enum class PlayFlowState {
-	Play,		// プレイ
-	Result,     // 結果表示
-	WhiteFade,	// 白フェード
-	BlackFade,  // 黒フェード
-};
 
 /// ===== ゲームプレイシーン ===== ///
 class GamePlayScene : public BaseScene {
@@ -82,6 +73,12 @@ public:
 	void CheckAllCollisions();
 
 	/// <summary>
+	/// 状態を変更
+	/// </summary>
+	/// <param name="newState"></param>
+	void ChangeState(std::unique_ptr<IPlayState> newState);
+
+	/// <summary>
 	/// 自機の弾の追加
 	/// </summary>
 	/// <param name="bullet"></param>
@@ -94,6 +91,21 @@ public:
 	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
 
 	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
+	void LoadEnemyPopData();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+	
+	/// <summary>
+	/// リストで管理しているオブジェクトの更新
+	/// </summary>
+	void UpdateListObjects();
+
+	/// <summary>
 	/// プレイヤーがダメージを受けたときの処理
 	/// </summary>
 	/// <param name="currentHP">現在のHP</param>
@@ -103,21 +115,11 @@ public:
 	/// 敵を倒したときの処理
 	/// </summary>
 	void OnEnemyDefeated();
-
+	
 	/// <summary>
-	/// ビネットエフェクトの更新
+	/// 倒した数をカウントアップ
 	/// </summary>
-	void UpdateVignetteEffect();
-
-	/// <summary>
-	/// 敵発生データの読み込み
-	/// </summary>
-	void LoadEnemyPopData();
-
-	/// <summary>
-	/// 敵発生コマンドの更新
-	/// </summary>
-	void UpdateEnemyPopCommands();
+	void AddKillCount() { killCount++; }
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -135,32 +137,16 @@ private:
 	/// <param name="shiftZ">手前にずらす量</param>
 	void ShiftWorld(float shiftZ);
 
-	/// ===== 各状態の処理 ===== ///
-
-	void PlayInitialize();
-
-	void PlayUpdate();
-
-	void ResultInitialize();
-
-	void ResultUpdate();
-
-	void WhiteFadeInitialize();
-
-	void WhiteFadeUpdate();
-
-	void BlackFadeInitialize();
-
-	void BlackFadeUpdate();
-
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
 public:
 
-	Player* GetPlayer() { return player_.get(); }
+	const int& GetKillCount() const { return killCount; }
 
-	RuleUI* GetRuleUI() { return ruleUI_.get(); }
+	ICameraController* GetCameraController() { return cameraController_.get(); }
+
+	Player* GetPlayer() { return player_.get(); }
 
 	Goal* GetGoal() { return goal_.get(); }
 
@@ -170,29 +156,43 @@ public:
 
 	LockOn* GetLockOn() { return lockOn_.get(); }
 
+	RuleUI* GetRuleUI() { return ruleUI_.get(); }
+
 	NormaUI* GetNormaUI() { return normaUI_.get(); }
 
 	GuideUI* GetGuideUI() { return guideUI_.get(); }
+
+	ResultUI* GetResultUI() { return resultUI_.get(); }
+
+	WhiteFade* GetWhiteFade() { return whiteFade_.get(); }
+
+	BlackFade* GetBlackFade() { return blackFade_.get(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// フィルターマネージャのインスタンス
-	FilterManager* filterManager_ = FilterManager::GetInstance();
+	std::unique_ptr<IPlayState> state_ = nullptr;
 
-	// パーティクルマネージャのインスタンス
-	ParticleManager* particleManager_ = ParticleManager::GetInstance();
+	// 敵を倒した数
+	int killCount = 0;
 
-	// カメラ
-	std::unique_ptr<Camera> camera_ = nullptr;
+	// 敵発生コマンド
+	std::stringstream enemyPopCommands;
 
-	// カメラコントローラ
+	// 待機中フラグ
+	bool isWait_ = true;
+	// 待機タイマー
+	int32_t standbyTimer_ = 0;
+
+	// ループする距離
+	const float kLoopDistance = 1000.0f;
+
+	/// ===== オブジェクト ===== ///
+
+	// カメラコントローラのポインタ
 	std::unique_ptr<ICameraController> cameraController_ = nullptr;
-
-	// 衝突マネージャのポインタ
-	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
 
 	// プレイヤーのポインタ
 	std::unique_ptr<Player> player_ = nullptr;
@@ -209,12 +209,6 @@ private:
 	// 3Dレティクルのポインタ
 	std::unique_ptr<Reticle3D> reticle3D_ = nullptr;
 
-	// 2Dレティクルのポインタ
-	std::unique_ptr<Reticle2D> reticle2D_ = nullptr;
-
-	// ロックオンのポインタ
-	std::unique_ptr<LockOn> lockOn_ = nullptr;
-
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;
 
@@ -224,53 +218,16 @@ private:
 	// スカイボックスのポインタ
 	std::unique_ptr<SkyBoxGame> skyBox_ = nullptr;
 
-	// 敵を倒した数
-	int killCount = 0;
+	// ゴールのポインタ
+	std::unique_ptr<Goal> goal_ = nullptr;
 
-	// 敵発生コマンド
-	std::stringstream enemyPopCommands;
+	/// ===== スプライト ===== ///
 
-	// 待機中フラグ
-	bool isWait_ = true;
+	// 2Dレティクルのポインタ
+	std::unique_ptr<Reticle2D> reticle2D_ = nullptr;
 
-	// 待機タイマー
-	int32_t standbyTimer_ = 0;
-
-	// プレイの流れの状態
-	PlayFlowState playFlowState_ = PlayFlowState::Play;
-
-	// 状態リクエスト
-	std::optional<PlayFlowState> stateRequest_ = std::nullopt;
-
-	// ラジアルブラー借りポインタ
-	RadialBlurFilter* radialBlurFilter_ = nullptr;
-
-	// ブラーの中心座標
-	Vector2 blurCenter_ = { 0.5f, 0.5f };
-
-	// ブラーの強さ
-	float blurStrength_ = 0.07f;
-
-	// ブラーの最小値
-	const float kMinBlurStrength = 0.0f;
-
-	// ビネットフィルター借りポインタ
-	VignetteFilter* vignetteFilter_ = nullptr;
-
-	// ビネットエフェクト用変数
-	bool isDamageVignetteActive_ = false; // ダメージ時の一時ビネット有効フラグ
-	float damageVignetteTimer_ = 0.0f; // ダメージビネットのタイマー
-	const float kDamageVignetteDuration_ = 0.5f; // ダメージビネットの持続時間 (秒)
-	uint16_t previousHP_ = 0; // 前フレームのHP
-
-	// プレイヤーの移動速度
-	float playerMoveSpeed_ = 4.0f;
-
-	// プレイ時のプレイヤーの移動速度
-	const float kPlayerMoveSpeedPlay = 0.5f;
-
-	// ループする距離
-	const float kLoopDistance = 1000.0f;
+	// ロックオンのポインタ
+	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
 	// ルールUI
 	std::unique_ptr<RuleUI> ruleUI_ = nullptr;
@@ -278,14 +235,11 @@ private:
 	// ノルマUI
 	std::unique_ptr<NormaUI> normaUI_ = nullptr;
 
-	// リザルトUI
-	std::unique_ptr<ResultUI> resultUI_ = nullptr;
-
 	// ガイドUI
 	std::unique_ptr<GuideUI> guideUI_ = nullptr;
 
-	// パーティクル共通のインスタンス
-	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
+	// リザルトUI
+	std::unique_ptr<ResultUI> resultUI_ = nullptr;
 
 	// 白フェードのポインタ
 	std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
@@ -293,6 +247,17 @@ private:
 	// 黒フェードのポインタ
 	std::unique_ptr<BlackFade> blackFade_ = nullptr;
 
-	// ゴールのポインタ
-	std::unique_ptr<Goal> goal_ = nullptr;
+	/// ===== エンジン ===== ///
+
+	// カメラ
+	std::unique_ptr<Camera> camera_ = nullptr;
+
+	// 衝突マネージャのポインタ
+	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
+
+	// パーティクルマネージャのインスタンス
+	ParticleManager* particleManager_ = ParticleManager::GetInstance();
+
+	// パーティクル共通のインスタンス
+	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
 };

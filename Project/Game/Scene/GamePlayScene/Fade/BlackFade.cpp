@@ -75,7 +75,7 @@ void BlackFade::ShowImGui() {
 
 	// フェード開始ボタン
 	if (ImGui::Button("Start Fade")) {
-		StartFadeAnimation();
+		StartFadeAnimation(FadeType::In);
 	}
 
 	// フェードリセットボタン
@@ -91,16 +91,24 @@ void BlackFade::ShowImGui() {
 #endif // USE_IMGUI
 }
 
-void BlackFade::StartFadeAnimation() {
+void BlackFade::StartFadeAnimation(FadeType type) {
 
 	// フェード状態をリセット
 	fadeTimer_ = 0.0f;
-	alpha_ = 0.0f;
 	isFading_ = true;
 	isFadeFinished_ = false;
+	fadeType_ = type;
 
-	// スプライトの色を初期化
-	sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+	if (fadeType_ == FadeType::In) {
+		// スプライトの色を透明に設定
+		sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+		alpha_ = 0.0f;
+	}
+	else {
+		// スプライトの色を不透明に設定
+		sprite_->SetColor({ 1.0f, 1.0f, 1.0f, 1.0f });
+		alpha_ = 1.0f;
+	}
 }
 
 void BlackFade::ResetFade() {

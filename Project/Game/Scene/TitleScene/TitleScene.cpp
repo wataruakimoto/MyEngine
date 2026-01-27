@@ -436,7 +436,7 @@ void TitleScene::SpeedUpUpdate() {
 
 void TitleScene::WhiteFadeInitialize() {
 	
-	whiteFade_->StartFadeAnimation(FadeType::In);
+	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
 }
 
 void TitleScene::WhiteFadeUpdate() {

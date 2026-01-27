@@ -7,8 +7,19 @@
 class GamePlayScene;
 class FilterManager;
 class RadialBlurFilter;
+class VignetteFilter;
+class ICameraController;
 class Player;
+class Goal;
+class Reticle3D;
+class Reticle2D;
+class LockOn;
 class RuleUI;
+class NormaUI;
+class GuideUI;
+class ResultUI;
+class WhiteFade;
+class BlackFade;
 
 /// ===== プレイシーンの状態 ===== ///
 class IPlayState {
@@ -25,15 +36,24 @@ public:
 	virtual void Update() = 0;
 
 ///-------------------------------------------/// 
+/// ゲッター
+///-------------------------------------------///
+public:
+
+	bool IsFinished() const { return isFinished_; }
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 protected:
+
+	bool isFinished_ = false;
 
 	// シーンの借りポインタ
 	GamePlayScene* scene_ = nullptr;
 };
 
-/// ===== プレイシーンのイントロ状態 ===== ///
+/// ===== イントロ状態 ===== ///
 class IntroState : public IPlayState {
 
 ///-------------------------------------------/// 
@@ -101,8 +121,14 @@ private:
 	// プレイヤーの借りポインタ
 	Player* player_ = nullptr;
 
+	// ゴールの借りポインタ
+	Goal* goal_ = nullptr;
+
 	// ルールUIの借りポインタ
 	RuleUI* ruleUI_ = nullptr;
+
+	// 白フェードの借りポインタ
+	WhiteFade* whiteFade_ = nullptr;
 };
 
 /// ===== プレイ状態 ===== ///
@@ -117,12 +143,36 @@ public:
 
 	void Update() override;
 
+	/// <summary>
+	/// プレイヤーがダメージを受けたときの処理
+	/// </summary>
+	/// <param name="currentHP">現在のHP</param>
+	void OnPlayerDamaged(uint16_t currentHP);
+
+	/// <summary>
+	/// 敵を倒したときの処理
+	/// </summary>
+	void OnEnemyDefeated();
+
+///-------------------------------------------///
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	/// <summary>
+	/// ビネットエフェクトの更新
+	/// </summary>
+	void UpdateVignetteEffect();
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	int killCount_ = 0;
+	// ビネットエフェクト用変数
+	bool isDamageVignetteActive_ = false; // ダメージ時の一時ビネット有効フラグ
+	float damageVignetteTimer_ = 0.0f; // ダメージビネットのタイマー
+	const float kDamageVignetteDuration_ = 0.5f; // ダメージビネットの持続時間 (秒)
 
 	/// ===== 借りポインタ・インスタンス ===== ///
 
@@ -146,10 +196,19 @@ private:
 
 	// ガイドUIの借りポインタ
 	GuideUI* guideUI_ = nullptr;
+
+	// カメラコントローラーの借りポインタ
+	ICameraController* cameraController_ = nullptr;
+
+	// フィルターマネージャのインスタンス
+	FilterManager* filterManager_ = nullptr;
+
+	// ビネットフィルター借りポインタ
+	VignetteFilter* vignetteFilter_ = nullptr;
 };
 	
-/// ===== リザルト状態 ===== ///
-class ResultState : public IPlayState {
+/// ===== エンディング状態 ===== ///
+class EndingState : public IPlayState {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -161,8 +220,47 @@ public:
 	void Update() override;
 
 ///-------------------------------------------/// 
+/// クラス内関数
+///-------------------------------------------///
+private:
+
+	void ShowUI();
+
+	void FadeIn();
+
+///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
+	bool isClear_ = false;
+
+	bool isPlayerDead_ = false;
+	
+	bool isFadeStarted_ = false;
+
+	bool isAnimationFinished_ = false;
+
+	/// ===== 借りポインタ・インスタンス ===== ///
+
+	// プレイヤーの借りポインタ
+	Player* player_ = nullptr;
+
+	// ゴールの借りポインタ
+	Goal* goal_ = nullptr;
+
+	// リザルトUIの借りポインタ
+	ResultUI* resultUI_ = nullptr;
+
+	// 白フェードの借りポインタ
+	WhiteFade* whiteFade_ = nullptr;
+
+	// 黒フェードの借りポインタ
+	BlackFade* blackFade_ = nullptr;
+
+	// フィルターマネージャのインスタンス
+	FilterManager* filterManager_ = nullptr;
+
+	// ビネットフィルター借りポインタ
+	VignetteFilter* vignetteFilter_ = nullptr;
 };
