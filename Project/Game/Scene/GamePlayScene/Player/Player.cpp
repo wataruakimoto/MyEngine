@@ -1,3 +1,5 @@
+#define NOMINMAX
+
 #include "Player.h"
 #include "Input.h"
 #include "GamePlayScene.h"
@@ -402,10 +404,25 @@ void Player::ClampPosition() {
 	// 加算後の座標を取得
 	Vector3 currentPos = worldTransform_.GetTranslate();
 
-	// X軸のクランプ
-	currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.x);
-	// Y軸のクランプ
-	currentPos.y = std::clamp(currentPos.y, kMoveMin.y + scale.y, kMoveMax.y - scale.y);
+	//// X軸のクランプ
+	//currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.x);
+	//// Y軸のクランプ
+	//currentPos.y = std::clamp(currentPos.y, kMoveMin.y + scale.y, kMoveMax.y - scale.y);
+
+	// Y軸のクランプ(0以上)
+	currentPos.y = std::max(currentPos.y, 0.0f + scale.y);
+
+	// 原点からの距離を計算(XZ平面)
+	float distanceFromOrigin = std::sqrt(currentPos.x * currentPos.x + currentPos.y * currentPos.y);
+
+	// 半径25を超えている場合、円周上に制限
+	const float kMaxRadius = 25.0f;
+	if (distanceFromOrigin > kMaxRadius - scale.x) {
+		float clampedRadius = kMaxRadius - scale.x;
+		float ratio = clampedRadius / distanceFromOrigin;
+		currentPos.x *= ratio;
+		currentPos.y *= ratio;
+	}
 
 	// クランプ後の座標を設定
 	worldTransform_.SetTranslate(currentPos);

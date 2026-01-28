@@ -24,7 +24,15 @@ void GuideUI::Initialize() {
 	buttonDSprite->SetAnchorPoint({ 0.5f, 0.5f }); // 中心に設定
 	buttonDSprite->SetSize({ 96.0f, 96.0f });
 
+	// ボタンESCスプライト生成
+	buttonESCSprite = std::make_unique<Sprite>();
+	buttonESCSprite->Initialize("Guide/Pause.png");
+	buttonESCSprite->SetPosition({ 64.0f, 64.0f });
+
 	isShooting = false;
+	isRollLeft = false;
+	isRollRight = false;
+	isPause = false;
 
 	input = Input::GetInstance();
 }
@@ -82,6 +90,19 @@ void GuideUI::Update() {
 		}
 	}
 
+	//if (input->TriggerKey(VK_ESCAPE)) {
+	//	if (isPause == false) {
+	//		buttonESCSprite->SetTexture("Resources/Textures/Guide/Back.png"); // 戻るの画像へ
+	//		isPause = true; // 状態を「ポーズ中」にする
+	//	}
+	//}
+	//else {
+	//	if (isPause == true) {
+	//		buttonESCSprite->SetTexture("Resources/Textures/Guide/Pause.png"); // ポーズの画像へ
+	//		isPause = false; // 状態を「通常」にする
+	//	}
+	//}
+
 	// マウススプライト更新
 	mouseSprite->Update();
 
@@ -90,6 +111,9 @@ void GuideUI::Update() {
 
 	// ボタンDスプライト更新
 	buttonDSprite->Update();
+
+	// ボタンESCスプライト更新
+	buttonESCSprite->Update();
 }
 
 void GuideUI::Draw() {
@@ -102,9 +126,10 @@ void GuideUI::Draw() {
 
 	// ボタンDスプライト描画
 	buttonDSprite->Draw();
+
+	// ボタンESCスプライト描画
+	buttonESCSprite->Draw();
 }
 
 void GuideUI::ShowImGui() {
-
-	mouseSprite->ShowImGui("MouseSprite");
 }

@@ -158,6 +158,13 @@ void MyGame::LoadAllResource() {
 	textureManager->LoadTextureRelative("Guide/ButtonD.png");
 	textureManager->LoadTextureRelative("Guide/PushA.png");
 	textureManager->LoadTextureRelative("Guide/PushD.png");
+	textureManager->LoadTextureRelative("Guide/Pause.png");
+	textureManager->LoadTextureRelative("Guide/Back.png");
+	textureManager->LoadTextureRelative("White1x1.png");
+	textureManager->LoadTextureRelative("PauseUI/ResumeButton.png");
+	textureManager->LoadTextureRelative("PauseUI/RestartButton.png");
+	textureManager->LoadTextureRelative("PauseUI/QuitButton.png");
+	textureManager->LoadTextureRelative("PauseUI/Frame.png");
 
 	textureManager->LoadTextureRelative("rostock_laage_airport_4k.dds");
 

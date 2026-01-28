@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector2.h"
+#include "UI/PauseUI.h"
 
 /// ===== 前方宣言 ===== ///
 
@@ -143,6 +144,8 @@ public:
 
 	void Update() override;
 
+	void DrawUI();
+
 	/// <summary>
 	/// プレイヤーがダメージを受けたときの処理
 	/// </summary>
@@ -263,4 +266,38 @@ private:
 
 	// ビネットフィルター借りポインタ
 	VignetteFilter* vignetteFilter_ = nullptr;
+};
+
+/// ===== ポーズ状態 ===== ///
+class PauseState : public IPlayState {
+
+///-------------------------------------------/// 
+/// メンバ関数
+///-------------------------------------------///
+public:
+
+	void Initialize(GamePlayScene* scene) override;
+
+	void Update() override;
+
+	void DrawPauseUI();
+
+///-------------------------------------------/// 
+/// メンバ変数
+///-------------------------------------------///
+private:
+
+	// ポーズUIのインスタンス
+	std::unique_ptr<PauseUI> pauseUI = nullptr;
+
+	// ノルマUIの借りポインタ
+	NormaUI* normaUI_ = nullptr;
+
+	// ガイドUIの借りポインタ
+	GuideUI* guideUI_ = nullptr;
+
+	// 白フェードの借りポインタ
+	WhiteFade* whiteFade_ = nullptr;
+
+	bool isSelectedRestart_ = false;
 };
