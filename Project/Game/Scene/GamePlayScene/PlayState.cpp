@@ -5,6 +5,7 @@
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "Easing.h"
 #include "WinApp.h"
+#include "Input.h"
 
 #include <algorithm>
 
@@ -175,6 +176,12 @@ void PlayState::Initialize(GamePlayScene* scene) {
 
 void PlayState::Update() {
 
+	/// ===== ポーズ処理 ===== ///
+	if(Input::GetInstance()->TriggerKey(VK_ESCAPE)) {
+		scene_->TogglePause();
+		return;
+	}
+
 	/// ===== 各種オブジェクトの更新 ===== ///
 
 	// プレイヤー更新
@@ -241,6 +248,21 @@ void PlayState::Update() {
 
 	// ビネットエフェクトの更新
 	UpdateVignetteEffect();
+}
+
+void PlayState::DrawUI() {
+
+	// 2Dレティクルの描画
+	reticle2D_->Draw();
+
+	// ロックオンの描画
+	lockOn_->Draw();
+
+	// ノルマUIの描画
+	normaUI_->Draw();
+
+	// ガイドUIの描画
+	guideUI_->Draw();
 }
 
 void PlayState::OnPlayerDamaged(uint16_t currentHP) {
@@ -361,7 +383,7 @@ void EndingState::Initialize(GamePlayScene* scene) {
 
 	// 白フェードのポインタを取得
 	whiteFade_ = scene_->GetWhiteFade();
-	
+
 	// フェード時間を設定
 	whiteFade_->SetFadeDuration(3.0f);
 
@@ -399,7 +421,7 @@ void EndingState::Initialize(GamePlayScene* scene) {
 
 		// クリアしていたら
 		if (isClear_) {
-			
+
 			// プレイヤーの速度を0.5にする
 			player_->SetMoveSpeedAuto(0.5f);
 
@@ -499,4 +521,101 @@ void EndingState::FadeIn() {
 			SceneManager::GetInstance()->ChangeScene("OVER");
 		}
 	}
+}
+
+void PauseState::Initialize(GamePlayScene* scene) {
+
+	// 引数をメンバ変数にセット
+	scene_ = scene;
+
+	// ポーズUIの生成・初期化
+	pauseUI = std::make_unique<PauseUI>();
+	pauseUI->Initialize();
+
+	// ノルマUIのポインタを取得
+	normaUI_ = scene_->GetNormaUI();
+
+	// ガイドUIのポインタを取得
+	guideUI_ = scene_->GetGuideUI();
+
+	// 白フェードのポインタを取得
+	whiteFade_ = scene_->GetWhiteFade();
+
+	isSelectedRestart_ = false;
+}
+
+void PauseState::Update() {
+
+	guideUI_->Update();
+
+	if (isSelectedRestart_) {
+
+		// 白フェードの更新
+		whiteFade_->Update();
+
+		if (whiteFade_->IsFadeFinished()) {
+
+			SceneManager::GetInstance()->ChangeScene("PLAY");
+		}
+
+		return;
+	}
+
+	// ポーズUIの更新
+	pauseUI->Update();
+
+	// 現在の選択肢を取得
+	PauseSelect selected = pauseUI->GetCurrentSelect();
+
+	// 選択肢に応じた処理
+	switch (selected) {
+
+	case PauseSelect::Resume:
+
+		scene_->TogglePause();
+
+		isFinished_ = true;
+
+		return;
+
+	case PauseSelect::Restart:
+		
+		if (!isSelectedRestart_) {
+
+			// 白フェードの開始
+			whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
+			isSelectedRestart_ = true;
+		}
+
+		break;
+
+	case PauseSelect::Quit:
+
+		SceneManager::GetInstance()->ChangeScene("TITLE");
+		
+		return;
+
+	case PauseSelect::None:
+		// 何もしない
+		break;
+	}
+
+	if(Input::GetInstance()->TriggerKey(VK_ESCAPE)){
+
+		scene_->TogglePause();
+		
+		return;
+	}
+}
+
+void PauseState::DrawPauseUI() {
+
+	// ポーズUIの描画
+	pauseUI->Draw();
+
+	// ノルマUIの描画
+	normaUI_->Draw();
+
+	// ガイドUIの描画
+	guideUI_->Draw();
 }

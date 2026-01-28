@@ -119,7 +119,17 @@ public:
 	/// <summary>
 	/// 倒した数をカウントアップ
 	/// </summary>
-	void AddKillCount() { killCount++; }
+	void AddKillCount() { killCount_++; }
+
+	/// <summary>
+	/// ポーズの切り替え
+	/// </summary>
+	void TogglePause();
+
+	/// <summary>
+	/// リスタート処理
+	/// </summary>
+	void Restart();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -142,7 +152,7 @@ private:
 ///-------------------------------------------///
 public:
 
-	const int& GetKillCount() const { return killCount; }
+	const int& GetKillCount() const { return killCount_; }
 
 	ICameraController* GetCameraController() { return cameraController_.get(); }
 
@@ -174,9 +184,10 @@ public:
 private:
 
 	std::unique_ptr<IPlayState> state_ = nullptr;
+	std::unique_ptr<IPlayState> pauseState_ = nullptr;
 
 	// 敵を倒した数
-	int killCount = 0;
+	int killCount_ = 0;
 
 	// 敵発生コマンド
 	std::stringstream enemyPopCommands;

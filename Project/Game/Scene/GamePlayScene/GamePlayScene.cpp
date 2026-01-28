@@ -235,23 +235,23 @@ void GamePlayScene::DrawUnfiltered() {
 
 	// TODO: 全てのスプライト個々の描画
 
-	// 2Dレティクルの描画
-	reticle2D_->Draw();
-
-	// ロックオンの描画
-	lockOn_->Draw();
-
 	// ルールUIの描画
 	ruleUI_->Draw();
-
-	// ノルマUIの描画
-	normaUI_->Draw();
 
 	// リザルトUIの描画
 	resultUI_->Draw();
 
-	// ガイドUIの描画
-	guideUI_->Draw();
+	if (PlayState* playState = dynamic_cast<PlayState*>(state_.get())) {
+		
+		// プレイ状態ならプレイUIの描画
+		playState->DrawUI();
+	}
+
+	if (PauseState* pauseState = dynamic_cast<PauseState*>(state_.get())) {
+
+		// ポーズ状態ならポーズUIの描画
+		pauseState->DrawPauseUI();
+	}
 
 	// 白フェードの描画
 	whiteFade_->Draw();
@@ -516,6 +516,68 @@ void GamePlayScene::OnEnemyDefeated() {
 
 		playState->OnEnemyDefeated();
 	}
+}
+
+void GamePlayScene::TogglePause() {
+
+	if (!pauseState_) {
+
+		// ポーズ状態を保存
+		pauseState_ = std::move(state_);
+
+		// ポーズ状態へ変更
+		ChangeState(std::make_unique<PauseState>());
+	}
+	else {
+
+		// ポーズ解除
+		state_ = std::move(pauseState_);
+
+		// ポーズ状態ポインタをクリア
+		pauseState_ = nullptr;
+	}
+}
+
+void GamePlayScene::Restart() {
+
+	/// ===== オブジェクトのクリア ===== ///
+
+	enemies_.clear();
+	playerBullets_.clear();
+	enemyBullets_.clear();
+
+	/// ===== 進行度のリセット ===== ///
+
+	killCount_ = 0;
+	normaUI_->SetCurrentValue(0);
+
+	// 敵発生データの読み込み
+	LoadEnemyPopData();
+
+	/// ===== 初期化 ===== ///
+
+	cameraController_->Initialize();
+
+	player_->Initialize();
+	player_->GetWorldTransform().SetTranslate({ 0.0f, 5.0f, 0.0f });
+	player_->SetMoveSpeedAuto(6.0f);
+
+	goal_->Initialize();
+
+	ruleUI_->Initialize();
+
+	/// ===== フェードのリセット ===== ///
+
+	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::Out);
+
+	/// ===== 状態の更新 ===== ///
+
+	// ステートを破棄
+	state_.reset();
+	pauseState_.reset();
+
+	// Introから再スタート
+	ChangeState(std::make_unique<IntroState>());
 }
 
 void GamePlayScene::CheckOriginShift() {

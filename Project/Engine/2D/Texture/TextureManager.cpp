@@ -69,7 +69,14 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	}
 	else { // 圧縮されていないフォーマットなら
 
-		hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 4, mipImages);
+		// 画像サイズが1x1の場合はミップマップ生成をスキップ
+		if (image.GetMetadata().width <= 1 && image.GetMetadata().height <= 1) {
+			mipImages = std::move(image);
+		}
+		else {
+			hr = DirectX::GenerateMipMaps(image.GetImages(), image.GetImageCount(), image.GetMetadata(), DirectX::TEX_FILTER_SRGB, 4, mipImages);
+			assert(SUCCEEDED(hr));
+		}
 	}
 
 	assert(SUCCEEDED(hr));

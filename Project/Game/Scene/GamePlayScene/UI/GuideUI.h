@@ -42,11 +42,16 @@ private:
 	// ボタンDスプライト
 	std::unique_ptr<Sprite> buttonDSprite = nullptr;
 
+	// ボタンESCスプライト
+	std::unique_ptr<Sprite> buttonESCSprite = nullptr;
+
 	bool isShooting = false;
 
 	bool isRollLeft = false;
 
 	bool isRollRight = false;
+
+	bool isPause = false;
 
 	// input
 	Input* input = nullptr;
