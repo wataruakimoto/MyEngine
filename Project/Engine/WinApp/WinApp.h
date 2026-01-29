@@ -42,6 +42,12 @@ public: // メンバ関数
 	bool ProcessMessage();
 
 	/// <summary>
+	/// ウィンドウモードの切り替え
+	/// </summary>
+	/// <param name="isWindowMode">ウィンドウモード</param>
+	void ChangeWindowMode(bool isWindowMode);
+
+	/// <summary>
 	/// HWNDのGetter
 	/// </summary>
 	/// <returns>hwnd</returns>

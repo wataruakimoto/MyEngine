@@ -69,6 +69,8 @@ void WinApp::Initialize() {
 		nullptr // オプション
 	);
 
+	//ShowCursor(false);
+
 	// システムタイマーの分解能を上げる
 	timeBeginPeriod(1);
 }
@@ -99,4 +101,17 @@ bool WinApp::ProcessMessage() {
 	}
 
 	return false;
+}
+
+void WinApp::ChangeWindowMode(bool isWindowMode) {
+
+	// ウィンドウ表示
+	if (isWindowMode) {
+		SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+	}
+	// フルスクリーン表示
+	else {
+		SetWindowLong(hwnd, GWL_STYLE, WS_POPUP);
+	}
+	ShowWindow(hwnd, SW_SHOW);
 }
