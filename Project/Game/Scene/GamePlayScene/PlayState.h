@@ -300,4 +300,10 @@ private:
 	WhiteFade* whiteFade_ = nullptr;
 
 	bool isSelectedRestart_ = false;
+
+	// フィルターマネージャのインスタンス
+	FilterManager* filterManager_ = nullptr;
+
+	// ビネットフィルター借りポインタ
+	VignetteFilter* vignetteFilter_ = nullptr;
 };

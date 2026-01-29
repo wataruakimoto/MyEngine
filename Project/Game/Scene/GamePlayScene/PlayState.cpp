@@ -542,6 +542,12 @@ void PauseState::Initialize(GamePlayScene* scene) {
 	whiteFade_ = scene_->GetWhiteFade();
 
 	isSelectedRestart_ = false;
+
+	// フィルターマネージャのインスタンスを取得
+	filterManager_ = FilterManager::GetInstance();
+
+	// ビネットフィルターのポインタを取得
+	vignetteFilter_ = filterManager_->GetVignetteFilter();
 }
 
 void PauseState::Update() {
@@ -554,6 +560,8 @@ void PauseState::Update() {
 		whiteFade_->Update();
 
 		if (whiteFade_->IsFadeFinished()) {
+
+			vignetteFilter_->SetIsActive(false);
 
 			SceneManager::GetInstance()->ChangeScene("PLAY");
 		}
@@ -590,6 +598,8 @@ void PauseState::Update() {
 		break;
 
 	case PauseSelect::Quit:
+
+		vignetteFilter_->SetIsActive(false);
 
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 		
