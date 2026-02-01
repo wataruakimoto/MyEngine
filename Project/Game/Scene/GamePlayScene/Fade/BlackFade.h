@@ -9,6 +9,17 @@
 class BlackFade {
 
 ///-------------------------------------------/// 
+/// 構造体
+///-------------------------------------------///
+public:
+
+	// フェードタイプ
+	enum class FadeType {
+		In,
+		Out,
+	};
+
+///-------------------------------------------/// 
 /// メンバ関数
 ///-------------------------------------------///
 public:
@@ -41,7 +52,7 @@ public:
 	/// <summary>
 	/// 白フェードアニメーション開始
 	/// </summary>
-	void StartFadeAnimation();
+	void StartFadeAnimation(FadeType type);
 
 	/// <summary>
 	/// フェードアニメーションリセット
@@ -110,5 +121,8 @@ private:
 
 	// デルタタイム
 	const float kDeltaTime = 1.0f / 60.0f;
+
+	// フェードタイプ
+	FadeType fadeType_ = FadeType::In;
 };
 

@@ -197,6 +197,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.cpp" />
     <ClCompile Include="Engine\Base\SceneBuffer.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\PlayState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\PauseUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Math\Easing.h" />
@@ -301,6 +303,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\SceneBuffer.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\PlayState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\PauseUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

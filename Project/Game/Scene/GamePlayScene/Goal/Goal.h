@@ -28,7 +28,7 @@ public:
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <param name="killCount"></param>
+	/// <param name="killCount_"></param>
 	void CheckGateCollision(int killCount);
 
 ///-------------------------------------------/// 

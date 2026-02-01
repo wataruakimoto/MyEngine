@@ -171,6 +171,8 @@ void Enemy::OnCollision(Collider* other) {
 
 		gamePlayScene_->OnEnemyDefeated();
 
+		gamePlayScene_->AddKillCount();
+
 		// 死亡
 		isDead = true;
 	}

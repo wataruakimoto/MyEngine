@@ -1,3 +1,5 @@
+#define NOMINMAX
+
 #include "Player.h"
 #include "Input.h"
 #include "GamePlayScene.h"
@@ -139,6 +141,9 @@ void Player::ShowImGui() {
 	ImGui::SliderFloat3("Velocity", &velocity_.x, -0.2f, 0.2f);
 
 	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
+
+	ImGui::Checkbox("isDead", &isDead_);
+	ImGui::Checkbox("isGroundHit", &isGroundHit_);
 
 	// 状態の表示
 	ImGui::Text("State: %s", (state_ == PlayerState::AutoPilot) ? "AutoPilot" :
@@ -399,10 +404,25 @@ void Player::ClampPosition() {
 	// 加算後の座標を取得
 	Vector3 currentPos = worldTransform_.GetTranslate();
 
-	// X軸のクランプ
-	currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.x);
-	// Y軸のクランプ
-	currentPos.y = std::clamp(currentPos.y, kMoveMin.y + scale.y, kMoveMax.y - scale.y);
+	//// X軸のクランプ
+	//currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.x);
+	//// Y軸のクランプ
+	//currentPos.y = std::clamp(currentPos.y, kMoveMin.y + scale.y, kMoveMax.y - scale.y);
+
+	// Y軸のクランプ(0以上)
+	currentPos.y = std::max(currentPos.y, 0.0f + scale.y);
+
+	// 原点からの距離を計算(XZ平面)
+	float distanceFromOrigin = std::sqrt(currentPos.x * currentPos.x + currentPos.y * currentPos.y);
+
+	// 半径25を超えている場合、円周上に制限
+	const float kMaxRadius = 25.0f;
+	if (distanceFromOrigin > kMaxRadius - scale.x) {
+		float clampedRadius = kMaxRadius - scale.x;
+		float ratio = clampedRadius / distanceFromOrigin;
+		currentPos.x *= ratio;
+		currentPos.y *= ratio;
+	}
 
 	// クランプ後の座標を設定
 	worldTransform_.SetTranslate(currentPos);
@@ -580,12 +600,6 @@ void Player::DeadUpdate() {
 	// タイマーを進める
 	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
 
-	// 5秒経過したらタイトルシーンに戻る
-	if (deathTimer_ >= 2.0f) {
-		isDead_ = true;
-		return; // 以降の処理をスキップ
-	}
-
 	// 回転速度の加算
 	deathRotateVelocity_.x += kRollAcceleration;
 	deathRotateVelocity_.z += kRollAcceleration * 0.5f;
@@ -621,9 +635,6 @@ void Player::DeadUpdate() {
 		// Y座標を地面の高さに揃える
 		worldTransform_.SetTranslate(Translate);
 
-		// フラグを立てる
-		isGroundHit_ = true;
-
 		if (!isParticleEmitted_) {
 
 			// エミッターの位置を設定
@@ -635,6 +646,21 @@ void Player::DeadUpdate() {
 			particleEmitterBlue->Emit();
 
 			isParticleEmitted_ = true;
+		}
+
+		if (!isGroundHit_) {
+
+			// フラグを立てる
+			isGroundHit_ = true;
+
+			// 床に当たったときの時間を保存
+			groundHitTime_ = deathTimer_;
+		}
+
+		// 地面に当たってから2秒経過したら
+		if(deathTimer_- groundHitTime_ >= 2.0f) {
+
+			isDead_ = true;
 		}
 	}
 }

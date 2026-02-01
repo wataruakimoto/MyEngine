@@ -390,7 +390,7 @@ void TitleScene::MoveUpUpdate() {
 void TitleScene::SpeedUpInitialize() {
 
 	// プレイヤーの速度を設定
-	playerMoveSpeed_ = player_->GetMoveSpeedTitle();
+	playerMoveSpeed_ = player_->GetMoveSpeedAuto();
 
 	// ラジアルブラーをつける
 	radialBlurFilter_->SetIsActive(true);
@@ -436,7 +436,7 @@ void TitleScene::SpeedUpUpdate() {
 
 void TitleScene::WhiteFadeInitialize() {
 	
-	whiteFade_->StartFadeAnimation(FadeType::In);
+	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
 }
 
 void TitleScene::WhiteFadeUpdate() {

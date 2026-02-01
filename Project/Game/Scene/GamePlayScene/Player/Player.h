@@ -138,7 +138,7 @@ public:
 	/// <returns></returns>
 	uint16_t GetHP() const { return hp_; }
 
-	float GetMoveSpeedTitle() { return moveSpeedAuto; }
+	float GetMoveSpeedAuto() { return moveSpeedAuto; }
 
 	float GetMoveSpeedPlay() { return moveSpeedManual; }
 
@@ -149,6 +149,8 @@ public:
 	float GetSpeedRate() { return speedRate_; }
 
 	const Vector3& GetVelocity() const { return velocity_; }
+
+	bool IsGroundHit() { return isGroundHit_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -285,6 +287,9 @@ private:
 
 	const float kGroundHeight = 0.0f;
 	const float kParticleSpawnDelay = 0.2f;
+
+	// 地面に当たったときの時間
+	float groundHitTime_ = 0.0f;
 
 	// 地面着地フラグ
 	bool isGroundHit_ = false;
