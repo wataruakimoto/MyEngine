@@ -88,13 +88,8 @@ private:
 	// 追従対象のオフセット
 	Vector3 baseOffset_ = { 0.0f, 4.0f, -12.0f };
 
-	// 移動時のオフセット
-	Vector3 dashOffset_ = { 0.0f, 4.0f, -4.0f };
-
-	Vector3 currentOffset;
-
 	// 追従の補間
-	float followLerp_ = 0.05f;
+	float followLerp_ = 0.1f;
 
 	/// ===== ダッチロール用 ===== ///
 

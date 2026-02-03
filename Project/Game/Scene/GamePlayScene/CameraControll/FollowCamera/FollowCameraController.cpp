@@ -25,7 +25,7 @@ void FollowCameraController::Update() {
 	Shake();
 
 	// 先読みの更新
-	//LookAhead();
+	LookAhead();
 
 	// 追従の更新
 	Follow();
@@ -53,8 +53,6 @@ void FollowCameraController::ShowImGui() {
 	ImGui::Begin("FollowCameraController");
 
 	ImGui::DragFloat3("BaseOffset", &baseOffset_.x, 0.1f);
-	ImGui::DragFloat3("DashOffset", &dashOffset_.x, 0.1f);
-	ImGui::DragFloat3("CurrentOffset", &currentOffset.x, 0.1f);
 
 	// ワールド変換のImGui表示
 	worldTransform.ShowImGui();
@@ -106,16 +104,11 @@ void FollowCameraController::Follow() {
 
 	if (player) {
 
-		// プレイヤーの速度率を取得
-		float playerSpeedRate = player->GetSpeedRate();
-
-		currentOffset = Lerp(baseOffset_, dashOffset_, playerSpeedRate);
-
 		// 回転行列を作成
 		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform.GetRotate());
 
 		// オフセットを回転に合わせる
-		Vector3 offset = TransformNormal(currentOffset, rotateMatrix);
+		Vector3 offset = TransformNormal(baseOffset_, rotateMatrix);
 
 		// 座標をコピーしてオフセット分ずらす
 		Vector3 targetPosition = player->GetWorldTransform().GetWorldPosition() + offset + shakeOffset_ + lookAheadOffset_;
@@ -124,7 +117,11 @@ void FollowCameraController::Follow() {
 		Vector3 currentPosition = worldTransform.GetTranslate();
 
 		// 新しい位置を計算
-		Vector3 newPosition = Lerp(currentPosition, targetPosition, followLerp_);
+		Vector3 newPosition;
+
+		newPosition.x = Lerp(currentPosition.x, targetPosition.x, followLerp_);
+		newPosition.y = Lerp(currentPosition.y, targetPosition.y, followLerp_);
+		newPosition.z = targetPosition.z; // Z座標は直接設定
 
 		// ワールド変換の平行移動を設定
 		worldTransform.SetTranslate(newPosition);
