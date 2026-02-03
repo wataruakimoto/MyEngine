@@ -19,7 +19,7 @@ void Bullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.5f, 0.5f, 0.5f });
+	object->SetScale({ 0.2f, 0.2f, 0.8f });
 
 	isDead = false;
 
@@ -114,4 +114,10 @@ void Bullet::OnCollision(Collider* other) {
 		// 何もしない
 		return;
 	}
+}
+
+void Bullet::Move() {
+
+	Vector3 direction = Normalize(velocity_);
+
 }
