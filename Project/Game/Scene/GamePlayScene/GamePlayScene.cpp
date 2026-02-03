@@ -594,6 +594,9 @@ void GamePlayScene::CheckOriginShift() {
 
 void GamePlayScene::ShiftWorld(float shiftZ) {
 
+	// カメラを手前にずらす
+	cameraController_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+
 	// プレイヤーを手前にずらす
 	player_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 

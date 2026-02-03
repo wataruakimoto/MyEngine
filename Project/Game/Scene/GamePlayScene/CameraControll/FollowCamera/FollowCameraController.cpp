@@ -25,7 +25,7 @@ void FollowCameraController::Update() {
 	Shake();
 
 	// 先読みの更新
-	LookAhead();
+	//LookAhead();
 
 	// 追従の更新
 	Follow();
@@ -52,7 +52,9 @@ void FollowCameraController::ShowImGui() {
 
 	ImGui::Begin("FollowCameraController");
 
-	ImGui::DragFloat3("BaseOffset", &baseOffset.x, 0.1f);
+	ImGui::DragFloat3("BaseOffset", &baseOffset_.x, 0.1f);
+	ImGui::DragFloat3("DashOffset", &dashOffset_.x, 0.1f);
+	ImGui::DragFloat3("CurrentOffset", &currentOffset.x, 0.1f);
 
 	// ワールド変換のImGui表示
 	worldTransform.ShowImGui();
@@ -102,16 +104,18 @@ void FollowCameraController::Shake() {
 
 void FollowCameraController::Follow() {
 
-	// 追従対象からカメラまでのオフセット
-	Vector3 offset = baseOffset;
-
 	if (player) {
+
+		// プレイヤーの速度率を取得
+		float playerSpeedRate = player->GetSpeedRate();
+
+		currentOffset = Lerp(baseOffset_, dashOffset_, playerSpeedRate);
 
 		// 回転行列を作成
 		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform.GetRotate());
 
 		// オフセットを回転に合わせる
-		offset = TransformNormal(offset, rotateMatrix);
+		Vector3 offset = TransformNormal(currentOffset, rotateMatrix);
 
 		// 座標をコピーしてオフセット分ずらす
 		Vector3 targetPosition = player->GetWorldTransform().GetWorldPosition() + offset + shakeOffset_ + lookAheadOffset_;
@@ -120,13 +124,7 @@ void FollowCameraController::Follow() {
 		Vector3 currentPosition = worldTransform.GetTranslate();
 
 		// 新しい位置を計算
-		Vector3 newPosition;
-
-		// X,Y軸は線形補間で追従
-		newPosition.x = Lerp(currentPosition.x, targetPosition.x, followLerp_);
-		newPosition.y = Lerp(currentPosition.y, targetPosition.y, followLerp_);
-		// Z軸は直接設定
-		newPosition.z = targetPosition.z;
+		Vector3 newPosition = Lerp(currentPosition, targetPosition, followLerp_);
 
 		// ワールド変換の平行移動を設定
 		worldTransform.SetTranslate(newPosition);
@@ -143,12 +141,22 @@ void FollowCameraController::DutchRoll() {
 		// 目標の傾き角度を計算
 		float targetTilt = playerVelocityX * kTiltFactor_;
 
+		// 傾きの最大値を度からラジアンに変換
+		float tiltLimitRad = ConvertDegreesToRadians(kTiltLimit_);
+
+		// 傾きを制限
+		targetTilt = std::clamp(targetTilt, -tiltLimitRad, tiltLimitRad);
+
 		// 現在の傾き角度を補間で滑らかに変更
 		currentTilt_ = Lerp(currentTilt_, targetTilt, kTiltDelay_);
 
-		// Z軸のみ回転を設定
+		// 現在の回転を取得
 		Vector3 currentRotation = worldTransform.GetRotate();
+
+		// Z軸に傾きを適用
 		currentRotation.z = currentTilt_;
+
+		// ワールド変換の回転を設定
 		worldTransform.SetRotate(currentRotation);
 	}
 }
@@ -158,11 +166,11 @@ void FollowCameraController::DynamicFov() {
 	float playerSpeedRate = player->GetSpeedRate();
 
 	// 度をラジアンに変換
-	float baseFovY_ = ConvertDegreesToRadians(baseDegree);
-	float dashFovY_ = ConvertDegreesToRadians(dashDegree);
+	float fovNormalRad = ConvertDegreesToRadians(kFovNormal_);
+	float fovDashRad = ConvertDegreesToRadians(kFovDash_);
 
 	// 速度に応じてFovを変化させる
-	float newFovY = Lerp(baseFovY_, dashFovY_, playerSpeedRate);
+	float newFovY = Lerp(fovNormalRad, fovDashRad, playerSpeedRate);
 
 	// 現在のFovを取得
 	float currentFovY = camera->GetFovY();

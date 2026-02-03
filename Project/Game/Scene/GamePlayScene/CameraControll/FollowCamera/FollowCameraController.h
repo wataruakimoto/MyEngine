@@ -86,20 +86,28 @@ private:
 	/// ===== 追従用 ===== ///
 
 	// 追従対象のオフセット
-	Vector3 baseOffset = { 0.0f, 3.0f, -15.0f };
+	Vector3 baseOffset_ = { 0.0f, 4.0f, -12.0f };
+
+	// 移動時のオフセット
+	Vector3 dashOffset_ = { 0.0f, 4.0f, -4.0f };
+
+	Vector3 currentOffset;
 
 	// 追従の補間
-	float followLerp_ = 0.2f;
+	float followLerp_ = 0.05f;
 
-	const float kTiltFactor_ = -0.1f; // 傾け具合
-	const float kTiltDelay_ = 0.1f; // 追従の遅延 (0〜1)
+	/// ===== ダッチロール用 ===== ///
+
+	const float kTiltFactor_ = -0.05f; // 傾け具合
+	const float kTiltLimit_ = 15.0f;  // 傾きの最大値 (度)
+	const float kTiltDelay_ = 0.05f; // 追従の遅延 (0〜1)
 
 	float currentTilt_ = 0.0f; // 現在の傾き角度
 
 	/// ===== ダイナミックFov ===== ///
 
-	const float baseDegree = 45.0f; // 基本時の視野角
-	const float dashDegree = 90.0f; // ダッシュ時の視野角
+	const float kFovNormal_ = 75.0f; // 通常移動時の視野角
+	const float kFovDash_ = 80.0f; // ダッシュ時の視野角
 
 	/// ===== 先読み用 ===== ///
 

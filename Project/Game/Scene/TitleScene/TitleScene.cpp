@@ -162,11 +162,11 @@ void TitleScene::Update() {
 		break;
 	}
 
-	// プレイヤーループ処理
-	PlayerLoop();
-
 	// カメラコントローラの更新
 	cameraController_->Update();
+
+	// プレイヤーループ処理
+	PlayerLoop();
 
 	// プレイヤー更新
 	player_->Update();
@@ -273,21 +273,16 @@ void TitleScene::ShowImGui() {
 
 void TitleScene::PlayerLoop() {
 
-	// プレイヤーの座標を取得
-	Vector3 playerPos = player_->GetWorldTransform().GetWorldPosition();
+	float playerZ = player_->GetWorldTransform().GetWorldPosition().z;
 
 	// プレイヤーがループさせる距離を超えたら
-	if (playerPos.z > kLoopDistance) {
+	if (playerZ >= kLoopDistance) {
 
-		// プレイヤーのZ座標だけを距離分戻す
-		playerPos.z -= kLoopDistance;
-		player_->GetWorldTransform().SetTranslate(playerPos);
+		// カメラを手前にずらす
+		cameraController_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -kLoopDistance });
 
-		// カメラの座標を取得
-		Vector3 cameraPos = camera_->GetTranslate();
-		// カメラのZ座標だけを距離分戻す
-		cameraPos.z -= kLoopDistance;
-		camera_->SetTranslate(cameraPos);
+		// プレイヤーを手前にずらす
+		player_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -kLoopDistance });
 	}
 }
 
