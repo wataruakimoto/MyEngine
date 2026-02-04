@@ -5,7 +5,6 @@
 #include "GamePlayScene.h"
 #include "Bullet.h"
 #include "Collision/CollisionTypeIDDef.h"
-#include "Reticle/Reticle3D.h"
 #include "MathVector.h"
 #include "Easing.h"
 
@@ -38,6 +37,27 @@ void Player::Initialize() {
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayer));
 
 	isDead_ = false;
+
+	// レティクルの生成
+	reticle_ = std::make_unique<Reticle>();
+	reticle_->Initialize();
+	// レティクルのカメラ設定
+	reticle_->SetCamera(camera_);
+
+	// ロックオンの生成
+	lockOn_ = std::make_unique<LockOn>();
+	lockOn_->Initialize();
+	// 自機をロックオンに設定
+	lockOn_->SetPlayer(this);
+	// カメラをロックオンに設定
+	lockOn_->SetCamera(camera_);
+	// 2Dレティクルをロックオンに設定
+	lockOn_->SetReticle(reticle_.get());
+
+	// コマンドの生成
+	normalShotCommand_ = std::make_unique<NormalShotCommand>();
+	lockOnAimCommand_ = std::make_unique<LockOnAimCommand>();
+	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
 }
 
 void Player::Update() {
@@ -125,6 +145,15 @@ void Player::Draw() {
 		// 3Dオブジェクトの描画
 		object->Draw();
 	}
+
+	// reticle_->Draw3D();
+}
+
+void Player::DrawUI() {
+
+	reticle_->Draw2D();
+
+	lockOn_->Draw();
 }
 
 void Player::Finalize() {
@@ -220,51 +249,21 @@ void Player::OnGateCollision() {
 	stateRequest_ = PlayerState::Dead;
 }
 
-void Player::Fire() {
+void Player::Fire(PlayerContext context) {
 
-	// 弾の生成&初期化
-	std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
-	bullet->Initialize();
+	// ロックオンモードなら
+	if (isLockOnMode_) {
 
-	// 弾の初期位置をプレイヤーの位置に設定
-	bullet->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
+		// ロックオンショットコマンド実行
+		lockOnShotCommand_->Execute(context);
 
-	// 弾の初期速度を設定
-	Vector3 velocity = { 0.0f, 0.0f, 0.0f };
-
-	// ロックオン中なら
-	if (lockOn_->IsLockOn()) {
-
-		// ターゲットの位置
-		Vector3 targetPos = lockOn_->GetTarget()->GetWorldTransform().GetWorldPosition();
-
-		// ターゲットの位置までの方向ベクトルを求める
-		velocity = targetPos - worldTransform_.GetWorldPosition();
-
-		// 正規化
-		velocity = Normalize(velocity);
-
-		// 速度を設定
-		bullet->SetVelocity(velocity);
 	}
-	// ロックオンしていないなら
+	// ロックオンモードでなければ
 	else {
 
-		// レティクルの位置
-		Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
-
-		// レティクルの位置までの方向ベクトルを求める
-		velocity = reticlePos - worldTransform_.GetWorldPosition();
-
-		// 正規化
-		velocity = Normalize(velocity);
-
-		// 速度を設定
-		bullet->SetVelocity(velocity);
+		// 通常射撃コマンド実行
+		normalShotCommand_->Execute(context);
 	}
-
-	// ゲームプレイシーンの弾をリストに登録
-	gamePlayScene_->AddPlayerBullet(std::move(bullet));
 
 	// 射撃間隔タイマーをリセット
 	fireTimer_ = kFireDuration_;
@@ -341,7 +340,7 @@ void Player::Rolling() {
 	worldTransform_.SetRotate(currentRotate);
 
 	/// ===== 位置の計算 ===== ///
-	
+
 	// 1フレーム分の差分を求める
 	float deltaT = easeT - preEaseT_; // 前回とのイージング値の差分
 
@@ -358,7 +357,7 @@ void Player::Rolling() {
 void Player::MoveToReticle() {
 
 	// レティクルの位置を取得
-	Vector3 reticlePos = reticle3D_->GetWorldTransform().GetWorldPosition();
+	Vector3 reticlePos = reticle_->GetWorldTransform().GetWorldPosition();
 
 	// レティクルの方向ベクトルを求める
 	Vector3 toReticle = reticlePos - worldTransform_.GetWorldPosition();
@@ -493,30 +492,65 @@ void Player::ManualInitialize() {
 
 void Player::ManualUpdate() {
 
-	// 各キーの入力の状態
-	bool isMousePush = Input::GetInstance()->PushMouseButton(MouseButton::Left); // 左クリック
-	bool isAPush = Input::GetInstance()->PushKey('A'); // Aキー
-	bool isDPush = Input::GetInstance()->PushKey('D'); // Dキー
+	// タイマー更新
+	if (fireTimer_ > 0.0f) {
+		fireTimer_ -= 1.0f / 60.0f;
+	}
 
 	// 速度をリセット
 	velocity_ = { 0.0f, 0.0f, 0.0f };
 
+	// コンテキスト作成
+	PlayerContext context;
+	context.player = this;
+	context.reticle = reticle_.get();
+	context.lockOn = lockOn_.get();
+	context.scene = gamePlayScene_;
+
+	// 各キーの入力の状態
+	bool isMouseLeftPush = Input::GetInstance()->PushMouseButton(MouseButton::Left); // 左クリック
+	bool isMouseLeftRelease = Input::GetInstance()->ReleaseMouseButton(MouseButton::Left); // 左クリックリリース
+	bool isAPush = Input::GetInstance()->PushKey('A'); // Aキー
+	bool isDPush = Input::GetInstance()->PushKey('D'); // Dキー
+
 	/// ===== 射撃処理 ===== ///
 
-	// タイマーが0以下なら
-	if (fireTimer_ <= 0) {
+	// 左クリックしている間
+	if (isMouseLeftPush) {
 
-		// スペースキーが押されたら
-		if (isMousePush) {
+		// 押されている時間を加算
+		pressTimer_ += 1.0f / 60.0f;
 
-			// 射撃
-			Fire();
+		// 一定時間以上押し続けたら
+		if (pressTimer_ > kLockOnDuration_) {
+
+			// ロックオンモードへ移行
+			isLockOnMode_ = true;
+
+			// ロックオンエイムコマンド実行
+			lockOnAimCommand_->Execute(context);
 		}
 	}
-	else {
 
-		// タイマーをデクリメント
-		fireTimer_ -= 1.0f / 60.0f;
+	// 左クリックを離したとき
+	if (isMouseLeftRelease) {
+
+		// タイマーが0以下なら
+		if (fireTimer_ <= 0) {
+
+			// 射撃
+			Fire(context);
+		}
+
+		// 押下時間をリセット
+		pressTimer_ = 0.0f;
+
+		// ロックオンモード解除
+		isLockOnMode_ = false;
+
+		// ロックオンターゲットをクリア
+		lockOn_->ClearTarget();
+
 	}
 
 	if (isFiring_) {
@@ -572,6 +606,12 @@ void Player::ManualUpdate() {
 
 	// 画面外に出ないように位置をクランプ
 	ClampPosition();
+
+	// レティクルの更新
+	reticle_->Update();
+
+	// ロックオンの更新
+	lockOn_->Update();
 }
 
 void Player::DeadInitialize() {
@@ -658,7 +698,7 @@ void Player::DeadUpdate() {
 		}
 
 		// 地面に当たってから2秒経過したら
-		if(deathTimer_- groundHitTime_ >= 2.0f) {
+		if (deathTimer_ - groundHitTime_ >= 2.0f) {
 
 			isDead_ = true;
 		}

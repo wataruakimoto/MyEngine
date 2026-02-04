@@ -152,15 +152,6 @@ void PlayState::Initialize(GamePlayScene* scene) {
 	// ゴールのポインタを取得
 	goal_ = scene_->GetGoal();
 
-	// 3Dレティクルのポインタを取得
-	reticle3D_ = scene_->GetReticle3D();
-
-	// 2Dレティクルのポインタを取得
-	reticle2D_ = scene_->GetReticle2D();
-
-	// ロックオンのポインタを取得
-	lockOn_ = scene_->GetLockOn();
-
 	// ノルマUIのポインタを取得
 	normaUI_ = scene_->GetNormaUI();
 
@@ -192,15 +183,6 @@ void PlayState::Update() {
 
 	// ゴールの更新
 	goal_->Update();
-
-	// 3Dレティクルの更新
-	reticle3D_->Update();
-
-	// 2Dレティクルの更新
-	reticle2D_->Update();
-
-	// ロックオンの更新
-	lockOn_->Update();
 
 	// ノルマUIに目標値を設定
 	normaUI_->SetTargetValue(goal_->GetNormaCount());
@@ -252,11 +234,7 @@ void PlayState::Update() {
 
 void PlayState::DrawUI() {
 
-	// 2Dレティクルの描画
-	reticle2D_->Draw();
-
-	// ロックオンの描画
-	lockOn_->Draw();
+	player_->DrawUI();
 
 	// ノルマUIの描画
 	normaUI_->Draw();
@@ -502,6 +480,8 @@ void EndingState::FadeIn() {
 		whiteFade_->Update();
 
 		if (whiteFade_->IsFadeFinished()) {
+
+			vignetteFilter_->SetIsActive(false);
 
 			// シーン切り替え
 			SceneManager::GetInstance()->ChangeScene("CLEAR");

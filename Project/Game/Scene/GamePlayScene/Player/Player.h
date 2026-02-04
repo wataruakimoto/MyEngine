@@ -6,7 +6,9 @@
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleEmitter.h"
-#include "Data/Transform.h"
+#include "PlayerCommand.h"
+#include "Reticle/Reticle.h"
+#include "LockOn/LockOn.h"
 
 #include <list>
 #include <memory>
@@ -50,6 +52,11 @@ public:
 	void Draw() override;
 
 	/// <summary>
+	/// Ui描画
+	/// </summary>
+	void DrawUI();
+
+	/// <summary>
 	/// 終了
 	/// </summary>
 	void Finalize();
@@ -77,7 +84,7 @@ private:
 	/// <summary>
 	/// 射撃
 	/// </summary>
-	void Fire();
+	void Fire(PlayerContext context);
 
 	/// <summary>
 	/// 射撃アニメーション更新
@@ -164,18 +171,6 @@ public:
 	void SetGamePlayScene(GamePlayScene* scene) { this->gamePlayScene_ = scene; }
 
 	/// <summary>
-	/// 3Dレティクルのセッター
-	/// </summary>
-	/// <param name="reticle"></param>
-	void SetReticle3D(Reticle3D* reticle) { this->reticle3D_ = reticle; }
-
-	/// <summary>
-	/// ロックオンのセッター
-	/// </summary>
-	/// <param name="lockOn"></param>
-	void SetLockOn(LockOn* lockOn) { this->lockOn_ = lockOn; }
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
@@ -204,17 +199,23 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
-	// ゲームプレイシーンの借りポインタ
-	GamePlayScene* gamePlayScene_ = nullptr;
+	// レティクルのポインタ
+	std::unique_ptr<Reticle> reticle_ = nullptr;
 
-	// 3Dレティクルの借りポインタ
-	Reticle3D* reticle3D_ = nullptr;
-
-	// ロックオンの借りポインタ
-	LockOn* lockOn_ = nullptr;
+	// ロックオンのポインタ
+	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;
+
+	// ゲームプレイシーンの借りポインタ
+	GamePlayScene* gamePlayScene_ = nullptr;
+
+	/// ===== コマンド ===== ///
+
+	std::unique_ptr<NormalShotCommand> normalShotCommand_ = nullptr;
+	std::unique_ptr<LockOnAimCommand> lockOnAimCommand_ = nullptr;
+	std::unique_ptr<LockOnShotCommand> lockOnShotCommand_ = nullptr;
 
 ///-------------------------------------------/// 
 /// オートパイロット用変数
@@ -225,6 +226,10 @@ private:
 ///-------------------------------------------/// 
 /// マニュアル操作用変数
 ///-------------------------------------------///
+
+	float pressTimer_ = 0.0f;
+	bool isLockOnMode_ = false;
+	const float kLockOnDuration_ = 0.5f; // ロックオンモード切り替えのための押下時間 (秒)
 
 	float moveSpeedManual = 0.5f;
 
