@@ -8,9 +8,6 @@
 #include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
 #include "Enemy/EnemyBullet.h"
-#include "Reticle/Reticle3D.h"
-#include "Reticle/Reticle2D.h"
-#include "LockOn/LockOn.h"
 #include "Camera.h"
 #include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
@@ -160,12 +157,6 @@ public:
 
 	Goal* GetGoal() { return goal_.get(); }
 
-	Reticle3D* GetReticle3D() { return reticle3D_.get(); }
-
-	Reticle2D* GetReticle2D() { return reticle2D_.get(); }
-
-	LockOn* GetLockOn() { return lockOn_.get(); }
-
 	RuleUI* GetRuleUI() { return ruleUI_.get(); }
 
 	NormaUI* GetNormaUI() { return normaUI_.get(); }
@@ -177,6 +168,8 @@ public:
 	WhiteFade* GetWhiteFade() { return whiteFade_.get(); }
 
 	BlackFade* GetBlackFade() { return blackFade_.get(); }
+
+	const std::list<std::unique_ptr<Enemy>>& GetEnemies() const { return enemies_; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -217,9 +210,6 @@ private:
 	// 敵の弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
 
-	// 3Dレティクルのポインタ
-	std::unique_ptr<Reticle3D> reticle3D_ = nullptr;
-
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;
 
@@ -233,12 +223,6 @@ private:
 	std::unique_ptr<Goal> goal_ = nullptr;
 
 	/// ===== スプライト ===== ///
-
-	// 2Dレティクルのポインタ
-	std::unique_ptr<Reticle2D> reticle2D_ = nullptr;
-
-	// ロックオンのポインタ
-	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
 	// ルールUI
 	std::unique_ptr<RuleUI> ruleUI_ = nullptr;

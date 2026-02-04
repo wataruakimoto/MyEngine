@@ -50,7 +50,7 @@ namespace MathVector {
 	Vector2 ConvertWorldToScreen(const Vector3& worldPos, const Matrix4x4& viewProjectionMatrix);
 
 	// スクリーン座標→ワールド座標
-	Vector3 ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float nearZ, float farZ);
+	Vector3 ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float distance);
 
 	// 角度をラジアンに変換
 	float ConvertDegreesToRadians(float degrees);

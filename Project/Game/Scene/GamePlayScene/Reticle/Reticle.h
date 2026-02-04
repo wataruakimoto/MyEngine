@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Sprite/Sprite.h"
 #include "Object/Object3d.h"
 #include "Model/Model.h"
 #include "WorldTransform.h"
@@ -7,12 +8,10 @@
 #include <memory>
 
 /// === 前方宣言 === ///
-class Player;
 class Camera;
-class Reticle2D;
 
-/// === 3Dレティクル === ///
-class Reticle3D {
+/// ===== レティクル ===== ///
+class Reticle {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -30,33 +29,14 @@ public:
 	void Update();
 
 	/// <summary>
-	/// 描画
+	/// 2D描画
 	/// </summary>
-	void Draw();
-
-	void ShowImGui();
-
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
-
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+	void Draw2D();
 
 	/// <summary>
-	/// カメラのセッター
+	/// 3D描画
 	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera_ = camera; }
-
-	/// <summary>
-	/// 2Dレティクルのセッター
-	/// </summary>
-	/// <param name="reticle2D"></param>
-	void SetReticle2D(Reticle2D* reticle2D) { this->reticle2D_ = reticle2D; }
+	void Draw3D();
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -69,10 +49,30 @@ public:
 	/// <returns></returns>
 	const WorldTransform& GetWorldTransform() { return worldTransform_; }
 
+	/// <summary>
+	/// スクリーン座標のゲッター
+	/// </summary>
+	/// <returns></returns>
+	const Vector2& GetScreenPosition() const { return screenPosition_; }
+
+///-------------------------------------------/// 
+/// セッター
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// カメラのセッター
+	/// </summary>
+	/// <param name="camera"></param>
+	void SetCamera(Camera* camera) { this->camera_ = camera; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
+
+	// レティクルのスプライト
+	std::unique_ptr<Sprite> sprite_ = nullptr;
 
 	// オブジェクト
 	std::unique_ptr<Object3d> object_;
@@ -83,13 +83,13 @@ private:
 	// 変換データ
 	WorldTransform worldTransform_;
 
+	// スクリーン座標の位置
+	Vector2 screenPosition_ = {};
+
 	// プレイヤーとレティクルの距離
-	const float kDistancePlayerToReticle_ = 50.0f;
+	const float kDistancePlayerToReticle_ = 75.0f;
 
 	// カメラの借りポインタ
 	Camera* camera_ = nullptr;
-
-	// 2Dレティクルの借りポインタ
-	Reticle2D* reticle2D_ = nullptr;
 };
 

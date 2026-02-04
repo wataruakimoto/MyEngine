@@ -1,17 +1,14 @@
 #pragma once
 
 #include "Sprite/Sprite.h"
-#include "Texture/TextureManager.h"
 
-#include <list>
-#include <tuple>
 #include <memory>
 
 /// === 前方宣言 === ///
 class Camera;
 class Enemy;
 class Player;
-class Reticle2D;
+class Reticle;
 
 /// === ロックオン === ///
 class LockOn {
@@ -20,11 +17,6 @@ class LockOn {
 /// メンバ関数
 ///-------------------------------------------///
 public:
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	LockOn();
 
 	/// <summary>
 	/// 初期化
@@ -40,26 +32,17 @@ public:
 	/// 描画
 	/// </summary>
 	void Draw();
-
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui();
-
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
 	
 	/// <summary>
-	/// ロックオン対象の探索
+	/// ターゲットの探索
 	/// </summary>
-	void SearchTarget();
-	
+	/// <param name="enemies">敵のリスト</param>
+	void SearchTarget(const std::list<std::unique_ptr<Enemy>>& enemies);
+
 	/// <summary>
-	/// ロックオン対象を決める
+	/// ターゲットのクリア
 	/// </summary>
-	void DecideTarget();
+	void ClearTarget() { target_ = nullptr; }
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -71,12 +54,6 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	Enemy* GetTarget() { return target_; }
-
-	/// <summary>
-	/// ロックオン中のゲッター
-	/// </summary>
-	/// <returns></returns>
-	bool IsLockOn() { return isLockOn_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -90,59 +67,45 @@ public:
 	void SetCamera(Camera* camera) { camera_ = camera; }
 
 	/// <summary>
-	/// 敵リストのセッター(追加)
-	/// </summary>
-	/// <param name="enemies"></param>
-	void SetEnemy(Enemy* enemy) { enemies_.push_back(enemy); }
-
-	/// <summary>
 	/// プレイヤーのセッター
 	/// </summary>
 	/// <param name="player"></param>
 	void SetPlayer(Player* player) { player_ = player; }
 
 	/// <summary>
-	/// 2Dレティクルのセッター
+	/// レティクルのセッター
 	/// </summary>
-	/// <param name="reticle2D"></param>
-	void SetReticle2D(Reticle2D* reticle2D) { reticle2D_ = reticle2D; }
+	/// <param name="reticle"></param>
+	void SetReticle(Reticle* reticle) { reticle_ = reticle; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// カメラの借りポインタ
-	Camera* camera_ = nullptr;
+	/// ===== パラメータ ===== ///
 
-	// 敵のリスト
-	std::list<Enemy*> enemies_;
+	const float kMaxRadius = 50.0f;   // 最大ロックオン半径
 
-	// 自機の借りポインタ
-	Player* player_ = nullptr;
+	const float kKeepRadius = 70.0f;  // ロックオン維持半径
 
-	// 2Dレティクルの借りポインタ
-	Reticle2D* reticle2D_ = nullptr;
-
-	// スプライト
-	std::unique_ptr<Sprite> sprite_ = nullptr;
-
-	// テクスチャマネージャのインスタンス
-	TextureManager* textureManager_ =  TextureManager::GetInstance();
-
-	// スクリーン座標でのロックオン距離の限界値
-	const float kDistanceLockOn_ = 75.0f;
-
-	// 3D空間でのロックオン距離の限界値
-	const float kDistanceLockOn3D_ = 150.0f;
-
-	// ロックオン対象リスト
-	std::list<std::tuple<float, float, Enemy*>> targets_; // <レティクルからの距離、自機からの距離、敵ポインタ＞
+	const float kMaxDistanceZ = 75.0f; // 最大ロックオン距離
 
 	// ロックオン対象
 	Enemy* target_ = nullptr;
 
-	// ロックオン中フラグ
-	bool isLockOn_ = false;
+	// スプライト
+	std::unique_ptr<Sprite> sprite_ = nullptr;
+
+	/// ===== 借りポインタ・インスタンス ===== ///
+
+	// カメラの借りポインタ
+	Camera* camera_ = nullptr;
+
+	// 自機の借りポインタ
+	Player* player_ = nullptr;
+
+	// レティクルの借りポインタ
+	Reticle* reticle_ = nullptr;
 };
 
