@@ -12,9 +12,6 @@ class VignetteFilter;
 class ICameraController;
 class Player;
 class Goal;
-class Reticle3D;
-class Reticle2D;
-class LockOn;
 class RuleUI;
 class NormaUI;
 class GuideUI;
@@ -184,15 +181,6 @@ private:
 
 	// ゴールの借りポインタ
 	Goal* goal_ = nullptr;
-
-	// 3Dレティクルの借りポインタ
-	Reticle3D* reticle3D_ = nullptr;
-
-	// 2Dレティクルの借りポインタ
-	Reticle2D* reticle2D_ = nullptr;
-
-	// ロックオンの借りポインタ
-	LockOn* lockOn_ = nullptr;
 
 	// ノルマUIの借りポインタ
 	NormaUI* normaUI_ = nullptr;

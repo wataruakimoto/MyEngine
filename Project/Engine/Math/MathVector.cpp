@@ -198,7 +198,7 @@ Vector2 MathVector::ConvertWorldToScreen(const Vector3& worldPos, const Matrix4x
 	return screenPos;
 }
 
-Vector3 MathVector::ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float nearZ, float farZ) {
+Vector3 MathVector::ConvertScreenToWorld(const Vector2& screenPos, const Matrix4x4& inverseViewProjectionMatrix, float distance) {
 	
 	// NDC座標に変換
 	Vector2 ndc = { 
@@ -207,15 +207,18 @@ Vector3 MathVector::ConvertScreenToWorld(const Vector2& screenPos, const Matrix4
 	};
 
 	// 近平面と遠平面のクリップ座標
-	Vector3 nearClip = { ndc.x, ndc.y, nearZ }; // 近平面
-	Vector3 farClip = { ndc.x, ndc.y, farZ };  // 遠平面
+	Vector3 nearClip = { ndc.x, ndc.y, 0.0f }; // 近平面
+	Vector3 farClip = { ndc.x, ndc.y, 1.0f };  // 遠平面
 
 	// クリップ座標をワールド座標に変換
 	Vector3 nearWorld = Transform(nearClip, inverseViewProjectionMatrix);
 	Vector3 farWorld = Transform(farClip, inverseViewProjectionMatrix);
 
+	// 方向ベクトルの計算
+	Vector3 direction = Normalize(farWorld - nearWorld);
+
 	// 座標の計算
-	Vector3 resultPosition = nearWorld + Normalize(farWorld - nearWorld);
+	Vector3 resultPosition = nearWorld + (direction * distance);
 
 	return resultPosition;
 }

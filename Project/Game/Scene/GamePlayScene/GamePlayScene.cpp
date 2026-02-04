@@ -40,44 +40,13 @@ void GamePlayScene::Initialize() {
 
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
+	player_->SetCamera(camera_.get());
 	player_->Initialize();
 	player_->SetGamePlayScene(this);
 	player_->SetMoveSpeedAuto(6.0f);
-	player_->SetCamera(camera_.get());
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
-
-	// 3Dレティクルの生成
-	reticle3D_ = std::make_unique<Reticle3D>();
-	reticle3D_->Initialize();
-	// レティクルのカメラ設定
-	reticle3D_->SetCamera(camera_.get());
-
-	// プレイヤーにレティクルを設定
-	player_->SetReticle3D(reticle3D_.get());
-
-	// 2Dレティクルの生成
-	reticle2D_ = std::make_unique<Reticle2D>();
-	reticle2D_->Initialize();
-	// カメラを2Dレティクルに設定
-	reticle2D_->SetCamera(camera_.get());
-
-	// 3Dレティクルに2Dレティクルを設定
-	reticle3D_->SetReticle2D(reticle2D_.get());
-
-	// ロックオンの生成
-	lockOn_ = std::make_unique<LockOn>();
-	lockOn_->Initialize();
-	// 自機をロックオンに設定
-	lockOn_->SetPlayer(player_.get());
-	// カメラをロックオンに設定
-	lockOn_->SetCamera(camera_.get());
-	// 2Dレティクルをロックオンに設定
-	lockOn_->SetReticle2D(reticle2D_.get());
-
-	// プレイヤーにロックオンを設定
-	player_->SetLockOn(lockOn_.get());
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
@@ -288,12 +257,6 @@ void GamePlayScene::ShowImGui() {
 
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) { bullet->ShowImGui(); }
 
-	reticle3D_->ShowImGui();
-
-	reticle2D_->ShowImGui();
-
-	lockOn_->ShowImGui();
-
 	floor_->ShowImGui();
 
 	cylinder_->ShowImGui();
@@ -436,9 +399,6 @@ void GamePlayScene::UpdateEnemyPopCommands() {
 			enemy->Initialize();
 			enemy->GetWorldTransform().SetTranslate({ x, y, z });
 			enemy->SetGamePlayScene(this);
-
-			// ロックオンに敵を登録
-			lockOn_->SetEnemy(enemy.get());
 
 			// 敵をリストに追加
 			enemies_.push_back(std::move(enemy));
@@ -617,4 +577,3 @@ void GamePlayScene::ShiftWorld(float shiftZ) {
 	goal_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 	goal_->GetGateWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 }
-

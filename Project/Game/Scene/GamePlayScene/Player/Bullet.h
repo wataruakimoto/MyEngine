@@ -58,6 +58,9 @@ public:
 ///-------------------------------------------///
 private:
 
+	/// <summary>
+	/// 移動処理
+	/// </summary>
 	void Move();
 
 ///-------------------------------------------/// 
@@ -65,11 +68,7 @@ private:
 ///-------------------------------------------///
 public:
 
-	/// <summary>
-	/// 速度のセッター
-	/// </summary>
-	/// <param name="velocity"></param>
-	void SetVelocity(Vector3 velocity) { this->velocity_ = velocity; }
+	void SetDirection(const Vector3& direction) { direction_ = direction; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -82,17 +81,20 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Object3d> object = nullptr;
 
+	// 方向
+	Vector3 direction_ = { 0.0f, 0.0f, 1.0f };
+
 	// 速度
 	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	// 移動の速さ
-	float moveSpeed = 1.0f;
+	float moveSpeed = 4.0f;
 
-	// 寿命<frm>
-	static const int32_t kLifeTime = 60 * 3;
+	// 寿命 (秒)
+	const float kLifeTime = 0.5f;
 
 	// デスタイマー
-	int32_t deathTimer_ = kLifeTime;
+	float deathTimer_ = 0.0f;
 
 	bool isDead = false;
 

@@ -19,8 +19,12 @@ void Bullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.2f, 0.2f, 0.8f });
+	object->SetScale({ 0.4f, 0.4f, 5.0f });
 
+	// デスタイマーの初期化
+	deathTimer_ = 0.0f;
+
+	// 死んだかどうかのフラグの初期化
 	isDead = false;
 
 	// コライダーの初期化
@@ -35,25 +39,24 @@ void Bullet::Initialize() {
 
 void Bullet::Update() {
 
-	// 速度は向きだけもらってきたから速さをかける
-	velocity_ = velocity_ * moveSpeed;
+	// デスタイマーの更新
+	deathTimer_ += 1.0f / 60.0f;
 
-	// ワールド変換の平行移動に速度を加算
-	worldTransform_.AddTranslate(velocity_);
-
-	object->SetTranslate(worldTransform_.GetTranslate());
-
-	if (deathTimer_ <= 0) {
+	// デスタイマーが寿命を超えたら
+	if (deathTimer_ >= kLifeTime) {
 
 		isDead = true;
 	}
-	else {
 
-		deathTimer_--;
-	}
+	// 移動処理
+	Move();
 
+	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
 
+	// 3Dオブジェクトの更新
+	object->SetRotate(worldTransform_.GetRotate());
+	object->SetTranslate(worldTransform_.GetTranslate());
 	object->Update();
 
 	// エミッターの更新
@@ -118,6 +121,25 @@ void Bullet::OnCollision(Collider* other) {
 
 void Bullet::Move() {
 
-	Vector3 direction = Normalize(velocity_);
+	/// ===== 向きの処理 ===== ///
 
+	// ヨー(Y軸回りの回転)の計算
+	float yaw = atan2f(direction_.x, direction_.z);
+
+	// 水壁距離の計算
+	float horizontalLength = Length(direction_.x, direction_.z);
+
+	// ピッチ(X軸回りの回転)の計算
+	float pitch = atan2f(-direction_.y, horizontalLength);
+
+	// 回転の設定
+	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+
+	/// ===== 速度の処理 ===== ///
+
+	// 速度に向きをかける
+	velocity_ = direction_ * moveSpeed;
+
+	// ワールド変換の平行移動に速度を加算
+	worldTransform_.AddTranslate(velocity_);
 }
