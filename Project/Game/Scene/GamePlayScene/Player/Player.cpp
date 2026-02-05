@@ -631,8 +631,8 @@ void Player::DeadInitialize() {
 	isParticleEmitted_ = false;
 
 	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", 0.0f, 10);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", 0.0f, 40);
+	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 40);
 }
 
 void Player::DeadUpdate() {

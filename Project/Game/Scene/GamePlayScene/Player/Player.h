@@ -213,9 +213,13 @@ private:
 
 	/// ===== コマンド ===== ///
 
-	std::unique_ptr<NormalShotCommand> normalShotCommand_ = nullptr;
-	std::unique_ptr<LockOnAimCommand> lockOnAimCommand_ = nullptr;
-	std::unique_ptr<LockOnShotCommand> lockOnShotCommand_ = nullptr;
+	std::unique_ptr<NormalShotCommand> normalShotCommand_ = nullptr; // 通常射撃コマンド
+
+	std::unique_ptr<LockOnAimCommand> lockOnAimCommand_ = nullptr; // ロックオン照準コマンド
+
+	std::unique_ptr<LockOnShotCommand> lockOnShotCommand_ = nullptr; // ロックオン射撃コマンド
+
+	std::unique_ptr<BarrelRollCommand> barrelRollCommand_ = nullptr; // バレルロールコマンド
 
 ///-------------------------------------------/// 
 /// オートパイロット用変数

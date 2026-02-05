@@ -13,14 +13,35 @@ void ParticleEmitter::Initialize() {
 
 void ParticleEmitter::Update() {
 
-	//// タイマー更新
-	//timer += deltaTime;
-	//
-	//// 発生頻度を超えたらパーティクル発生
-	//if (timer >= frequency) {
-	//	Emit();
-	//	timer = 0.0f;
-	//}
+	// タイプに応じた発射処理
+	switch (emitterType) {
+
+	// 常に発射
+	case EmitterType::Constant:
+		Emit();
+		break;
+
+	// 一定間隔ごとに発射
+	case EmitterType::Interval:
+
+		// タイマー更新
+		timer += deltaTime;
+
+		// 発生頻度を超えたらパーティクル発生
+		if (timer >= frequency) {
+			Emit();
+			timer = 0.0f; // シンプルなリセットならこちら
+		}
+		break;
+
+	// 呼んだときだけ
+	case EmitterType::OneShot:
+		// 何もしない
+		break;
+
+	default:
+		break;
+	}
 
 	// ワールド変換の更新
 	worldTransform.UpdateMatrix();
