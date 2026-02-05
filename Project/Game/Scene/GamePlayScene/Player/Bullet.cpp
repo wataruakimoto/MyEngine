@@ -33,7 +33,7 @@ void Bullet::Initialize() {
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet));
 
 	// エミッターの生成・初期化
-	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", 0.0f, 20);
+	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", EmitterType::OneShot, 20);
 	particleEmitter->Initialize();
 };
 

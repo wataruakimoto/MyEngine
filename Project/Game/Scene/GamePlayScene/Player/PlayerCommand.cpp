@@ -82,3 +82,6 @@ void LockOnShotCommand::Execute(const PlayerContext& context) {
 	// ゲームプレイシーンの弾をリストに登録
 	context.scene->AddPlayerBullet(std::move(bullet));
 }
+
+void BarrelRollCommand::Execute(const PlayerContext& context) {
+}

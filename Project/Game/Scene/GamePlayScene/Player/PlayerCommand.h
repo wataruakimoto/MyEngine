@@ -90,3 +90,16 @@ public:
 	void Execute(const PlayerContext& context) override;
 };
 
+class BarrelRollCommand : public IPlayerCommand {
+
+///-------------------------------------------/// 
+/// メンバ関数
+///-------------------------------------------///
+public:
+
+	/// <summary>
+	/// コマンド実行
+	/// </summary>
+	/// <param name="context">プレイヤーからの情報</param>
+	void Execute(const PlayerContext& context) override;
+};

@@ -14,8 +14,8 @@ void DebugScene::Initialize() {
 	particleManager->SetCamera(camera.get());
 
 	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("BulletRed", 1.0f, 5);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", 1.0f, 10);
+	particleEmitterRed = std::make_unique<ParticleEmitter>("BulletRed", EmitterType::OneShot, 5);
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 10);
 
 	// エミッターの初期化
 	particleEmitterRed->Initialize();
