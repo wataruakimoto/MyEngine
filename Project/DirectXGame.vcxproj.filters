@@ -133,7 +133,7 @@
     <ClCompile Include="engine\base\DirectXUtility.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Base\GraphicsPipelineCreater.cpp">
+    <ClCompile Include="Engine\Base\GraphicsPipelineCreator.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="engine\base\SrvManager.cpp">
@@ -423,7 +423,7 @@
     <ClInclude Include="engine\base\DirectXUtility.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Base\GraphicsPipelineCreater.h">
+    <ClInclude Include="Engine\Base\GraphicsPipelineCreator.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="engine\base\SrvManager.h">

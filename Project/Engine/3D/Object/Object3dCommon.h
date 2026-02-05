@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsPipelineCreater.h"
+#include "GraphicsPipelineCreator.h"
 
 /// === 前方宣言 === ///
 class Camera;
@@ -102,10 +102,10 @@ private:
 	DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
 
 	// パイプラインクリエイター
-	GraphicsPipelineCreater pipelineCreaterOpaque_;
+	GraphicsPipelineCreator pipelineCreaterOpaque_;
 
 	// 半透明用パイプラインクリエイター
-	GraphicsPipelineCreater pipelineCreaterAlpha_;
+	GraphicsPipelineCreator pipelineCreaterAlpha_;
 
 	// RootSignature
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;

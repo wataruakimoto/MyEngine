@@ -27,7 +27,7 @@ enum class DepthMode {
 };
 
 /// ===== グラフィックスパイプライン生成クラス ===== ///
-class GraphicsPipelineCreater {
+class GraphicsPipelineCreator {
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -37,12 +37,12 @@ public:
 	/// <summary>
 	/// コンストラクタ
 	/// </summary>
-	GraphicsPipelineCreater();
+	GraphicsPipelineCreator();
 
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
-	~GraphicsPipelineCreater();
+	~GraphicsPipelineCreator();
 
 	/// <summary>
 	/// パイプライン生成

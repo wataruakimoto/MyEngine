@@ -1,12 +1,12 @@
-#include "GraphicsPipelineCreater.h"
+#include "GraphicsPipelineCreator.h"
 
-GraphicsPipelineCreater::GraphicsPipelineCreater() {
+GraphicsPipelineCreator::GraphicsPipelineCreator() {
 }
 
-GraphicsPipelineCreater::~GraphicsPipelineCreater() {
+GraphicsPipelineCreator::~GraphicsPipelineCreator() {
 }
 
-void GraphicsPipelineCreater::Create(BlendMode blendMode, CullMode cullMode, DepthMode depthMode) {
+void GraphicsPipelineCreator::Create(BlendMode blendMode, CullMode cullMode, DepthMode depthMode) {
 
 	// PSOを生成する
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
@@ -54,7 +54,7 @@ void GraphicsPipelineCreater::Create(BlendMode blendMode, CullMode cullMode, Dep
 	assert(SUCCEEDED(hr));
 }
 
-void GraphicsPipelineCreater::CreateBlendState(BlendMode blendMode) {
+void GraphicsPipelineCreator::CreateBlendState(BlendMode blendMode) {
 
 	// デフォルト値で初期化
 	blendDesc.AlphaToCoverageEnable = false;
@@ -85,7 +85,7 @@ void GraphicsPipelineCreater::CreateBlendState(BlendMode blendMode) {
 	}
 }
 
-void GraphicsPipelineCreater::CreateRasterizerState(CullMode cullMode) {
+void GraphicsPipelineCreator::CreateRasterizerState(CullMode cullMode) {
 
 	// デフォルト値で初期化
 	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID; // 三角形の中を塗りつぶす
@@ -122,7 +122,7 @@ void GraphicsPipelineCreater::CreateRasterizerState(CullMode cullMode) {
 	}
 }
 
-void GraphicsPipelineCreater::CreateVertexShader() {
+void GraphicsPipelineCreator::CreateVertexShader() {
 
 	// フルパスのファイル名を作成
 	vertexShaderFullPath = shaderDirectoryPath + vertexShaderFileName;
@@ -132,7 +132,7 @@ void GraphicsPipelineCreater::CreateVertexShader() {
 	assert(vertexShaderBlob != nullptr);
 }
 
-void GraphicsPipelineCreater::CreatePixelShader() {
+void GraphicsPipelineCreator::CreatePixelShader() {
 
 	// フルパスのファイル名を作成
 	pixelShaderFullPath = shaderDirectoryPath + pixelShaderFileName;
@@ -142,7 +142,7 @@ void GraphicsPipelineCreater::CreatePixelShader() {
 	assert(pixelShaderBlob != nullptr);
 }
 
-void GraphicsPipelineCreater::CreateDepthStencilState(DepthMode depthMode) {
+void GraphicsPipelineCreator::CreateDepthStencilState(DepthMode depthMode) {
 
 	// デフォルト値で初期化
 	depthStencilDesc.DepthEnable = true; // Depthの機能を有効化
