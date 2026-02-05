@@ -1,2 +1,12 @@
 [*.{cpp,h,hlsl,hlsli}]
 charset = utf-8
+# スペルミスをintelliSense上での警告として扱う
+spelling_error_serverity = error
+# チェック対象を「識別子(変数名など)とコメント」に限定する
+spelling_checkable_types = identifires, comments
+# 辞書を英語(米国)に固定する
+spelling_language = en-US
+# 自分の辞書を作れるように標準の辞書設定はそのまま使用
+spelling_use_default_exclusion_dictionary = true
+# 自分の除外辞書を指定
+spelling_exclusion_path = ./exclusino.dic

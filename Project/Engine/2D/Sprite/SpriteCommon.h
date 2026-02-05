@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsPipelineCreater.h"
+#include "GraphicsPipelineCreator.h"
 
 // スプライト共通部
 class SpriteCommon {
@@ -72,7 +72,7 @@ private:
 	DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
 
 	// パイプラインクリエイター
-	GraphicsPipelineCreater pipelineCreater_;
+	GraphicsPipelineCreator pipelineCreater_;
 
 	// RootSignature
 	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
