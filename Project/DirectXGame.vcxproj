@@ -184,7 +184,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\TitleUI.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\StartUI.cpp" />
-    <ClCompile Include="Game\Scene\System\TransitionManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\RuleUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp" />
@@ -287,7 +286,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\LockOn\LockOn.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\TitleUI.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\StartUI.h" />
-    <ClInclude Include="Game\Scene\System\TransitionManager.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Goal\Goal.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h" />
