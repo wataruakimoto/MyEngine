@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="resources\shaders\Sprite.PS.hlsl">
+    <FxCompile Include="Resources\shaders\Sprite.PS.hlsl">
       <Filter>Engine\2D\Sprite</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\Sprite.VS.hlsl">
+    <FxCompile Include="Resources\shaders\Sprite.VS.hlsl">
       <Filter>Engine\2D\Sprite</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\Object3d.PS.hlsl">
+    <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
       <Filter>Engine\3D\Object</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\Object3d.VS.hlsl">
+    <FxCompile Include="Resources\shaders\Object3d.VS.hlsl">
       <Filter>Engine\3D\Object</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\Skybox.PS.hlsl">
@@ -19,10 +19,10 @@
     <FxCompile Include="Resources\Shaders\Skybox.VS.hlsl">
       <Filter>Engine\3D\Skybox</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\Particle.PS.hlsl">
+    <FxCompile Include="Resources\shaders\Particle.PS.hlsl">
       <Filter>Engine\3D\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\Particle.VS.hlsl">
+    <FxCompile Include="Resources\shaders\Particle.VS.hlsl">
       <Filter>Engine\3D\Particle</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\DepthOutline.PS.hlsl">
@@ -37,7 +37,7 @@
     <FxCompile Include="Resources\Shaders\Fog.PS.hlsl">
       <Filter>Engine\Base\PostProcess\Filters</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\FullScreen.PS.hlsl">
+    <FxCompile Include="Resources\shaders\FullScreen.PS.hlsl">
       <Filter>Engine\Base\PostProcess\Filters</Filter>
     </FxCompile>
     <FxCompile Include="Resources\shaders\FullScreen.VS.hlsl">
@@ -58,7 +58,7 @@
     <FxCompile Include="Resources\Shaders\Random.PS.hlsl">
       <Filter>Engine\Base\PostProcess\Filters</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\Vignette.PS.hlsl">
+    <FxCompile Include="Resources\shaders\Vignette.PS.hlsl">
       <Filter>Engine\Base\PostProcess\Filters</Filter>
     </FxCompile>
   </ItemGroup>
@@ -115,28 +115,28 @@
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.cpp">
       <Filter>Engine\3D\Particle\Renderer</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\MathMatrix.cpp">
+    <ClCompile Include="Engine\math\MathMatrix.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Math\MathRandom.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\math\MathVector.cpp">
+    <ClCompile Include="Engine\math\MathVector.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\audio\AudioManager.cpp">
+    <ClCompile Include="Engine\audio\AudioManager.cpp">
       <Filter>Engine\Audio</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Math\Easing.cpp">
       <Filter>Engine\Math</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\DirectXUtility.cpp">
+    <ClCompile Include="Engine\base\DirectXUtility.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\GraphicsPipelineCreator.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
-    <ClCompile Include="engine\base\SrvManager.cpp">
+    <ClCompile Include="Engine\base\SrvManager.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Base\SceneBuffer.cpp">
@@ -184,19 +184,19 @@
     <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp">
       <Filter>Engine\Base\PostProcess</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\Logger.cpp">
+    <ClCompile Include="Engine\debug\Logger.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\ImGuiManager.cpp">
+    <ClCompile Include="Engine\debug\ImGuiManager.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="engine\debug\D3DResourceLeakChecker.cpp">
+    <ClCompile Include="Engine\debug\D3DResourceLeakChecker.cpp">
       <Filter>Engine\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Framework\Framework.cpp">
       <Filter>Engine\Framework</Filter>
     </ClCompile>
-    <ClCompile Include="engine\input\Input.cpp">
+    <ClCompile Include="Engine\input\Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Level\Loader.cpp">
@@ -205,10 +205,10 @@
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="engine\utility\StringUtility.cpp">
+    <ClCompile Include="Engine\utility\StringUtility.cpp">
       <Filter>Engine\Utility</Filter>
     </ClCompile>
-    <ClCompile Include="engine\winApp\WinApp.cpp">
+    <ClCompile Include="Engine\winApp\WinApp.cpp">
       <Filter>Engine\WinApp</Filter>
     </ClCompile>
     <ClCompile Include="Engine\WorldTransform\WorldTransform.cpp">
@@ -235,7 +235,7 @@
     <ClCompile Include="Game\Scene\System\SceneFactory.cpp">
       <Filter>Game\Scene\System</Filter>
     </ClCompile>
-    <ClCompile Include="engine\camera\Camera.cpp">
+    <ClCompile Include="Engine\camera\Camera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp">
@@ -253,7 +253,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\RailCamera\RailCameraController.cpp">
       <Filter>Game\Scene\GamePlayScene\CameraControll</Filter>
     </ClCompile>
-    <ClCompile Include="engine\camera\DebugCamera.cpp">
+    <ClCompile Include="Engine\camera\DebugCamera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene\Collision\Collider.cpp">
@@ -378,55 +378,55 @@
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.h">
       <Filter>Engine\3D\Particle\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\MathMatrix.h">
+    <ClInclude Include="Engine\math\MathMatrix.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\MathRandom.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\MathVector.h">
+    <ClInclude Include="Engine\math\MathVector.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\Matrix4x4.h">
+    <ClInclude Include="Engine\math\Matrix4x4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\audio\AudioManager.h">
+    <ClInclude Include="Engine\audio\AudioManager.h">
       <Filter>Engine\Audio</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Math\Easing.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\Vector2.h">
+    <ClInclude Include="Engine\math\Vector2.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\Vector3.h">
+    <ClInclude Include="Engine\math\Vector3.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\math\Vector4.h">
+    <ClInclude Include="Engine\math\Vector4.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\Data\VertexData.h">
+    <ClInclude Include="Engine\3d\Data\VertexData.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\Data\MaterialData.h">
+    <ClInclude Include="Engine\3d\Data\MaterialData.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\Data\TransformationData.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\Data\ModelData.h">
+    <ClInclude Include="Engine\3d\Data\ModelData.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
-    <ClInclude Include="engine\3d\Data\Transform.h">
+    <ClInclude Include="Engine\3d\Data\Transform.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\DirectXUtility.h">
+    <ClInclude Include="Engine\base\DirectXUtility.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\GraphicsPipelineCreator.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
-    <ClInclude Include="engine\base\SrvManager.h">
+    <ClInclude Include="Engine\base\SrvManager.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Base\SceneBuffer.h">
@@ -477,19 +477,19 @@
     <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h">
       <Filter>Engine\Base\PostProcess\Filters</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\Logger.h">
+    <ClInclude Include="Engine\debug\Logger.h">
       <Filter>Engine\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\ImGuiManager.h">
+    <ClInclude Include="Engine\debug\ImGuiManager.h">
       <Filter>Engine\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="engine\debug\D3DResourceLeakChecker.h">
+    <ClInclude Include="Engine\debug\D3DResourceLeakChecker.h">
       <Filter>Engine\Debug</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Framework\Framework.h">
       <Filter>Engine\Framework</Filter>
     </ClInclude>
-    <ClInclude Include="engine\input\Input.h">
+    <ClInclude Include="Engine\input\Input.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Level\LevelData.h">
@@ -504,10 +504,10 @@
     <ClInclude Include="Engine\Scene\SceneManager.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="engine\utility\StringUtility.h">
+    <ClInclude Include="Engine\utility\StringUtility.h">
       <Filter>Engine\Utility</Filter>
     </ClInclude>
-    <ClInclude Include="engine\winApp\WinApp.h">
+    <ClInclude Include="Engine\winApp\WinApp.h">
       <Filter>Engine\WinApp</Filter>
     </ClInclude>
     <ClInclude Include="Engine\WorldTransform\WorldTransform.h">
@@ -537,7 +537,7 @@
     <ClInclude Include="Game\Scene\System\SceneFactory.h">
       <Filter>Game\Scene\System</Filter>
     </ClInclude>
-    <ClInclude Include="engine\camera\Camera.h">
+    <ClInclude Include="Engine\camera\Camera.h">
       <Filter>Engine\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h">
@@ -558,7 +558,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\ICameraController.h">
       <Filter>Game\Scene\GamePlayScene\CameraControll</Filter>
     </ClInclude>
-    <ClInclude Include="engine\camera\DebugCamera.h">
+    <ClInclude Include="Engine\camera\DebugCamera.h">
       <Filter>Engine\Camera</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\Collision\Collider.h">
@@ -632,16 +632,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="resources\shaders\Sprite.hlsli">
+    <None Include="Resources\shaders\Sprite.hlsli">
       <Filter>Engine\2D\Sprite</Filter>
     </None>
-    <None Include="resources\shaders\Object3d.hlsli">
+    <None Include="Resources\shaders\Object3d.hlsli">
       <Filter>Engine\3D\Object</Filter>
     </None>
     <None Include="Resources\Shaders\Skybox.hlsli">
       <Filter>Engine\3D\Skybox</Filter>
     </None>
-    <None Include="resources\shaders\Particle.hlsli">
+    <None Include="Resources\shaders\Particle.hlsli">
       <Filter>Engine\3D\Particle</Filter>
     </None>
     <None Include="Resources\shaders\FullScreen.hlsli">
