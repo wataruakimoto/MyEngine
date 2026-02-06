@@ -117,10 +117,10 @@ public:
 private:
 
 	// モデルのポインタ
-	std::unique_ptr<Model> model = nullptr;
+	std::unique_ptr<Engine::Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	std::unique_ptr<Object3d> object = nullptr;
+	std::unique_ptr<Engine::Object3d> object = nullptr;
 
 	// プレイヤーの借りポインタ
 	Player* player = nullptr;
@@ -133,15 +133,15 @@ private:
 	bool isDead = false;
 
 	// エミッターBlackのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitterBlack = nullptr;
+	std::unique_ptr <Engine::ParticleEmitter> particleEmitterBlack = nullptr;
 
 	// エミッターWhiteのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitterWhite = nullptr;
+	std::unique_ptr <Engine::ParticleEmitter> particleEmitterWhite = nullptr;
 
 	/// ===== 射撃アニメーション用 ===== ///
 
-	Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
-	Vector3 fireScale_ = { 0.8f, 0.8f, 0.8f };
+	Engine::Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
+	Engine::Vector3 fireScale_ = { 0.8f, 0.8f, 0.8f };
 
 	float fireTimer_ = 0.0f; // カウントダウンタイマー
 	float fireAnimationTimer_ = 0.0f; // 射撃アニメーション用カウントダウンタイマー
@@ -155,5 +155,5 @@ private:
 	// ドリル回転用
 	float drillRotation_ = 0.0f; // ドリル回転角度（ラジアン）
 
-	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 };

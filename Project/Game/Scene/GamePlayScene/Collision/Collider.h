@@ -31,7 +31,7 @@ public:
 	virtual void OnCollision([[maybe_unused]] Collider* other) = 0;
 
 	// 中心座標を取得
-	virtual const Vector3 GetCenterPosition() const = 0;
+	virtual const Engine::Vector3 GetCenterPosition() const = 0;
 
 ///-------------------------------------------/// 
 /// ゲッター

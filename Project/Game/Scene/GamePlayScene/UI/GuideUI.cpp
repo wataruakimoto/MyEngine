@@ -1,6 +1,8 @@
 #include "GuideUI.h"
 #include "Input.h"
 
+using namespace Engine;
+
 void GuideUI::Initialize() {
 
 	// マウススプライト生成

@@ -1,5 +1,7 @@
 #include "BlackScreen.h"
 
+using namespace Engine;
+
 BlackScreen::BlackScreen() {
 }
 

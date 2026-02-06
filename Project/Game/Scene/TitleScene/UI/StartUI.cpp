@@ -2,6 +2,8 @@
 
 #include <numbers>
 
+using namespace Engine;
+
 StartUI::StartUI() {
 }
 

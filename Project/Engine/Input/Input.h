@@ -6,256 +6,259 @@
 #include <wrl.h> // Comptrを使うため
 #include <Xinput.h> // XInputを使うため
 
-/// ===== 列挙型 ===== ///
+namespace Engine {
 
-// マウスボタン
-enum class MouseButton {
-	Left = 0, // 左クリック
-	Right,	  // 右クリック
-	Middle,	  // 中クリック(ホイールクリック)
-};
+	/// ===== 列挙型 ===== ///
 
-/// ===== 前方宣言 ===== ///
-class WinApp;
+	// マウスボタン
+	enum class MouseButton {
+		Left = 0, // 左クリック
+		Right,	  // 右クリック
+		Middle,	  // 中クリック(ホイールクリック)
+	};
 
-/// ===== 入力 ===== ///
-class Input {
+	/// ===== 前方宣言 ===== ///
+	class WinApp;
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// ===== 入力 ===== ///
+	class Input {
 
-	// インスタンス
-	static Input* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	Input() = default;
-	// デストラクタの隠蔽
-	~Input() = default;
-	// コピーコンストラクタの封印
-	Input(Input&) = delete;
-	// コピー代入演算子の封印
-	Input& operator=(Input&) = delete;
+		// インスタンス
+		static Input* instance;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コンストラクタの隠蔽
+		Input() = default;
+		// デストラクタの隠蔽
+		~Input() = default;
+		// コピーコンストラクタの封印
+		Input(Input&) = delete;
+		// コピー代入演算子の封印
+		Input& operator=(Input&) = delete;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(WinApp* winApp);
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize(WinApp* winApp);
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// ImGuiの表示
-	/// </summary>
-	void ShowImgui();
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-///-------------------------------------------/// 
-/// キーボード操作関数
-///-------------------------------------------///
+		/// <summary>
+		/// ImGuiの表示
+		/// </summary>
+		void ShowImgui();
 
-	/// <summary>
-	/// キーの押下をチェック
-	/// </summary>
-	/// <param name="keyNumber">キー番号</param>
-	/// <returns>押されているか</returns>
-	bool PushKey(BYTE keyNumber);
+		///-------------------------------------------/// 
+		/// キーボード操作関数
+		///-------------------------------------------///
 
-	/// <summary>
-	/// キーのトリガーをチェック
-	/// </summary>
-	/// <param name="keyNumber">キー番号</param>
-	/// <returns>トリガーしているか</returns>
-	bool TriggerKey(BYTE keyNumber);
+			/// <summary>
+			/// キーの押下をチェック
+			/// </summary>
+			/// <param name="keyNumber">キー番号</param>
+			/// <returns>押されているか</returns>
+		bool PushKey(BYTE keyNumber);
 
-	/// <summary>
-	/// キーのリリースをチェック
-	/// </summary>
-	/// <param name="keyNumber">キー番号</param>
-	/// <returns>リリースしているか</returns>
-	bool ReleaseKey(BYTE keyNumber);
+		/// <summary>
+		/// キーのトリガーをチェック
+		/// </summary>
+		/// <param name="keyNumber">キー番号</param>
+		/// <returns>トリガーしているか</returns>
+		bool TriggerKey(BYTE keyNumber);
 
-///-------------------------------------------///
-/// マウス操作関数
-///-------------------------------------------///
+		/// <summary>
+		/// キーのリリースをチェック
+		/// </summary>
+		/// <param name="keyNumber">キー番号</param>
+		/// <returns>リリースしているか</returns>
+		bool ReleaseKey(BYTE keyNumber);
 
-	/// <summary>
-	/// マウスカーソルの位置を取得
-	/// </summary>
-	/// <returns></returns>
-	const Vector2& GetMousePosition() const;
+		///-------------------------------------------///
+		/// マウス操作関数
+		///-------------------------------------------///
 
-	/// <summary>
-	/// マウスの移動量を取得
-	/// </summary>
-	/// <returns></returns>
-	const Vector2& GetMouseMove() const;
+			/// <summary>
+			/// マウスカーソルの位置を取得
+			/// </summary>
+			/// <returns></returns>
+		const Vector2& GetMousePosition() const;
 
-	/// <summary>
-	/// マウスボタンの押下をチェック
-	/// </summary>
-	/// <param name="button">マウスボタン</param>
-	/// <returns></returns>
-	bool PushMouseButton(MouseButton button);
+		/// <summary>
+		/// マウスの移動量を取得
+		/// </summary>
+		/// <returns></returns>
+		const Vector2& GetMouseMove() const;
 
-	/// <summary>
-	/// マウスボタンのトリガーをチェック
-	/// </summary>
-	/// <param name="button">マウスボタン</param>
-	/// <returns></returns>
-	bool TriggerMouseButton(MouseButton button);
+		/// <summary>
+		/// マウスボタンの押下をチェック
+		/// </summary>
+		/// <param name="button">マウスボタン</param>
+		/// <returns></returns>
+		bool PushMouseButton(MouseButton button);
 
-	/// <summary>
-	/// マウスボタンのリリースをチェック
-	/// </summary>
-	/// <param name="button">マウスボタン</param>
-	/// <returns></returns>
-	bool ReleaseMouseButton(MouseButton button);
+		/// <summary>
+		/// マウスボタンのトリガーをチェック
+		/// </summary>
+		/// <param name="button">マウスボタン</param>
+		/// <returns></returns>
+		bool TriggerMouseButton(MouseButton button);
 
-///-------------------------------------------///
-/// コントローラー操作関数
-///-------------------------------------------///
+		/// <summary>
+		/// マウスボタンのリリースをチェック
+		/// </summary>
+		/// <param name="button">マウスボタン</param>
+		/// <returns></returns>
+		bool ReleaseMouseButton(MouseButton button);
 
-	/// <summary>
-	/// コントローラーが接続されているか
-	/// </summary>
-	/// <returns></returns>
-	bool IsControllerConnected() const;
+		///-------------------------------------------///
+		/// コントローラー操作関数
+		///-------------------------------------------///
 
-	/// <summary>
-	/// コントローラーの押下をチェック
-	/// </summary>
-	/// <param name="button">ボタン</param>
-	/// <returns></returns>
-	bool PushButton(WORD button);
+			/// <summary>
+			/// コントローラーが接続されているか
+			/// </summary>
+			/// <returns></returns>
+		bool IsControllerConnected() const;
 
-	/// <summary>
-	/// コントローラーのトリガーをチェック
-	/// </summary>
-	/// <param name="button">ボタン</param>
-	/// <returns></returns>
-	bool TriggerButton(WORD button);
+		/// <summary>
+		/// コントローラーの押下をチェック
+		/// </summary>
+		/// <param name="button">ボタン</param>
+		/// <returns></returns>
+		bool PushButton(WORD button);
 
-	/// <summary>
-	/// コントローラーのリリースをチェック
-	/// </summary>
-	/// <param name="button">ボタン</param>
-	/// <returns></returns>
-	bool ReleaseButton(WORD button);
+		/// <summary>
+		/// コントローラーのトリガーをチェック
+		/// </summary>
+		/// <param name="button">ボタン</param>
+		/// <returns></returns>
+		bool TriggerButton(WORD button);
 
-	/// <summary>
-	/// 左スティックの値を取得
-	/// </summary>
-	Vector2 GetLeftThumbStick();
+		/// <summary>
+		/// コントローラーのリリースをチェック
+		/// </summary>
+		/// <param name="button">ボタン</param>
+		/// <returns></returns>
+		bool ReleaseButton(WORD button);
 
-	/// <summary>
-	/// 右スティックの値を取得
-	/// </summary>
-	Vector2 GetRightThumbStick();
+		/// <summary>
+		/// 左スティックの値を取得
+		/// </summary>
+		Vector2 GetLeftThumbStick();
 
-	/// <summary>
-	/// デッドゾーンの設定(0.0f ~ 1.0f)
-	/// </summary>
-	/// <param name="left">左のデッドゾーン</param>
-	/// <param name="right">右のデッドゾーン</param>
-	void SetDeadZone(float left, float right);
-	
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 右スティックの値を取得
+		/// </summary>
+		Vector2 GetRightThumbStick();
 
-	/// <summary>
-	/// キーボードの初期化
-	/// </summary>
-	void InitializeKeyboard();
+		/// <summary>
+		/// デッドゾーンの設定(0.0f ~ 1.0f)
+		/// </summary>
+		/// <param name="left">左のデッドゾーン</param>
+		/// <param name="right">右のデッドゾーン</param>
+		void SetDeadZone(float left, float right);
 
-	/// <summary>
-	/// キーボードの更新
-	/// </summary>
-	void UpdateKeyboard();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// マウスの更新
-	/// </summary>
-	void UpdateMouse();
+		/// <summary>
+		/// キーボードの初期化
+		/// </summary>
+		void InitializeKeyboard();
 
-	/// <summary>
-	/// コントローラーの初期化
-	/// </summary>
-	void InitializeController();
+		/// <summary>
+		/// キーボードの更新
+		/// </summary>
+		void UpdateKeyboard();
 
-	/// <summary>
-	/// コントローラーの更新
-	/// </summary>
-	void UpdateController();
+		/// <summary>
+		/// マウスの更新
+		/// </summary>
+		void UpdateMouse();
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// コントローラーの初期化
+		/// </summary>
+		void InitializeController();
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static Input* GetInstance();
+		/// <summary>
+		/// コントローラーの更新
+		/// </summary>
+		void UpdateController();
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// ===== キーボード用変数 ===== ///
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static Input* GetInstance();
 
-	// 全キーの状態
-	BYTE key[256] = {};
-	// 前のフレームの全キーの状態
-	BYTE keyPre[256] = {};
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	/// ===== マウス用変数 ===== ///
+		/// ===== キーボード用変数 ===== ///
 
-	// マウスカーソルの座標
-	Vector2 mousePosition = {};
-	// 前のフレームのマウスカーソルの座標
-	Vector2 mousePositionPre = {};
-	// 移動量
-	Vector2 mouseMove = {};
+		// 全キーの状態
+		BYTE key[256] = {};
+		// 前のフレームの全キーの状態
+		BYTE keyPre[256] = {};
 
-	// マウスボタンの状態
-	bool mouseButton[3] = {};
-	// 前のフレームのマウスボタンの状態
-	bool mouseButtonPre[3] = {};
+		/// ===== マウス用変数 ===== ///
 
-	/// ===== コントローラー用変数 ===== ///
+		// マウスカーソルの座標
+		Vector2 mousePosition = {};
+		// 前のフレームのマウスカーソルの座標
+		Vector2 mousePositionPre = {};
+		// 移動量
+		Vector2 mouseMove = {};
 
-	// コントローラーが接続フラグ
-	bool isConnected = false;
+		// マウスボタンの状態
+		bool mouseButton[3] = {};
+		// 前のフレームのマウスボタンの状態
+		bool mouseButtonPre[3] = {};
 
-	// 現在のコントローラーの状態
-	XINPUT_STATE controllerState;
-	// 前のフレームのコントローラーの状態
-	XINPUT_STATE controllerStatePre;
+		/// ===== コントローラー用変数 ===== ///
 
-	// デッドゾーンの値 (0.0f ~ 1.0f)
-	float deadZoneL = 0.24f; // 左のデッドゾーン
-	float deadZoneR = 0.26f; // 右のデッドゾーン
+		// コントローラーが接続フラグ
+		bool isConnected = false;
 
-	/// ===== 借りポインタ・インスタンス ===== ///
+		// 現在のコントローラーの状態
+		XINPUT_STATE controllerState;
+		// 前のフレームのコントローラーの状態
+		XINPUT_STATE controllerStatePre;
 
-	// WindowsAPIの借りポインタ
-	WinApp* winApp_ = nullptr;
-};
+		// デッドゾーンの値 (0.0f ~ 1.0f)
+		float deadZoneL = 0.24f; // 左のデッドゾーン
+		float deadZoneR = 0.26f; // 右のデッドゾーン
+
+		/// ===== 借りポインタ・インスタンス ===== ///
+
+		// WindowsAPIの借りポインタ
+		WinApp* winApp_ = nullptr;
+	};
+}

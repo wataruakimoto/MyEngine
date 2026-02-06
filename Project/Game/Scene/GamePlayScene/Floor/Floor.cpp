@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 void Floor::Initialize() {
 
 	// モデルの生成・初期化

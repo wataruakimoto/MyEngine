@@ -13,6 +13,7 @@
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dxcompiler.lib")
 
+using namespace Engine;
 using namespace Microsoft::WRL;
 using namespace Logger;
 using namespace StringUtility;

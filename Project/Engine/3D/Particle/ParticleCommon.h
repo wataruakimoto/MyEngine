@@ -2,110 +2,112 @@
 
 #include "GraphicsPipelineCreator.h"
 
-/// ===== 前方宣言 ===== ///
-class Camera;
+namespace Engine {
 
-/// ===== パーティクル基盤 ===== ///
-class ParticleCommon {
+	/// ===== 前方宣言 ===== ///
+	class Camera;
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// ===== パーティクル基盤 ===== ///
+	class ParticleCommon {
 
-	// インスタンス
-	static ParticleCommon* instance;
-	// コンストラクタの隠蔽
-	ParticleCommon() = default;
-	// デストラクタの隠蔽
-	~ParticleCommon() = default;
-	// コピーコンストラクタの封印
-	ParticleCommon(ParticleCommon&) = delete;
-	// コピー代入演算子の封印
-	ParticleCommon& operator=(ParticleCommon&) = delete;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// インスタンス
+		static ParticleCommon* instance;
+		// コンストラクタの隠蔽
+		ParticleCommon() = default;
+		// デストラクタの隠蔽
+		~ParticleCommon() = default;
+		// コピーコンストラクタの封印
+		ParticleCommon(ParticleCommon&) = delete;
+		// コピー代入演算子の封印
+		ParticleCommon& operator=(ParticleCommon&) = delete;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画設定
-	/// </summary>
-	void SettingDrawing();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 描画設定
+		/// </summary>
+		void SettingDrawing();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// RootSignatureの生成
-	/// </summary>
-	void CreateRootSignature();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// InputLayoutの生成
-	/// </summary>
-	void CreateInputLayout();
+		/// <summary>
+		/// RootSignatureの生成
+		/// </summary>
+		void CreateRootSignature();
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// InputLayoutの生成
+		/// </summary>
+		void CreateInputLayout();
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static ParticleCommon* GetInstance();
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// デフォルトカメラのゲッター
-	/// </summary>
-	/// <returns>Camera</returns>
-	Camera* GetDefaultCamera() const { return defaultCamera_; }
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static ParticleCommon* GetInstance();
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// デフォルトカメラのゲッター
+		/// </summary>
+		/// <returns>Camera</returns>
+		Camera* GetDefaultCamera() const { return defaultCamera_; }
 
-	/// <summary>
-	/// デフォルトカメラのセッター
-	/// </summary>
-	/// <param effectName="camera">カメラ</param>
-	void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// デフォルトカメラのセッター
+		/// </summary>
+		/// <param effectName="camera">カメラ</param>
+		void SetDefaultCamera(Camera* camera) { this->defaultCamera_ = camera; }
 
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// パイプラインクリエイター
-	GraphicsPipelineCreator pipelineCreater_;
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
 
-	// RootSignature
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+		// パイプラインクリエイター
+		GraphicsPipelineCreator pipelineCreator_;
 
-	// InputLayout
-	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
+		// RootSignature
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
-	// デフォルトカメラ
-	Camera* defaultCamera_ = nullptr;
-};
+		// InputLayout
+		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+		D3D12_INPUT_ELEMENT_DESC inputElementDescs[3] = {};
 
+		// デフォルトカメラ
+		Camera* defaultCamera_ = nullptr;
+	};
+}

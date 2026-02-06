@@ -245,14 +245,14 @@ private:
 	/// ===== エンジン ===== ///
 
 	// カメラ
-	std::unique_ptr<Camera> camera_ = nullptr;
+	std::unique_ptr<Engine::Camera> camera_ = nullptr;
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
 
 	// パーティクルマネージャのインスタンス
-	ParticleManager* particleManager_ = ParticleManager::GetInstance();
+	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
 
 	// パーティクル共通のインスタンス
-	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
+	Engine::ParticleCommon* particleCommon = Engine::ParticleCommon::GetInstance();
 };

@@ -7,6 +7,8 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 BaseScene* SceneFactory::CreateScene(const std::string& sceneName) {
 
 	// 次のシーンを生成

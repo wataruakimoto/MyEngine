@@ -5,154 +5,156 @@
 #include <wrl.h>
 #include <cstdint>
 
-/// ===== 前方宣言 ===== ///
-class DirectXUtility;
-class SrvManager;
-class Camera;
+namespace Engine {
 
-/// ===== フィルター基底クラス ===== ///
-class BaseFilter {
+	/// ===== 前方宣言 ===== ///
+	class DirectXUtility;
+	class SrvManager;
+	class Camera;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== フィルター基底クラス ===== ///
+	class BaseFilter {
 
-	/// <summary>
-	/// 仮想デストラクタ
-	/// </summary>
-	virtual ~BaseFilter() = default;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	virtual void Initialize() = 0;
+		/// <summary>
+		/// 仮想デストラクタ
+		/// </summary>
+		virtual ~BaseFilter() = default;
 
-	/// <summary>
-	/// 描画設定
-	/// </summary>
-	virtual void Draw() = 0;
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		virtual void Initialize() = 0;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	virtual void ShowImGui() = 0;
+		/// <summary>
+		/// 描画設定
+		/// </summary>
+		virtual void Draw() = 0;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-protected:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		virtual void ShowImGui() = 0;
 
-	/// <summary>
-	/// RootSignature作成
-	/// </summary>
-	virtual void CreateRootSignature() = 0;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	protected:
 
-	/// <summary>
-	/// InputLayout作成
-	/// </summary>
-	virtual void CreateInputLayout() = 0;
+		/// <summary>
+		/// RootSignature作成
+		/// </summary>
+		virtual void CreateRootSignature() = 0;
 
-	/// <summary>
-	/// BlendState作成
-	/// </summary>
-	virtual void CreateBlendState() = 0;
+		/// <summary>
+		/// InputLayout作成
+		/// </summary>
+		virtual void CreateInputLayout() = 0;
 
-	/// <summary>
-	/// RasterizerState作成
-	/// </summary>
-	virtual void CreateRasterizerState() = 0;
+		/// <summary>
+		/// BlendState作成
+		/// </summary>
+		virtual void CreateBlendState() = 0;
 
-	/// <summary>
-	/// VertexShader作成
-	/// </summary>
-	virtual void CreateVertexShader() = 0;
+		/// <summary>
+		/// RasterizerState作成
+		/// </summary>
+		virtual void CreateRasterizerState() = 0;
 
-	/// <summary>
-	/// PixelShader作成
-	/// </summary>
-	virtual void CreatePixelShader() = 0;
+		/// <summary>
+		/// VertexShader作成
+		/// </summary>
+		virtual void CreateVertexShader() = 0;
 
-	/// <summary>
-	/// DepthStencilState作成
-	/// </summary>
-	virtual void CreateDepthStencilState() = 0;
+		/// <summary>
+		/// PixelShader作成
+		/// </summary>
+		virtual void CreatePixelShader() = 0;
 
-	/// <summary>
-	/// GraphicsPipeline作成
-	/// </summary>
-	virtual void CreateGraphicsPipeline() = 0;
+		/// <summary>
+		/// DepthStencilState作成
+		/// </summary>
+		virtual void CreateDepthStencilState() = 0;
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// GraphicsPipeline作成
+		/// </summary>
+		virtual void CreateGraphicsPipeline() = 0;
 
-	/// <summary>
-	/// 有効化フラグのゲッター
-	/// </summary>
-	/// <returns></returns>
-	bool GetIsActive() const { return isActive; }
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// 有効化フラグのゲッター
+		/// </summary>
+		/// <returns></returns>
+		bool GetIsActive() const { return isActive; }
 
-	/// <summary>
-	/// SRVインデックスのセッター
-	/// </summary>
-	/// <param name="srvIndex"></param>
-	void SetSrvIndex(uint32_t& srvIndex) { this->srvIndex = srvIndex; }
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 有効化フラグのセッター
-	/// </summary>
-	/// <param name="isActive"></param>
-	void SetIsActive(bool isActive) { this->isActive = isActive; }
+		/// <summary>
+		/// SRVインデックスのセッター
+		/// </summary>
+		/// <param name="srvIndex"></param>
+		void SetSrvIndex(uint32_t& srvIndex) { this->srvIndex = srvIndex; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-protected:
+		/// <summary>
+		/// 有効化フラグのセッター
+		/// </summary>
+		/// <param name="isActive"></param>
+		void SetIsActive(bool isActive) { this->isActive = isActive; }
 
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	protected:
 
-	// SrvManagerのインスタンス
-	SrvManager* srvManager = nullptr;
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility = nullptr;
 
-	// HRESULT
-	HRESULT hr;
+		// SrvManagerのインスタンス
+		SrvManager* srvManager = nullptr;
 
-	// RootSignature
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+		// HRESULT
+		HRESULT hr;
 
-	// InputLayout
-	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+		// RootSignature
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
 
-	// BlendState
-	D3D12_BLEND_DESC blendDesc{};
+		// InputLayout
+		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
 
-	// RasterizerState
-	D3D12_RASTERIZER_DESC rasterizerDesc{};
+		// BlendState
+		D3D12_BLEND_DESC blendDesc{};
 
-	// VertexShader
-	Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = nullptr;
+		// RasterizerState
+		D3D12_RASTERIZER_DESC rasterizerDesc{};
 
-	// PixelShader
-	Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = nullptr;
+		// VertexShader
+		Microsoft::WRL::ComPtr<IDxcBlob> vertexShaderBlob = nullptr;
 
-	// DepthStencilState
-	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+		// PixelShader
+		Microsoft::WRL::ComPtr<IDxcBlob> pixelShaderBlob = nullptr;
 
-	// GraphicsPipeline
-	Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
+		// DepthStencilState
+		D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
 
-	// 有効化フラグ
-	bool isActive = false;
+		// GraphicsPipeline
+		Microsoft::WRL::ComPtr <ID3D12PipelineState> graphicsPipelineState = nullptr;
 
-	// SRVインデックス
-	uint32_t srvIndex = 0;
-};
+		// 有効化フラグ
+		bool isActive = false;
 
+		// SRVインデックス
+		uint32_t srvIndex = 0;
+	};
+}

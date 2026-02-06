@@ -5,6 +5,7 @@
 
 #include <imgui.h>
 
+using namespace Engine;
 using namespace Microsoft::WRL;
 using namespace Logger;
 

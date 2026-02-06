@@ -2,82 +2,85 @@
 
 #include "GraphicsPipelineCreator.h"
 
-// スプライト共通部
-class SpriteCommon {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	// スプライト共通部
+	class SpriteCommon {
 
-	// インスタンス
-	static SpriteCommon* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	SpriteCommon() = default;
-	// デストラクタの隠蔽
-	~SpriteCommon() = default;
-	// コピーコンストラクタの封印
-	SpriteCommon(SpriteCommon&) = delete;
-	// コピー代入演算子の封印
-	SpriteCommon& operator=(SpriteCommon&) = delete;
+		// インスタンス
+		static SpriteCommon* instance;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コンストラクタの隠蔽
+		SpriteCommon() = default;
+		// デストラクタの隠蔽
+		~SpriteCommon() = default;
+		// コピーコンストラクタの封印
+		SpriteCommon(SpriteCommon&) = delete;
+		// コピー代入演算子の封印
+		SpriteCommon& operator=(SpriteCommon&) = delete;
 
-	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static SpriteCommon* GetInstance();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		/// <summary>
+		/// シングルトンインスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static SpriteCommon* GetInstance();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 共通描画設定
-	/// </summary>
-	void SettingDrawing();
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 共通描画設定
+		/// </summary>
+		void SettingDrawing();
 
-	/// <summary>
-	/// RootSignatureの生成
-	/// </summary>
-	void CreateRootSignature();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// InputLayoutの生成
-	/// </summary>
-	void CreateInputLayout();
+		/// <summary>
+		/// RootSignatureの生成
+		/// </summary>
+		void CreateRootSignature();
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-	
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
+		/// <summary>
+		/// InputLayoutの生成
+		/// </summary>
+		void CreateInputLayout();
 
-	// パイプラインクリエイター
-	GraphicsPipelineCreator pipelineCreater_;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// RootSignature
-	Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility_ = DirectXUtility::GetInstance();
 
-	// InputLayout
-	D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
-};
+		// パイプラインクリエイター
+		GraphicsPipelineCreator pipelineCreator_;
+
+		// RootSignature
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature = nullptr;
+
+		// InputLayout
+		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+		D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
+	};
+}

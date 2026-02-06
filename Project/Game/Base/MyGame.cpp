@@ -10,6 +10,8 @@
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
 
+using namespace Engine;
+
 void MyGame::Initialize() {
 
 	// 基底クラス初期化

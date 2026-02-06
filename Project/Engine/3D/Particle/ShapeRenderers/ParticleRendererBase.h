@@ -7,97 +7,100 @@
 #include <d3d12.h>
 #include <wrl.h>
 
-/// === 前方宣言 === ///
-class DirectXUtility;
-class SrvManager;
-class TextureManager;
+namespace Engine {
 
-/// ===== パーティクル描画用の抽象基底クラス ===== ///
-class ParticleRendererBase {
+	/// === 前方宣言 === ///
+	class DirectXUtility;
+	class SrvManager;
+	class TextureManager;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== パーティクル描画用の抽象基底クラス ===== ///
+	class ParticleRendererBase {
 
-	/// <summary>
-	/// 仮想デストラクタ
-	/// </summary>
-	virtual ~ParticleRendererBase() = default;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	virtual void Initialize() = 0;
+		/// <summary>
+		/// 仮想デストラクタ
+		/// </summary>
+		virtual ~ParticleRendererBase() = default;
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	virtual void Update() = 0;
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		virtual void Initialize() = 0;
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="instanceCount">インスタンス数</param>
-	/// <param name="instanceSrvIndex">インスタンス用SRVインデックス</param>
-	/// <param name="texturePath">テクスチャパス</param>
-	virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) = 0;
+		/// <summary>
+		/// 更新
+		/// </summary>
+		virtual void Update() = 0;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-protected:
+		/// <summary>
+		/// 描画
+		/// </summary>
+		/// <param name="instanceCount">インスタンス数</param>
+		/// <param name="instanceSrvIndex">インスタンス用SRVインデックス</param>
+		/// <param name="texturePath">テクスチャパス</param>
+		virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) = 0;
 
-	/// <summary>
-	/// 頂点データ生成
-	/// </summary>
-	virtual void GenerateVertexData() = 0;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	protected:
 
-	/// <summary>
-	/// 参照データ生成
-	/// </summary>
-	virtual void GenerateIndexData() = 0;
+		/// <summary>
+		/// 頂点データ生成
+		/// </summary>
+		virtual void GenerateVertexData() = 0;
 
-	/// <summary>
-	/// マテリアルデータ生成
-	/// </summary>
-	virtual void GenerateMaterialData() = 0;
+		/// <summary>
+		/// 参照データ生成
+		/// </summary>
+		virtual void GenerateIndexData() = 0;
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-protected:
+		/// <summary>
+		/// マテリアルデータ生成
+		/// </summary>
+		virtual void GenerateMaterialData() = 0;
 
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	protected:
 
-	// SrvManagerのインスタンス
-	SrvManager* srvManager = nullptr;
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility = nullptr;
 
-	// TextureManagerのインスタンス
-	TextureManager* textureManager = nullptr;
+		// SrvManagerのインスタンス
+		SrvManager* srvManager = nullptr;
 
-	// 頂点リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
+		// TextureManagerのインスタンス
+		TextureManager* textureManager = nullptr;
 
-	// 頂点データ
-	VertexData* vertexData = nullptr;
+		// 頂点リソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
 
-	// 頂点バッファビュー
-	D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+		// 頂点データ
+		VertexData* vertexData = nullptr;
 
-	// 参照リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> indexResource;
+		// 頂点バッファビュー
+		D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-	// 参照データ
-	uint32_t* indexData = nullptr;
+		// 参照リソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> indexResource;
 
-	// Index用のビュー
-	D3D12_INDEX_BUFFER_VIEW indexBufferView{};
+		// 参照データ
+		uint32_t* indexData = nullptr;
 
-	// マテリアルリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
+		// Index用のビュー
+		D3D12_INDEX_BUFFER_VIEW indexBufferView{};
 
-	// マテリアルデータ
-	Material* materialData = nullptr;
-};
+		// マテリアルリソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> materialResource;
+
+		// マテリアルデータ
+		Material* materialData = nullptr;
+	};
+}

@@ -4,9 +4,12 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
-// 頂点データ
-struct VertexData {
-	Vector4 position;
-	Vector2 texcoord;
-	Vector3 normal;
-};
+namespace Engine {
+
+	// 頂点データ
+	struct VertexData {
+		Vector4 position;
+		Vector2 texcoord;
+		Vector3 normal;
+	};
+}

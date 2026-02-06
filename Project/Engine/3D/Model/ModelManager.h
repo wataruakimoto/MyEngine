@@ -10,88 +10,91 @@
 #include <map>
 #include <memory>
 
-/// === モデルマネージャー === ///
-class ModelManager {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// === モデルマネージャー === ///
+	class ModelManager {
 
-	// インスタンス
-	static ModelManager* instance;
-	
-	// コンストラクタ(隠蔽)
-	ModelManager() = default;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// デストラクタ(隠蔽)
-	~ModelManager() = default;
+		// インスタンス
+		static ModelManager* instance;
 
-	// コピーコンストラクタ(封印)
-	ModelManager(ModelManager&) = delete;
+		// コンストラクタ(隠蔽)
+		ModelManager() = default;
 
-	// コピー代入演算子(封印)
-	ModelManager& operator=(ModelManager&) = delete;
+		// デストラクタ(隠蔽)
+		~ModelManager() = default;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コピーコンストラクタ(封印)
+		ModelManager(ModelManager&) = delete;
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static ModelManager* GetInstance();
+		// コピー代入演算子(封印)
+		ModelManager& operator=(ModelManager&) = delete;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static ModelManager* GetInstance();
 
-	/// <summary>
-	/// モデルデータの読み込み
-	/// </summary>
-	/// <param name="directoryName">ディレクトリ名</param>
-	/// <param name="fileName">ファイル名</param>
-	void LoadModelData(const std::string& directoryName, const std::string& fileName);
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// モデルデータを検索
-	/// </summary>
-	/// <param name="directoryName">ディレクトリ名</param>
-	/// <param name="fileName">ファイル名</param>
-	/// <returns>モデルデータ</returns>
-	ModelData* FindModelData(const std::string& directoryName, const std::string& fileName);
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	static Node ReadNode(aiNode* node);
+		/// <summary>
+		/// モデルデータの読み込み
+		/// </summary>
+		/// <param name="directoryName">ディレクトリ名</param>
+		/// <param name="fileName">ファイル名</param>
+		void LoadModelData(const std::string& directoryName, const std::string& fileName);
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// モデルデータを検索
+		/// </summary>
+		/// <param name="directoryName">ディレクトリ名</param>
+		/// <param name="fileName">ファイル名</param>
+		/// <returns>モデルデータ</returns>
+		ModelData* FindModelData(const std::string& directoryName, const std::string& fileName);
 
-	/// <summary>
-	/// 画像ファイルの探索
-	/// </summary>
-	/// <param name="directoryName">ディレクトリ名</param>
-	/// <param name="filename">ファイル名</param>
-	/// <returns></returns>
-	std::string FindTextureFilePath(const std::string& directoryName, const std::string& filename);
+		static Node ReadNode(aiNode* node);
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	// モデルデータのマップコンテナ キー : ディレクトリ + ファイル名
-	std::map<std::string, std::unique_ptr<ModelData>> modelDatas;
+		/// <summary>
+		/// 画像ファイルの探索
+		/// </summary>
+		/// <param name="directoryName">ディレクトリ名</param>
+		/// <param name="filename">ファイル名</param>
+		/// <returns></returns>
+		std::string FindTextureFilePath(const std::string& directoryName, const std::string& filename);
 
-	// ベースのディレクトリパス
-	const std::string baseDirectoryPath = "Resources/Models";
-};
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// モデルデータのマップコンテナ キー : ディレクトリ + ファイル名
+		std::map<std::string, std::unique_ptr<ModelData>> modelDatas;
+
+		// ベースのディレクトリパス
+		const std::string baseDirectoryPath = "Resources/Models";
+	};
+}

@@ -3,7 +3,7 @@
 #include "AbstractSceneFactory.h"
 
 /// ===== シーンファクトリー ===== ///
-class SceneFactory : public AbstractSceneFactory {
+class SceneFactory : public Engine::AbstractSceneFactory {
 
 ///-------------------------------------------/// 
 /// メンバ関数

@@ -2,11 +2,14 @@
 
 #include <string>
 
-namespace Logger {
+namespace Engine {
 
-	/// <summary>
-	/// ログ出力
-	/// </summary>
-	/// <param name="message">ログ</param>
-	void Log(const std::string& message);
-};
+	namespace Logger {
+
+		/// <summary>
+		/// ログ出力
+		/// </summary>
+		/// <param name="message">ログ</param>
+		void Log(const std::string& message);
+	};
+}

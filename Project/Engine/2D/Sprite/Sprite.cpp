@@ -6,6 +6,7 @@
 
 #include <imgui.h>
 
+using namespace Engine;
 using namespace MathMatrix;
 
 void Sprite::Initialize(const std::string relativePath) {

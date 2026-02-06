@@ -101,10 +101,10 @@ public:
 private:
 	
 	// テクスチャマネージャのインスタンス
-	TextureManager* textureManager_ = TextureManager::GetInstance();
+	Engine::TextureManager* textureManager_ = Engine::TextureManager::GetInstance();
 
 	// スプライト
-	std::unique_ptr<Sprite> sprite_ = nullptr;
+	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
 
 	// アルファ値
 	float alpha_ = 0.0f;

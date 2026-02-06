@@ -5,6 +5,8 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 void SceneBuffer::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得

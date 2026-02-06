@@ -7,6 +7,7 @@
 
 #include <imgui.h>
 
+using namespace Engine;
 using namespace MathMatrix;
 
 void Skybox::Initialize(const std::string relativePath) {

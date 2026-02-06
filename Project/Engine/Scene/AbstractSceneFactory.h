@@ -4,36 +4,39 @@
 
 #include <string>
 
-/// ===== 抽象シーンファクトリー ===== ///
-class AbstractSceneFactory {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== 抽象シーンファクトリー ===== ///
+	class AbstractSceneFactory {
 
-	/// <summary>
-	/// 仮想デストラクタ
-	/// </summary>
-	virtual ~AbstractSceneFactory() = default;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// シーン生成
-	/// </summary>
-	/// <param name="sceneName">シーン名</param>
-	/// <returns>BaseScene</returns>
-	virtual BaseScene* CreateScene(const std::string& sceneName) = 0;
+		/// <summary>
+		/// 仮想デストラクタ
+		/// </summary>
+		virtual ~AbstractSceneFactory() = default;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	virtual void ShowImGui() = 0;
+		/// <summary>
+		/// シーン生成
+		/// </summary>
+		/// <param name="sceneName">シーン名</param>
+		/// <returns>BaseScene</returns>
+		virtual BaseScene* CreateScene(const std::string& sceneName) = 0;
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-protected:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		virtual void ShowImGui() = 0;
 
-	// 現在のシーン名
-	std::string currentSceneName_;
-};
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	protected:
+
+		// 現在のシーン名
+		std::string currentSceneName_;
+	};
+}

@@ -3,6 +3,8 @@
 #include <cassert>
 #include <fstream>
 
+using namespace Engine;
+
 AudioManager* AudioManager::instance = nullptr;
 
 AudioManager* AudioManager::GetInstance() {

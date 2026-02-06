@@ -1,5 +1,7 @@
 #include "GameOverScene.h"
 
+using namespace Engine;
+
 void GameOverScene::Initialize() {
 
 	// スプライトの生成&初期化

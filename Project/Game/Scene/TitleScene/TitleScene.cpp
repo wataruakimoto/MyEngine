@@ -7,10 +7,12 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 void TitleScene::Initialize() {
 
 	// カメラの生成&初期化
-	camera_ = std::make_unique<Camera>();
+	camera_ = std::make_unique<Engine::Camera>();
 	camera_->Initialize();
 	camera_->SetFarClip(950.0f); // ファークリップを950に設定
 

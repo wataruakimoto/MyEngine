@@ -1,13 +1,16 @@
 #pragma once
 
-/// <summary>
-/// リソースリークチェッカー
-/// </summary>
-class D3DResourceLeakChecker {
+namespace Engine {
 
-public:
 	/// <summary>
-	/// デストラクタ
+	/// リソースリークチェッカー
 	/// </summary>
-	~D3DResourceLeakChecker();
-};
+	class D3DResourceLeakChecker {
+
+	public:
+		/// <summary>
+		/// デストラクタ
+		/// </summary>
+		~D3DResourceLeakChecker();
+	};
+}

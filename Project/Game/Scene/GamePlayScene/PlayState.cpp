@@ -9,6 +9,7 @@
 
 #include <algorithm>
 
+using namespace Engine;
 using namespace Easing;
 
 ///-------------------------------------------/// 

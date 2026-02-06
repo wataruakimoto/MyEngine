@@ -53,18 +53,18 @@ public:
 private:
 
 	// カメラのポインタ
-	std::unique_ptr<Camera> camera = nullptr;
+	std::unique_ptr<Engine::Camera> camera = nullptr;
 
 	// パーティクル共通のインスタンス
-	ParticleCommon* particleCommon = ParticleCommon::GetInstance();
+	Engine::ParticleCommon* particleCommon = Engine::ParticleCommon::GetInstance();
 
 	// パーティクルマネージャーのインスタンス
-	ParticleManager* particleManager = ParticleManager::GetInstance();
+	Engine::ParticleManager* particleManager = Engine::ParticleManager::GetInstance();
 
 	// エミッターのポインタ
-	std::unique_ptr<ParticleEmitter> particleEmitterRed = nullptr;
-	std::unique_ptr<ParticleEmitter> particleEmitterBlue = nullptr;
+	std::unique_ptr<Engine::ParticleEmitter> particleEmitterRed = nullptr;
+	std::unique_ptr<Engine::ParticleEmitter> particleEmitterBlue = nullptr;
 
 	// フィルターマネージャのインスタンス
-	FilterManager* filterManager;
+	Engine::FilterManager* filterManager;
 };

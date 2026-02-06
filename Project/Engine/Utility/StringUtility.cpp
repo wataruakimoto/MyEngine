@@ -2,6 +2,8 @@
 
 #include <windows.h>
 
+using namespace Engine;
+
 std::wstring StringUtility::ConvertString(const std::string& str) {
 	if (str.empty()) {
 		return std::wstring();

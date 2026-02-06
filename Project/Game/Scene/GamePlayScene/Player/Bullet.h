@@ -68,7 +68,7 @@ private:
 ///-------------------------------------------///
 public:
 
-	void SetDirection(const Vector3& direction) { direction_ = direction; }
+	void SetDirection(const Engine::Vector3& direction) { direction_ = direction; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -76,16 +76,16 @@ public:
 private:
 
 	// モデルのポインタ
-	std::unique_ptr<Model> model = nullptr;
+	std::unique_ptr<Engine::Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	std::unique_ptr<Object3d> object = nullptr;
+	std::unique_ptr<Engine::Object3d> object = nullptr;
 
 	// 方向
-	Vector3 direction_ = { 0.0f, 0.0f, 1.0f };
+	Engine::Vector3 direction_ = { 0.0f, 0.0f, 1.0f };
 
 	// 速度
-	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	// 移動の速さ
 	float moveSpeed = 4.0f;
@@ -99,5 +99,5 @@ private:
 	bool isDead = false;
 
 	// エミッターのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitter = nullptr;
+	std::unique_ptr <Engine::ParticleEmitter> particleEmitter = nullptr;
 };

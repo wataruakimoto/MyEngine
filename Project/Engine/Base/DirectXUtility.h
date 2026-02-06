@@ -11,234 +11,236 @@
 
 #include "DirectXTex.h"
 
-/// === DirectX機能 === ///
-class DirectXUtility {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// === DirectX機能 === ///
+	class DirectXUtility {
 
-	// インスタンス
-	static DirectXUtility* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	DirectXUtility() = default;
-	// デストラクタの隠蔽
-	~DirectXUtility() = default;
-	// コピーコンストラクタの封印
-	DirectXUtility(DirectXUtility&) = delete;
-	// コピー代入演算子の封印
-	DirectXUtility& operator=(DirectXUtility&) = delete;
+		// インスタンス
+		static DirectXUtility* instance;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コンストラクタの隠蔽
+		DirectXUtility() = default;
+		// デストラクタの隠蔽
+		~DirectXUtility() = default;
+		// コピーコンストラクタの封印
+		DirectXUtility(DirectXUtility&) = delete;
+		// コピー代入演算子の封印
+		DirectXUtility& operator=(DirectXUtility&) = delete;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
-	void PostDraw();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 描画後処理
+		/// </summary>
+		void PostDraw();
 
-	/// <summary>
-	/// デスクリプタヒープを作成する
-	/// </summary>
-	/// <param name="heapType"></param>
-	/// <param name="numDescriptors"></param>
-	/// <param name="shaderVisible"></param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// シェーダーコンパイル
-	/// </summary>
-	/// <param name="filePath">Shaderファイルへのパス</param>
-	/// <param name="profile">プロファイル</param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
+		/// <summary>
+		/// デスクリプタヒープを作成する
+		/// </summary>
+		/// <param name="heapType"></param>
+		/// <param name="numDescriptors"></param>
+		/// <param name="shaderVisible"></param>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> CreateDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE heapType, UINT numDescriptors, bool shaderVisible);
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// シェーダーコンパイル
+		/// </summary>
+		/// <param name="filePath">Shaderファイルへのパス</param>
+		/// <param name="profile">プロファイル</param>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr<IDxcBlob> CompileShader(const std::wstring& filePath, const wchar_t* profile);
 
-	/// <summary>
-	/// デバイス初期化
-	/// </summary>
-	void DeviceInitialize();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// コマンド関連の初期化
-	/// </summary>
-	void CommandRelatedInitialize();
+		/// <summary>
+		/// デバイス初期化
+		/// </summary>
+		void DeviceInitialize();
 
-	/// <summary>
-	/// フェンスの初期化
-	/// </summary>
-	void FenceInitialize();
+		/// <summary>
+		/// コマンド関連の初期化
+		/// </summary>
+		void CommandRelatedInitialize();
 
-	/// <summary>
-	/// DXCコンパイラの生成
-	/// </summary>
-	void DXCCompilerGenerate();
+		/// <summary>
+		/// フェンスの初期化
+		/// </summary>
+		void FenceInitialize();
 
-	/// <summary>
-	/// FPS固定初期化
-	/// </summary>
-	void InitializeFixFPS();
+		/// <summary>
+		/// DXCコンパイラの生成
+		/// </summary>
+		void DXCCompilerGenerate();
 
-	/// <summary>
-	/// FPS固定更新
-	/// </summary>
-	void UpdateFixFPS();
+		/// <summary>
+		/// FPS固定初期化
+		/// </summary>
+		void InitializeFixFPS();
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// FPS固定更新
+		/// </summary>
+		void UpdateFixFPS();
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static DirectXUtility* GetInstance();
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// デバイスの取得
-	/// </summary>
-	/// <returns>ID3D12Device</returns>
-	Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device; }
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static DirectXUtility* GetInstance();
 
-	/// <summary>
-	/// コマンドリストを取得
-	/// </summary>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() const { return commandList; }
+		/// <summary>
+		/// デバイスの取得
+		/// </summary>
+		/// <returns>ID3D12Device</returns>
+		Microsoft::WRL::ComPtr<ID3D12Device> GetDevice() { return device; }
 
-	/// <summary>
-	/// コマンドキューを取得
-	/// </summary>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> GetCommandQueue() const { return commandQueue; }
+		/// <summary>
+		/// コマンドリストを取得
+		/// </summary>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> GetCommandList() const { return commandList; }
 
-	/// <summary>
-	/// DXGIファクトリーの取得
-	/// </summary>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr<IDXGIFactory7> GetDXGIFactory() { return dxgiFactory; }
+		/// <summary>
+		/// コマンドキューを取得
+		/// </summary>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> GetCommandQueue() const { return commandQueue; }
 
-	/// <summary>
-	/// CPUのデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="descriptorHeap"></param>
-	/// <param name="descriptorSize"></param>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+		/// <summary>
+		/// DXGIファクトリーの取得
+		/// </summary>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr<IDXGIFactory7> GetDXGIFactory() { return dxgiFactory; }
 
-	/// <summary>
-	/// GPUのデスクリプタハンドルを取得する
-	/// </summary>
-	/// <param name="descriptorHeap"></param>
-	/// <param name="descriptorSize"></param>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
+		/// <summary>
+		/// CPUのデスクリプタハンドルを取得する
+		/// </summary>
+		/// <param name="descriptorHeap"></param>
+		/// <param name="descriptorSize"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		static D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
-	/// <summary>
-	/// バッファリソース生成
-	/// </summary>
-	/// <param name="sizeInBytes"></param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
+		/// <summary>
+		/// GPUのデスクリプタハンドルを取得する
+		/// </summary>
+		/// <param name="descriptorHeap"></param>
+		/// <param name="descriptorSize"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		static D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>& descriptorHeap, uint32_t descriptorSize, uint32_t index);
 
-	/// <summary>
-	/// テクスチャリソース生成
-	/// </summary>
-	/// <param name="metadata"></param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
+		/// <summary>
+		/// バッファリソース生成
+		/// </summary>
+		/// <param name="sizeInBytes"></param>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr<ID3D12Resource> CreateBufferResource(size_t sizeInBytes);
 
-	/// <summary>
-	/// テクスチャリソースにデータを転送する
-	/// </summary>
-	/// <param name="texture"></param>
-	/// <param name="mipImages"></param>
-	Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
+		/// <summary>
+		/// テクスチャリソース生成
+		/// </summary>
+		/// <param name="metadata"></param>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr<ID3D12Resource> CreateTextureResource(const DirectX::TexMetadata& metadata);
 
-	/// <summary>
-	/// レンダーテクスチャ生成 
-	/// </summary>
-	/// <param name="width"></param>
-	/// <param name="height"></param>
-	/// <param name="format"></param>
-	/// <param name="clearColor"></param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr <ID3D12Resource> CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
+		/// <summary>
+		/// テクスチャリソースにデータを転送する
+		/// </summary>
+		/// <param name="texture"></param>
+		/// <param name="mipImages"></param>
+		Microsoft::WRL::ComPtr<ID3D12Resource> UploadTextureData(Microsoft::WRL::ComPtr<ID3D12Resource> texture, const DirectX::ScratchImage& mipImages);
 
-	/// <summary>
-	/// 深度ステンシルリソース生成
-	/// </summary>
-	/// <param name="width"></param>
-	/// <param name="height"></param>
-	/// <param name="format"></param>
-	/// <param name="clearDepth"></param>
-	/// <returns></returns>
-	Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth);
+		/// <summary>
+		/// レンダーテクスチャ生成 
+		/// </summary>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="format"></param>
+		/// <param name="clearColor"></param>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr <ID3D12Resource> CreateRenderTextureResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const Vector4& clearColor);
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 深度ステンシルリソース生成
+		/// </summary>
+		/// <param name="width"></param>
+		/// <param name="height"></param>
+		/// <param name="format"></param>
+		/// <param name="clearDepth"></param>
+		/// <returns></returns>
+		Microsoft::WRL::ComPtr <ID3D12Resource> CreateDepthStencilResource(uint32_t width, uint32_t height, DXGI_FORMAT format, const float clearDepth);
 
-	// HRESULT
-	HRESULT hr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// デバイス
-	Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
+		// HRESULT
+		HRESULT hr;
 
-	// コマンドアロケータ
-	Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
+		// デバイス
+		Microsoft::WRL::ComPtr<ID3D12Device> device = nullptr;
 
-	// コマンドリスト
-	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
+		// コマンドアロケータ
+		Microsoft::WRL::ComPtr<ID3D12CommandAllocator> commandAllocator = nullptr;
 
-	// コマンドキュー
-	Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
+		// コマンドリスト
+		Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList> commandList = nullptr;
 
-	// フェンス
-	Microsoft::WRL::ComPtr <ID3D12Fence> fence = nullptr;
+		// コマンドキュー
+		Microsoft::WRL::ComPtr<ID3D12CommandQueue> commandQueue = nullptr;
 
-	// フェンスの値
-	uint64_t fenceValue = 0;
+		// フェンス
+		Microsoft::WRL::ComPtr <ID3D12Fence> fence = nullptr;
 
-	// フェンスイベント
-	HANDLE fenceEvent;
+		// フェンスの値
+		uint64_t fenceValue = 0;
 
-	// DXGIファクトリー
-	Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
+		// フェンスイベント
+		HANDLE fenceEvent;
 
-	// DXCユーティリティ
-	Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils = nullptr;
+		// DXGIファクトリー
+		Microsoft::WRL::ComPtr<IDXGIFactory7> dxgiFactory = nullptr;
 
-	// DXCコンパイラ
-	Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
+		// DXCユーティリティ
+		Microsoft::WRL::ComPtr<IDxcUtils> dxcUtils = nullptr;
 
-	// デフォルトインクルードハンドラ
-	Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
+		// DXCコンパイラ
+		Microsoft::WRL::ComPtr<IDxcCompiler3> dxcCompiler = nullptr;
 
-	// 記録時間(FPS固定用)
-	std::chrono::steady_clock::time_point reference;
-};
+		// デフォルトインクルードハンドラ
+		Microsoft::WRL::ComPtr<IDxcIncludeHandler> includeHandler = nullptr;
 
+		// 記録時間(FPS固定用)
+		std::chrono::steady_clock::time_point reference;
+	};
+}

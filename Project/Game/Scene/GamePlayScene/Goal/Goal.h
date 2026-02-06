@@ -36,9 +36,9 @@ public:
 ///-------------------------------------------///
 public:
 
-	WorldTransform& GetWorldTransform() { return worldTransform_; }
+	Engine::WorldTransform& GetWorldTransform() { return worldTransform_; }
 
-	WorldTransform& GetGateWorldTransform() { return gateWorldTransform_; }
+	Engine::WorldTransform& GetGateWorldTransform() { return gateWorldTransform_; }
 
 	const int GetNormaCount() const { return kNormaCount; }
 
@@ -55,22 +55,22 @@ public:
 private:
 
 	// モデルのポインタ
-	std::unique_ptr<Model> model_ = nullptr;
+	std::unique_ptr<Engine::Model> model_ = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	std::unique_ptr<Object3d> object_ = nullptr;
+	std::unique_ptr<Engine::Object3d> object_ = nullptr;
 
 	// ゲート用のモデル
-	std::unique_ptr<Model> gateModel_ = nullptr;
+	std::unique_ptr<Engine::Model> gateModel_ = nullptr;
 
 	// ゲート用の3Dオブジェクト
-	std::unique_ptr<Object3d> gateObject_ = nullptr;
+	std::unique_ptr<Engine::Object3d> gateObject_ = nullptr;
 
 	// ワールド変換
-	WorldTransform worldTransform_;
+	Engine::WorldTransform worldTransform_;
 
 	// ゲートのワールド変換
-	WorldTransform gateWorldTransform_;
+	Engine::WorldTransform gateWorldTransform_;
 
 	// ノルマの倒した数
 	const int kNormaCount = 5;

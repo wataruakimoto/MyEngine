@@ -2,6 +2,7 @@
 #include "MathMatrix.h"
 #include "WinApp.h"
 
+using namespace Engine;
 using namespace MathMatrix;
 
 DebugCamera::DebugCamera() {

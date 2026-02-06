@@ -11,6 +11,7 @@
 #include <cassert>
 #include <imgui.h>
 
+using namespace Engine;
 using namespace MathVector;
 using namespace MathMatrix;
 using namespace MathRandom;

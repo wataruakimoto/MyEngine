@@ -74,13 +74,13 @@ public:
 ///-------------------------------------------///
 private:
 
-	std::unique_ptr<Sprite> ruleSprite_ = nullptr;
-	std::unique_ptr<Sprite> operationSprite_ = nullptr;
+	std::unique_ptr<Engine::Sprite> ruleSprite_ = nullptr;
+	std::unique_ptr<Engine::Sprite> operationSprite_ = nullptr;
 
 	// アニメーション関連
-	Vector2 startScale_ = { 0.0f, 0.0f }; // 開始時のスケール
-	Vector2 maxScale_ = { 1.0f, 1.0f };   // 最大時のスケール
-	Vector2 endScale_ = { 0.0f, 0.0f };	  // 終了時のスケール
+	Engine::Vector2 startScale_ = { 0.0f, 0.0f }; // 開始時のスケール
+	Engine::Vector2 maxScale_ = { 1.0f, 1.0f };   // 最大時のスケール
+	Engine::Vector2 endScale_ = { 0.0f, 0.0f };	  // 終了時のスケール
 
 	int animationFrame_ = 0;			  // 現在のアニメーションフレーム
 
@@ -91,7 +91,7 @@ private:
 	bool isAnimating_ = false;			  // アニメーション中フラグ
 	bool isAnimationFinished_ = false;	  // アニメーション終了フラグ
 
-	const Vector2 kDefaultSize = { 896.0f, 504.0f }; // デフォルトのサイズ
+	const Engine::Vector2 kDefaultSize = { 896.0f, 504.0f }; // デフォルトのサイズ
 
 	AnimationStateWarning animationState_ = AnimationStateWarning::BounceIn;
 };

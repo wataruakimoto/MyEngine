@@ -2,10 +2,13 @@
 
 #include <json.hpp>
 
-struct Vector2 {
-	float x;
-	float y;
-};
+namespace Engine {
 
-// JSON用のシリアライズ・デシリアライズ定義
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vector2, x, y)
+	struct Vector2 {
+		float x;
+		float y;
+	};
+
+	// JSON用のシリアライズ・デシリアライズ定義
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Vector2, x, y)
+}

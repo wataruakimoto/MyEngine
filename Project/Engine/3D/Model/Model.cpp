@@ -5,6 +5,7 @@
 #include "Model/ModelManager.h"
 #include <imgui.h>
 
+using namespace Engine;
 using namespace MathMatrix;
 
 void Model::Initialize(const std::string& directoryName, const std::string& fileName) {

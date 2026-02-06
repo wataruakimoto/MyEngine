@@ -2,28 +2,30 @@
 
 #include "ParticleRendererBase.h"
 
-class PlaneRenderer : public ParticleRendererBase {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	class PlaneRenderer : public ParticleRendererBase {
 
-	void Initialize() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	void Update() override;
+		void Initialize() override;
 
-	void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Update() override;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
 
-	void GenerateVertexData() override;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	void GenerateIndexData() override;
+		void GenerateVertexData() override;
 
-	void GenerateMaterialData() override;
-};
+		void GenerateIndexData() override;
 
+		void GenerateMaterialData() override;
+	};
+}

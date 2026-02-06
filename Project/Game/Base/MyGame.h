@@ -2,12 +2,15 @@
 
 #include "Framework.h"
 
-/// ===== 前方宣言 ===== ///
-class TextureManager;
-class ModelManager;
+namespace Engine {
+
+	/// ===== 前方宣言 ===== ///
+	class TextureManager;
+	class ModelManager;
+}
 
 /// === ゲーム関連 === ///
-class MyGame : public Framework {
+class MyGame : public Engine::Framework{
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -59,8 +62,8 @@ private:
 	/// ===== インスタンス ===== ///
 
 	// テクスチャマネージャのインスタンス
-	TextureManager* textureManager = nullptr;
+	Engine::TextureManager* textureManager = nullptr;
 
 	// モデルマネージャのインスタンス
-	ModelManager* modelManager = nullptr;
+	Engine::ModelManager* modelManager = nullptr;
 };

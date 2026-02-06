@@ -9,6 +9,7 @@
 
 #undef max
 
+using namespace Engine;
 using namespace Microsoft::WRL;
 using namespace Logger;
 

@@ -4,6 +4,8 @@
 
 #include <cassert>
 
+using namespace Engine;
+
 void SwapChain::Initialize(WinApp* winApp) {
 
 	// 引数をメンバ変数に設定

@@ -5,10 +5,12 @@
 #include <memory>
 
 /// === 前方宣言 === ///
-class Camera;
 class Enemy;
 class Player;
 class Reticle;
+namespace Engine {
+	class Camera;
+}
 
 /// === ロックオン === ///
 class LockOn {
@@ -64,7 +66,7 @@ public:
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { camera_ = camera; }
+	void SetCamera(Engine::Camera* camera) { camera_ = camera; }
 
 	/// <summary>
 	/// プレイヤーのセッター
@@ -95,12 +97,12 @@ private:
 	Enemy* target_ = nullptr;
 
 	// スプライト
-	std::unique_ptr<Sprite> sprite_ = nullptr;
+	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
 
 	/// ===== 借りポインタ・インスタンス ===== ///
 
 	// カメラの借りポインタ
-	Camera* camera_ = nullptr;
+	Engine::Camera* camera_ = nullptr;
 
 	// 自機の借りポインタ
 	Player* player_ = nullptr;

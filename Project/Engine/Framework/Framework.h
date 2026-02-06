@@ -8,69 +8,72 @@
 
 #include <memory>
 
-/// === 前方宣言 === ///
-class WinApp;
-class DirectXUtility;
+namespace Engine {
 
-/// === フレームワーク === ///
-class Framework {
+	/// === 前方宣言 === ///
+	class WinApp;
+	class DirectXUtility;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// === フレームワーク === ///
+	class Framework {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	virtual void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	virtual void Update();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		virtual void Initialize();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	virtual void Draw() = 0;
+		/// <summary>
+		/// 更新
+		/// </summary>
+		virtual void Update();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	virtual void Finalize();
+		/// <summary>
+		/// 描画
+		/// </summary>
+		virtual void Draw() = 0;
 
-	/// <summary>
-	/// 終了フラグのチェック
-	/// </summary>
-	/// <returns></returns>
-	virtual bool IsEndRequest() { return endRequest_; }
+		/// <summary>
+		/// 終了
+		/// </summary>
+		virtual void Finalize();
 
-	/// <summary>
-	/// ゲーム実行
-	/// </summary>
-	void Run();
+		/// <summary>
+		/// 終了フラグのチェック
+		/// </summary>
+		/// <returns></returns>
+		virtual bool IsEndRequest() { return endRequest_; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-protected:
+		/// <summary>
+		/// ゲーム実行
+		/// </summary>
+		void Run();
 
-	// WindowsAPIのポインタ
-	std::unique_ptr<WinApp> winApp = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	protected:
 
-	// スワップチェインのポインタ
-	std::unique_ptr<SwapChain> swapChain = nullptr;
+		// WindowsAPIのポインタ
+		std::unique_ptr<WinApp> winApp = nullptr;
 
-	// シーンバッファのポインタ
-	std::unique_ptr<SceneBuffer> sceneBuffer = nullptr;
+		// スワップチェインのポインタ
+		std::unique_ptr<SwapChain> swapChain = nullptr;
 
-	// ポストプロセスバッファのポインタ
-	std::unique_ptr<PostProcessBuffer> postProcessBuffer = nullptr;
+		// シーンバッファのポインタ
+		std::unique_ptr<SceneBuffer> sceneBuffer = nullptr;
 
-	// シーンファクトリー
-	std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+		// ポストプロセスバッファのポインタ
+		std::unique_ptr<PostProcessBuffer> postProcessBuffer = nullptr;
 
-	// ゲーム終了フラグ
-	bool endRequest_ = false;
-};
+		// シーンファクトリー
+		std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+
+		// ゲーム終了フラグ
+		bool endRequest_ = false;
+	};
+}

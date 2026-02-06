@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 
+using namespace Engine;
 using namespace Easing;
 
 ResultUI::ResultUI() {

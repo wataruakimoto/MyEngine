@@ -18,9 +18,9 @@ class PauseUI {
 private:
 
 	struct Button {
-		std::unique_ptr<Sprite> sprite; // スプライト
-		Vector2 position;               // 位置
-		Vector2 size;                   // サイズ
+		std::unique_ptr<Engine::Sprite> sprite; // スプライト
+		Engine::Vector2 position;               // 位置
+		Engine::Vector2 size;                   // サイズ
 		PauseSelect select;             // 選択肢
 	};
 
@@ -55,12 +55,12 @@ private:
 	/// <param name="select"></param>
 	/// <param name="relativePath"></param>
 	/// <param name="position"></param>
-	void CreateButton(PauseSelect select, const std::string& relativePath, const Vector2& position);
+	void CreateButton(PauseSelect select, const std::string& relativePath, const Engine::Vector2& position);
 
 	/// <summary>
 	/// ボタンとマウスカーソルの当たり判定
 	/// </summary>
-	bool CheckButtonSelect(const Button& button, const Vector2& mousePosition);
+	bool CheckButtonSelect(const Button& button, const Engine::Vector2& mousePosition);
 
 public:
 
@@ -68,11 +68,11 @@ public:
 
 private:
 
-	std::unique_ptr<Sprite> backFilter_; // 背景フィルター
+	std::unique_ptr<Engine::Sprite> backFilter_; // 背景フィルター
 
 	std::vector<Button> buttons_; // ボタンの配列
 
-	std::unique_ptr<Sprite> selectFrame_; // 選択枠
+	std::unique_ptr<Engine::Sprite> selectFrame_; // 選択枠
 
 	float centerX_ = 640.0f; // 画面中央X座標
 

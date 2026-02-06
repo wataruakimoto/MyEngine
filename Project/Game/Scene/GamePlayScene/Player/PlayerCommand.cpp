@@ -6,6 +6,7 @@
 #include "Bullet.h"
 #include "MathVector.h"
 
+using namespace Engine;
 using namespace MathVector;
 
 void NormalShotCommand::Execute(const PlayerContext& context) {

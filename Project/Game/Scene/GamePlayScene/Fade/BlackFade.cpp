@@ -5,6 +5,8 @@
 #include <imgui.h>
 #include <algorithm>
 
+using namespace Engine;
+
 BlackFade::BlackFade() {
 }
 

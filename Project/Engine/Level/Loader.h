@@ -7,78 +7,80 @@
 #include <map>
 #include <memory>
 
-/// === ローダー === ///
-class Loader {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// === ローダー === ///
+	class Loader {
 
-	/// <summary>
-	/// レベルデータファイルの読み込み
-	/// </summary>
-	/// <param name="filePath"></param>
-	void LoadLevel(const std::string& fileName);
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// オブジェクトの配置
-	/// </summary>
-	void PlaceObject();
+		/// <summary>
+		/// レベルデータファイルの読み込み
+		/// </summary>
+		/// <param name="filePath"></param>
+		void LoadLevel(const std::string& fileName);
 
-	/// <summary>
-	/// 自機の配置
-	/// </summary>
-	void PlacePlayer();
+		/// <summary>
+		/// オブジェクトの配置
+		/// </summary>
+		void PlaceObject();
 
-	/// <summary>
-	/// 敵の配置
-	/// </summary>
-	void PlaceEnemy();
+		/// <summary>
+		/// 自機の配置
+		/// </summary>
+		void PlacePlayer();
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// 敵の配置
+		/// </summary>
+		void PlaceEnemy();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui();
+		/// <summary>
+		/// 描画
+		/// </summary>
+		void Draw();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
 
-	/// <summary>
-	/// オブジェクトの解析
-	/// </summary>
-	void ParseObject(nlohmann::json& object);
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// オブジェクトの解析
+		/// </summary>
+		void ParseObject(nlohmann::json& object);
 
-	// デフォルトのディレクトリ
-	const std::string kDefaultDirectory = "Resources/Levels";
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// レベルデータ格納用インスタンス
-	std::unique_ptr<LevelData> levelData = nullptr;
+		// デフォルトのディレクトリ
+		const std::string kDefaultDirectory = "Resources/Levels";
 
-	// JSON文字列から読み込んだデータ
-	nlohmann::json deserialized;
+		// レベルデータ格納用インスタンス
+		std::unique_ptr<LevelData> levelData = nullptr;
 
-	// モデルのリスト
-	std::map<std::string, std::unique_ptr<Model>> models;
+		// JSON文字列から読み込んだデータ
+		nlohmann::json deserialized;
 
-	// オブジェクトのリスト
-	std::map<std::string, std::unique_ptr<Object3d>> objects;
-};
+		// モデルのリスト
+		std::map<std::string, std::unique_ptr<Model>> models;
 
+		// オブジェクトのリスト
+		std::map<std::string, std::unique_ptr<Object3d>> objects;
+	};
+}

@@ -4,6 +4,8 @@
 
 #include <cassert>
 
+using namespace Engine;
+
 SrvManager* SrvManager::instance = nullptr;
 
 SrvManager* SrvManager::GetInstance() {

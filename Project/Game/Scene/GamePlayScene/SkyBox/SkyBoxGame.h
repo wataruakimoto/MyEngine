@@ -5,7 +5,7 @@
 #include <memory>
 
 /// === 前方宣言 === ///
-class Camera;
+class Engine::Camera;
 class Player;
 
 /// ===== 天球 ===== ///
@@ -50,7 +50,7 @@ public:
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { skybox->SetCamera(camera); }
+	void SetCamera(Engine::Camera* camera) { skybox->SetCamera(camera); }
 
 	/// <summary>
 	/// プレイヤーのセッター
@@ -64,7 +64,7 @@ public:
 private:
 
 	// スカイボックス
-	std::unique_ptr<Skybox> skybox = nullptr;
+	std::unique_ptr<Engine::Skybox> skybox = nullptr;
 
 	// プレイヤーの借りポインタ
 	Player* player_ = nullptr;

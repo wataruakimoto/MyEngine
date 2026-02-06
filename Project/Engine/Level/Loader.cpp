@@ -10,6 +10,8 @@
 #include <numbers>
 #include <imgui.h>
 
+using namespace Engine;
+
 void Loader::LoadLevel(const std::string& fileName) {
 
 	/// === 読み込み === ///
