@@ -4,138 +4,141 @@
 #include <d3d12.h>
 #include <wrl.h>
 
-/// === 前方宣言 === ///
-class DirectXUtility;
+namespace Engine {
 
-class SrvManager {
+	/// === 前方宣言 === ///
+	class DirectXUtility;
 
-	///-------------------------------------------/// 
-	/// シングルトン
-	///-------------------------------------------///
-private:
+	class SrvManager {
 
-	// インスタンス
-	static SrvManager* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	SrvManager() = default;
-	// デストラクタの隠蔽
-	~SrvManager() = default;
-	// コピーコンストラクタの封印
-	SrvManager(SrvManager&) = delete;
-	// コピー代入演算子の封印
-	SrvManager& operator=(SrvManager&) = delete;
+		// インスタンス
+		static SrvManager* instance;
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
-public:
+		// コンストラクタの隠蔽
+		SrvManager() = default;
+		// デストラクタの隠蔽
+		~SrvManager() = default;
+		// コピーコンストラクタの封印
+		SrvManager(SrvManager&) = delete;
+		// コピー代入演算子の封印
+		SrvManager& operator=(SrvManager&) = delete;
 
-	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static SrvManager* GetInstance();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		/// <summary>
+		/// シングルトンインスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static SrvManager* GetInstance();
 
-	/// <summary>
-	/// 描画前処理
-	/// </summary>
-	void PreDraw();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 描画前処理
+		/// </summary>
+		void PreDraw();
 
-	/// <summary>
-	/// 確保
-	/// </summary>
-	/// <returns></returns>
-	uint32_t Allocate();
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// 確保可能チェック
-	/// </summary>
-	/// <returns></returns>
-	bool CheckAllocate();
+		/// <summary>
+		/// 確保
+		/// </summary>
+		/// <returns></returns>
+		uint32_t Allocate();
 
-	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
+		/// <summary>
+		/// 確保可能チェック
+		/// </summary>
+		/// <returns></returns>
+		bool CheckAllocate();
 
-	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
+		D3D12_CPU_DESCRIPTOR_HANDLE GetCPUDescriptorHandle(uint32_t index);
 
-	/// <summary>
-	/// SRV生成(テクスチャ用)
-	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
-	/// <param name="format"></param>
-	/// <param name="mipLevels"></param>
-	void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels);
+		D3D12_GPU_DESCRIPTOR_HANDLE GetGPUDescriptorHandle(uint32_t index);
 
-	/// <summary>
-	/// SRV生成(キューブマップテクスチャ用)
-	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
-	/// <param name="format"></param>
-	/// <param name="mipLevels"></param>
-	void CreateSRVforTextureCube(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels);
+		/// <summary>
+		/// SRV生成(テクスチャ用)
+		/// </summary>
+		/// <param name="srvIndex"></param>
+		/// <param name="pResource"></param>
+		/// <param name="format"></param>
+		/// <param name="mipLevels"></param>
+		void CreateSRVforTexture2D(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels);
 
-	/// <summary>
-	/// SRV生成(構造化バッファ用)
-	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
-	/// <param name="numElements"></param>
-	/// <param name="structureByteStride"></param>
-	void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, uint32_t numElements, UINT structureByteStride);
+		/// <summary>
+		/// SRV生成(キューブマップテクスチャ用)
+		/// </summary>
+		/// <param name="srvIndex"></param>
+		/// <param name="pResource"></param>
+		/// <param name="format"></param>
+		/// <param name="mipLevels"></param>
+		void CreateSRVforTextureCube(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format, UINT mipLevels);
 
-	/// <summary>
-	/// SRV生成(レンダーテクスチャ用)
-	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
-	/// <param name="format"></param>
-	void CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format);
+		/// <summary>
+		/// SRV生成(構造化バッファ用)
+		/// </summary>
+		/// <param name="srvIndex"></param>
+		/// <param name="pResource"></param>
+		/// <param name="numElements"></param>
+		/// <param name="structureByteStride"></param>
+		void CreateSRVforStructuredBuffer(uint32_t srvIndex, ID3D12Resource* pResource, uint32_t numElements, UINT structureByteStride);
 
-	/// <summary>
-	/// SRV生成(深度ステンシル用)
-	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <param name="pResource"></param>
-	/// <param name="format"></param>
-	void CreateSRVforDepthStencil(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format);
+		/// <summary>
+		/// SRV生成(レンダーテクスチャ用)
+		/// </summary>
+		/// <param name="srvIndex"></param>
+		/// <param name="pResource"></param>
+		/// <param name="format"></param>
+		void CreateSRVforRenderTexture(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format);
 
-	void SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex);
+		/// <summary>
+		/// SRV生成(深度ステンシル用)
+		/// </summary>
+		/// <param name="srvIndex"></param>
+		/// <param name="pResource"></param>
+		/// <param name="format"></param>
+		void CreateSRVforDepthStencil(uint32_t srvIndex, ID3D12Resource* pResource, DXGI_FORMAT format);
 
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetDescriptorHeap() { return descriptorHeap; }
+		void SetGraphicsRootDescriptorTable(UINT rootParameterIndex, uint32_t srvIndex);
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetDescriptorHeap() { return descriptorHeap; }
 
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility_ = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// SRV用デスクリプタサイズ
-	uint32_t descriptorSize;
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility_ = nullptr;
 
-	// SRV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
+		// SRV用デスクリプタサイズ
+		uint32_t descriptorSize;
 
-	// 次に使用するSRVインデックス
-	uint32_t useIndex = 0;
+		// SRV用デスクリプタヒープ
+		Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> descriptorHeap;
 
-///-------------------------------------------/// 
-/// 定数
-///-------------------------------------------///
-public:
-	// 最大SRV数(最大テクスチャ枚数)
-	static const uint32_t kMaxSRVCount;
-};
+		// 次に使用するSRVインデックス
+		uint32_t useIndex = 0;
+
+		///-------------------------------------------/// 
+		/// 定数
+		///-------------------------------------------///
+	public:
+		// 最大SRV数(最大テクスチャ枚数)
+		static const uint32_t kMaxSRVCount;
+	};
+}

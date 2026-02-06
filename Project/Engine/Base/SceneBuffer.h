@@ -6,179 +6,181 @@
 #include <wrl.h>
 #include <stdint.h>
 
-/// ===== 前方宣言 ===== ///
-class DirectXUtility;
-class SrvManager;
+namespace Engine {
 
-/// ===== シーン用のバッファ ===== ///
-class SceneBuffer {
+	/// ===== 前方宣言 ===== ///
+	class DirectXUtility;
+	class SrvManager;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== シーン用のバッファ ===== ///
+	class SceneBuffer {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// シーンビュー作成
-	/// </summary>
-	void CreateSceneView();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// フィルター適応のある描画前処理
-	/// </summary>
-	void PreDrawFiltered();
+		/// <summary>
+		/// シーンビュー作成
+		/// </summary>
+		void CreateSceneView();
 
-	/// <summary>
-	/// フィルター適応のない描画前処理
-	/// </summary>
-	void PreDrawUnfiltered();
+		/// <summary>
+		/// フィルター適応のある描画前処理
+		/// </summary>
+		void PreDrawFiltered();
 
-	/// <summary>
-	/// 書き戻し用の描画前処理
-	/// </summary>
-	void PreDrawResolve();
+		/// <summary>
+		/// フィルター適応のない描画前処理
+		/// </summary>
+		void PreDrawUnfiltered();
 
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
-	void PostDraw();
+		/// <summary>
+		/// 書き戻し用の描画前処理
+		/// </summary>
+		void PreDrawResolve();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 描画後処理
+		/// </summary>
+		void PostDraw();
 
-	/// <summary>
-	/// デスクリプタヒープ生成
-	/// </summary>
-	void DescriptorHeapGenerate();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// RTV初期化
-	/// </summary>
-	void RenderTargetViewInitialize();
+		/// <summary>
+		/// デスクリプタヒープ生成
+		/// </summary>
+		void DescriptorHeapGenerate();
 
-	/// <summary>
-	/// DSV初期化
-	/// </summary>
-	void DepthStencilViewInitialize();
+		/// <summary>
+		/// RTV初期化
+		/// </summary>
+		void RenderTargetViewInitialize();
 
-	/// <summary>
-	/// SRV初期化
-	/// </summary>
-	void ShaderResourceViewInitialize();
+		/// <summary>
+		/// DSV初期化
+		/// </summary>
+		void DepthStencilViewInitialize();
 
-	/// <summary>
-	/// ビューポート矩形の初期化
-	/// </summary>
-	void ViewportRectInitialize();
+		/// <summary>
+		/// SRV初期化
+		/// </summary>
+		void ShaderResourceViewInitialize();
 
-	/// <summary>
-	/// シザリング矩形の初期化
-	/// </summary>
-	void ScissoringRectInitialize();
+		/// <summary>
+		/// ビューポート矩形の初期化
+		/// </summary>
+		void ViewportRectInitialize();
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
-	
-	/// <summary>
-	/// SRVインデックスを取得
-	/// </summary>
-	/// <returns>SRVインデックス</returns>
-	uint32_t GetSrvIndex() const { return srvIndex; }
+		/// <summary>
+		/// シザリング矩形の初期化
+		/// </summary>
+		void ScissoringRectInitialize();
 
-	/// <summary>
-	/// 深度用SRVインデックスを取得
-	/// </summary>
-	/// <returns>深度用SRVインデックス</returns>
-	uint32_t GetDepthSrvIndex() const { return depthSrvIndex; }
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// SRVインデックスを取得
+		/// </summary>
+		/// <returns>SRVインデックス</returns>
+		uint32_t GetSrvIndex() const { return srvIndex; }
 
-	/// ===== RTV用の変数 ===== ///
+		/// <summary>
+		/// 深度用SRVインデックスを取得
+		/// </summary>
+		/// <returns>深度用SRVインデックス</returns>
+		uint32_t GetDepthSrvIndex() const { return depthSrvIndex; }
 
-	// レンダーテクスチャリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// RTV用デスクリプタサイズ
-	uint32_t rtvDescriptorSize;
+		/// ===== RTV用の変数 ===== ///
 
-	// RTV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
+		// レンダーテクスチャリソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
 
-	// RTVの設定
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+		// RTV用デスクリプタサイズ
+		uint32_t rtvDescriptorSize;
 
-	// RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
+		// RTV用デスクリプタヒープ
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
 
-	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
+		// RTVの設定
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
-	/// ===== DSV用の変数 ===== ///
+		// RTVハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
-	// 深度バッファリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
+		// クリアする色
+		const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
 
-	// DSV用デスクリプタサイズ
-	uint32_t dsvDescriptorSize;
+		/// ===== DSV用の変数 ===== ///
 
-	// DSV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
+		// 深度バッファリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource = nullptr;
 
-	// DSVの設定
-	D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+		// DSV用デスクリプタサイズ
+		uint32_t dsvDescriptorSize;
 
-	// DSVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle;
+		// DSV用デスクリプタヒープ
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
 
-	// クリアする深度
-	const float kDepthClearValue = 1.0f;
+		// DSVの設定
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
 
-	/// ===== SRV用の変数 ===== ///
+		// DSVハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE dsvHandle;
 
-	// SRVインデックス
-	uint32_t srvIndex = 0;
+		// クリアする深度
+		const float kDepthClearValue = 1.0f;
 
-	// 深度用SRVインデックス
-	uint32_t depthSrvIndex = 0;
+		/// ===== SRV用の変数 ===== ///
 
-	/// ===== その他の変数 ===== ///
+		// SRVインデックス
+		uint32_t srvIndex = 0;
 
-	// ビューポート矩形
-	D3D12_VIEWPORT viewportRect{};
+		// 深度用SRVインデックス
+		uint32_t depthSrvIndex = 0;
 
-	// シザリング矩形
-	D3D12_RECT scissorRect{};
+		/// ===== その他の変数 ===== ///
 
-	// レンダーテクスチャ用のTrainsitionBarrier
-	D3D12_RESOURCE_BARRIER renderTextureBarrier{};
+		// ビューポート矩形
+		D3D12_VIEWPORT viewportRect{};
 
-	// レンダーテクスチャ用のバリアの現在のリソースステート
-	D3D12_RESOURCE_STATES currentRtvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// シザリング矩形
+		D3D12_RECT scissorRect{};
 
-	// 深度ステンシル用のTrainsitionBarrier
-	D3D12_RESOURCE_BARRIER depthStencilBarrier{};
+		// レンダーテクスチャ用のTrainsitionBarrier
+		D3D12_RESOURCE_BARRIER renderTextureBarrier{};
 
-	// 深度ステンシル用のバリアの現在のリソースステート	
-	D3D12_RESOURCE_STATES currentDsvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// レンダーテクスチャ用のバリアの現在のリソースステート
+		D3D12_RESOURCE_STATES currentRtvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
-	/// ===== 借りポインタ ===== ///
+		// 深度ステンシル用のTrainsitionBarrier
+		D3D12_RESOURCE_BARRIER depthStencilBarrier{};
 
-	// DirectXユーティリティのポインタ
-	DirectXUtility* dxUtility = nullptr;
+		// 深度ステンシル用のバリアの現在のリソースステート	
+		D3D12_RESOURCE_STATES currentDsvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
-	// SRVマネージャのポインタ
-	SrvManager* srvManager = nullptr;
-};
+		/// ===== 借りポインタ ===== ///
 
+		// DirectXユーティリティのポインタ
+		DirectXUtility* dxUtility = nullptr;
+
+		// SRVマネージャのポインタ
+		SrvManager* srvManager = nullptr;
+	};
+}

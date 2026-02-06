@@ -2,98 +2,100 @@
 
 #include "BaseFilter.h"
 
-/// ===== ランダムフィルター ===== ///
-class RandomFilter : public BaseFilter {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== ランダムフィルター ===== ///
+	class RandomFilter : public BaseFilter {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画設定
-	/// </summary>
-	void Draw() override;
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize() override;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui() override;
+		/// <summary>
+		/// 描画設定
+		/// </summary>
+		void Draw() override;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui() override;
 
-	/// <summary>
-	/// RootSignature作成
-	/// </summary>
-	void CreateRootSignature() override;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// InputLayout作成
-	/// </summary>
-	void CreateInputLayout() override;
+		/// <summary>
+		/// RootSignature作成
+		/// </summary>
+		void CreateRootSignature() override;
 
-	/// <summary>
-	/// BlendState作成
-	/// </summary>
-	void CreateBlendState() override;
+		/// <summary>
+		/// InputLayout作成
+		/// </summary>
+		void CreateInputLayout() override;
 
-	/// <summary>
-	/// RasterizerState作成
-	/// </summary>
-	void CreateRasterizerState() override;
+		/// <summary>
+		/// BlendState作成
+		/// </summary>
+		void CreateBlendState() override;
 
-	/// <summary>
-	/// VertexShader作成
-	/// </summary>
-	void CreateVertexShader() override;
+		/// <summary>
+		/// RasterizerState作成
+		/// </summary>
+		void CreateRasterizerState() override;
 
-	/// <summary>
-	/// PixelShader作成
-	/// </summary>
-	void CreatePixelShader() override;
+		/// <summary>
+		/// VertexShader作成
+		/// </summary>
+		void CreateVertexShader() override;
 
-	/// <summary>
-	/// DepthStencilState作成
-	/// </summary>
-	void CreateDepthStencilState() override;
+		/// <summary>
+		/// PixelShader作成
+		/// </summary>
+		void CreatePixelShader() override;
 
-	/// <summary>
-	/// GraphicsPipeline作成
-	/// </summary>
-	void CreateGraphicsPipeline() override;
+		/// <summary>
+		/// DepthStencilState作成
+		/// </summary>
+		void CreateDepthStencilState() override;
 
-	/// <summary>
-	/// コンフィグデータ作成
-	/// </summary>
-	void CreateConfigData();
+		/// <summary>
+		/// GraphicsPipeline作成
+		/// </summary>
+		void CreateGraphicsPipeline() override;
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// コンフィグデータ作成
+		/// </summary>
+		void CreateConfigData();
 
-	struct Config {
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	public:
 
-		float time; // 時間
+		struct Config {
+
+			float time; // 時間
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// コンフィグデータ
+		Config* configData = nullptr;
+
+		// コンフィグのリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 	};
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// コンフィグデータ
-	Config* configData = nullptr;
-
-	// コンフィグのリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
-};
-
+}

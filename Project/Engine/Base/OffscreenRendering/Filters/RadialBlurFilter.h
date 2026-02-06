@@ -4,118 +4,120 @@
 #include "Vector3.h"
 #include "Vector2.h"
 
-/// ===== ラジアルブラーフィルター ===== ///
-class RadialBlurFilter : public BaseFilter {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== ラジアルブラーフィルター ===== ///
+	class RadialBlurFilter : public BaseFilter {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画設定
-	/// </summary>
-	void Draw() override;
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize() override;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui() override;
+		/// <summary>
+		/// 描画設定
+		/// </summary>
+		void Draw() override;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui() override;
 
-	/// <summary>
-	/// RootSignature作成
-	/// </summary>
-	void CreateRootSignature() override;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// InputLayout作成
-	/// </summary>
-	void CreateInputLayout() override;
+		/// <summary>
+		/// RootSignature作成
+		/// </summary>
+		void CreateRootSignature() override;
 
-	/// <summary>
-	/// BlendState作成
-	/// </summary>
-	void CreateBlendState() override;
+		/// <summary>
+		/// InputLayout作成
+		/// </summary>
+		void CreateInputLayout() override;
 
-	/// <summary>
-	/// RasterizerState作成
-	/// </summary>
-	void CreateRasterizerState() override;
+		/// <summary>
+		/// BlendState作成
+		/// </summary>
+		void CreateBlendState() override;
 
-	/// <summary>
-	/// VertexShader作成
-	/// </summary>
-	void CreateVertexShader() override;
+		/// <summary>
+		/// RasterizerState作成
+		/// </summary>
+		void CreateRasterizerState() override;
 
-	/// <summary>
-	/// PixelShader作成
-	/// </summary>
-	void CreatePixelShader() override;
+		/// <summary>
+		/// VertexShader作成
+		/// </summary>
+		void CreateVertexShader() override;
 
-	/// <summary>
-	/// DepthStencilState作成
-	/// </summary>
-	void CreateDepthStencilState() override;
+		/// <summary>
+		/// PixelShader作成
+		/// </summary>
+		void CreatePixelShader() override;
 
-	/// <summary>
-	/// GraphicsPipeline作成
-	/// </summary>
-	void CreateGraphicsPipeline() override;
+		/// <summary>
+		/// DepthStencilState作成
+		/// </summary>
+		void CreateDepthStencilState() override;
 
-	/// <summary>
-	/// コンフィグデータ生成
-	/// </summary>
-	void CreateConfigData();
+		/// <summary>
+		/// GraphicsPipeline作成
+		/// </summary>
+		void CreateGraphicsPipeline() override;
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// コンフィグデータ生成
+		/// </summary>
+		void CreateConfigData();
 
-	float GetBlurStrength() { return configData->blurStrength; }
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		float GetBlurStrength() { return configData->blurStrength; }
 
-	void SetGlowColor(const Vector3& glowColor) { configData->glowColor = glowColor; }
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-	void SetBlurStrength(float blurStrength) { configData->blurStrength = blurStrength; }
+		void SetGlowColor(const Vector3& glowColor) { configData->glowColor = glowColor; }
 
-	void SetCenter(const Vector2& center) { configData->center = center; }
+		void SetBlurStrength(float blurStrength) { configData->blurStrength = blurStrength; }
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
+		void SetCenter(const Vector2& center) { configData->center = center; }
 
-	struct Config {
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	public:
 
-		Vector3 glowColor;  // 発光色
-		float blurStrength; // ぼかし強度
-		Vector2 center;	    // 中心点
+		struct Config {
+
+			Vector3 glowColor;  // 発光色
+			float blurStrength; // ぼかし強度
+			Vector2 center;	    // 中心点
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// コンフィグデータ
+		Config* configData = nullptr;
+
+		// コンフィグデータ用リソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 	};
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// コンフィグデータ
-	Config* configData = nullptr;
-
-	// コンフィグデータ用リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
-};
-
+}

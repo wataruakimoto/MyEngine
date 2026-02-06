@@ -1,6 +1,8 @@
 #include "PauseUI.h"
 #include "Input.h"
 
+using namespace Engine;
+
 PauseUI::PauseUI() {
 }
 

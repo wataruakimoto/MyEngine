@@ -73,18 +73,18 @@ public:
 private:
 
 	// テクスチャマネージャのインスタンス
-	TextureManager* textureManager_ = TextureManager::GetInstance();
+	Engine::TextureManager* textureManager_ = Engine::TextureManager::GetInstance();
 
 	// クリアスプライト
-	std::unique_ptr<Sprite> clearSprite_;
+	std::unique_ptr<Engine::Sprite> clearSprite_;
 
 	// ゲームオーバースプライト
-	std::unique_ptr<Sprite> gameOverSprite_;
+	std::unique_ptr<Engine::Sprite> gameOverSprite_;
 
 	// アニメーション関連
-	Vector2 startPosition_ = { 640.0f, -300.0f }; // 開始位置（画面外上部）
-	Vector2 targetPosition_ = { 640.0f, 288.0f }; // 目標位置（画面中央）
-	Vector2 endPosition_ = { 640.0f, 1000.0f };   // 終了位置（画面外下部）
+	Engine::Vector2 startPosition_ = { 640.0f, -300.0f }; // 開始位置（画面外上部）
+	Engine::Vector2 targetPosition_ = { 640.0f, 288.0f }; // 目標位置（画面中央）
+	Engine::Vector2 endPosition_ = { 640.0f, 1000.0f };   // 終了位置（画面外下部）
 
 	int animationFrame_ = 0;			  // 現在のアニメーションフレーム
 

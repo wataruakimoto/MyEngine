@@ -47,13 +47,13 @@ public:
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const WorldTransform& GetWorldTransform() { return worldTransform_; }
+	const Engine::WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	/// <summary>
 	/// スクリーン座標のゲッター
 	/// </summary>
 	/// <returns></returns>
-	const Vector2& GetScreenPosition() const { return screenPosition_; }
+	const Engine::Vector2& GetScreenPosition() const { return screenPosition_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -64,7 +64,7 @@ public:
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera_ = camera; }
+	void SetCamera(Engine::Camera* camera) { this->camera_ = camera; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -72,24 +72,24 @@ public:
 private:
 
 	// レティクルのスプライト
-	std::unique_ptr<Sprite> sprite_ = nullptr;
+	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
 
 	// オブジェクト
-	std::unique_ptr<Object3d> object_;
+	std::unique_ptr<Engine::Object3d> object_;
 
 	// モデル
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Engine::Model> model_;
 
 	// 変換データ
-	WorldTransform worldTransform_;
+	Engine::WorldTransform worldTransform_;
 
 	// スクリーン座標の位置
-	Vector2 screenPosition_ = {};
+	Engine::Vector2 screenPosition_ = {};
 
 	// プレイヤーとレティクルの距離
 	const float kDistancePlayerToReticle_ = 75.0f;
 
 	// カメラの借りポインタ
-	Camera* camera_ = nullptr;
+	Engine::Camera* camera_ = nullptr;
 };
 

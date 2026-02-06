@@ -7,127 +7,130 @@
 #include <string>
 #include <wrl.h>
 
-/// === 前方宣言 === ///
-class DirectXUtility;
+namespace Engine {
 
-/// === テクスチャマネージャ === ///
-class TextureManager {
+	/// === 前方宣言 === ///
+	class DirectXUtility;
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// === テクスチャマネージャ === ///
+	class TextureManager {
 
-	// インスタンス
-	static TextureManager* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	TextureManager() = default;
-	// デストラクタの隠蔽
-	~TextureManager() = default;
-	// コピーコンストラクタの封印
-	TextureManager(TextureManager&) = delete;
-	// コピー代入演算子の封印
-	TextureManager& operator=(TextureManager&) = delete;
+		// インスタンス
+		static TextureManager* instance;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コンストラクタの隠蔽
+		TextureManager() = default;
+		// デストラクタの隠蔽
+		~TextureManager() = default;
+		// コピーコンストラクタの封印
+		TextureManager(TextureManager&) = delete;
+		// コピー代入演算子の封印
+		TextureManager& operator=(TextureManager&) = delete;
 
-	/// <summary>
-	/// シングルトンインスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static TextureManager* GetInstance();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		/// <summary>
+		/// シングルトンインスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static TextureManager* GetInstance();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// DirectXTexでテクスチャを読む
-	/// </summary>
-	/// <param name="fullPath">フルパス</param>
-	void LoadTexture(const std::string& fullPath);
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// 相対パスでテクスチャを読み込み
-	/// </summary>
-	/// <param name="relativePath"相対パス></param>
-	void LoadTextureRelative(const std::string& relativePath);
+		/// <summary>
+		/// DirectXTexでテクスチャを読む
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		void LoadTexture(const std::string& fullPath);
 
-	/// <summary>
-	/// SRVインデックスの開始番号
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	/// <returns></returns>
-	uint32_t GetTextureIndexByFilePath(const std::string& filePath);
+		/// <summary>
+		/// 相対パスでテクスチャを読み込み
+		/// </summary>
+		/// <param name="relativePath"相対パス></param>
+		void LoadTextureRelative(const std::string& relativePath);
 
-	/// <summary>
-	/// テクスチャ番号からGPUハンドルを取得
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const std::string& filePath);
+		/// <summary>
+		/// SRVインデックスの開始番号
+		/// </summary>
+		/// <param name="filePath">ファイルパス</param>
+		/// <returns></returns>
+		uint32_t GetTextureIndexByFilePath(const std::string& filePath);
 
-	/// <summary>
-	/// SRVインデックスからGPUハンドルを取得
-	/// </summary>
-	/// <param name="srvIndex"></param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const uint32_t srvIndex);
+		/// <summary>
+		/// テクスチャ番号からGPUハンドルを取得
+		/// </summary>
+		/// <param name="filePath">ファイルパス</param>
+		/// <returns></returns>
+		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const std::string& filePath);
 
-	/// <summary>
-	/// メタデータを取得
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	/// <returns></returns>
-	const DirectX::TexMetadata& GetMetadata(const std::string& filePath);
-	
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// SRVインデックスからGPUハンドルを取得
+		/// </summary>
+		/// <param name="srvIndex"></param>
+		/// <returns></returns>
+		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const uint32_t srvIndex);
 
-	/// <summary>
-	/// ベースディレクトリパスのゲッター
-	/// </summary>
-	/// <returns></returns>
-	const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
+		/// <summary>
+		/// メタデータを取得
+		/// </summary>
+		/// <param name="filePath">ファイルパス</param>
+		/// <returns></returns>
+		const DirectX::TexMetadata& GetMetadata(const std::string& filePath);
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	// テクスチャ1枚分のデータ
-	struct TextureData {
-		DirectX::TexMetadata metaData;
-		Microsoft::WRL::ComPtr<ID3D12Resource> resource;
-		Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource; // 中間リソース
-		uint32_t srvIndex;
-		D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
-		D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
+		/// <summary>
+		/// ベースディレクトリパスのゲッター
+		/// </summary>
+		/// <returns></returns>
+		const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
+
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	public:
+
+		// テクスチャ1枚分のデータ
+		struct TextureData {
+			DirectX::TexMetadata metaData;
+			Microsoft::WRL::ComPtr<ID3D12Resource> resource;
+			Microsoft::WRL::ComPtr<ID3D12Resource> intermediateResource; // 中間リソース
+			uint32_t srvIndex;
+			D3D12_CPU_DESCRIPTOR_HANDLE srvHandleCPU;
+			D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility_ = nullptr;
+
+		// テクスチャデータ
+		std::unordered_map<std::string, TextureData> textureDatas;
+
+		// ベースのディレクトリパス
+		const std::string baseDirectoryPath = "Resources/Textures";
 	};
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility_ = nullptr;
-
-	// テクスチャデータ
-	std::unordered_map<std::string,TextureData> textureDatas;
-
-	// ベースのディレクトリパス
-	const std::string baseDirectoryPath = "Resources/Textures";
-};
+}

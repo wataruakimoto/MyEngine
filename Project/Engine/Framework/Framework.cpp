@@ -13,6 +13,8 @@
 #include "Skybox/SkyboxCommon.h"
 #include "SceneManager.h"
 
+using namespace Engine;
+
 void Framework::Initialize() {
 
 	// WindowsAPIの初期化

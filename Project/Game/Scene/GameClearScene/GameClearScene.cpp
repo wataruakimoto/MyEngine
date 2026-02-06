@@ -1,5 +1,7 @@
 #include "GameClearScene.h"
 
+using namespace Engine;
+
 void GameClearScene::Initialize() {
 
 	// スプライトの生成&初期化

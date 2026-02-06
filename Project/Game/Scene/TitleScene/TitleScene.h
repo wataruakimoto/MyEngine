@@ -115,16 +115,16 @@ private:
 private:
 
     // シーンマネージャのインスタンス
-    SceneManager* sceneManager_ = SceneManager::GetInstance();
+    Engine::SceneManager* sceneManager_ = Engine::SceneManager::GetInstance();
 
     // フィルターマネージャのインスタンス
-    FilterManager* filterManager_ = FilterManager::GetInstance();
+    Engine::FilterManager* filterManager_ = Engine::FilterManager::GetInstance();
 
     // 入力のインスタンス
-    Input* input_ = Input::GetInstance();
+    Engine::Input* input_ = Engine::Input::GetInstance();
 
     // カメラ
-    std::unique_ptr<Camera> camera_ = nullptr;
+    std::unique_ptr<Engine::Camera> camera_ = nullptr;
 
     // カメラコントローラ
     std::unique_ptr<ICameraController> cameraController_ = nullptr;
@@ -160,13 +160,13 @@ private:
     std::optional<TitleFlowState> stateRequest_ = std::nullopt;
 
     // ラジアルブラー借りポインタ
-    RadialBlurFilter* radialBlurFilter_ = nullptr;
+    Engine::RadialBlurFilter* radialBlurFilter_ = nullptr;
 
 	// フォグの借りポインタ
-	FogFilter* fogFilter_ = nullptr;
+    Engine::FogFilter* fogFilter_ = nullptr;
 
     // ブラーの中心座標
-    Vector2 blurCenter_ = { 0.5f, 0.5f };
+    Engine::Vector2 blurCenter_ = { 0.5f, 0.5f };
 
     // ブラーの強さ
     float blurStrength_ = 0.0f;

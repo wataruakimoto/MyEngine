@@ -12,217 +12,219 @@
 #include <list>
 #include <memory>
 
-/// ===== 前方宣言 ===== ///
-class TextureManager;
-class DirectXUtility;
-class SrvManager;
-class Camera;
+namespace Engine {
 
-/// ===== パ＝ティクルマネージャー ===== ///
-class ParticleManager {
+	/// ===== 前方宣言 ===== ///
+	class TextureManager;
+	class DirectXUtility;
+	class SrvManager;
+	class Camera;
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// ===== パ＝ティクルマネージャー ===== ///
+	class ParticleManager {
 
-	// インスタンス
-	static ParticleManager* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	ParticleManager() = default;
-	// デストラクタの隠蔽
-	~ParticleManager() = default;
-	// コピーコンストラクタの無効化
-	ParticleManager(const ParticleManager&) = delete;
-	// 代入演算子の無効化
-	ParticleManager& operator=(const ParticleManager&) = delete;
+		// インスタンス
+		static ParticleManager* instance;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コンストラクタの隠蔽
+		ParticleManager() = default;
+		// デストラクタの隠蔽
+		~ParticleManager() = default;
+		// コピーコンストラクタの無効化
+		ParticleManager(const ParticleManager&) = delete;
+		// 代入演算子の無効化
+		ParticleManager& operator=(const ParticleManager&) = delete;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 描画
+		/// </summary>
+		void Draw();
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui();
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// 設定の追加
-	/// </summary>
-	/// <param effectName="setting">設定</param>
-	void AddSetting(ParticleSetting& setting);
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
 
-	/// <summary>
-	/// パーティクルの追加
-	/// </summary>
-	/// <param effectName="instance">インスタンス</param>
-	void AddInstance(const ParticleInstance& instance);
+		/// <summary>
+		/// 設定の追加
+		/// </summary>
+		/// <param effectName="setting">設定</param>
+		void AddSetting(ParticleSetting& setting);
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// パーティクルの追加
+		/// </summary>
+		/// <param effectName="instance">インスタンス</param>
+		void AddInstance(const ParticleInstance& instance);
 
-	/// <summary>
-	/// Groupごとのパーティクル更新
-	/// </summary>
-	/// <param name="particles"></param>
-	void UpdateParticles(std::list<ParticleInstance>& particles);
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// グループコンテナの更新
-	/// </summary>
-	/// <param name="groups"></param>
-	void UpdateGroups(std::unordered_map<std::string, ParticleGroup>& groups);
+		/// <summary>
+		/// Groupごとのパーティクル更新
+		/// </summary>
+		/// <param name="particles"></param>
+		void UpdateParticles(std::list<ParticleInstance>& particles);
 
-	/// <summary>
-	/// JSONからパーティクル設定を全て読み込み
-	/// </summary>
-	void LoadParticleSettingsFromJSON();
+		/// <summary>
+		/// グループコンテナの更新
+		/// </summary>
+		/// <param name="groups"></param>
+		void UpdateGroups(std::unordered_map<std::string, ParticleGroup>& groups);
 
-	/// <summary>
-	/// エフェクトのリストを表示
-	/// </summary>
-	void ShowEffectList();
+		/// <summary>
+		/// JSONからパーティクル設定を全て読み込み
+		/// </summary>
+		void LoadParticleSettingsFromJSON();
 
-	/// <summary>
-	/// パラメータを表示
-	/// </summary>
-	void ShowParameters();
+		/// <summary>
+		/// エフェクトのリストを表示
+		/// </summary>
+		void ShowEffectList();
 
-	/// <summary>
-	/// 設定をJSONに保存
-	/// </summary>
-	/// <param name="effectName">エフェクト名</param>
-	void SaveSettingsToJSON(const std::string& effectName);
+		/// <summary>
+		/// パラメータを表示
+		/// </summary>
+		void ShowParameters();
 
-	/// <summary>
-	/// 設定をJSONから読み込み
-	/// </summary>
-	/// <param name="filePath">ファイルパス</param>
-	void LoadSettingsFromJSON(const std::string& filePath);
+		/// <summary>
+		/// 設定をJSONに保存
+		/// </summary>
+		/// <param name="effectName">エフェクト名</param>
+		void SaveSettingsToJSON(const std::string& effectName);
 
-	/// <summary>
-	/// グループのリソース作成
-	/// </summary>
-	/// <param name="group"></param>
-	void CreateGroupResource(ParticleGroup& group);
+		/// <summary>
+		/// 設定をJSONから読み込み
+		/// </summary>
+		/// <param name="filePath">ファイルパス</param>
+		void LoadSettingsFromJSON(const std::string& filePath);
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// グループのリソース作成
+		/// </summary>
+		/// <param name="group"></param>
+		void CreateGroupResource(ParticleGroup& group);
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static ParticleManager* GetInstance();
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 設定のゲッター
-	/// </summary>
-	/// <param effectName="effectName">エフェクト名</param>
-	/// <returns></returns>
-	ParticleSetting* GetSetting(const std::string& effectName);
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static ParticleManager* GetInstance();
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// 設定のゲッター
+		/// </summary>
+		/// <param effectName="effectName">エフェクト名</param>
+		/// <returns></returns>
+		ParticleSetting* GetSetting(const std::string& effectName);
 
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param effectName="camera">カメラ</param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// カメラのセッター
+		/// </summary>
+		/// <param effectName="camera">カメラ</param>
+		void SetCamera(Camera* camera) { this->camera = camera; }
 
-	// テクスチャマネージャーのインスタンス
-	TextureManager* textureManager;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// DirectXユーティリティのインスタンス
-	DirectXUtility* dxUtility;
+		// テクスチャマネージャーのインスタンス
+		TextureManager* textureManager;
 
-	// SRVマネージャーのインスタンス
-	SrvManager* srvManager;
+		// DirectXユーティリティのインスタンス
+		DirectXUtility* dxUtility;
 
-	// カメラの借りポインタ
-	Camera* camera = nullptr;
+		// SRVマネージャーのインスタンス
+		SrvManager* srvManager;
 
-	// 設定のコンテナ エフェクト名、設定
-	std::unordered_map<std::string, ParticleSetting> settings;
+		// カメラの借りポインタ
+		Camera* camera = nullptr;
 
-	// グループコンテナ  エフェクト名、グループ
-	std::unordered_map<std::string, ParticleGroup> planeGroups;
-	std::unordered_map<std::string, ParticleGroup> ringGroups;
-	std::unordered_map<std::string, ParticleGroup> cylinderGroups;
-	std::unordered_map<std::string, ParticleGroup> cubeGroups;
-	std::unordered_map<std::string, ParticleGroup> shardGroups;
+		// 設定のコンテナ エフェクト名、設定
+		std::unordered_map<std::string, ParticleSetting> settings;
 
-	// Δt
-	const float kDeltaTime = 1.0f / 60.0f;
+		// グループコンテナ  エフェクト名、グループ
+		std::unordered_map<std::string, ParticleGroup> planeGroups;
+		std::unordered_map<std::string, ParticleGroup> ringGroups;
+		std::unordered_map<std::string, ParticleGroup> cylinderGroups;
+		std::unordered_map<std::string, ParticleGroup> cubeGroups;
+		std::unordered_map<std::string, ParticleGroup> shardGroups;
 
-	// 板ポリのレンダラー
-	std::unique_ptr<PlaneRenderer> planeRenderer = nullptr;
+		// Δt
+		const float kDeltaTime = 1.0f / 60.0f;
 
-	// リングのレンダラー
-	std::unique_ptr<RingRenderer> ringRenderer = nullptr;
+		// 板ポリのレンダラー
+		std::unique_ptr<PlaneRenderer> planeRenderer = nullptr;
 
-	// シリンダーのレンダラー
-	std::unique_ptr<CylinderRenderer> cylinderRenderer = nullptr;
+		// リングのレンダラー
+		std::unique_ptr<RingRenderer> ringRenderer = nullptr;
 
-	// キューブのレンダラー
-	std::unique_ptr<CubeRenderer> cubeRenderer = nullptr;
+		// シリンダーのレンダラー
+		std::unique_ptr<CylinderRenderer> cylinderRenderer = nullptr;
 
-	// シャードのレンダラー
-	std::unique_ptr<ShardRenderer> shardRenderer = nullptr;
+		// キューブのレンダラー
+		std::unique_ptr<CubeRenderer> cubeRenderer = nullptr;
 
-	// Jsonデータを入れておくフォルダパス
-	const std::string DataFolderPath = "Resources/Datas/Particles/";
+		// シャードのレンダラー
+		std::unique_ptr<ShardRenderer> shardRenderer = nullptr;
 
-	// 画像データを入れておくフォルダパス
-	const std::string TextureFolderPath = "Resources/Textures/Particles/";
+		// Jsonデータを入れておくフォルダパス
+		const std::string DataFolderPath = "Resources/Datas/Particles/";
 
-	// エディタで選択中のエフェクト名
-	std::string currentEditName = "";
+		// 画像データを入れておくフォルダパス
+		const std::string TextureFolderPath = "Resources/Textures/Particles/";
 
-	// 新規作成時の入力バッファ
-	char inputNameBuffer[64] = ""; // 最大64文字
+		// エディタで選択中のエフェクト名
+		std::string currentEditName = "";
 
-	// 編集用の一時設定
-	ParticleSetting tempSetting;
+		// 新規作成時の入力バッファ
+		char inputNameBuffer[64] = ""; // 最大64文字
 
-	// ViewProjection行列
-	Matrix4x4 viewProjectionMatrix = {};
+		// 編集用の一時設定
+		ParticleSetting tempSetting;
 
-	// ビルボード行列
-	Matrix4x4 billboardMatrix = {};
-};
+		// ViewProjection行列
+		Matrix4x4 viewProjectionMatrix = {};
 
+		// ビルボード行列
+		Matrix4x4 billboardMatrix = {};
+	};
+}

@@ -2,6 +2,7 @@
 #include "Collider.h"
 #include "MathVector.h"
 
+using namespace Engine;
 using namespace MathVector;
 
 void CollisionManager::Initialize() {

@@ -4,46 +4,48 @@
 
 #include <numbers>
 
-class CylinderRenderer : public ParticleRendererBase {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	class CylinderRenderer : public ParticleRendererBase {
 
-	void Initialize() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	void Update() override;
+		void Initialize() override;
 
-	void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Update() override;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
 
-	void GenerateVertexData() override;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	void GenerateIndexData() override;
+		void GenerateVertexData() override;
 
-	void GenerateMaterialData() override;
+		void GenerateIndexData() override;
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		void GenerateMaterialData() override;
 
-	// シリンダーの設定
-	const uint32_t kCylinderDivide = 32; // 円の分割数
-	const float kTopRadius = 1.0f; // 上側の半径
-	const float kBottomRadius = 1.0f; // 下側の半径
-	const float kHeight = 3.0f; // 高さ
-	const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide); // 分割あたりのラジアン 2π/分割数
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// Δt
-	const float kDeltaTime = 1.0f / 60.0f;
+		// シリンダーの設定
+		const uint32_t kCylinderDivide = 32; // 円の分割数
+		const float kTopRadius = 1.0f; // 上側の半径
+		const float kBottomRadius = 1.0f; // 下側の半径
+		const float kHeight = 3.0f; // 高さ
+		const float radianPerDivide = 2.0f * std::numbers::pi_v<float> / float(kCylinderDivide); // 分割あたりのラジアン 2π/分割数
 
-	// 1秒間のUVの移動量
-	float kUVSpeed = 0.1f; // 10秒で1周
-};
+		// Δt
+		const float kDeltaTime = 1.0f / 60.0f;
 
+		// 1秒間のUVの移動量
+		float kUVSpeed = 0.1f; // 10秒で1周
+	};
+}

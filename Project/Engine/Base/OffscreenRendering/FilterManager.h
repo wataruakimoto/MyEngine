@@ -17,155 +17,157 @@
 #include <vector>
 #include <memory>
 
-/// ===== 前方宣言 ===== ///
-class SceneBuffer;
-class PostProcessBuffer;
-class Camera;
+namespace Engine {
 
-/// ===== フィルター管理クラス ===== ///
-class FilterManager {
+	/// ===== 前方宣言 ===== ///
+	class SceneBuffer;
+	class PostProcessBuffer;
+	class Camera;
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// ===== フィルター管理クラス ===== ///
+	class FilterManager {
 
-	// インスタンス
-	static FilterManager* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	FilterManager() = default;
-	// デストラクタの隠蔽
-	~FilterManager() = default;
-	// コピーコンストラクタの封印
-	FilterManager(FilterManager&) = delete;
-	// コピー代入演算子の封印
-	FilterManager& operator=(const FilterManager&) = delete;
-	
-///-------------------------------------------///
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// インスタンス
+		static FilterManager* instance;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		// コンストラクタの隠蔽
+		FilterManager() = default;
+		// デストラクタの隠蔽
+		~FilterManager() = default;
+		// コピーコンストラクタの封印
+		FilterManager(FilterManager&) = delete;
+		// コピー代入演算子の封印
+		FilterManager& operator=(const FilterManager&) = delete;
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	/// <param name="scene">シーンバッファ</param>
-	/// <param name="postProcess">ポストプロセスバッファ</param>
-	void Draw(SceneBuffer* scene, PostProcessBuffer* postProcess);
+		///-------------------------------------------///
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// テクスチャ描画
-	/// </summary>
-	/// <param name="srvIndex">SRVインデックス</param>
-	void DrawTexture(uint32_t srvIndex);
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 描画
+		/// </summary>
+		/// <param name="scene">シーンバッファ</param>
+		/// <param name="postProcess">ポストプロセスバッファ</param>
+		void Draw(SceneBuffer* scene, PostProcessBuffer* postProcess);
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui();
+		/// <summary>
+		/// テクスチャ描画
+		/// </summary>
+		/// <param name="srvIndex">SRVインデックス</param>
+		void DrawTexture(uint32_t srvIndex);
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static FilterManager* GetInstance();
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
 
-	/// <summary>
-	/// カメラのゲッター
-	/// </summary>
-	/// <returns></returns>
-	Camera* GetCamera() const { return camera; }
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// ビネットフィルターのゲッター
-	/// </summary>
-	/// <returns></returns>
-	VignetteFilter* GetVignetteFilter() const { return static_cast<VignetteFilter*>(filters_.at("Vignette").get()); }
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static FilterManager* GetInstance();
 
-	/// <summary>
-	/// ラジアルブラーのゲッター
-	/// </summary>
-	/// <returns></returns>
-	RadialBlurFilter* GetRadialBlurFilter() const { return static_cast<RadialBlurFilter*>(filters_.at("RadialBlur").get()); }
+		/// <summary>
+		/// カメラのゲッター
+		/// </summary>
+		/// <returns></returns>
+		Camera* GetCamera() const { return camera; }
 
-	/// <summary>
-	/// フォグフィルターのゲッター
-	/// </summary>
-	/// <returns></returns>
-	FogFilter* GetFogFilter() const { return static_cast<FogFilter*>(filters_.at("Fog").get()); }
+		/// <summary>
+		/// ビネットフィルターのゲッター
+		/// </summary>
+		/// <returns></returns>
+		VignetteFilter* GetVignetteFilter() const { return static_cast<VignetteFilter*>(filters_.at("Vignette").get()); }
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// ラジアルブラーのゲッター
+		/// </summary>
+		/// <returns></returns>
+		RadialBlurFilter* GetRadialBlurFilter() const { return static_cast<RadialBlurFilter*>(filters_.at("RadialBlur").get()); }
 
-	/// <summary>
-	/// カメラのセット
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
+		/// <summary>
+		/// フォグフィルターのゲッター
+		/// </summary>
+		/// <returns></returns>
+		FogFilter* GetFogFilter() const { return static_cast<FogFilter*>(filters_.at("Fog").get()); }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-	// フィルターのリスト
-	std::unordered_map<std::string, std::unique_ptr<BaseFilter>> filters_ = {};
+		/// <summary>
+		/// カメラのセット
+		/// </summary>
+		/// <param name="camera"></param>
+		void SetCamera(Camera* camera) { this->camera = camera; }
 
-	// フィルターの名前の配列
-	std::vector<std::string> filterOrder;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// フルスクリーンフィルター
-	std::unique_ptr<FullScreenFilter> fullScreenFilter_ = nullptr;
+		// フィルターのリスト
+		std::unordered_map<std::string, std::unique_ptr<BaseFilter>> filters_ = {};
 
-	// グレースケールフィルター
-	std::unique_ptr<GrayscaleFilter> grayscaleFilter_ = nullptr;
+		// フィルターの名前の配列
+		std::vector<std::string> filterOrder;
 
-	// ビネットフィルター
-	std::unique_ptr<VignetteFilter> vignetteFilter_ = nullptr;
+		// フルスクリーンフィルター
+		std::unique_ptr<FullScreenFilter> fullScreenFilter_ = nullptr;
 
-	// ボックスブラーフィルター
-	std::unique_ptr<BoxBlurFilter> boxBlurFilter_ = nullptr;
+		// グレースケールフィルター
+		std::unique_ptr<GrayscaleFilter> grayscaleFilter_ = nullptr;
 
-	// ガウシアンブラーフィルター
-	std::unique_ptr<GaussianBlurFilter> gaussianBlurFilter_ = nullptr;
+		// ビネットフィルター
+		std::unique_ptr<VignetteFilter> vignetteFilter_ = nullptr;
 
-	// 輝度アウトラインフィルター
-	std::unique_ptr<LuminanceOutlineFilter> luminanceOutlineFilter_ = nullptr;
+		// ボックスブラーフィルター
+		std::unique_ptr<BoxBlurFilter> boxBlurFilter_ = nullptr;
 
-	// 深度アウトラインフィルター
-	std::unique_ptr<DepthOutlineFilter> depthOutlineFilter_ = nullptr;
+		// ガウシアンブラーフィルター
+		std::unique_ptr<GaussianBlurFilter> gaussianBlurFilter_ = nullptr;
 
-	// ラジアルブラー
-	std::unique_ptr<RadialBlurFilter> radialBlurFilter_ = nullptr;
+		// 輝度アウトラインフィルター
+		std::unique_ptr<LuminanceOutlineFilter> luminanceOutlineFilter_ = nullptr;
 
-	// ディゾルブフィルター
-	std::unique_ptr<DissolveFilter> dissolveFilter_ = nullptr;
+		// 深度アウトラインフィルター
+		std::unique_ptr<DepthOutlineFilter> depthOutlineFilter_ = nullptr;
 
-	// ランダムフィルター
-	std::unique_ptr<RandomFilter> randomFilter_ = nullptr;
+		// ラジアルブラー
+		std::unique_ptr<RadialBlurFilter> radialBlurFilter_ = nullptr;
 
-	// フォグフィルター
-	std::unique_ptr<FogFilter> fogFilter_ = nullptr;
+		// ディゾルブフィルター
+		std::unique_ptr<DissolveFilter> dissolveFilter_ = nullptr;
 
-	// カメラの借りポインタ
-	Camera* camera = nullptr;
-};
+		// ランダムフィルター
+		std::unique_ptr<RandomFilter> randomFilter_ = nullptr;
 
+		// フォグフィルター
+		std::unique_ptr<FogFilter> fogFilter_ = nullptr;
+
+		// カメラの借りポインタ
+		Camera* camera = nullptr;
+	};
+}

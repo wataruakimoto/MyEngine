@@ -6,9 +6,6 @@
 /// ===== 前方宣言 ===== ///
 
 class GamePlayScene;
-class FilterManager;
-class RadialBlurFilter;
-class VignetteFilter;
 class ICameraController;
 class Player;
 class Goal;
@@ -18,6 +15,12 @@ class GuideUI;
 class ResultUI;
 class WhiteFade;
 class BlackFade;
+
+namespace Engine {
+	class FilterManager;
+	class RadialBlurFilter;
+	class VignetteFilter;
+}
 
 /// ===== プレイシーンの状態 ===== ///
 class IPlayState {
@@ -101,7 +104,7 @@ private:
 	float initialBlurStrength_ = 0.0f;
 
 	// ブラーの中心座標
-	Vector2 blurCenter_ = {};
+	Engine::Vector2 blurCenter_ = {};
 
 	/// ===== UI表示用 ===== ///
 
@@ -111,10 +114,10 @@ private:
 	/// ===== 借りポインタ・インスタンス ===== ///
 
 	// ラジアルブラー借りポインタ
-	RadialBlurFilter* radialBlurFilter_ = nullptr;
+	Engine::RadialBlurFilter* radialBlurFilter_ = nullptr;
 
 	// フィルターマネージャのインスタンス
-	FilterManager* filterManager_;
+	Engine::FilterManager* filterManager_;
 
 	// プレイヤーの借りポインタ
 	Player* player_ = nullptr;
@@ -192,10 +195,10 @@ private:
 	ICameraController* cameraController_ = nullptr;
 
 	// フィルターマネージャのインスタンス
-	FilterManager* filterManager_ = nullptr;
+	Engine::FilterManager* filterManager_ = nullptr;
 
 	// ビネットフィルター借りポインタ
-	VignetteFilter* vignetteFilter_ = nullptr;
+	Engine::VignetteFilter* vignetteFilter_ = nullptr;
 };
 	
 /// ===== エンディング状態 ===== ///
@@ -250,10 +253,10 @@ private:
 	BlackFade* blackFade_ = nullptr;
 
 	// フィルターマネージャのインスタンス
-	FilterManager* filterManager_ = nullptr;
+	Engine::FilterManager* filterManager_ = nullptr;
 
 	// ビネットフィルター借りポインタ
-	VignetteFilter* vignetteFilter_ = nullptr;
+	Engine::VignetteFilter* vignetteFilter_ = nullptr;
 };
 
 /// ===== ポーズ状態 ===== ///
@@ -290,8 +293,8 @@ private:
 	bool isSelectedRestart_ = false;
 
 	// フィルターマネージャのインスタンス
-	FilterManager* filterManager_ = nullptr;
+	Engine::FilterManager* filterManager_ = nullptr;
 
 	// ビネットフィルター借りポインタ
-	VignetteFilter* vignetteFilter_ = nullptr;
+	Engine::VignetteFilter* vignetteFilter_ = nullptr;
 };

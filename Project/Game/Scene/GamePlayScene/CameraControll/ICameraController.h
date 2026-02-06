@@ -2,15 +2,18 @@
 
 #include "WorldTransform.h"
 
-/// ===== 前方宣言 ===== ///
-class Camera;
+namespace Engine {
+
+	/// ===== 前方宣言 ===== ///
+	class Camera;
+}
 
 /// ===== カメラコントローラーのインターフェース ===== ///
 class ICameraController {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 public:
 
 	/// <summary>
@@ -33,36 +36,36 @@ public:
 	/// </summary>
 	virtual void ShowImGui() = 0;
 
-///-------------------------------------------///
-/// ゲッター
-///-------------------------------------------///
+	///-------------------------------------------///
+	/// ゲッター
+	///-------------------------------------------///
 public:
 
 	/// <summary>
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	WorldTransform& GetWorldTransform() { return worldTransform; }
+	Engine::WorldTransform& GetWorldTransform() { return worldTransform; }
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
 public:
 
 	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
+	void SetCamera(Engine::Camera* camera) { this->camera = camera; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 protected:
 
 	// カメラのワールド変換
-	WorldTransform worldTransform;
+	Engine::WorldTransform worldTransform;
 
 	// カメラ(ゲームシーンからの借りポインタ)
-	Camera* camera = nullptr;
+	Engine::Camera* camera = nullptr;
 };

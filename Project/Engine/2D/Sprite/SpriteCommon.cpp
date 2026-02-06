@@ -2,6 +2,7 @@
 #include "SrvManager.h"
 #include "Logger.h"
 
+using namespace Engine;
 using namespace Microsoft::WRL;
 
 SpriteCommon* SpriteCommon::instance = nullptr;
@@ -20,20 +21,20 @@ void SpriteCommon::Initialize(){
 	CreateRootSignature();
 
 	// RootSignatureをセット
-	pipelineCreater_.SetRootSignature(rootSignature.Get());
+	pipelineCreator_.SetRootSignature(rootSignature.Get());
 
 	// InputLayoutを生成
 	CreateInputLayout();
 
 	// InputLayoutをセット
-	pipelineCreater_.SetInputLayoutDesc(inputLayoutDesc);
+	pipelineCreator_.SetInputLayoutDesc(inputLayoutDesc);
 
 	// シェーダパスをセット
-	pipelineCreater_.SetVSFileName(L"Sprite.VS.hlsl");
-	pipelineCreater_.SetPSFileName(L"Sprite.PS.hlsl");
+	pipelineCreator_.SetVSFileName(L"Sprite.VS.hlsl");
+	pipelineCreator_.SetPSFileName(L"Sprite.PS.hlsl");
 
 	// パイプライン生成
-	pipelineCreater_.Create(BlendMode::AlphaBlend, CullMode::None, DepthMode::Disabled);
+	pipelineCreator_.Create(BlendMode::AlphaBlend, CullMode::None, DepthMode::Disabled);
 }
 
 void SpriteCommon::Finalize() {
@@ -47,7 +48,7 @@ void SpriteCommon::SettingDrawing() {
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreater_.GetGraphicsPipelineState().Get());
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreator_.GetGraphicsPipelineState().Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

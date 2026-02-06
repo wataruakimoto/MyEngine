@@ -3,6 +3,7 @@
 
 #include <cmath>
 
+using namespace Engine;
 using namespace MathVector;
 
 float Easing::Lerp(float start, float end, float t) {

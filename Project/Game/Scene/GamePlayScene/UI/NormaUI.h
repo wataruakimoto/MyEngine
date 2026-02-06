@@ -48,7 +48,7 @@ private:
 	/// </summary>
 	/// <param name="number">数字（0-9）</param>
 	/// <returns>UV座標</returns>
-	Vector2 GetNumberUV(int number);
+	Engine::Vector2 GetNumberUV(int number);
 
 	/// <summary>
 	/// 数値の桁数を取得
@@ -70,7 +70,7 @@ private:
 	/// </summary>
 	/// <param name="number">数字（0-9）</param>
 	/// <returns>ピクセル座標での左上位置</returns>
-	Vector2 GetNumberPixelPosition(int number);
+	Engine::Vector2 GetNumberPixelPosition(int number);
 
 	/// <summary>
 	/// スプライトの位置を更新
@@ -119,21 +119,21 @@ public:
 private:
 
 	// 固定テキストスプライト
-	std::unique_ptr<Sprite> normaTextSprite_;     // "ノルマ:"
-	std::unique_ptr<Sprite> slashSprite_;         // "/"
+	std::unique_ptr<Engine::Sprite> normaTextSprite_;     // "ノルマ:"
+	std::unique_ptr<Engine::Sprite> slashSprite_;         // "/"
 
 	// 数字用スプライト
-	std::vector<std::unique_ptr<Sprite>> NormaNumSprites_;   // ノルマ数（目標値）用
-	std::vector<std::unique_ptr<Sprite>> CurrentNumSprites_; // 現在値用
+	std::vector<std::unique_ptr<Engine::Sprite>> NormaNumSprites_;   // ノルマ数（目標値）用
+	std::vector<std::unique_ptr<Engine::Sprite>> CurrentNumSprites_; // 現在値用
 
 	int currentValue_ = 0;  // 現在の値
 	int targetValue_ = 5;   // 目標値
 
-	Vector2 basePosition_ = { 240.0f, 600.0f };  // 基準位置
+	Engine::Vector2 basePosition_ = { 240.0f, 600.0f };  // 基準位置
 	const float spacing_ = 10.0f;                 // 要素間の間隔
-	const Vector2 digitSize_ = { 40.0f, 56.0f };  // 各数字のサイズ
-	const Vector2 textSize_ = { 176.0f, 56.0f };  // "ノルマ："テキストのサイズ
-	const Vector2 symbolSize_ = { 32.0f, 56.0f }; // 記号のサイズ
+	const Engine::Vector2 digitSize_ = { 40.0f, 56.0f };  // 各数字のサイズ
+	const Engine::Vector2 textSize_ = { 176.0f, 56.0f };  // "ノルマ："テキストのサイズ
+	const Engine::Vector2 symbolSize_ = { 32.0f, 56.0f }; // 記号のサイズ
 
 	// 数字テクスチャのUV設定
 	const float numberTextureWidth_ = 400.0f;     // 数字テクスチャ全体の幅
@@ -150,6 +150,6 @@ private:
 	static const int kMaxDigits = 2;  // 最大2桁（0-99）
 
 	// テクスチャマネージャのインスタンス
-	TextureManager* textureManager_ = TextureManager::GetInstance();
+	Engine::TextureManager* textureManager_ = Engine::TextureManager::GetInstance();
 };
 

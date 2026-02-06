@@ -3,6 +3,7 @@
 #include "SrvManager.h"
 #include "StringUtility.h"
 
+using namespace Engine;
 using namespace StringUtility;
 
 TextureManager* TextureManager::instance = nullptr;

@@ -4,6 +4,7 @@
 #include "Texture/TextureManager.h"
 #include "MathMatrix.h"
 
+using namespace Engine;
 using namespace MathMatrix;
 
 void CubeRenderer::Initialize() {

@@ -3,6 +3,8 @@
 #include <cassert>
 #include <imgui.h>
 
+using namespace Engine;
+
 SceneManager* SceneManager::instance = nullptr;
 
 SceneManager* SceneManager::GetInstance() {

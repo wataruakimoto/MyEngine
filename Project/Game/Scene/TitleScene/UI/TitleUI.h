@@ -79,10 +79,10 @@ public:
 private:
 
 	// テクスチャマネージャのインスタンス
-	TextureManager* textureManager_ = TextureManager::GetInstance();
+	Engine::TextureManager* textureManager_ = Engine::TextureManager::GetInstance();
 
 	// スプライト
-	std::unique_ptr<Sprite> sprite_ = nullptr;
+	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
 
 	// 終了フラグ
 	bool isSlideFinished_ = false;
@@ -98,8 +98,8 @@ private:
 	float animationTime_ = 0.0f;
 
 	// Tweenパラメータ
-	Vector2 tweenStart_ = { 0.0f, 0.0f };
-	Vector2 tweenEnd_ = { 0.0f, 0.0f };
+	Engine::Vector2 tweenStart_ = { 0.0f, 0.0f };
+	Engine::Vector2 tweenEnd_ = { 0.0f, 0.0f };
 	int tweenFrame_ = 0;
 	int tweenDuration_ = 0;
 

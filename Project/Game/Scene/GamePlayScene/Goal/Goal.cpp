@@ -4,6 +4,7 @@
 
 #include <imgui.h>
 
+using namespace Engine;
 using namespace Easing;
 
 void Goal::Initialize() {

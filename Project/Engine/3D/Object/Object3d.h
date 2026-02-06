@@ -10,264 +10,267 @@
 #include <vector>
 #include <wrl.h>
 
-/// === 前方宣言 === ///
-class Camera;
-class DirectXUtility;
+namespace Engine {
 
-/// === 3Dオブジェクト === ///
-class Object3d {
+	/// === 前方宣言 === ///
+	class Camera;
+	class DirectXUtility;
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
+	/// === 3Dオブジェクト === ///
+	class Object3d {
 
-	// 座標変換行列
-	struct TransformationMatrix {
-		Matrix4x4 WVP;
-		Matrix4x4 world;
-		Matrix4x4 worldInverseTranspose;
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	public:
+
+		// 座標変換行列
+		struct TransformationMatrix {
+			Matrix4x4 WVP;
+			Matrix4x4 world;
+			Matrix4x4 worldInverseTranspose;
+		};
+
+		// 平行光源データ
+		struct DirectionalLight {
+			Vector4 color; // 色
+			Vector3 direction; // 向き
+			float intensity; // 輝度
+		};
+
+		// 点光源データ
+		struct PointLight {
+			Vector4 color; // 色
+			Vector3 position; // 位置
+			float intensity; // 輝度
+			float distance; // 光の届く最大距離
+			float decay; // 減衰率
+			float padding[2];
+		};
+
+		// スポットライトデータ
+		struct SpotLight {
+			Vector4 color; // 色
+			Vector3 position; // 位置
+			float padding;
+			Vector3 direction; // 向き
+			float intensity; // 輝度
+			float distance; // 光の届く最大距離
+			float decay; // 減衰率
+			float cosAngle; // 余弦
+			float cosFalloffStart; // Falloffの開始角度
+		};
+
+		// 環境データ
+		struct Environment {
+			float intensity; // 環境光の輝度
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
+
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
+
+		/// <summary>
+		/// 描画
+		/// </summary>
+		void Draw();
+
+		void Draw(WorldTransform worldTransform);
+
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
+
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
+
+		/// <summary>
+		/// 座標変換行列データ初期化
+		/// </summary>
+		void InitializeTransformationMatrixData();
+
+		/// <summary>
+		/// 平行光源データ初期化
+		/// </summary>
+		void InitializeDirectionalLightData();
+
+		/// <summary>
+		/// 点光源データ初期化
+		/// </summary>
+		void InitializePointLightData();
+
+		/// <summary>
+		/// スポットライトデータ初期化
+		/// </summary>
+		void InitializeSpotLightData();
+
+		/// <summary>
+		/// 環境データ初期化
+		/// </summary>
+		void InitializeEnvironmentData();
+
+		/// <summary>
+		/// カメラデータ初期化
+		/// </summary>
+		void InitializeCameraData();
+
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// 大きさのセッター
+		/// </summary>
+		/// <param name="scale">大きさ</param>
+		void SetScale(const Vector3& scale) { this->worldTransform.SetScale(scale); }
+
+		/// <summary>
+		/// 回転のセッター
+		/// </summary>
+		/// <param name="rotate">回転</param>
+		void SetRotate(const Vector3& rotate) { this->worldTransform.SetRotate(rotate); }
+
+		/// <summary>
+		/// 位置のセッター
+		/// </summary>
+		/// <param name="translate">位置</param>
+		void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
+
+		/// <summary>
+		/// モデルのセッター
+		/// </summary>
+		/// <param name="model">モデル</param>
+		void SetModel(Model* model) { this->model = model; }
+
+		/// <summary>
+		/// カメラのセッター
+		/// </summary>
+		/// <param name="camera">カメラ</param>
+		void SetCamera(Camera* camera) { this->camera = camera; }
+
+		/// <summary>
+		/// 色のセッター
+		/// </summary>
+		/// <param name="color"></param>
+		void SetColor(const Vector4& color) { this->directionalLightData->color = color; }
+
+		/// <summary>
+		///	向きのセッター
+		/// </summary>
+		/// <param name="direction"></param>
+		void SetDirection(const Vector3& direction) { this->directionalLightData->direction = direction; }
+
+		/// <summary>
+		/// 輝度のセッター
+		/// </summary>
+		/// <param name="intensity"></param>
+		void SetIntensity(float intensity) { this->directionalLightData->intensity = intensity; }
+
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// 大きさのゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Vector3& GetScale() const { return worldTransform.GetScale(); }
+
+		/// <summary>
+		/// 回転のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Vector3& GetRotate() const { return worldTransform.GetRotate(); }
+
+		/// <summary>
+		/// 位置のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Vector3& GetTranslate() const { return worldTransform.GetTranslate(); }
+
+		/// <summary>
+		/// 色のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Vector4& GetColor() const { return directionalLightData->color; }
+
+		/// <summary>
+		/// 向きのゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Vector3& GetDirection() const { return directionalLightData->direction; }
+
+		/// <summary>
+		/// 輝度のゲッター
+		/// </summary>
+		/// <returns></returns>
+		float GetIntensity() const { return directionalLightData->intensity; }
+
+		/// <summary>
+		/// ワールド行列のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// 座標変換行列リソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
+		// 平行光源リソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
+		// 点光源リソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
+		// スポットライトリソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
+		// 環境リソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> environmentResource;
+		// カメラリソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
+
+		// 座標変換行列データ
+		TransformationMatrix* transformationMatrixData = nullptr;
+		// 平行光源データ
+		DirectionalLight* directionalLightData = nullptr;
+		// 点光源データ
+		PointLight* pointLightData = nullptr;
+		// スポットライトデータ
+		SpotLight* spotLightData = nullptr;
+		// 環境データ
+		Environment* environmentData = nullptr;
+		// カメラデータ
+		Vector3* cameraData;
+
+		// モデル
+		Model* model = nullptr;
+
+		// ワールド変換
+		WorldTransform worldTransform;
+
+		// カメラ
+		Camera* camera = nullptr;
+
+		bool isDraw = true;
+
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility = nullptr;
 	};
-
-	// 平行光源データ
-	struct DirectionalLight {
-		Vector4 color; // 色
-		Vector3 direction; // 向き
-		float intensity; // 輝度
-	};
-
-	// 点光源データ
-	struct PointLight {
-		Vector4 color; // 色
-		Vector3 position; // 位置
-		float intensity; // 輝度
-		float distance; // 光の届く最大距離
-		float decay; // 減衰率
-		float padding[2];
-	};
-
-	// スポットライトデータ
-	struct SpotLight {
-		Vector4 color; // 色
-		Vector3 position; // 位置
-		float padding;
-		Vector3 direction; // 向き
-		float intensity; // 輝度
-		float distance; // 光の届く最大距離
-		float decay; // 減衰率
-		float cosAngle; // 余弦
-		float cosFalloffStart; // Falloffの開始角度
-	};
-
-	// 環境データ
-	struct Environment {
-		float intensity; // 環境光の輝度
-	};
-
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
-
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
-
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
-
-	void Draw(WorldTransform worldTransform);
-
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui();
-
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
-
-	/// <summary>
-	/// 座標変換行列データ初期化
-	/// </summary>
-	void InitializeTransformationMatrixData();
-
-	/// <summary>
-	/// 平行光源データ初期化
-	/// </summary>
-	void InitializeDirectionalLightData();
-
-	/// <summary>
-	/// 点光源データ初期化
-	/// </summary>
-	void InitializePointLightData();
-
-	/// <summary>
-	/// スポットライトデータ初期化
-	/// </summary>
-	void InitializeSpotLightData();
-
-	/// <summary>
-	/// 環境データ初期化
-	/// </summary>
-	void InitializeEnvironmentData();
-
-	/// <summary>
-	/// カメラデータ初期化
-	/// </summary>
-	void InitializeCameraData();
-
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 大きさのセッター
-	/// </summary>
-	/// <param name="scale">大きさ</param>
-	void SetScale(const Vector3& scale) { this->worldTransform.SetScale(scale); }
-
-	/// <summary>
-	/// 回転のセッター
-	/// </summary>
-	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate) { this->worldTransform.SetRotate(rotate); }
-
-	/// <summary>
-	/// 位置のセッター
-	/// </summary>
-	/// <param name="translate">位置</param>
-	void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
-
-	/// <summary>
-	/// モデルのセッター
-	/// </summary>
-	/// <param name="model">モデル</param>
-	void SetModel(Model* model) { this->model = model; }
-
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera">カメラ</param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
-
-	/// <summary>
-	/// 色のセッター
-	/// </summary>
-	/// <param name="color"></param>
-	void SetColor(const Vector4& color) { this->directionalLightData->color = color; }
-
-	/// <summary>
-	///	向きのセッター
-	/// </summary>
-	/// <param name="direction"></param>
-	void SetDirection(const Vector3& direction) { this->directionalLightData->direction = direction; }
-
-	/// <summary>
-	/// 輝度のセッター
-	/// </summary>
-	/// <param name="intensity"></param>
-	void SetIntensity(float intensity) { this->directionalLightData->intensity = intensity; }
-
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// 大きさのゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetScale() const { return worldTransform.GetScale(); }
-
-	/// <summary>
-	/// 回転のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetRotate() const { return worldTransform.GetRotate(); }
-
-	/// <summary>
-	/// 位置のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetTranslate() const { return worldTransform.GetTranslate(); }
-
-	/// <summary>
-	/// 色のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector4& GetColor() const { return directionalLightData->color; }
-
-	/// <summary>
-	/// 向きのゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetDirection() const { return directionalLightData->direction; }
-
-	/// <summary>
-	/// 輝度のゲッター
-	/// </summary>
-	/// <returns></returns>
-	float GetIntensity() const { return directionalLightData->intensity; }
-
-	/// <summary>
-	/// ワールド行列のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// 座標変換行列リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
-	// 平行光源リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
-	// 点光源リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
-	// スポットライトリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
-	// 環境リソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> environmentResource;
-	// カメラリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
-
-	// 座標変換行列データ
-	TransformationMatrix* transformationMatrixData = nullptr;
-	// 平行光源データ
-	DirectionalLight* directionalLightData = nullptr;
-	// 点光源データ
-	PointLight* pointLightData = nullptr;
-	// スポットライトデータ
-	SpotLight* spotLightData = nullptr;
-	// 環境データ
-	Environment* environmentData = nullptr;
-	// カメラデータ
-	Vector3* cameraData;
-
-	// モデル
-	Model* model = nullptr;
-
-	// ワールド変換
-	WorldTransform worldTransform;
-
-	// カメラ
-	Camera* camera = nullptr;
-
-	bool isDraw = true;
-
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility = nullptr;
-};
+}

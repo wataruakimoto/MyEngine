@@ -8,6 +8,7 @@
 // .libファイルのリンクをする
 #pragma comment(lib,"xinput.lib")
 
+using namespace Engine;
 using namespace MathVector;
 
 Input* Input::instance = nullptr;

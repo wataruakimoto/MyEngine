@@ -1,5 +1,7 @@
 #include "GraphicsPipelineCreator.h"
 
+using namespace Engine;
+
 GraphicsPipelineCreator::GraphicsPipelineCreator() {
 }
 

@@ -2,6 +2,7 @@
 #include "ParticleManager.h"
 #include "MathVector.h"
 
+using namespace Engine;
 using namespace MathVector;
 using namespace MathRandom;
 

@@ -3,85 +3,88 @@
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
 
-/// ===== シーン管理 ===== ///
-class SceneManager {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// ===== シーン管理 ===== ///
+	class SceneManager {
 
-	// インスタンス
-	static SceneManager* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタの隠蔽
-	SceneManager() = default;
-	// デストラクタの隠蔽
-	~SceneManager() = default;
-	// コピーコンストラクタの封印
-	SceneManager(SceneManager&) = delete;
-	// コピー代入演算子の封印
-	SceneManager& operator=(SceneManager&) = delete;
+		// インスタンス
+		static SceneManager* instance;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コンストラクタの隠蔽
+		SceneManager() = default;
+		// デストラクタの隠蔽
+		~SceneManager() = default;
+		// コピーコンストラクタの封印
+		SceneManager(SceneManager&) = delete;
+		// コピー代入演算子の封印
+		SceneManager& operator=(SceneManager&) = delete;
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static SceneManager* GetInstance();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static SceneManager* GetInstance();
 
-	/// <summary>
-	/// フィルター適応のある描画
-	/// </summary>
-	void DrawFiltered();
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// フィルター適応のない描画
-	/// </summary>
-	void DrawUnfiltered();
+		/// <summary>
+		/// フィルター適応のある描画
+		/// </summary>
+		void DrawFiltered();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// フィルター適応のない描画
+		/// </summary>
+		void DrawUnfiltered();
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui();
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// シーンファクトリーのセッター
-	/// </summary>
-	/// <param name="sceneFactory">シーンファクトリー</param>
-	void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
 
-	/// <summary>
-	/// シーンを変更
-	/// </summary>
-	/// <param name="sceneName">シーン名</param>
-	void ChangeScene(const std::string& sceneName);
+		/// <summary>
+		/// シーンファクトリーのセッター
+		/// </summary>
+		/// <param name="sceneFactory">シーンファクトリー</param>
+		void SetSceneFactory(AbstractSceneFactory* sceneFactory) { sceneFactory_ = sceneFactory; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// シーンを変更
+		/// </summary>
+		/// <param name="sceneName">シーン名</param>
+		void ChangeScene(const std::string& sceneName);
 
-	// 今のシーン
-	BaseScene* scene_ = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// 次のシーン
-	BaseScene* nextScene_ = nullptr;
+		// 今のシーン
+		BaseScene* scene_ = nullptr;
 
-	// シーンファクトリー
-	AbstractSceneFactory* sceneFactory_ = nullptr;
-};
+		// 次のシーン
+		BaseScene* nextScene_ = nullptr;
+
+		// シーンファクトリー
+		AbstractSceneFactory* sceneFactory_ = nullptr;
+	};
+}

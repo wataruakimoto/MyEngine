@@ -6,6 +6,7 @@
 #include <imgui.h>
 #include <algorithm>
 
+using namespace Engine;
 using namespace Easing;
 
 RuleUI::RuleUI() {

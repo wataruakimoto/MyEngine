@@ -80,13 +80,13 @@ private:
 	float shakeTimer_ = 0.0f;          // シェイクタイマー
 	float shakeDuration_ = 0.0f;       // シェイク持続時間
 	float shakeIntensity_ = 0.0f;      // シェイク強度
-	Vector3 shakeOffset_ = { 0.0f, 0.0f, 0.0f }; // シェイクオフセット
-	Vector3Range shakeRange_ = { {-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f} }; // シェイク範囲
+	Engine::Vector3 shakeOffset_ = { 0.0f, 0.0f, 0.0f }; // シェイクオフセット
+	Engine::Vector3Range shakeRange_ = { {-1.0f, -1.0f, -1.0f}, {1.0f, 1.0f, 1.0f} }; // シェイク範囲
 
 	/// ===== 追従用 ===== ///
 
 	// 追従対象のオフセット
-	Vector3 baseOffset_ = { 0.0f, 4.0f, -12.0f };
+	Engine::Vector3 baseOffset_ = { 0.0f, 4.0f, -12.0f };
 
 	// 追従の補間
 	float followLerp_ = 0.1f;
@@ -106,7 +106,7 @@ private:
 
 	/// ===== 先読み用 ===== ///
 
-	Vector3 lookAheadOffset_ = { 0.0f, 0.0f, 0.0f }; // 先読みオフセット
+	Engine::Vector3 lookAheadOffset_ = { 0.0f, 0.0f, 0.0f }; // 先読みオフセット
 
 	const float kLookAheadFactor_ = 5.0f; // カメラのズレ具合
 

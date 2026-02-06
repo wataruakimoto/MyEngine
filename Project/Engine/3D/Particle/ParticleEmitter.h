@@ -4,89 +4,91 @@
 
 #include <string>
 
-// エミッターの発射タイプ
-enum class EmitterType {
-	Constant,   // 常に発射
-	Interval,   // 一定間隔ごとに発射
-	OneShot,    // 呼んだときだけ
-};
+namespace Engine {
 
-/// ===== パーティクルエミッター ===== ///
-class ParticleEmitter {
-
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
-
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="effectName">エフェクト名</param>
-	/// <param name="type">発射タイプ</param>
-	/// <param name="count">1回あたりの発生数</param>
-	ParticleEmitter(std::string	effectName, EmitterType type, uint32_t count) :
-		effectName(effectName),
-		emitterType(type),
-		count(count) {
+	// エミッターの発射タイプ
+	enum class EmitterType {
+		Constant,   // 常に発射
+		Interval,   // 一定間隔ごとに発射
+		OneShot,    // 呼んだときだけ
 	};
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+	/// ===== パーティクルエミッター ===== ///
+	class ParticleEmitter {
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// パーティクル発生
-	/// </summary>
-	void Emit();
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="effectName">エフェクト名</param>
+		/// <param name="type">発射タイプ</param>
+		/// <param name="count">1回あたりの発生数</param>
+		ParticleEmitter(std::string	effectName, EmitterType type, uint32_t count) :
+			effectName(effectName),
+			emitterType(type),
+			count(count) {
+		};
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 位置のセッター
-	/// </summary>
-	/// <param name="translate">位置</param>
-	void SetTranslate(const Vector3& translate) { worldTransform.SetTranslate(translate); }
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// 頻度のセッター
-	/// </summary>
-	/// <param name="frequency"></param>
-	void SetFrequency(float frequency) { this->frequency = frequency; }
+		/// <summary>
+		/// パーティクル発生
+		/// </summary>
+		void Emit();
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-	// エフェクト名
-	std::string effectName;
+		/// <summary>
+		/// 位置のセッター
+		/// </summary>
+		/// <param name="translate">位置</param>
+		void SetTranslate(const Vector3& translate) { worldTransform.SetTranslate(translate); }
 
-	// 発射タイプ
-	EmitterType emitterType;
+		/// <summary>
+		/// 頻度のセッター
+		/// </summary>
+		/// <param name="frequency"></param>
+		void SetFrequency(float frequency) { this->frequency = frequency; }
 
-	// 発生頻度 (秒間)
-	float frequency = 0.0f;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// 発生用タイマー
-	float timer = 0.0f;
+		// エフェクト名
+		std::string effectName;
 
-	// デルタタイム
-	const float deltaTime = 1.0f / 60.0f;
+		// 発射タイプ
+		EmitterType emitterType;
 
-	// 1回あたりの発生数
-	uint32_t count = 0;
+		// 発生頻度 (秒間)
+		float frequency = 0.0f;
 
-	// ワールド変換情報
-	WorldTransform worldTransform;
-};
+		// 発生用タイマー
+		float timer = 0.0f;
 
+		// デルタタイム
+		const float deltaTime = 1.0f / 60.0f;
+
+		// 1回あたりの発生数
+		uint32_t count = 0;
+
+		// ワールド変換情報
+		WorldTransform worldTransform;
+	};
+}

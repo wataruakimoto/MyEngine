@@ -5,117 +5,119 @@
 
 #include <string>
 
-/// ===== ディゾルブフィルター ===== ///
-class DissolveFilter : public BaseFilter {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== ディゾルブフィルター ===== ///
+	class DissolveFilter : public BaseFilter {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画設定
-	/// </summary>
-	void Draw() override;
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize() override;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui() override;
+		/// <summary>
+		/// 描画設定
+		/// </summary>
+		void Draw() override;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui() override;
 
-	/// <summary>
-	/// RootSignature作成
-	/// </summary>
-	void CreateRootSignature() override;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// InputLayout作成
-	/// </summary>
-	void CreateInputLayout() override;
+		/// <summary>
+		/// RootSignature作成
+		/// </summary>
+		void CreateRootSignature() override;
 
-	/// <summary>
-	/// BlendState作成
-	/// </summary>
-	void CreateBlendState() override;
+		/// <summary>
+		/// InputLayout作成
+		/// </summary>
+		void CreateInputLayout() override;
 
-	/// <summary>
-	/// RasterizerState作成
-	/// </summary>
-	void CreateRasterizerState() override;
+		/// <summary>
+		/// BlendState作成
+		/// </summary>
+		void CreateBlendState() override;
 
-	/// <summary>
-	/// VertexShader作成
-	/// </summary>
-	void CreateVertexShader() override;
+		/// <summary>
+		/// RasterizerState作成
+		/// </summary>
+		void CreateRasterizerState() override;
 
-	/// <summary>
-	/// PixelShader作成
-	/// </summary>
-	void CreatePixelShader() override;
+		/// <summary>
+		/// VertexShader作成
+		/// </summary>
+		void CreateVertexShader() override;
 
-	/// <summary>
-	/// DepthStencilState作成
-	/// </summary>
-	void CreateDepthStencilState() override;
+		/// <summary>
+		/// PixelShader作成
+		/// </summary>
+		void CreatePixelShader() override;
 
-	/// <summary>
-	/// GraphicsPipeline作成
-	/// </summary>
-	void CreateGraphicsPipeline() override;
+		/// <summary>
+		/// DepthStencilState作成
+		/// </summary>
+		void CreateDepthStencilState() override;
 
-	/// <summary>
-	/// コンフィグデータ作成
-	/// </summary>
-	void CreateConfigData();
+		/// <summary>
+		/// GraphicsPipeline作成
+		/// </summary>
+		void CreateGraphicsPipeline() override;
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// コンフィグデータ作成
+		/// </summary>
+		void CreateConfigData();
 
-	/// <summary>
-	/// maskテクスチャの設定
-	/// </summary>
-	/// <param name="relativePath">相対パス</param>
-	void SetMaskTextureFilePath(const std::string relativePath);
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// maskテクスチャの設定
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		void SetMaskTextureFilePath(const std::string relativePath);
 
-	struct Config {
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	public:
 
-		float threshold;	  // 閾値
-		Vector3 edgeColor;    // エッジの色
-		float detectionRange; // 検出範囲
-		float padding[3];      // パディング
+		struct Config {
+
+			float threshold;	  // 閾値
+			Vector3 edgeColor;    // エッジの色
+			float detectionRange; // 検出範囲
+			float padding[3];      // パディング
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// maskテクスチャのフルパス
+		std::string maskTextureFullPath = "";
+
+		// マスクテクスチャのSRVインデックス
+		uint32_t maskTextureSrvIndex = 0;
+
+		// コンフィグデータ
+		Config* configData = nullptr;
+		// コンフィグのリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 	};
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// maskテクスチャのフルパス
-	std::string maskTextureFullPath = "";
-
-	// マスクテクスチャのSRVインデックス
-	uint32_t maskTextureSrvIndex = 0;
-
-	// コンフィグデータ
-	Config* configData = nullptr;
-	// コンフィグのリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
-};
-
+}

@@ -3,120 +3,122 @@
 #include "BaseFilter.h"
 #include "Matrix4x4.h"
 
-/// ===== 深度アウトラインフィルター ===== ///
-class DepthOutlineFilter : public BaseFilter {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== 深度アウトラインフィルター ===== ///
+	class DepthOutlineFilter : public BaseFilter {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画設定
-	/// </summary>
-	void Draw() override;
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize() override;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui() override;
+		/// <summary>
+		/// 描画設定
+		/// </summary>
+		void Draw() override;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui() override;
 
-	/// <summary>
-	/// RootSignature作成
-	/// </summary>
-	void CreateRootSignature() override;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// InputLayout作成
-	/// </summary>
-	void CreateInputLayout() override;
+		/// <summary>
+		/// RootSignature作成
+		/// </summary>
+		void CreateRootSignature() override;
 
-	/// <summary>
-	/// BlendState作成
-	/// </summary>
-	void CreateBlendState() override;
+		/// <summary>
+		/// InputLayout作成
+		/// </summary>
+		void CreateInputLayout() override;
 
-	/// <summary>
-	/// RasterizerState作成
-	/// </summary>
-	void CreateRasterizerState() override;
+		/// <summary>
+		/// BlendState作成
+		/// </summary>
+		void CreateBlendState() override;
 
-	/// <summary>
-	/// VertexShader作成
-	/// </summary>
-	void CreateVertexShader() override;
+		/// <summary>
+		/// RasterizerState作成
+		/// </summary>
+		void CreateRasterizerState() override;
 
-	/// <summary>
-	/// PixelShader作成
-	/// </summary>
-	void CreatePixelShader() override;
+		/// <summary>
+		/// VertexShader作成
+		/// </summary>
+		void CreateVertexShader() override;
 
-	/// <summary>
-	/// DepthStencilState作成
-	/// </summary>
-	void CreateDepthStencilState() override;
+		/// <summary>
+		/// PixelShader作成
+		/// </summary>
+		void CreatePixelShader() override;
 
-	/// <summary>
-	/// GraphicsPipeline作成
-	/// </summary>
-	void CreateGraphicsPipeline() override;
+		/// <summary>
+		/// DepthStencilState作成
+		/// </summary>
+		void CreateDepthStencilState() override;
 
-	/// <summary>
-	/// マテリアルデータ生成
-	/// </summary>
-	void GenerateMaterialData();
+		/// <summary>
+		/// GraphicsPipeline作成
+		/// </summary>
+		void CreateGraphicsPipeline() override;
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// マテリアルデータ生成
+		/// </summary>
+		void GenerateMaterialData();
 
-	/// <summary>
-	/// カメラのセッター
-	/// </summary>
-	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera = camera; }
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 深度用SRVインデックスのセッター
-	/// </summary>
-	/// <param name="index"></param>
-	void SetDepthSrvIndex(uint32_t index) { depthSrvIndex = index; }
+		/// <summary>
+		/// カメラのセッター
+		/// </summary>
+		/// <param name="camera"></param>
+		void SetCamera(Camera* camera) { this->camera = camera; }
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// 深度用SRVインデックスのセッター
+		/// </summary>
+		/// <param name="index"></param>
+		void SetDepthSrvIndex(uint32_t index) { depthSrvIndex = index; }
 
-	struct Material {
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	public:
 
-		Matrix4x4 projectionInverse; // 投影逆行列
+		struct Material {
+
+			Matrix4x4 projectionInverse; // 投影逆行列
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// マテリアルリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
+		// マテリアルデータ
+		Material* materialData = nullptr;
+
+		// カメラの借りポインタ
+		Camera* camera = nullptr;
+
+		// 深度用SRVインデックス
+		uint32_t depthSrvIndex = 0;
 	};
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// マテリアルリソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> materialResource = nullptr;
-	// マテリアルデータ
-	Material* materialData = nullptr;
-
-	// カメラの借りポインタ
-	Camera* camera = nullptr;
-	
-	// 深度用SRVインデックス
-	uint32_t depthSrvIndex = 0;
-};
-
+}

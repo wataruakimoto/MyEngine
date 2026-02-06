@@ -3,119 +3,121 @@
 #include "BaseFilter.h"
 #include "Vector3.h"
 
-/// ===== ビネットフィルター ===== ///
-class VignetteFilter : public BaseFilter {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== ビネットフィルター ===== ///
+	class VignetteFilter : public BaseFilter {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize() override;
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画設定
-	/// </summary>
-	void Draw() override;
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize() override;
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	void ShowImGui() override;
+		/// <summary>
+		/// 描画設定
+		/// </summary>
+		void Draw() override;
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui() override;
 
-	/// <summary>
-	/// RootSignature作成
-	/// </summary>
-	void CreateRootSignature() override;
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// InputLayout作成
-	/// </summary>
-	void CreateInputLayout() override;
+		/// <summary>
+		/// RootSignature作成
+		/// </summary>
+		void CreateRootSignature() override;
 
-	/// <summary>
-	/// BlendState作成
-	/// </summary>
-	void CreateBlendState() override;
+		/// <summary>
+		/// InputLayout作成
+		/// </summary>
+		void CreateInputLayout() override;
 
-	/// <summary>
-	/// RasterizerState作成
-	/// </summary>
-	void CreateRasterizerState() override;
+		/// <summary>
+		/// BlendState作成
+		/// </summary>
+		void CreateBlendState() override;
 
-	/// <summary>
-	/// VertexShader作成
-	/// </summary>
-	void CreateVertexShader() override;
+		/// <summary>
+		/// RasterizerState作成
+		/// </summary>
+		void CreateRasterizerState() override;
 
-	/// <summary>
-	/// PixelShader作成
-	/// </summary>
-	void CreatePixelShader() override;
+		/// <summary>
+		/// VertexShader作成
+		/// </summary>
+		void CreateVertexShader() override;
 
-	/// <summary>
-	/// DepthStencilState作成
-	/// </summary>
-	void CreateDepthStencilState() override;
+		/// <summary>
+		/// PixelShader作成
+		/// </summary>
+		void CreatePixelShader() override;
 
-	/// <summary>
-	/// GraphicsPipeline作成
-	/// </summary>
-	void CreateGraphicsPipeline() override;
+		/// <summary>
+		/// DepthStencilState作成
+		/// </summary>
+		void CreateDepthStencilState() override;
 
-	/// <summary>
-	/// コンフィグデータの生成
-	/// </summary>
-	void CreateConfigData();
+		/// <summary>
+		/// GraphicsPipeline作成
+		/// </summary>
+		void CreateGraphicsPipeline() override;
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// コンフィグデータの生成
+		/// </summary>
+		void CreateConfigData();
 
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
-public:
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	void SetColor(const Vector3& color) { configData->color = color; }
+		///-------------------------------------------/// 
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-	void SetIntensity(float intensity) { configData->intensity = intensity; }
+		void SetColor(const Vector3& color) { configData->color = color; }
 
-	void SetScale(float scale) { configData->scale = scale; }
+		void SetIntensity(float intensity) { configData->intensity = intensity; }
 
-	void SetRange(float range) { configData->range = range; }
+		void SetScale(float scale) { configData->scale = scale; }
 
-///-------------------------------------------/// 
-/// 構造体
-///-------------------------------------------///
-public:
+		void SetRange(float range) { configData->range = range; }
 
-	struct Config {
+		///-------------------------------------------/// 
+		/// 構造体
+		///-------------------------------------------///
+	public:
 
-		Vector3 color; // 色
-		float intensity; // 強さ
-		float scale; // スケール
-		float range; // 範囲
+		struct Config {
+
+			Vector3 color; // 色
+			float intensity; // 強さ
+			float scale; // スケール
+			float range; // 範囲
+		};
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
+
+		// コンフィグデータ
+		Config* configData = nullptr;
+
+		// コンフィグ用リソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 	};
-
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
-
-	// コンフィグデータ
-	Config* configData = nullptr;
-
-	// コンフィグ用リソース
-	Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
-};
-
+}

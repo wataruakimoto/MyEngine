@@ -8,6 +8,7 @@
 #include <cassert>
 #include <filesystem>
 
+using namespace Engine;
 using namespace Logger;
 
 ModelManager* ModelManager::instance = nullptr;

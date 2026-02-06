@@ -7,6 +7,8 @@
 #include <cassert>
 #include <numbers>
 
+using namespace Engine;
+
 Vector2 MathVector::Add(const Vector2& v1, const Vector2& v2) {
 
 	Vector2 result;

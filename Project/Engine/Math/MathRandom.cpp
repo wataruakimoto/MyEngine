@@ -2,6 +2,8 @@
 
 #include <random>
 
+using namespace Engine;
+
 // 変数は外部からアクセスできないようにする
 namespace {
     std::random_device seedGenerator;

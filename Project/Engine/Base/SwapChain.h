@@ -5,164 +5,166 @@
 #include <wrl.h>
 #include <stdint.h>
 
-/// === 前方宣言 === ///
-class WinApp;
-class DirectXUtility;
+namespace Engine {
 
-/// === スワップチェイン === ///
-class SwapChain {
+	/// === 前方宣言 === ///
+	class WinApp;
+	class DirectXUtility;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// === スワップチェイン === ///
+	class SwapChain {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(WinApp* winApp);
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 描画前
-	/// </summary>
-	void PreDraw();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize(WinApp* winApp);
 
-	/// <summary>
-	/// 描画後
-	/// </summary>
-	void PostDraw();
+		/// <summary>
+		/// 描画前
+		/// </summary>
+		void PreDraw();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 描画後
+		/// </summary>
+		void PostDraw();
 
-	/// <summary>
-	/// スワップチェーンの生成
-	/// </summary>
-	void SwapChainGenerate();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// 各種デスクリプターヒープの生成
-	/// </summary>
-	void VariousDescriptorHeapGenerate();
+		/// <summary>
+		/// スワップチェーンの生成
+		/// </summary>
+		void SwapChainGenerate();
 
-	/// <summary>
-	/// レンダーターゲットビューの初期化
-	/// </summary>
-	void RenderTargetViewInitialize();
+		/// <summary>
+		/// 各種デスクリプターヒープの生成
+		/// </summary>
+		void VariousDescriptorHeapGenerate();
 
-	/// <summary>
-	/// 深度バッファの生成
-	/// </summary>
-	void DepthBufferGenerate();
+		/// <summary>
+		/// レンダーターゲットビューの初期化
+		/// </summary>
+		void RenderTargetViewInitialize();
 
-	/// <summary>
-	/// 深度ステンシルビューの初期化
-	/// </summary>
-	void DepthStencilViewInitialize();
+		/// <summary>
+		/// 深度バッファの生成
+		/// </summary>
+		void DepthBufferGenerate();
 
-	/// <summary>
-	/// ビューポート矩形の初期化
-	/// </summary>
-	void ViewportRectInitialize();
+		/// <summary>
+		/// 深度ステンシルビューの初期化
+		/// </summary>
+		void DepthStencilViewInitialize();
 
-	/// <summary>
-	/// シザリング矩形の初期化
-	/// </summary>
-	void ScissoringRectInitialize();
+		/// <summary>
+		/// ビューポート矩形の初期化
+		/// </summary>
+		void ViewportRectInitialize();
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// シザリング矩形の初期化
+		/// </summary>
+		void ScissoringRectInitialize();
 
-	/// <summary>
-	/// バッファカウントを取得
-	/// </summary>
-	/// <returns></returns>
-	uint32_t GetBackBufferCount() const { return swapChainDesc.BufferCount; }
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// RTVのCPUのデスクリプタハンドルを取得
-	/// </summary>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
+		/// <summary>
+		/// バッファカウントを取得
+		/// </summary>
+		/// <returns></returns>
+		uint32_t GetBackBufferCount() const { return swapChainDesc.BufferCount; }
 
-	/// <summary>
-	/// RTVのGPUのデスクリプタハンドルを取得
-	/// </summary>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
+		/// <summary>
+		/// RTVのCPUのデスクリプタハンドルを取得
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		D3D12_CPU_DESCRIPTOR_HANDLE GetRTVCPUDescriptorHandle(uint32_t index);
 
-	/// <summary>
-	/// DSVのCPUのデスクリプタハンドルを取得
-	/// </summary>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
+		/// <summary>
+		/// RTVのGPUのデスクリプタハンドルを取得
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		D3D12_GPU_DESCRIPTOR_HANDLE GetRTVGPUDescriptorHandle(uint32_t index);
 
-	/// <summary>
-	/// DSVのGPUのデスクリプタハンドルを取得
-	/// </summary>
-	/// <param name="index"></param>
-	/// <returns></returns>
-	D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
+		/// <summary>
+		/// DSVのCPUのデスクリプタハンドルを取得
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		D3D12_CPU_DESCRIPTOR_HANDLE GetDSVCPUDescriptorHandle(uint32_t index);
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// DSVのGPUのデスクリプタハンドルを取得
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		D3D12_GPU_DESCRIPTOR_HANDLE GetDSVGPUDescriptorHandle(uint32_t index);
 
-	// HRESULT
-	HRESULT hr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// スワップチェーン
-	Microsoft::WRL::ComPtr <IDXGISwapChain4> swapChain = nullptr;
+		// HRESULT
+		HRESULT hr;
 
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+		// スワップチェーン
+		Microsoft::WRL::ComPtr <IDXGISwapChain4> swapChain = nullptr;
 
-	// スワップチェーンから引っ張ってきたリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> swapChainResources[2] = { nullptr };
+		DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 
-	// スワップチェーンリソース
-	//std::array<ComPtr<ID3D12Resource>, 2> swapChainResources;
+		// スワップチェーンから引っ張ってきたリソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> swapChainResources[2] = { nullptr };
 
-	// RTV用デスクリプタサイズ
-	uint32_t rtvDescriptorSize;
+		// スワップチェーンリソース
+		//std::array<ComPtr<ID3D12Resource>, 2> swapChainResources;
 
-	// RTV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
+		// RTV用デスクリプタサイズ
+		uint32_t rtvDescriptorSize;
 
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+		// RTV用デスクリプタヒープ
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
 
-	// RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
-	// DSV用デスクリプタサイズ
-	uint32_t dsvDescriptorSize;
+		// RTVハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandles[2];
 
-	// DSV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
+		// DSV用デスクリプタサイズ
+		uint32_t dsvDescriptorSize;
 
-	// 深度バッファ
-	Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
+		// DSV用デスクリプタヒープ
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> dsvDescriptorHeap;
 
-	// ビューポート矩形
-	D3D12_VIEWPORT viewportRect{};
+		// 深度バッファ
+		Microsoft::WRL::ComPtr<ID3D12Resource> depthStencilResource;
 
-	// シザー矩形
-	D3D12_RECT scissorRect{};
+		// ビューポート矩形
+		D3D12_VIEWPORT viewportRect{};
 
-	// TrainsitionBarrierの設定
-	D3D12_RESOURCE_BARRIER barrier{};
+		// シザー矩形
+		D3D12_RECT scissorRect{};
 
-	// WinAppの借りポインタ
-	WinApp* winApp = nullptr;
+		// TrainsitionBarrierの設定
+		D3D12_RESOURCE_BARRIER barrier{};
 
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility = nullptr;
-};
+		// WinAppの借りポインタ
+		WinApp* winApp = nullptr;
 
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility = nullptr;
+	};
+}

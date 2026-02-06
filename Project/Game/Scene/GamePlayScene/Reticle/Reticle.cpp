@@ -4,6 +4,7 @@
 #include "MathVector.h"
 #include "MathMatrix.h"
 
+using namespace Engine;
 using namespace MathVector;
 using namespace MathMatrix;
 

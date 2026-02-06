@@ -3,6 +3,8 @@
 #include "Base/MyGame.h"
 #include "Debug/D3DResourceLeakChecker.h"
 
+using namespace Engine;
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 

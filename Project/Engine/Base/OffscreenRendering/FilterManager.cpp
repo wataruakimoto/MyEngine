@@ -5,6 +5,8 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 void FilterManager::Initialize() {
 
 	// 各種フィルターの生成・初期化・登録

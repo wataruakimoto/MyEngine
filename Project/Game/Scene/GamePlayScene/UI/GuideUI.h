@@ -4,7 +4,9 @@
 
 #include <memory>
 
-class Input;
+namespace Engine {
+	class Input;
+}
 
 /// ===== ガイドUI ===== ///
 class GuideUI {
@@ -34,16 +36,16 @@ public:
 private:
 
 	// マウススプライト
-	std::unique_ptr<Sprite> mouseSprite = nullptr;
+	std::unique_ptr<Engine::Sprite> mouseSprite = nullptr;
 
 	// ボタンAスプライト
-	std::unique_ptr<Sprite> buttonASprite = nullptr;
+	std::unique_ptr<Engine::Sprite> buttonASprite = nullptr;
 
 	// ボタンDスプライト
-	std::unique_ptr<Sprite> buttonDSprite = nullptr;
+	std::unique_ptr<Engine::Sprite> buttonDSprite = nullptr;
 
 	// ボタンESCスプライト
-	std::unique_ptr<Sprite> buttonESCSprite = nullptr;
+	std::unique_ptr<Engine::Sprite> buttonESCSprite = nullptr;
 
 	bool isShooting = false;
 
@@ -54,6 +56,6 @@ private:
 	bool isPause = false;
 
 	// input
-	Input* input = nullptr;
+	Engine::Input* input = nullptr;
 };
 

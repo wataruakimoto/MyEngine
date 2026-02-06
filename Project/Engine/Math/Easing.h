@@ -4,37 +4,40 @@
 #include "Vector3.h"
 #include "Vector4.h"
 
-/// <summary>
-/// イージング関数ライブラリ
-/// 参考: https://easings.net/ja :イージング関数チートシート
-/// </summary>
-namespace Easing {
+namespace Engine {
 
-	/// ===== 線形補間 ===== ///
+	/// <summary>
+	/// イージング関数ライブラリ
+	/// 参考: https://easings.net/ja :イージング関数チートシート
+	/// </summary>
+	namespace Easing {
 
-	float Lerp(float start, float end, float t);
+		/// ===== 線形補間 ===== ///
 
-	Vector2 Lerp(const Vector2& start, const Vector2& end, float t);
+		float Lerp(float start, float end, float t);
 
-	Vector3 Lerp(const Vector3& start, const Vector3& end, float t);
+		Vector2 Lerp(const Vector2& start, const Vector2& end, float t);
 
-	Vector4 Lerp(const Vector4& start, const Vector4& end, float t);
+		Vector3 Lerp(const Vector3& start, const Vector3& end, float t);
 
-	/// ===== In ゆっくり始まって速く終わる ===== ///
+		Vector4 Lerp(const Vector4& start, const Vector4& end, float t);
 
-	float EaseInCubic(float t);
+		/// ===== In ゆっくり始まって速く終わる ===== ///
 
-	/// ===== Out 速く始まってゆっくり終わる ===== ///
+		float EaseInCubic(float t);
 
-	float EaseOutQuad(float t);
+		/// ===== Out 速く始まってゆっくり終わる ===== ///
 
-	float EaseOutCubic(float t);
+		float EaseOutQuad(float t);
 
-	float EaseOutQuart(float t);
+		float EaseOutCubic(float t);
 
-	float EaseOutBounce(float t);
+		float EaseOutQuart(float t);
 
-	/// ===== InOut 滑らかな往復運動 ===== ///
+		float EaseOutBounce(float t);
 
-	float EaseInOutQuad(float t);
+		/// ===== InOut 滑らかな往復運動 ===== ///
+
+		float EaseInOutQuad(float t);
+	}
 }

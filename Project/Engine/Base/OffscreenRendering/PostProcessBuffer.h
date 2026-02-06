@@ -6,124 +6,126 @@
 #include <wrl.h>
 #include <stdint.h>
 
-/// ===== 前方宣言 ===== ///
-class DirectXUtility;
-class SrvManager;
+namespace Engine {
 
-/// ===== ポストプロセス用バッファ ===== ///
-class PostProcessBuffer {
+	/// ===== 前方宣言 ===== ///
+	class DirectXUtility;
+	class SrvManager;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// ===== ポストプロセス用バッファ ===== ///
+	class PostProcessBuffer {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 3D用描画前処理
-	/// </summary>
-	void PreDraw();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// 描画後処理
-	/// </summary>
-	void PostDraw();
+		/// <summary>
+		/// 3D用描画前処理
+		/// </summary>
+		void PreDraw();
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 描画後処理
+		/// </summary>
+		void PostDraw();
 
-	/// <summary>
-	/// デスクリプタヒープ生成
-	/// </summary>
-	void DescriptorHeapGenerate();
+		///-------------------------------------------/// 
+		/// クラス内関数
+		///-------------------------------------------///
+	private:
 
-	/// <summary>
-	/// RTV初期化
-	/// </summary>
-	void RenderTargetViewInitialize();
+		/// <summary>
+		/// デスクリプタヒープ生成
+		/// </summary>
+		void DescriptorHeapGenerate();
 
-	/// <summary>
-	/// SRV初期化
-	/// </summary>
-	void ShaderResourceViewInitialize();
+		/// <summary>
+		/// RTV初期化
+		/// </summary>
+		void RenderTargetViewInitialize();
 
-	/// <summary>
-	/// ビューポート矩形の初期化
-	/// </summary>
-	void ViewportRectInitialize();
+		/// <summary>
+		/// SRV初期化
+		/// </summary>
+		void ShaderResourceViewInitialize();
 
-	/// <summary>
-	/// シザリング矩形の初期化
-	/// </summary>
-	void ScissoringRectInitialize();
+		/// <summary>
+		/// ビューポート矩形の初期化
+		/// </summary>
+		void ViewportRectInitialize();
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// シザリング矩形の初期化
+		/// </summary>
+		void ScissoringRectInitialize();
 
-	/// <summary>
-	/// SRVインデックスを取得
-	/// </summary>
-	/// <returns>SRVインデックス</returns>
-	uint32_t GetSrvIndex() const { return srvIndex; }
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// SRVインデックスを取得
+		/// </summary>
+		/// <returns>SRVインデックス</returns>
+		uint32_t GetSrvIndex() const { return srvIndex; }
 
-	/// ===== RTV用の変数 ===== ///
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// レンダーテクスチャリソース
-	Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
+		/// ===== RTV用の変数 ===== ///
 
-	// RTV用デスクリプタサイズ
-	uint32_t rtvDescriptorSize;
+		// レンダーテクスチャリソース
+		Microsoft::WRL::ComPtr <ID3D12Resource> renderTextureResource = nullptr;
 
-	// RTV用デスクリプタヒープ
-	Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
+		// RTV用デスクリプタサイズ
+		uint32_t rtvDescriptorSize;
 
-	// RTVの設定
-	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
+		// RTV用デスクリプタヒープ
+		Microsoft::WRL::ComPtr <ID3D12DescriptorHeap> rtvDescriptorHeap;
 
-	// RTVハンドル
-	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
+		// RTVの設定
+		D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 
-	// クリアする色
-	const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
+		// RTVハンドル
+		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
-	/// ===== SRV用の変数 ===== ///
+		// クリアする色
+		const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
 
-	// SRVインデックス
-	uint32_t srvIndex = 0;
+		/// ===== SRV用の変数 ===== ///
 
-	/// ===== その他の変数 ===== ///
+		// SRVインデックス
+		uint32_t srvIndex = 0;
 
-	// ビューポート矩形
-	D3D12_VIEWPORT viewportRect{};
+		/// ===== その他の変数 ===== ///
 
-	// シザリング矩形
-	D3D12_RECT scissorRect{};
+		// ビューポート矩形
+		D3D12_VIEWPORT viewportRect{};
 
-	// レンダーテクスチャ用のTrainsitionBarrier
-	D3D12_RESOURCE_BARRIER renderTextureBarrier{};
+		// シザリング矩形
+		D3D12_RECT scissorRect{};
 
-	// レンダーテクスチャ用のバリアの現在のリソースステート
-	D3D12_RESOURCE_STATES currentRtvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
+		// レンダーテクスチャ用のTrainsitionBarrier
+		D3D12_RESOURCE_BARRIER renderTextureBarrier{};
 
-	/// ===== 借りポインタ ===== ///
+		// レンダーテクスチャ用のバリアの現在のリソースステート
+		D3D12_RESOURCE_STATES currentRtvState = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE;
 
-	// DirectXユーティリティのポインタ
-	DirectXUtility* dxUtility = nullptr;
+		/// ===== 借りポインタ ===== ///
 
-	// SRVマネージャのポインタ
-	SrvManager* srvManager = nullptr;
-};
+		// DirectXユーティリティのポインタ
+		DirectXUtility* dxUtility = nullptr;
 
+		// SRVマネージャのポインタ
+		SrvManager* srvManager = nullptr;
+	};
+}

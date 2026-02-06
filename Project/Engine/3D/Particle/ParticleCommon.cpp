@@ -2,6 +2,7 @@
 #include "SrvManager.h"
 #include "Logger.h"
 
+using namespace Engine;
 using namespace Microsoft::WRL;
 using namespace Logger;
 
@@ -11,20 +12,20 @@ void ParticleCommon::Initialize() {
 	CreateRootSignature();
 
 	// RootSignatureをセット
-	pipelineCreater_.SetRootSignature(rootSignature.Get());
+	pipelineCreator_.SetRootSignature(rootSignature.Get());
 
 	// InputLayoutを生成
 	CreateInputLayout();
 
 	// InputLayoutをセット
-	pipelineCreater_.SetInputLayoutDesc(inputLayoutDesc);
+	pipelineCreator_.SetInputLayoutDesc(inputLayoutDesc);
 
 	// シェーダパスをセット
-	pipelineCreater_.SetVSFileName(L"Particle.VS.hlsl");
-	pipelineCreater_.SetPSFileName(L"Particle.PS.hlsl");
+	pipelineCreator_.SetVSFileName(L"Particle.VS.hlsl");
+	pipelineCreator_.SetPSFileName(L"Particle.PS.hlsl");
 
 	// パイプライン生成
-	pipelineCreater_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadOnly);
+	pipelineCreator_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadOnly);
 }
 
 void ParticleCommon::SettingDrawing() {
@@ -33,7 +34,7 @@ void ParticleCommon::SettingDrawing() {
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreater_.GetGraphicsPipelineState().Get());
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreator_.GetGraphicsPipelineState().Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

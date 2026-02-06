@@ -62,7 +62,7 @@ public:
 	/// 速度のセッター
 	/// </summary>
 	/// <param name="velocity"></param>
-	void SetVelocity(Vector3 velocity) { this->velocity_ = velocity; }
+	void SetVelocity(Engine::Vector3 velocity) { this->velocity_ = velocity; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -70,13 +70,13 @@ public:
 private:
 
 	// モデルのポインタ
-	std::unique_ptr<Model> model = nullptr;
+	std::unique_ptr<Engine::Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	std::unique_ptr<Object3d> object = nullptr;
+	std::unique_ptr<Engine::Object3d> object = nullptr;
 
 	// 速度
-	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	// 移動の速さ
 	float moveSpeed = 0.5f;
@@ -90,5 +90,5 @@ private:
 	bool isDead = false;
 
 	// エミッターのポインタ
-	std::unique_ptr<ParticleEmitter> particleEmitter = nullptr;
+	std::unique_ptr<Engine::ParticleEmitter> particleEmitter = nullptr;
 };

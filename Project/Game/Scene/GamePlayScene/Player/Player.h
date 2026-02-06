@@ -20,7 +20,10 @@ class GamePlayScene;
 class Enemy;
 class Reticle3D;
 class LockOn;
-class Camera;
+
+namespace Engine {
+	class Camera;
+}
 
 enum class PlayerState {
 	AutoPilot,
@@ -137,7 +140,7 @@ public:
 	/// スクリーン座標のゲッター
 	/// </summary>
 	/// <returns></returns>
-	Vector2 GetScreenPos() { return screenPos_; }
+	Engine::Vector2 GetScreenPos() { return screenPos_; }
 
 	/// <summary>
 	/// HPのゲッター
@@ -155,7 +158,7 @@ public:
 
 	float GetSpeedRate() { return speedRate_; }
 
-	const Vector3& GetVelocity() const { return velocity_; }
+	const Engine::Vector3& GetVelocity() const { return velocity_; }
 
 	bool IsGroundHit() { return isGroundHit_; }
 
@@ -174,7 +177,7 @@ public:
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Camera* camera) { this->camera_ = camera; }
+	void SetCamera(Engine::Camera* camera) { this->camera_ = camera; }
 
 	/// <summary>
 	/// 状態変更リクエストのセッター
@@ -194,10 +197,10 @@ private:
 	/// ===== ポインタ・インスタンス ===== ///
 
 	// モデルのポインタ
-	std::unique_ptr<Model> model = nullptr;
+	std::unique_ptr<Engine::Model> model = nullptr;
 
 	// 3Dオブジェクトのポインタ
-	std::unique_ptr<Object3d> object = nullptr;
+	std::unique_ptr<Engine::Object3d> object = nullptr;
 
 	// レティクルのポインタ
 	std::unique_ptr<Reticle> reticle_ = nullptr;
@@ -206,7 +209,7 @@ private:
 	std::unique_ptr<LockOn> lockOn_ = nullptr;
 
 	// カメラの借りポインタ
-	Camera* camera_ = nullptr;
+	Engine::Camera* camera_ = nullptr;
 
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;
@@ -238,13 +241,13 @@ private:
 	float moveSpeedManual = 0.5f;
 
 	// 移動範囲の制限
-	const Vector2 kMoveMin = { -25.0f, 0.0f }; // X,Yの最小値 左下
-	const Vector2 kMoveMax = { 25.0f, 25.0f }; // X,Yの最大値 右上
+	const Engine::Vector2 kMoveMin = { -25.0f, 0.0f }; // X,Yの最小値 左下
+	const Engine::Vector2 kMoveMax = { 25.0f, 25.0f }; // X,Yの最大値 右上
 
 	/// ===== 射撃アニメーション用 ===== ///
 
-	Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
-	Vector3 fireScale_ = { 0.8f, 0.8f, 0.8f };
+	Engine::Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
+	Engine::Vector3 fireScale_ = { 0.8f, 0.8f, 0.8f };
 
 	float fireTimer_ = 0.0f; // カウントダウンタイマー
 	float fireAnimationTimer_ = 0.0f; // 射撃アニメーション用カウントダウンタイマー
@@ -279,9 +282,9 @@ private:
 
 	float deathTimer_ = 0.0f;
 
-	Vector3 deathVelocity_ = {};
+	Engine::Vector3 deathVelocity_ = {};
 
-	Vector3 deathRotateVelocity_ = {};
+	Engine::Vector3 deathRotateVelocity_ = {};
 
 	const float kFallStartSpeed = -0.02f;
 	const float kFallAcceleration = -0.001f;
@@ -308,10 +311,10 @@ private:
 	/// ===== パーティクル用 ===== ///
 
 	// エミッターREDのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitterRed = nullptr;
+	std::unique_ptr <Engine::ParticleEmitter> particleEmitterRed = nullptr;
 
 	// エミッターBLUEのポインタ
-	std::unique_ptr <ParticleEmitter> particleEmitterBlue = nullptr;
+	std::unique_ptr <Engine::ParticleEmitter> particleEmitterBlue = nullptr;
 
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;
@@ -324,10 +327,10 @@ private:
 
 	uint16_t hp_ = 5;
 
-	Vector2 screenPos_ = { 0.0f, 0.0f };
+	Engine::Vector2 screenPos_ = { 0.0f, 0.0f };
 
 	// 速度
-	Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	// 速度倍率
 	float speedRate_ = 1.0f;

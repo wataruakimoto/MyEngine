@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <imgui.h>
 
+using namespace Engine;
+
 NormaUI::NormaUI() {
 }
 

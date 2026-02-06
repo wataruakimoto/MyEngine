@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 void DebugScene::Initialize() {
 
 	// カメラの初期化

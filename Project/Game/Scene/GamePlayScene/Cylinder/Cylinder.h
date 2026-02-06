@@ -50,7 +50,7 @@ public:
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="Translate"></param>
-	void SetCameraTranslate(Vector3 Translate) { cameraTranslate_ = Translate; }
+	void SetCameraTranslate(Engine::Vector3 Translate) { cameraTranslate_ = Translate; }
 
 ///-------------------------------------------///
 /// メンバ変数
@@ -58,13 +58,13 @@ public:
 private:
 
 	// モデル
-	std::unique_ptr<Model> model_;
+	std::unique_ptr<Engine::Model> model_;
 
 	// 3Dオブジェクトのリスト
-	std::vector<std::unique_ptr<Object3d>> objects_;
+	std::vector<std::unique_ptr<Engine::Object3d>> objects_;
 
 	// カメラの借りポインタ
-	Vector3 cameraTranslate_ = {};
+	Engine::Vector3 cameraTranslate_ = {};
 
 	// 50.0fの壁が20枚で1000で予定
 	const float kCylinderLength = 50.0f * 20.0f; // 壁の長さ

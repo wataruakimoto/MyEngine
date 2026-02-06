@@ -24,13 +24,13 @@ public:
 public:
 
 	// 中心座標の取得
-	const Vector3 GetCenterPosition() const { return worldTransform_.GetWorldPosition(); }
+	const Engine::Vector3 GetCenterPosition() const { return worldTransform_.GetWorldPosition(); }
 
 	/// <summary>
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	WorldTransform& GetWorldTransform() { return worldTransform_; }
+	Engine::WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 ///-------------------------------------------/// 
 /// セッター
@@ -41,7 +41,7 @@ public:
 	/// ワールド変換のセッター
 	/// </summary>
 	/// <param name="worldTransform"></param>
-	void SetWorldTransform(const WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
+	void SetWorldTransform(const Engine::WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -49,5 +49,5 @@ public:
 protected:
 
 	// ワールド変換
-	WorldTransform worldTransform_;
+	Engine::WorldTransform worldTransform_;
 };

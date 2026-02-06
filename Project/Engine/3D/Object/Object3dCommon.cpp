@@ -3,6 +3,7 @@
 #include "Logger.h"
 #include "DebugCamera.h"
 
+using namespace Engine;
 using namespace Microsoft::WRL;
 using namespace Logger;
 
@@ -22,25 +23,25 @@ void Object3dCommon::Initialize() {
 	CreateRootSignature();
 
 	// RootSignatureをセット
-	pipelineCreaterOpaque_.SetRootSignature(rootSignature.Get());
-	pipelineCreaterAlpha_.SetRootSignature(rootSignature.Get());
+	pipelineCreatorOpaque_.SetRootSignature(rootSignature.Get());
+	pipelineCreatorAlpha_.SetRootSignature(rootSignature.Get());
 
 	// InputLayoutを生成
 	CreateInputLayout();
 
 	// InputLayoutをセット
-	pipelineCreaterOpaque_.SetInputLayoutDesc(inputLayoutDesc);
-	pipelineCreaterAlpha_.SetInputLayoutDesc(inputLayoutDesc);
+	pipelineCreatorOpaque_.SetInputLayoutDesc(inputLayoutDesc);
+	pipelineCreatorAlpha_.SetInputLayoutDesc(inputLayoutDesc);
 
 	// シェーダパスをセット
-	pipelineCreaterOpaque_.SetVSFileName(L"Object3d.VS.hlsl");
-	pipelineCreaterOpaque_.SetPSFileName(L"Object3d.PS.hlsl");
-	pipelineCreaterAlpha_.SetVSFileName(L"Object3d.VS.hlsl");
-	pipelineCreaterAlpha_.SetPSFileName(L"Object3d.PS.hlsl");
+	pipelineCreatorOpaque_.SetVSFileName(L"Object3d.VS.hlsl");
+	pipelineCreatorOpaque_.SetPSFileName(L"Object3d.PS.hlsl");
+	pipelineCreatorAlpha_.SetVSFileName(L"Object3d.VS.hlsl");
+	pipelineCreatorAlpha_.SetPSFileName(L"Object3d.PS.hlsl");
 
 	// パイプライン生成
-	pipelineCreaterOpaque_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadWrite);
-	pipelineCreaterAlpha_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadOnly);
+	pipelineCreatorOpaque_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadWrite);
+	pipelineCreatorAlpha_.Create(BlendMode::AlphaBlend, CullMode::Back, DepthMode::ReadOnly);
 }
 
 void Object3dCommon::Finalize() {
@@ -54,7 +55,7 @@ void Object3dCommon::SettingDrawingOpaque() {
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreaterOpaque_.GetGraphicsPipelineState().Get());
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreatorOpaque_.GetGraphicsPipelineState().Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -69,7 +70,7 @@ void Object3dCommon::SettingDrawingAlpha() {
 	dxUtility_->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
 
 	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreaterOpaque_.GetGraphicsPipelineState().Get());
+	dxUtility_->GetCommandList()->SetPipelineState(pipelineCreatorOpaque_.GetGraphicsPipelineState().Get());
 
 	/// === プリミティブトポロジーをセットするコマンド === ///
 	dxUtility_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

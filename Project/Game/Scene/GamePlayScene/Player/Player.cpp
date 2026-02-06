@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <imgui.h>
 
+using namespace Engine;
 using namespace MathVector;
 using namespace Easing;
 

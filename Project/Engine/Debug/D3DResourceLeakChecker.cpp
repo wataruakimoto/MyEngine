@@ -5,6 +5,8 @@
 #include <dxgi1_6.h>
 #include <wrl.h>
 
+using namespace Engine;
+
 D3DResourceLeakChecker::~D3DResourceLeakChecker() {
 
 	// リソースリークチェック

@@ -3,206 +3,209 @@
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
-/// === カメラ === ///
-class Camera {
+namespace Engine {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+	/// === カメラ === ///
+	class Camera {
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize();
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// ビュー行列の更新
-	/// </summary>
-	void UpdateViewMatrix();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
 
-	/// <summary>
-	/// プロジェクション行列の更新
-	/// </summary>
-	void UpdateProjectionMatrix();
+		/// <summary>
+		/// ビュー行列の更新
+		/// </summary>
+		void UpdateViewMatrix();
 
-	/// <summary>
-	/// ビュープロジェクション行列の更新
-	/// </summary>
-	void UpdateViewProjectionMatrix();
+		/// <summary>
+		/// プロジェクション行列の更新
+		/// </summary>
+		void UpdateProjectionMatrix();
 
-	/// <summary>
-	/// 更新
-	/// </summary>
-	void Update();
+		/// <summary>
+		/// ビュープロジェクション行列の更新
+		/// </summary>
+		void UpdateViewProjectionMatrix();
 
-	/// <summary>
-	/// ImGui表示
-	/// </summary>
-	/// <param name="name"></param>
-	void ShowImGui(const char* name);
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
 
-	/// <summary>
-	/// ImGuiツリー表示
-	/// </summary>
-	void ShowImGuiTree();
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		/// <param name="name"></param>
+		void ShowImGui(const char* name);
 
-///-------------------------------------------///
-/// セッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// ImGuiツリー表示
+		/// </summary>
+		void ShowImGuiTree();
 
-	/// <summary>
-	/// 回転のセッター
-	/// </summary>
-	/// <param name="rotate">回転</param>
-	void SetRotate(const Vector3& rotate) { this->rotate = rotate; }
+		///-------------------------------------------///
+		/// セッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 位置のセッター
-	/// </summary>
-	/// <param name="translate">位置</param>
-	void SetTranslate(const Vector3& translate) { this->translate = translate; }
+		/// <summary>
+		/// 回転のセッター
+		/// </summary>
+		/// <param name="rotate">回転</param>
+		void SetRotate(const Vector3& rotate) { this->rotate = rotate; }
 
-	/// <summary>
-	/// 水平方向視野のセッター
-	/// </summary>
-	/// <param name="fovY">水平方向視野</param>
-	void SetFovY(float fovY) { this->fovY = fovY; }
+		/// <summary>
+		/// 位置のセッター
+		/// </summary>
+		/// <param name="translate">位置</param>
+		void SetTranslate(const Vector3& translate) { this->translate = translate; }
 
-	/// <summary>
-	/// アスペクト比のセッター
-	/// </summary>
-	/// <param name="aspectRatio">アスペクト比</param>
-	void SetAspectRatio(float aspectRatio) { this->aspectRatio = aspectRatio; }
+		/// <summary>
+		/// 水平方向視野のセッター
+		/// </summary>
+		/// <param name="fovY">水平方向視野</param>
+		void SetFovY(float fovY) { this->fovY = fovY; }
 
-	/// <summary>
-	/// ニアクリップ距離のセッター
-	/// </summary>
-	/// <param name="nearClip">ニアクリップ距離</param>
-	void SetNearClip(float nearClip) { this->nearClip = nearClip; }
+		/// <summary>
+		/// アスペクト比のセッター
+		/// </summary>
+		/// <param name="aspectRatio">アスペクト比</param>
+		void SetAspectRatio(float aspectRatio) { this->aspectRatio = aspectRatio; }
 
-	/// <summary>
-	/// ファークリップ距離のセッター
-	/// </summary>
-	/// <param name="farClip">ファークリップ距離</param>
-	void SetFarClip(float farClip) { this->farClip = farClip; }
+		/// <summary>
+		/// ニアクリップ距離のセッター
+		/// </summary>
+		/// <param name="nearClip">ニアクリップ距離</param>
+		void SetNearClip(float nearClip) { this->nearClip = nearClip; }
 
-	/// <summary>
-	/// ビュー行列のセッター
-	/// </summary>
-	/// <param name="viewMatrix"></param>
-	void SetViewMatrix(const Matrix4x4& viewMatrix) { this->viewMatrix = viewMatrix; }
+		/// <summary>
+		/// ファークリップ距離のセッター
+		/// </summary>
+		/// <param name="farClip">ファークリップ距離</param>
+		void SetFarClip(float farClip) { this->farClip = farClip; }
 
-///-------------------------------------------///
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// ビュー行列のセッター
+		/// </summary>
+		/// <param name="viewMatrix"></param>
+		void SetViewMatrix(const Matrix4x4& viewMatrix) { this->viewMatrix = viewMatrix; }
 
-	/// <summary>
-	/// 回転のゲッター
-	/// </summary>
-	/// <returns>Vector3</returns>
-	const Vector3& GetRotate() const { return rotate; }
+		///-------------------------------------------///
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 位置のゲッター
-	/// </summary>
-	/// <returns>Vector3</returns>
-	const Vector3& GetTranslate() const { return translate; }
+		/// <summary>
+		/// 回転のゲッター
+		/// </summary>
+		/// <returns>Vector3</returns>
+		const Vector3& GetRotate() const { return rotate; }
 
-	/// <summary>
-	/// ワールド行列のゲッター
-	/// </summary>
-	/// <returns>Matrix4x4</returns>
-	const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
+		/// <summary>
+		/// 位置のゲッター
+		/// </summary>
+		/// <returns>Vector3</returns>
+		const Vector3& GetTranslate() const { return translate; }
 
-	/// <summary>
-	/// ビュー行列のゲッター
-	/// </summary>
-	/// <returns>Matrix4x4</returns>
-	const Matrix4x4& GetViewMatrix() const { return viewMatrix; }
+		/// <summary>
+		/// ワールド行列のゲッター
+		/// </summary>
+		/// <returns>Matrix4x4</returns>
+		const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
 
-	/// <summary>
-	/// プロジェクション行列のゲッター
-	/// </summary>
-	/// <returns>Matrix4x4</returns>
-	const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix; }
+		/// <summary>
+		/// ビュー行列のゲッター
+		/// </summary>
+		/// <returns>Matrix4x4</returns>
+		const Matrix4x4& GetViewMatrix() const { return viewMatrix; }
 
-	/// <summary>
-	/// プロジェクション行列の逆行列のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Matrix4x4& GetProjectionMatrixInverse() const { return projectionMatrixInverse; }
+		/// <summary>
+		/// プロジェクション行列のゲッター
+		/// </summary>
+		/// <returns>Matrix4x4</returns>
+		const Matrix4x4& GetProjectionMatrix() const { return projectionMatrix; }
 
-	/// <summary>
-	/// ビュープロジェクション行列のゲッター
-	/// </summary>
-	/// <returns>Matrix4x4</returns>
-	const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
+		/// <summary>
+		/// プロジェクション行列の逆行列のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Matrix4x4& GetProjectionMatrixInverse() const { return projectionMatrixInverse; }
 
-	/// <summary>
-	/// ワールド座標のゲッター
-	/// </summary>
-	/// <returns></returns>
-	const Vector3& GetWorldPosition() const;
+		/// <summary>
+		/// ビュープロジェクション行列のゲッター
+		/// </summary>
+		/// <returns>Matrix4x4</returns>
+		const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
 
-	/// <summary>
-	/// ニアクリップ距離のゲッター
-	/// </summary>
-	/// <returns>ニアクリップ距離	</returns>
-	const float& GetNearClip() const { return nearClip; }
+		/// <summary>
+		/// ワールド座標のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Vector3& GetWorldPosition() const;
 
-	/// <summary>
-	/// ファークリップ距離のゲッター
-	/// </summary>
-	/// <returns>ファークリップ距離</returns>
-	const float& GetFarClip() const { return farClip; }
+		/// <summary>
+		/// ニアクリップ距離のゲッター
+		/// </summary>
+		/// <returns>ニアクリップ距離	</returns>
+		const float& GetNearClip() const { return nearClip; }
 
-	/// <summary>
-	/// 水平方向視野のゲッター
-	/// </summary>
-	/// <returns>水平方向視野</returns>
-	const float& GetFovY() const { return fovY; }
+		/// <summary>
+		/// ファークリップ距離のゲッター
+		/// </summary>
+		/// <returns>ファークリップ距離</returns>
+		const float& GetFarClip() const { return farClip; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// 水平方向視野のゲッター
+		/// </summary>
+		/// <returns>水平方向視野</returns>
+		const float& GetFovY() const { return fovY; }
 
-	// 拡縮
-	Vector3 scale = { 1.0f, 1.0f, 1.0f };
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// 回転
-	Vector3 rotate = { 0.0f, 0.0f, 0.0f };
+		// 拡縮
+		Vector3 scale = { 1.0f, 1.0f, 1.0f };
 
-	// 平行移動
-	Vector3 translate = { 0.0f, 0.0f, 0.0f };
+		// 回転
+		Vector3 rotate = { 0.0f, 0.0f, 0.0f };
 
-	// ワールド行列
-	Matrix4x4 worldMatrix;
+		// 平行移動
+		Vector3 translate = { 0.0f, 0.0f, 0.0f };
 
-	// ビュー行列
-	Matrix4x4 viewMatrix;
+		// ワールド行列
+		Matrix4x4 worldMatrix;
 
-	// プロジェクション行列
-	Matrix4x4 projectionMatrix;
+		// ビュー行列
+		Matrix4x4 viewMatrix;
 
-	// プロジェクション行列の逆行列
-	Matrix4x4 projectionMatrixInverse;
+		// プロジェクション行列
+		Matrix4x4 projectionMatrix;
 
-	// ビュープロジェクション行列
-	Matrix4x4 viewProjectionMatrix;
+		// プロジェクション行列の逆行列
+		Matrix4x4 projectionMatrixInverse;
 
-	// 水平方向視野 (field of view)
-	float fovY;
+		// ビュープロジェクション行列
+		Matrix4x4 viewProjectionMatrix;
 
-	// アスペクト比
-	float aspectRatio;
+		// 水平方向視野 (field of view)
+		float fovY;
 
-	// ニアクリップ距離
-	float nearClip;
+		// アスペクト比
+		float aspectRatio;
 
-	// ファークリップ距離
-	float farClip;
-};
+		// ニアクリップ距離
+		float nearClip;
+
+		// ファークリップ距離
+		float farClip;
+	};
+}

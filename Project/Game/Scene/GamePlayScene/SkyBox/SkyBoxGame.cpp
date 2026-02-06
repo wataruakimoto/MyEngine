@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 void SkyBoxGame::Initialize() {
 
 	// スカイボックスの生成

@@ -3,6 +3,8 @@
 #include <cassert>
 #include <cmath>
 
+using namespace Engine;
+
 Matrix4x4 MathMatrix::Add(const Matrix4x4& m1, const Matrix4x4& m2) {
 
 	Matrix4x4 resultAdd = {};

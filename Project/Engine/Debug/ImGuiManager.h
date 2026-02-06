@@ -2,89 +2,92 @@
 
 #include <string>
 
-/// === 前方宣言 === ///
-class WinApp;
-class DirectXUtility;
-class SwapChain;
+namespace Engine {
 
-/// === ImGui管理クラス === ///
-class ImGuiManager {
+	/// === 前方宣言 === ///
+	class WinApp;
+	class DirectXUtility;
+	class SwapChain;
 
-///-------------------------------------------/// 
-/// シングルトン
-///-------------------------------------------///
-private:
+	/// === ImGui管理クラス === ///
+	class ImGuiManager {
 
-	// インスタンス
-	static ImGuiManager* instance;
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
+	private:
 
-	// コンストラクタ(隠蔽)
-	ImGuiManager() = default;
+		// インスタンス
+		static ImGuiManager* instance;
 
-	// デストラクタ(隠蔽)
-	~ImGuiManager() = default;
+		// コンストラクタ(隠蔽)
+		ImGuiManager() = default;
 
-	// コピーコンストラクタ(封印)
-	ImGuiManager(ImGuiManager&) = delete;
+		// デストラクタ(隠蔽)
+		~ImGuiManager() = default;
 
-	// コピー代入演算子(封印)
-	ImGuiManager& operator=(ImGuiManager&) = delete;
+		// コピーコンストラクタ(封印)
+		ImGuiManager(ImGuiManager&) = delete;
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
-public:
+		// コピー代入演算子(封印)
+		ImGuiManager& operator=(ImGuiManager&) = delete;
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
-	void Initialize(WinApp* winApp, SwapChain* swapChain);
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
+	public:
 
-	/// <summary>
-	/// 受付開始
-	/// </summary>
-	void Begin();
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize(WinApp* winApp, SwapChain* swapChain);
 
-	/// <summary>
-	/// 受付終了
-	/// </summary>
-	void End();
+		/// <summary>
+		/// 受付開始
+		/// </summary>
+		void Begin();
 
-	/// <summary>
-	/// 描画
-	/// </summary>
-	void Draw();
+		/// <summary>
+		/// 受付終了
+		/// </summary>
+		void End();
 
-	/// <summary>
-	/// 終了
-	/// </summary>
-	void Finalize();
+		/// <summary>
+		/// 描画
+		/// </summary>
+		void Draw();
 
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
-public:
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
 
-	/// <summary>
-	/// インスタンスの取得
-	/// </summary>
-	/// <returns></returns>
-	static ImGuiManager* GetInstance();
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
+	public:
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
-private:
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static ImGuiManager* GetInstance();
 
-	// DirectXUtilityのインスタンス
-	DirectXUtility* dxUtility_ = nullptr;
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
+	private:
 
-	// SwapChainの借りポインタ
-	SwapChain* swapChain_ = nullptr;
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility_ = nullptr;
 
-	// フォントのリソースデータのパス
-	std::string fontResourcePath_ = "Resources/Fonts/";
+		// SwapChainの借りポインタ
+		SwapChain* swapChain_ = nullptr;
 
-	// フォントファイル名
-	std::string fontFileName_ = "FirgeConsole-Regular.ttf";
-};
+		// フォントのリソースデータのパス
+		std::string fontResourcePath_ = "Resources/Fonts/";
+
+		// フォントファイル名
+		std::string fontFileName_ = "FirgeConsole-Regular.ttf";
+	};
+}
