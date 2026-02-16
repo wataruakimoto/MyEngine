@@ -21,8 +21,11 @@ namespace Engine {
 		///-------------------------------------------///
 	public:
 
-		// 衝突形状の型 4種類のいずれか1つを保持
-		using CollisionShape = std::variant<Sphere, Plane, AABB, OBB>;
+		// 衝突形状なしの型
+		struct None {};
+
+		// 衝突形状の型 5種類のいずれか1つを保持
+		using CollisionShape = std::variant<None, Sphere, Plane, AABB, OBB>;
 
 		///-------------------------------------------/// 
 		/// メンバ関数
@@ -45,7 +48,7 @@ namespace Engine {
 		virtual void OnCollision([[maybe_unused]] Collider* other) = 0;
 
 		// 中心座標を取得
-		virtual const Engine::Vector3 GetCenterPosition() const = 0;
+		virtual const Vector3 GetCenterPosition() const = 0;
 
 		///-------------------------------------------/// 
 		/// ゲッター
@@ -64,10 +67,18 @@ namespace Engine {
 	public:
 
 		// 形状のセッター
-		void SetShape(const CollisionShape& shape) { shape_ = shape; }
+		void SetShape(const CollisionShape& shape);
 
 		// 種別IDのセッター
 		void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
+
+		void SetSphere(const Sphere& sphere);
+
+		void SetPlane(const Plane& plane);
+
+		void SetAABB(const AABB& aabb);
+
+		void SetOBB(const OBB& obb);
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -79,5 +90,11 @@ namespace Engine {
 
 		// 種別ID
 		uint32_t typeID_ = 0u;
+
+		// ワールド座標
+		Vector3 worldPosition_ = {};
+
+		// オフセット
+		Vector3 offset_ = {};
 	};
 }
