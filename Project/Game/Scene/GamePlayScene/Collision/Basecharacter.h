@@ -6,7 +6,7 @@
 ///-------------------------------------------/// 
 /// キャラクター基底クラス
 ///-------------------------------------------///
-class BaseCharacter : public Collider {
+class BaseCharacter : public Engine::Collider {
 
 public:
 

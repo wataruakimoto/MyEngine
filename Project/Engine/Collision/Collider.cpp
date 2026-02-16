@@ -2,6 +2,8 @@
 
 #include <imgui.h>
 
+using namespace Engine;
+
 void Collider::Initialize() {
 }
 
