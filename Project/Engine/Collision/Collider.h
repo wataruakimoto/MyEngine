@@ -47,9 +47,6 @@ namespace Engine {
 		// 衝突時のコールバック関数
 		virtual void OnCollision([[maybe_unused]] Collider* other) = 0;
 
-		// 中心座標を取得
-		virtual const Vector3 GetCenterPosition() const = 0;
-
 		///-------------------------------------------/// 
 		/// ゲッター
 		///-------------------------------------------///
@@ -72,12 +69,16 @@ namespace Engine {
 		// 種別IDのセッター
 		void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
 
+		// 球のセッター
 		void SetSphere(const Sphere& sphere);
 
+		// 平面のセッター
 		void SetPlane(const Plane& plane);
 
+		// AABBのセッター
 		void SetAABB(const AABB& aabb);
 
+		// OBBのセッター
 		void SetOBB(const OBB& obb);
 
 		///-------------------------------------------/// 
@@ -90,11 +91,5 @@ namespace Engine {
 
 		// 種別ID
 		uint32_t typeID_ = 0u;
-
-		// ワールド座標
-		Vector3 worldPosition_ = {};
-
-		// オフセット
-		Vector3 offset_ = {};
 	};
 }

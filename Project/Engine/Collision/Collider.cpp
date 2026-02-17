@@ -8,8 +8,6 @@ void Collider::Initialize() {
 }
 
 void Collider::Update() {
-
-
 }
 
 void Collider::Draw() {
@@ -27,7 +25,7 @@ void Collider::SetShape(const CollisionShape& shape) {
 	}
 }
 
-void Engine::Collider::SetSphere(const Sphere& sphere) {
+void Collider::SetSphere(const Sphere& sphere) {
 
 	// Noneが設定されていたら
 	if (std::holds_alternative<None>(shape_)) {
@@ -47,7 +45,7 @@ void Engine::Collider::SetSphere(const Sphere& sphere) {
 	}
 }
 
-void Engine::Collider::SetPlane(const Plane& plane) {
+void Collider::SetPlane(const Plane& plane) {
 
 	// Noneが設定されていたら
 	if (std::holds_alternative<None>(shape_)) {
@@ -67,7 +65,7 @@ void Engine::Collider::SetPlane(const Plane& plane) {
 	}
 }
 
-void Engine::Collider::SetAABB(const AABB& aabb) {
+void Collider::SetAABB(const AABB& aabb) {
 
 	// Noneが設定されていたら
 	if (std::holds_alternative<None>(shape_)) {
@@ -87,7 +85,7 @@ void Engine::Collider::SetAABB(const AABB& aabb) {
 	}
 }
 
-void Engine::Collider::SetOBB(const OBB& obb) {
+void Collider::SetOBB(const OBB& obb) {
 
 	// Noneが設定されていたら
 	if (std::holds_alternative<None>(shape_)) {

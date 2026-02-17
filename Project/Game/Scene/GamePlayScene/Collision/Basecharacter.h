@@ -23,9 +23,6 @@ public:
 ///-------------------------------------------///
 public:
 
-	// 中心座標の取得
-	const Engine::Vector3 GetCenterPosition() const { return worldTransform_.GetWorldPosition(); }
-
 	/// <summary>
 	/// ワールド変換のゲッター
 	/// </summary>

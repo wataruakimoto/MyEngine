@@ -32,10 +32,14 @@ void Player::Initialize() {
 	object->SetModel(model.get());
 	object->SetScale({ 1.0f, 1.0f, 1.0f });
 
+	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 0.5f, 0.5f, 0.5f });
+
 	// コライダーの初期化
 	Collider::Initialize();
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayer));
+	// コライダーに形状を設定
+	Collider::SetAABB(colliderShape_);
 
 	isDead_ = false;
 
@@ -129,6 +133,10 @@ void Player::Update() {
 
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
+
+	// コライダーの形状をワールド座標に合わせて更新
+	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 0.5f, 0.5f, 0.5f });
+	Collider::SetAABB(colliderShape_);
 
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
 
