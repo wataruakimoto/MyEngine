@@ -20,7 +20,7 @@ void Bullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.4f, 0.4f, 5.0f });
+	object->SetScale({ 0.5f, 0.5f, 5.0f });
 
 	// デスタイマーの初期化
 	deathTimer_ = 0.0f;
@@ -103,6 +103,12 @@ void Bullet::OnCollision(Collider* other) {
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
+
+		// ロックオンでの射撃の場合
+		if (isLockedOn_) {
+
+			return;
+		}
 
 		// エミッターの位置を設定
 		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());

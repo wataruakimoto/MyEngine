@@ -87,7 +87,7 @@ private:
 	Engine::Vector2 screenPosition_ = {};
 
 	// プレイヤーとレティクルの距離
-	const float kDistancePlayerToReticle_ = 75.0f;
+	const float kDistancePlayerToReticle_ = 70.0f;
 
 	// カメラの借りポインタ
 	Engine::Camera* camera_ = nullptr;
