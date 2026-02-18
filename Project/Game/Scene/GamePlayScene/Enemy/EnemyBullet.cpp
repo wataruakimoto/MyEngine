@@ -24,10 +24,15 @@ void EnemyBullet::Initialize() {
 
 	isDead = false;
 
+	// コライダーの形状を球に設定
+	colliderShape_ = CreateSphere(worldTransform_.GetWorldPosition(), 0.5f);
+
 	// コライダーの初期化
 	Collider::Initialize();
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet));
+	// コライダーに形状を設定
+	Collider::SetSphere(colliderShape_);
 
 	// エミッターの生成
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletRed", EmitterType::OneShot, 20);
@@ -54,6 +59,10 @@ void EnemyBullet::Update() {
 	}
 
 	worldTransform_.UpdateMatrix();
+
+	// コライダーの更新
+	colliderShape_ = CreateSphere(worldTransform_.GetWorldPosition(), 0.5f);
+	Collider::SetSphere(colliderShape_);
 
 	object->Update();
 };

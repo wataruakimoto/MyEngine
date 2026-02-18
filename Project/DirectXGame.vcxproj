@@ -65,7 +65,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals;$(ProjectDir)Engine;$(ProjectDir)Game;$(ProjectDir)ImGui;$(ProjectDir)Externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -153,8 +153,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="engine\debug\ImGuiManager.cpp" />
     <ClCompile Include="Game\Scene\GameClearScene\GameClearScene.cpp" />
     <ClCompile Include="Game\Scene\GameOverScene\GameOverScene.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Collision\Collider.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Collision\CollisionManager.cpp" />
+    <ClCompile Include="Engine\Collision\Collider.cpp" />
+    <ClCompile Include="Engine\Collision\CollisionManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\Enemy.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\GamePlayScene.cpp" />
     <ClCompile Include="Engine\Framework\Framework.cpp" />
@@ -200,6 +200,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\Reticle\Reticle.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Engine\Math\AABB.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.h" />
@@ -208,6 +209,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ParticleData.h" />
     <ClInclude Include="Engine\Math\MathRandom.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FogFilter.h" />
+    <ClInclude Include="Engine\Math\OBB.h" />
+    <ClInclude Include="Engine\Math\Plane.h" />
+    <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
@@ -233,8 +237,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GameClearScene\GameClearScene.h" />
     <ClInclude Include="Game\Scene\GameOverScene\GameOverScene.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Collision\Basecharacter.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Collision\Collider.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Collision\CollisionManager.h" />
+    <ClInclude Include="Engine\Collision\Collider.h" />
+    <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Collision\CollisionTypeIDDef.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Enemy\Enemy.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Bullet.h" />

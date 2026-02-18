@@ -100,4 +100,6 @@ private:
 
 	// エミッターのポインタ
 	std::unique_ptr <Engine::ParticleEmitter> particleEmitter = nullptr;
+
+	Engine::Sphere colliderShape_ = {};
 };

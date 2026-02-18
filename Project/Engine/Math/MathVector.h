@@ -13,7 +13,7 @@ namespace Engine {
 		/// 静的メンバ関数
 		///-------------------------------------------///
 
-			// 加算
+		// 加算
 		Vector2 Add(const Vector2& v1, const Vector2& v2);
 		Vector3 Add(const Vector3& v1, const Vector3& v2);
 		Vector4 Add(const Vector4& v1, const Vector4& v2);
@@ -27,6 +27,11 @@ namespace Engine {
 		Vector2 Multiply(float s, const Vector2& v);
 		Vector3 Multiply(float s, const Vector3& v);
 		Vector4 Multiply(float s, const Vector4& v);
+
+		// 内積
+		float Dot(const Vector2& v1, const Vector2& v2);
+		float Dot(const Vector3& v1, const Vector3& v2);
+		float Dot(const Vector4& v1, const Vector4& v2);
 
 		// 長さ
 		float Length(float f1, float f2);
@@ -64,7 +69,7 @@ namespace Engine {
 		/// オペレーター演算子
 		///-------------------------------------------///
 
-			/// ===== 加算 ===== ///
+		/// ===== 加算 ===== ///
 
 		Vector2 operator+(const Vector2& v1, const Vector2& v2);
 		Vector2 operator+(const Vector2& v);

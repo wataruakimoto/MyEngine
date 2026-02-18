@@ -37,7 +37,7 @@ void GamePlayScene::Initialize() {
 	particleManager_->SetCamera(camera_.get());
 
 	// 衝突マネージャの初期化
-	collisionManager_ = std::make_unique<CollisionManager>();
+	collisionManager_ = std::make_unique<Engine::CollisionManager>();
 
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();

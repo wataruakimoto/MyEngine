@@ -248,7 +248,7 @@ private:
 	std::unique_ptr<Engine::Camera> camera_ = nullptr;
 
 	// 衝突マネージャのポインタ
-	std::unique_ptr<CollisionManager> collisionManager_ = nullptr;
+	std::unique_ptr<Engine::CollisionManager> collisionManager_ = nullptr;
 
 	// パーティクルマネージャのインスタンス
 	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
