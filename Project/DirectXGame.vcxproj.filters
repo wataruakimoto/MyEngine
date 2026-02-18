@@ -319,6 +319,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\PlayState.cpp">
       <Filter>Game\Scene\GamePlayScene</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Line\LineRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -634,6 +635,7 @@
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Math\AABB.h" />
     <ClInclude Include="Engine\Math\OBB.h" />
+    <ClInclude Include="Engine\Line\LineRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Sprite.hlsli">
