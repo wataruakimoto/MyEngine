@@ -61,6 +61,8 @@
     <FxCompile Include="Resources\shaders\Vignette.PS.hlsl">
       <Filter>Engine\Base\PostProcess\Filters</Filter>
     </FxCompile>
+    <FxCompile Include="Resources\Shaders\Line\Line.VS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Line\Line.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -320,6 +322,7 @@
       <Filter>Game\Scene\GamePlayScene</Filter>
     </ClCompile>
     <ClCompile Include="Engine\Line\LineRenderer.cpp" />
+    <ClCompile Include="Engine\Line\LineManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -636,6 +639,7 @@
     <ClInclude Include="Engine\Math\AABB.h" />
     <ClInclude Include="Engine\Math\OBB.h" />
     <ClInclude Include="Engine\Line\LineRenderer.h" />
+    <ClInclude Include="Engine\Line\LineManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Sprite.hlsli">
@@ -653,6 +657,7 @@
     <None Include="Resources\shaders\FullScreen.hlsli">
       <Filter>Engine\Base\PostProcess\Filters</Filter>
     </None>
+    <None Include="Resources\Shaders\Line\Line.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">

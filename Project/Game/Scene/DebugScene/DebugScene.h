@@ -2,12 +2,8 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
-#include "Particle/ParticleCommon.h"
-#include "Particle/ParticleManager.h"
-#include "Particle/ParticleEmitter.h"
-#include "OffscreenRendering/FilterManager.h"
-
-#include <memory>
+#include "LineManager.h"
+#include "LineRenderer.h"
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {
@@ -55,16 +51,9 @@ private:
 	// カメラのポインタ
 	std::unique_ptr<Engine::Camera> camera = nullptr;
 
-	// パーティクル共通のインスタンス
-	Engine::ParticleCommon* particleCommon = Engine::ParticleCommon::GetInstance();
+	// 線描画レンダラーのポインタ
+	Engine::LineRenderer* lineRenderer = nullptr;
 
-	// パーティクルマネージャーのインスタンス
-	Engine::ParticleManager* particleManager = Engine::ParticleManager::GetInstance();
-
-	// エミッターのポインタ
-	std::unique_ptr<Engine::ParticleEmitter> particleEmitterRed = nullptr;
-	std::unique_ptr<Engine::ParticleEmitter> particleEmitterBlue = nullptr;
-
-	// フィルターマネージャのインスタンス
-	Engine::FilterManager* filterManager;
+	// 線描画マネージャのポインタ
+	Engine::LineManager* lineManager = nullptr;
 };

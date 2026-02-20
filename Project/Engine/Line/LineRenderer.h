@@ -89,13 +89,17 @@ namespace Engine {
 
 		// インプットレイアウト	
 		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
+		// インプットレイアウトの設定
 		D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
+
+		// 頂点シェーダーのファイル名
+		std::wstring vertexShaderFileName = L"Line/Line.VS.hlsl";
+
+		// ピクセルシェーダーのファイル名
+		std::wstring pixelShaderFileName = L"Line/Line.PS.hlsl";
 
 		// DirectXユーティリティのインスタンス
 		DirectXUtility* dxUtility_ = nullptr;
-
-		// Srvマネージャのインスタンス
-		SrvManager* srvManager_ = nullptr;
 	};
 }
 
