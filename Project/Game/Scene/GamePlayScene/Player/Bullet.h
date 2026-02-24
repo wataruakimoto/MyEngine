@@ -70,6 +70,8 @@ public:
 
 	void SetDirection(const Engine::Vector3& direction) { direction_ = direction; }
 
+	void SetIsLockOn(bool isLockedOn) { isLockedOn_ = isLockedOn; }
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -100,6 +102,9 @@ private:
 
 	// エミッターのポインタ
 	std::unique_ptr <Engine::ParticleEmitter> particleEmitter = nullptr;
+
+	// ロックオンしているかどうか
+	bool isLockedOn_ = false;
 
 	Engine::Sphere colliderShape_ = {};
 };
