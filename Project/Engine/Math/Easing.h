@@ -24,9 +24,13 @@ namespace Engine {
 
 		/// ===== In ゆっくり始まって速く終わる ===== ///
 
+		float EaseInSine(float t);
+
 		float EaseInCubic(float t);
 
 		/// ===== Out 速く始まってゆっくり終わる ===== ///
+
+		float EaseOutSine(float t);
 
 		float EaseOutQuad(float t);
 
@@ -38,6 +42,10 @@ namespace Engine {
 
 		/// ===== InOut 滑らかな往復運動 ===== ///
 
+		float EaseInOutSine(float t);
+
 		float EaseInOutQuad(float t);
+
+		float EaseInOutCubic(float t);
 	}
 }

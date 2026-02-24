@@ -353,6 +353,8 @@ void TitleScene::WaitInputInitialize() {
 
 	// スタートUIを表示に設定
 	startUI_->SetVisible(true);
+
+	titleUI_->StartHoverAnimation();
 }
 
 void TitleScene::WaitInputUpdate() {
