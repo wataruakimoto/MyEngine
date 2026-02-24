@@ -108,6 +108,21 @@ Vector4 MathVector::Multiply(float s, const Vector4& v) {
 	return result;
 }
 
+float MathVector::Dot(const Vector2& v1, const Vector2& v2) {
+	
+	return v1.x * v2.x + v1.y * v2.y;
+}
+
+float MathVector::Dot(const Vector3& v1, const Vector3& v2) {
+	
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
+}
+
+float MathVector::Dot(const Vector4& v1, const Vector4& v2) {
+
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
+}
+
 float MathVector::Length(float f1, float f2) {
 
 	return sqrtf(f1 * f1 + f2 * f2);

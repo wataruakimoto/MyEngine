@@ -256,10 +256,10 @@
     <ClCompile Include="Engine\camera\DebugCamera.cpp">
       <Filter>Engine\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\Collision\Collider.cpp">
+    <ClCompile Include="Engine\Collision\Collider.cpp">
       <Filter>Game\Scene\GamePlayScene\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\Collision\CollisionManager.cpp">
+    <ClCompile Include="Engine\Collision\CollisionManager.cpp">
       <Filter>Game\Scene\GamePlayScene\Collision</Filter>
     </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp">
@@ -561,10 +561,10 @@
     <ClInclude Include="Engine\camera\DebugCamera.h">
       <Filter>Engine\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Collision\Collider.h">
+    <ClInclude Include="Engine\Collision\Collider.h">
       <Filter>Game\Scene\GamePlayScene\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Collision\CollisionManager.h">
+    <ClInclude Include="Engine\Collision\CollisionManager.h">
       <Filter>Game\Scene\GamePlayScene\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\Collision\CollisionTypeIDDef.h">
@@ -630,6 +630,10 @@
     <ClInclude Include="Game\Scene\GamePlayScene\PlayState.h">
       <Filter>Game\Scene\GamePlayScene</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Math\Plane.h" />
+    <ClInclude Include="Engine\Math\Sphere.h" />
+    <ClInclude Include="Engine\Math\AABB.h" />
+    <ClInclude Include="Engine\Math\OBB.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\shaders\Sprite.hlsli">

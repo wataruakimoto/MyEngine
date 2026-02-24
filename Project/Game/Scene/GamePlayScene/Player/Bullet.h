@@ -105,4 +105,6 @@ private:
 
 	// ロックオンしているかどうか
 	bool isLockedOn_ = false;
+
+	Engine::Sphere colliderShape_ = {};
 };

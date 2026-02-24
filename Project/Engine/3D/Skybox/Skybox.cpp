@@ -18,6 +18,9 @@ void Skybox::Initialize(const std::string relativePath) {
 	// TextureManagerからSRVインデックスを取得
 	textureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(fullPath);
 
+	// ワールド変換の初期化
+	worldTransform.Initialize();
+
 	// 頂点データの初期化
 	InitializeVertexData();
 
@@ -33,8 +36,10 @@ void Skybox::Initialize(const std::string relativePath) {
 
 void Skybox::Update() {
 
-	// 変換データからワールド行列を作成
-	Matrix4x4 worldMatrix = MakeAffineMatrix(transform.scale, transform.rotate, transform.translate);
+	// ワールド変換の更新
+	worldTransform.UpdateMatrix();
+
+	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
 
 	// カメラからビュープロジェクション行列を取得
 	Matrix4x4 viewProjectionMatrix = camera->GetViewProjectionMatrix();
@@ -69,11 +74,7 @@ void Skybox::ShowImGui(const char* name) {
 #ifdef USE_IMGUI
 
 	ImGui::Begin(name);
-	ImGui::DragFloat3("Scale", &transform.scale.x, 0.01f);
-	ImGui::SliderAngle("Rotate X", &transform.rotate.x, -180.0f, 180.0f);
-	ImGui::SliderAngle("Rotate Y", &transform.rotate.y, -180.0f, 180.0f);
-	ImGui::SliderAngle("Rotate Z", &transform.rotate.z, -180.0f, 180.0f);
-	ImGui::DragFloat3("Translate", &transform.translate.x, 0.01f);
+	worldTransform.ShowImGui();
 	ImGui::End();
 
 #endif // USE_IMGUI

@@ -156,4 +156,6 @@ private:
 	float drillRotation_ = 0.0f; // ドリル回転角度（ラジアン）
 
 	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+
+	Engine::AABB colliderShape_ = {};
 };

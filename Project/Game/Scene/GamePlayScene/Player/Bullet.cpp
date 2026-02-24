@@ -28,10 +28,15 @@ void Bullet::Initialize() {
 	// 死んだかどうかのフラグの初期化
 	isDead = false;
 
+	// コライダーの形状を球に設定
+	colliderShape_ = CreateSphere(worldTransform_.GetWorldPosition(), 0.5f);
+
 	// コライダーの初期化
 	Collider::Initialize();
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet));
+	// コライダーに形状を設定
+	Collider::SetSphere(colliderShape_);
 
 	// エミッターの生成・初期化
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", EmitterType::OneShot, 20);
@@ -59,6 +64,10 @@ void Bullet::Update() {
 	object->SetRotate(worldTransform_.GetRotate());
 	object->SetTranslate(worldTransform_.GetTranslate());
 	object->Update();
+
+	// コライダーの更新
+	colliderShape_ = CreateSphere(worldTransform_.GetWorldPosition(), 0.5f);
+	Collider::SetSphere(colliderShape_);
 
 	// エミッターの更新
 	particleEmitter->Update();

@@ -340,4 +340,6 @@ private:
 
 	// 状態変更リクエスト
 	std::optional<PlayerState> stateRequest_ = std::nullopt;
+
+	Engine::AABB colliderShape_ = {};
 };
