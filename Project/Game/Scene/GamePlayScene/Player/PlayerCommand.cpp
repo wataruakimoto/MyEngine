@@ -80,6 +80,9 @@ void LockOnShotCommand::Execute(const PlayerContext& context) {
 	// 弾の方向を設定
 	bullet->SetDirection(direction);
 
+	// ロックオンショットのフラグを設定
+	bullet->SetIsLockOn(true);
+
 	// ゲームプレイシーンの弾をリストに登録
 	context.scene->AddPlayerBullet(std::move(bullet));
 }
