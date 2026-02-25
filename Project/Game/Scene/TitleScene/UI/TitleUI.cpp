@@ -46,14 +46,6 @@ void TitleUI::ShowImGui() {
 	// スプライトのImGui表示
 	sprite_->ShowImGui("TitleUI");
 
-	// Tweenパラメータ表示
-	ImGui::Begin("Tween Parameters");
-	ImGui::Text("Tween Start: (%.1f, %.1f)", tweenStart_.x, tweenStart_.y);
-	ImGui::Text("Tween End: (%.1f, %.1f)", tweenEnd_.x, tweenEnd_.y);
-	ImGui::Text("Tween Frame: %d", tweenFrame_);
-	ImGui::Text("Tween Duration: %d", tweenDuration_);
-	ImGui::End();
-
 #endif // USE_IMGUI
 }
 
@@ -61,87 +53,107 @@ void TitleUI::StartSlideInAnimation() {
 
 	const float width = sprite_->GetSize().x;
 
-	tweenStart_ = { -width, 180.0f };
+	slideInTween_.start = { -width, 180.0f };
 
-	tweenEnd_ = { 640.0f, 180.0f };
+	slideInTween_.end = { 640.0f, 180.0f };
 
-	sprite_->SetPosition(tweenStart_);
+	sprite_->SetPosition(slideInTween_.start);
 
-	tweenFrame_ = 0;
-	tweenDuration_ = std::max(1, kAnimationDuration * static_cast<int>(60.0f)); // 60フレームでアニメーション
+	slideInTween_.frame = 0;
+	slideInTween_.duration = std::max(1, kAnimationDuration * static_cast<int>(60.0f)); // 60フレームでアニメーション
 
 	animationState_ = AnimationState::SlideIn;
 
-	isSlideFinished_ = false;
+	slideInTween_.isFinished = false;
 }
 
 void TitleUI::StartMoveUpAnimation() {
 
 	const float height = sprite_->GetSize().y;
 
-	tweenStart_ = { 640.0f, 180.0f };
-	tweenEnd_ = { 640.0f, -height };
+	moveUpTween_.start = { 640.0f, 180.0f };
+	moveUpTween_.end = { 640.0f, -height };
 
-	sprite_->SetPosition(tweenStart_);
+	sprite_->SetPosition(moveUpTween_.start);
 
-	tweenFrame_ = 0;
-	tweenDuration_ = std::max(1, kAnimationDuration * static_cast<int>(60.0f)); // 60フレームでアニメーション
+	moveUpTween_.frame = 0;
+	moveUpTween_.duration = std::max(1, kAnimationDuration * static_cast<int>(60.0f)); // 60フレームでアニメーション
 
 	animationState_ = AnimationState::MoveUp;
 
-	isMoveUpFinished_ = false;
+	moveUpTween_.isFinished = false;
+}
+
+void TitleUI::StartHoverAnimation() {
+
+	hoverTween_.start = { 640.0f, 180.0f };
+	hoverTween_.end = { 640.0f, 200.0f };
+	hoverTween_.frame = 0;
+	hoverTween_.duration = static_cast<int>(60.0f); // 60フレームでアニメーション
+	hoverTween_.isFinished = false;
+
+	isHoverReverse_ = false;
+
+	animationState_ = AnimationState::Hover;
 }
 
 void TitleUI::AnimationUpdate() {
 
-	tweenFrame_ = std::min(tweenFrame_ + 1, tweenDuration_);
-
-	float t = static_cast<float>(tweenFrame_) / static_cast<float>(tweenDuration_);
-
-	float k = 0.0f;
-
 	switch (animationState_) {
 
-	case AnimationState::SlideIn:
+	case AnimationState::SlideIn: {
 
-		k = EaseOutCubic(t);
+		slideInTween_.frame = std::min(slideInTween_.frame + 1, slideInTween_.duration);
 
-		break;
+		float t = static_cast<float>(slideInTween_.frame) / static_cast<float>(slideInTween_.duration);
+		float k = EaseOutCubic(t);
 
-	case AnimationState::MoveUp:
+		sprite_->SetPosition(k * (slideInTween_.end - slideInTween_.start) + slideInTween_.start);
 
-		k = EaseInCubic(t);
+		if (slideInTween_.frame >= slideInTween_.duration) {
+			slideInTween_.isFinished = true;
+		}
 
-		break;
-
-	default:
 		break;
 	}
 
-	const Vector2 newPos = k * (tweenEnd_ - tweenStart_) + tweenStart_;
+	case AnimationState::MoveUp: {
 
-	sprite_->SetPosition(newPos);
+		moveUpTween_.frame = std::min(moveUpTween_.frame + 1, moveUpTween_.duration);
 
-	if (tweenFrame_ >= tweenDuration_) {
+		float t = static_cast<float>(moveUpTween_.frame) / static_cast<float>(moveUpTween_.duration);
+		float k = EaseInCubic(t);
 
-		switch (animationState_) {
+		sprite_->SetPosition(k * (moveUpTween_.end - moveUpTween_.start) + moveUpTween_.start);
 
-		case AnimationState::SlideIn:
-
-			isSlideFinished_ = true;
-
-			break;
-
-		case AnimationState::MoveUp:
-
-			isMoveUpFinished_ = true;
-
-			break;
-
-		default:
-			break;
+		if (moveUpTween_.frame >= moveUpTween_.duration) {
+			moveUpTween_.isFinished = true;
 		}
-		
-		animationStateRequest_ = std::nullopt;
+
+		break;
+	}
+
+	case AnimationState::Hover: {
+
+		hoverTween_.frame = std::min(hoverTween_.frame + 1, hoverTween_.duration);
+
+		float t = static_cast<float>(hoverTween_.frame) / static_cast<float>(hoverTween_.duration);
+		float k = EaseInOutQuad(t);
+
+		sprite_->SetPosition(k * (hoverTween_.end - hoverTween_.start) + hoverTween_.start);
+
+		// 1方向が終わったら反転
+		if (hoverTween_.frame >= hoverTween_.duration) {
+
+			std::swap(hoverTween_.start, hoverTween_.end);
+			hoverTween_.frame = 0;
+			isHoverReverse_ = !isHoverReverse_;
+		}
+
+		break;
+	}
+
+	default:
+		break;
 	}
 }
