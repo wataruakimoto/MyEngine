@@ -4,10 +4,13 @@
 #include "SceneManager.h"
 #include "Input.h"
 #include "Texture/TextureManager.h"
-#include "Sprite/SpriteCommon.h"
 #include "Sprite/Sprite.h"
 
 #include <memory>
+
+/// ===== 前方宣言 ===== ///
+
+class Engine::SpriteRenderer;
 
 /// ===== ゲームオーバーシーン ===== ///
 class GameOverScene : public BaseScene {
@@ -61,8 +64,8 @@ private:
 	// テクスチャマネージャのインスタンス
 	Engine::TextureManager* textureManager_ = Engine::TextureManager::GetInstance();
 
-	// スプライトコモンのインスタンス
-	Engine::SpriteCommon* spriteCommon_ = Engine::SpriteCommon::GetInstance();
+	// スプライトレンダラーのインスタンス
+	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
 
 	// スプライト
 	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;

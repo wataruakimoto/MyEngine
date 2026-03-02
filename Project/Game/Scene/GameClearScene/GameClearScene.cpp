@@ -1,8 +1,12 @@
 #include "GameClearScene.h"
+#include "Sprite/SpriteRenderer.h"
 
 using namespace Engine;
 
 void GameClearScene::Initialize() {
+
+	// インスタンスの取得
+	spriteRenderer_ = SpriteRenderer::GetInstance();
 
 	// スプライトの生成&初期化
 	sprite_ = std::make_unique<Sprite>();
@@ -25,8 +29,8 @@ void GameClearScene::DrawFiltered() {
 
 void GameClearScene::DrawUnfiltered() {
 
-	// スプライトコモンの描画準備
-	spriteCommon_->SettingDrawing();
+	// スプライトレンダラーの描画設定
+	spriteRenderer_->SettingDrawing();
 
 	// スプライトの描画
 	sprite_->Draw();

@@ -14,6 +14,8 @@ namespace Engine {
 	class WinApp;
 	class DirectXUtility;
 
+	class SpriteRenderer;
+
 	/// === フレームワーク === ///
 	class Framework {
 
@@ -75,5 +77,10 @@ namespace Engine {
 
 		// ゲーム終了フラグ
 		bool endRequest_ = false;
+
+		/// ===== シングルトン ===== ///
+
+		// スプライトレンダラーのインスタンス
+		SpriteRenderer* spriteRenderer_ = nullptr;
 	};
 }

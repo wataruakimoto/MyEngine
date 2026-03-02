@@ -1,7 +1,7 @@
 #include "GamePlayScene.h"
 #include "Input.h"
 #include "Texture/TextureManager.h"
-#include "Sprite/SpriteCommon.h"
+#include "Sprite/SpriteRenderer.h"
 #include "Object/Object3dCommon.h"
 #include "Skybox/SkyboxCommon.h"
 #include "Vector3.h"
@@ -33,6 +33,9 @@ void GamePlayScene::Initialize() {
 	SkyboxCommon::GetInstance()->SetDefaultCamera(camera_.get());
 	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
 	FilterManager::GetInstance()->SetCamera(camera_.get());
+
+	// インスタンス取得
+	spriteRenderer_ = SpriteRenderer::GetInstance();
 
 	particleManager_->SetCamera(camera_.get());
 
@@ -201,7 +204,7 @@ void GamePlayScene::DrawFiltered() {
 void GamePlayScene::DrawUnfiltered() {
 
 	/// === UIの描画準備 === ///
-	SpriteCommon::GetInstance()->SettingDrawing();
+	spriteRenderer_->SettingDrawing();
 
 	// TODO: 全てのスプライト個々の描画
 

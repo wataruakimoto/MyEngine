@@ -26,6 +26,10 @@
 #include <memory>
 #include <optional>
 
+/// ===== 前方宣言 ===== ///
+
+class Engine::SpriteRenderer;
+
 /// ===== ゲームプレイシーン ===== ///
 class GamePlayScene : public BaseScene {
 
@@ -255,4 +259,7 @@ private:
 
 	// パーティクル共通のインスタンス
 	Engine::ParticleCommon* particleCommon = Engine::ParticleCommon::GetInstance();
+
+	// スプライトレンダラーのインスタンス
+	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
 };

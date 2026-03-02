@@ -6,12 +6,13 @@
 #include "AudioManager.h"
 #include "Input.h"
 #include "Texture/TextureManager.h"
-#include "Sprite/SpriteCommon.h"
 #include "Object/Object3dCommon.h"
 #include "Model/ModelManager.h"
 #include "Particle/ParticleCommon.h"
 #include "Skybox/SkyboxCommon.h"
 #include "SceneManager.h"
+
+#include "Sprite/SpriteRenderer.h"
 
 using namespace Engine;
 
@@ -39,11 +40,12 @@ void Framework::Initialize() {
 	// テクスチャマネージャ初期化
 	TextureManager::GetInstance()->Initialize();
 
+	// スプライトレンダラーの初期化
+	spriteRenderer_ = SpriteRenderer::GetInstance();
+	spriteRenderer_->Initialize();
+
 	// モデルマネージャ初期化
 	ModelManager::GetInstance()->Initialize();
-
-	// スプライト共通部初期化
-	SpriteCommon::GetInstance()->Initialize();
 
 	// 3Dオブジェクト共通部初期化
 	Object3dCommon::GetInstance()->Initialize();
@@ -99,8 +101,8 @@ void Framework::Finalize() {
 	// 3Dオブジェクト共通部の解放
 	Object3dCommon::GetInstance()->Finalize();
 
-	// スプライト共通部の解放
-	SpriteCommon::GetInstance()->Finalize();
+	// スプライトレンダラーの終了
+	spriteRenderer_->Finalize();
 
 	// モデルマネージャの終了
 	ModelManager::GetInstance()->Finalize();
