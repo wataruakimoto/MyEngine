@@ -50,7 +50,7 @@ namespace Engine {
 		};
 
 		/// <summary>
-		/// トポロジモード
+		/// トポロジーモード
 		/// </summary>
 		enum class TopologyMode {
 			Point,    // 点
@@ -165,6 +165,12 @@ namespace Engine {
 	/// ゲッター
 	///-------------------------------------------///
 	public:
+
+		/// <summary>
+		/// ルートシグネチャのゲッター
+		/// </summary>
+		/// <returns>ID3D12RootSignature</returns>
+		Microsoft::WRL::ComPtr<ID3D12RootSignature> GetRootSignature() { return rootSignature_; }
 
 		/// <summary>
 		/// グラフィックスパイプラインのゲッター

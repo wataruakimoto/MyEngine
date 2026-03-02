@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GraphicsPipelineCreator.h"
+#include "GraphicsPipelineBuilder.h"
 
 namespace Engine {
 
@@ -51,21 +51,6 @@ namespace Engine {
 		void Finalize();
 
 	///-------------------------------------------/// 
-	/// クラス内関数
-	///-------------------------------------------///
-	private:
-
-		/// <summary>
-		/// ルートシグネチャ作成
-		/// </summary>
-		void CreateRootSignature();
-
-		/// <summary>
-		/// インプットレイアウト作成
-		/// </summary>
-		void CreateInputLayout();
-
-	///-------------------------------------------/// 
 	/// ゲッター
 	///-------------------------------------------///
 	public:
@@ -81,16 +66,8 @@ namespace Engine {
 	///-------------------------------------------///
 	private:
 
-		// パイプラインクリエイター
-		GraphicsPipelineCreator pipelineCreator_;
-
-		// ルートシグネチャ
-		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
-
-		// インプットレイアウト	
-		D3D12_INPUT_LAYOUT_DESC inputLayoutDesc{};
-		// インプットレイアウトの設定
-		D3D12_INPUT_ELEMENT_DESC inputElementDescs[2] = {};
+		// パイプラインビルダー
+		GraphicsPipelineBuilder pipelineBuilder_;
 
 		// 頂点シェーダーのファイル名
 		std::wstring vertexShaderFileName = L"Line/Line.VS.hlsl";
