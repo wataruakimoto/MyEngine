@@ -1,9 +1,12 @@
 #include "GraphicsPipelineBuilder.h"
 #include "DirectXUtility.h"
+#include "Logger.h"
 
 #include <cassert>
 
 using namespace Engine;
+using namespace Logger;
+using namespace Microsoft::WRL;
 
 GraphicsPipelineBuilder::GraphicsPipelineBuilder() {
 }
@@ -11,17 +14,82 @@ GraphicsPipelineBuilder::GraphicsPipelineBuilder() {
 GraphicsPipelineBuilder::~GraphicsPipelineBuilder() {
 }
 
+void GraphicsPipelineBuilder::AddRootParameter(D3D12_ROOT_PARAMETER_TYPE type, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility) {
+
+	// CBV、SRV、UAVのいずれかでなければエラー
+	assert(type == D3D12_ROOT_PARAMETER_TYPE_CBV || type == D3D12_ROOT_PARAMETER_TYPE_SRV || type == D3D12_ROOT_PARAMETER_TYPE_UAV);
+
+	// ルートパラメーターの設定
+	D3D12_ROOT_PARAMETER rootParameter{};
+
+	rootParameter.ParameterType = type;
+	rootParameter.Descriptor.ShaderRegister = shaderRegister;
+	rootParameter.Descriptor.RegisterSpace = 0;
+	rootParameter.ShaderVisibility = visibility;
+
+	// ルートパラメータの配列に追加
+	rootParameters_.push_back(rootParameter);
+}
+
+void GraphicsPipelineBuilder::AddRootParameterTable(D3D12_DESCRIPTOR_RANGE_TYPE type, UINT baseShaderRegister, D3D12_SHADER_VISIBILITY visibility) {
+
+	// ディスクリプタレンジの設定
+	D3D12_DESCRIPTOR_RANGE descriptorRange{};
+
+	descriptorRange.RangeType = type;
+	descriptorRange.NumDescriptors = 1;
+	descriptorRange.BaseShaderRegister = baseShaderRegister;
+	descriptorRange.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+	// ディスクリプタレンジの配列に追加
+	descriptorRanges_.push_back(descriptorRange);
+
+	// ルートパラメーターの設定
+	D3D12_ROOT_PARAMETER rootParameter{};
+
+	rootParameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+	rootParameter.DescriptorTable.pDescriptorRanges = &descriptorRanges_.back();
+	rootParameter.DescriptorTable.NumDescriptorRanges = 1;
+	rootParameter.ShaderVisibility = visibility;
+
+	// ルートパラメータの配列に追加
+	rootParameters_.push_back(rootParameter);
+}
+
+void GraphicsPipelineBuilder::AddStaticSampler(D3D12_FILTER filter, D3D12_TEXTURE_ADDRESS_MODE addressMode, UINT shaderRegister, D3D12_SHADER_VISIBILITY visibility) {
+
+	// 静的サンプラーの設定
+	D3D12_STATIC_SAMPLER_DESC staticSamplerDesc{};
+
+	staticSamplerDesc.Filter = filter;
+	staticSamplerDesc.AddressU = addressMode;
+	staticSamplerDesc.AddressV = addressMode;
+	staticSamplerDesc.AddressW = addressMode;
+	staticSamplerDesc.MipLODBias = 0.0f;
+	staticSamplerDesc.MaxAnisotropy = 1;
+	staticSamplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
+	staticSamplerDesc.BorderColor = D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+	staticSamplerDesc.MinLOD = 0.0f;
+	staticSamplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+	staticSamplerDesc.ShaderRegister = shaderRegister;
+	staticSamplerDesc.RegisterSpace = 0;
+	staticSamplerDesc.ShaderVisibility = visibility;
+
+	// 静的サンプラーの設定
+	staticSamplerDescs_.push_back(staticSamplerDesc);
+}
+
 void GraphicsPipelineBuilder::AddInputElement(const char* semanticName, UINT semanticIndex, DXGI_FORMAT format) {
 
+	// インプットエレメントの設定
 	D3D12_INPUT_ELEMENT_DESC inputElementDesc{};
 
 	inputElementDesc.SemanticName = semanticName;
 	inputElementDesc.SemanticIndex = semanticIndex;
 	inputElementDesc.Format = format;
-	inputElementDesc.InputSlot = 0;
 	inputElementDesc.AlignedByteOffset = D3D12_APPEND_ALIGNED_ELEMENT;
-	inputElementDesc.InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
 
+	// インプットエレメントの配列に追加
 	inputElementDescs_.push_back(inputElementDesc);
 }
 
@@ -47,8 +115,9 @@ void GraphicsPipelineBuilder::Build() {
 	graphicsPipelineStateDesc.BlendState = blendDesc_;
 
 	// SamplerStateの設定
-	graphicsPipelineStateDesc.SampleDesc.Count = 1;
 	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
+	graphicsPipelineStateDesc.SampleDesc.Count = 1;
+	graphicsPipelineStateDesc.SampleDesc.Quality = 0;
 
 	// RasterizerStateの設定
 	ConfigureRasterizerState();
@@ -63,16 +132,100 @@ void GraphicsPipelineBuilder::Build() {
 	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc_;
 
 	// PrimitiveTopologyTypeの設定
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	ConfigureTopologyType();
+	graphicsPipelineStateDesc.PrimitiveTopologyType = primitiveTopologyType_;
 
 	// RTVFormatsの設定
 	graphicsPipelineStateDesc.NumRenderTargets = 1;
 	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// GraphicsPipelineStateの生成
+	HRESULT hr = dxUtility_->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc, IID_PPV_ARGS(&graphicsPipelineState_));
+	assert(SUCCEEDED(hr));
+}
+
+void GraphicsPipelineBuilder::Reset() {
+
+	/// ===== RootSignature ===== ///
+
+	rootSignature_.Reset();
+	descriptorRanges_.clear();
+	rootParameters_.clear();
+	staticSamplerDescs_.clear();
+
+	/// ===== Shader ===== ///
+
+	vertexShaderFileName_.clear();
+	vertexShaderBlob_.Reset();
+	pixelShaderFileName_.clear();
+	pixelShaderBlob_.Reset();
+
+	/// ===== BlendState ===== ///
+
+	blendDesc_ = {};
+	blendMode_ = BlendMode::None;
+
+	/// ===== RasterizerState ===== ///
+	
+	rasterizerDesc_ = {};
+	cullMode_ = CullMode::None;
+
+	/// ===== DepthStencilState ===== ///
+
+	depthStencilDesc_ = {};
+	depthMode_ = DepthMode::Disabled;
+
+	/// ===== InputLayout ===== ///
+
+	inputElementDescs_.clear();
+	inputLayoutDesc_ = {};
+
+	/// ===== TopologyType ===== ///
+
+	topologyMode_ = TopologyMode::Triangle;
+	primitiveTopologyType_ = {};
+
+	/// ===== Pipeline ===== ///
+
+	graphicsPipelineState_.Reset();
 }
 
 void GraphicsPipelineBuilder::ConfigureRootSignature() {
+
+	// ルートシグネチャの設定
+	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
+
+	// IAステージでInputLayoutを使う
+	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	rootSignatureDesc.pParameters = rootParameters_.data(); // ルートパラメーター配列のポインタ
+	rootSignatureDesc.NumParameters = static_cast<UINT>(rootParameters_.size()); // ルートパラメーターの数
+
+	if (staticSamplerDescs_.size() > 0) {
+
+		rootSignatureDesc.pStaticSamplers = staticSamplerDescs_.data(); // 静的サンプラーの配列のポインタ
+		rootSignatureDesc.NumStaticSamplers = static_cast<UINT>(staticSamplerDescs_.size()); // 静的サンプラーの数
+	}
+
+	// ルートシグネチャを生成する
+
+	ComPtr<ID3DBlob> signatureBlob = nullptr;
+	ComPtr<ID3DBlob> errorBlob = nullptr;
+
+	// シリアライズしてバイナリにする
+	HRESULT hr = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
+
+	if (FAILED(hr)) {
+		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
+		assert(false);
+	}
+
+	// バイナリを元にルートシグネチャを生成
+	hr = DirectXUtility::GetInstance()->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(), signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature_));
+
+	// 成功したか確認
+	assert(SUCCEEDED(hr));
 }
 
 void GraphicsPipelineBuilder::ConfigureVertexShader() {
@@ -81,7 +234,7 @@ void GraphicsPipelineBuilder::ConfigureVertexShader() {
 	std::wstring vertexShaderFullPath = shaderDirectoryPath_ + vertexShaderFileName_;
 
 	// シェーダーをコンパイル
-	vertexShaderBlob_ = DirectXUtility::GetInstance()->CompileShader(vertexShaderFullPath, L"vs_5_0");
+	vertexShaderBlob_ = DirectXUtility::GetInstance()->CompileShader(vertexShaderFullPath, L"vs_6_0");
 	assert(vertexShaderBlob_ != nullptr);
 }
 
@@ -91,7 +244,7 @@ void GraphicsPipelineBuilder::ConfigurePixelShader() {
 	std::wstring pixelShaderFullPath = shaderDirectoryPath_ + pixelShaderFileName_;
 
 	// シェーダーをコンパイル
-	pixelShaderBlob_ = DirectXUtility::GetInstance()->CompileShader(pixelShaderFullPath, L"ps_5_0");
+	pixelShaderBlob_ = DirectXUtility::GetInstance()->CompileShader(pixelShaderFullPath, L"ps_6_0");
 	assert(pixelShaderBlob_ != nullptr);
 }
 
@@ -251,4 +404,32 @@ void GraphicsPipelineBuilder::ConfigureDepthStencilState() {
 }
 
 void GraphicsPipelineBuilder::ConfigureInputLayout() {
+
+	// インプットレイアウトの設定
+	inputLayoutDesc_.pInputElementDescs = inputElementDescs_.data(); // インプットエレメントの配列のポインタ
+	inputLayoutDesc_.NumElements = static_cast<UINT>(inputElementDescs_.size()); // インプットエレメントの数
+}
+
+void GraphicsPipelineBuilder::ConfigureTopologyType() {
+
+	switch (topologyMode_) {
+
+	case GraphicsPipelineBuilder::TopologyMode::Point:
+
+		primitiveTopologyType_ = D3D12_PRIMITIVE_TOPOLOGY_TYPE_POINT;
+
+		break;
+
+	case GraphicsPipelineBuilder::TopologyMode::Line:
+
+		primitiveTopologyType_ = D3D12_PRIMITIVE_TOPOLOGY_TYPE_LINE;
+
+		break;
+
+	case GraphicsPipelineBuilder::TopologyMode::Triangle:
+
+		primitiveTopologyType_ = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+
+		break;
+	}
 }
