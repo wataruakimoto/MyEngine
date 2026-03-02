@@ -12,19 +12,14 @@ void DebugScene::Initialize() {
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,0.0f,-20.0f });
 
-	// カメラのセット
-	particleManager->SetCamera(camera.get());
+	// 線描画レンダラーの初期化
+	lineRenderer = LineRenderer::GetInstance();
+	lineRenderer->Initialize();
 
-	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("BulletRed", EmitterType::OneShot, 5);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 10);
-
-	// エミッターの初期化
-	particleEmitterRed->Initialize();
-	particleEmitterBlue->Initialize();
-
-	// フィルターマネージャの取得
-	filterManager = FilterManager::GetInstance();
+	// 線描画マネージャの初期化
+	lineManager = LineManager::GetInstance();
+	lineManager->Initialize();
+	lineManager->SetDefaultCamera(camera.get());
 }
 
 void DebugScene::Update() {
@@ -32,37 +27,34 @@ void DebugScene::Update() {
 	// カメラの更新
 	camera->Update();
 
-	// エミッターの更新
-	particleEmitterRed->Update();
-	particleEmitterBlue->Update();
-
-	// パーティクルシステムの更新
-	particleManager->Update();
+	// 線描画マネージャのクリア
+	lineManager->Clear();
 }
 
 void DebugScene::DrawFiltered() {
-
-	/// === パーティクルの描画準備 === ///
-	particleCommon->SettingDrawing();
-
-	// パーティクルシステムの描画
-	particleManager->Draw();
 }
 
 void DebugScene::DrawUnfiltered() {
+
+	// 線描画の設定
+	lineRenderer->SettingDrawing();
+
+	lineManager->DrawSphere({ 0.0f, 0.0f, 0.0f }, 2.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, 16);
+
+	// 線描画
+	lineManager->Render();
 }
 
 void DebugScene::Finalize() {
+
+	// 線描画マネージャの終了
+	lineManager->Finalize();
+	// 線描画レンダラーの終了
+	lineRenderer->Finalize();
 }
 
 void DebugScene::ShowImGui() {
 
 	// カメラのImGui表示
 	camera->ShowImGui("Camera");
-
-	// パーティクルマネージャーのImGui表示
-	particleManager->ShowImGui();
-
-	// フィルターマネージャーのImGui表示
-	filterManager->ShowImGui();
 }
