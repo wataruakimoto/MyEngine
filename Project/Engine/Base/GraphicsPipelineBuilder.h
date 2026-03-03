@@ -6,6 +6,7 @@
 #include <dxcapi.h>
 #include <string>
 #include <vector>
+#include <deque>
 #include <wrl.h>
 
 namespace Engine {
@@ -228,12 +229,12 @@ namespace Engine {
 
 		// ルートシグネチャ
 		Microsoft::WRL::ComPtr<ID3D12RootSignature> rootSignature_ = nullptr;
-		
-		// ディスクリプタレンジの動的配列
-		std::vector<D3D12_DESCRIPTOR_RANGE> descriptorRanges_;
 
 		// ルートパラメーターの動的配列
 		std::vector<D3D12_ROOT_PARAMETER> rootParameters_;
+
+		// ディスクリプタレンジの動的配列
+		std::deque<D3D12_DESCRIPTOR_RANGE> descriptorRanges_;
 
 		// 静的サンプラーの動的配列
 		std::vector<D3D12_STATIC_SAMPLER_DESC> staticSamplerDescs_;

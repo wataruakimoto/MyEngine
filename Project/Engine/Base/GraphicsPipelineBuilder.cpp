@@ -276,8 +276,8 @@ void GraphicsPipelineBuilder::ConfigureBlendState() {
 		renderTargetBlendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;		 // ソースのアルファ値
 		renderTargetBlendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA; // デストの(1-ソースアルファ)
 		renderTargetBlendDesc.BlendOp = D3D12_BLEND_OP_ADD;			 // 加算
-		renderTargetBlendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;		 // ソースのアルファ値はそのまま
-		renderTargetBlendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;	 // デストのアルファ値は使わない
+		renderTargetBlendDesc.SrcBlendAlpha = D3D12_BLEND_ZERO;		 // ソースのアルファ値はそのまま
+		renderTargetBlendDesc.DestBlendAlpha = D3D12_BLEND_ONE;	 // デストのアルファ値は使わない
 		renderTargetBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;	 // 加算
 
 		break;

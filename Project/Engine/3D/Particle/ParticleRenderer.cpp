@@ -1,10 +1,10 @@
-#include "SpriteRenderer.h"
+#include "ParticleRenderer.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 
 using namespace Engine;
 
-void SpriteRenderer::Initialize() {
+void ParticleRenderer::Initialize() {
 
 	// DirectXユーティリティのインスタンス取得
 	dxUtility_ = DirectXUtility::GetInstance();
@@ -12,14 +12,14 @@ void SpriteRenderer::Initialize() {
 	// SrvManagerのインスタンス取得
 	srvManager_ = SrvManager::GetInstance();
 
-	// gTransformationMatrix CBV b0 頂点シェーダーで使う
-	pipelineBuilder_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, D3D12_SHADER_VISIBILITY_VERTEX);
+	// gInstance SRV t0 頂点シェーダーで使う
+	pipelineBuilder_.AddRootParameterTable(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
-	// gMaterial CBV b1 ピクセルシェーダーで使う
-	pipelineBuilder_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 1, D3D12_SHADER_VISIBILITY_PIXEL);
+	// gMaterial CBV b0 ピクセルシェーダーで使う
+	pipelineBuilder_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gTexture SRV t0 ピクセルシェーダーで使う
-	pipelineBuilder_.AddRootParameterTable(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, D3D12_SHADER_VISIBILITY_PIXEL);
+	// gTexture SRV t1 ピクセルシェーダーで使う
+	pipelineBuilder_.AddRootParameterTable(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	// gSampler 線形フィルタ、テクスチャ端は繰り返し、s0、ピクセルシェーダーで使う
 	pipelineBuilder_.AddStaticSampler(D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_WRAP, 0, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -32,16 +32,19 @@ void SpriteRenderer::Initialize() {
 	pipelineBuilder_.SetBlendMode(GraphicsPipelineBuilder::BlendMode::Alpha);
 
 	// カリングモードの設定 なし
-	pipelineBuilder_.SetCullMode(GraphicsPipelineBuilder::CullMode::None);
+	pipelineBuilder_.SetCullMode(GraphicsPipelineBuilder::CullMode::Back);
 
 	// 深度モードの設定 無効化
-	pipelineBuilder_.SetDepthMode(GraphicsPipelineBuilder::DepthMode::Disabled);
+	pipelineBuilder_.SetDepthMode(GraphicsPipelineBuilder::DepthMode::ReadOnly);
 
 	// インプットエレメントの追加 POSITION0 float4
 	pipelineBuilder_.AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 	// インプットエレメントの追加 TEXCOORD0 float2
 	pipelineBuilder_.AddInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT);
+
+	// インプットエレメントの追加 COLOR0 float3
+	pipelineBuilder_.AddInputElement("COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT);
 
 	// トポロジーモードの設定
 	pipelineBuilder_.SetTopologyMode(GraphicsPipelineBuilder::TopologyMode::Triangle);
@@ -50,7 +53,7 @@ void SpriteRenderer::Initialize() {
 	pipelineBuilder_.Build();
 }
 
-void SpriteRenderer::SettingDrawing() {
+void ParticleRenderer::SettingDrawing() {
 
 	// コマンドリストを取得
 	ID3D12GraphicsCommandList* commandList = dxUtility_->GetCommandList().Get();
@@ -71,18 +74,18 @@ void SpriteRenderer::SettingDrawing() {
 	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
-void SpriteRenderer::Finalize() {
+void ParticleRenderer::Finalize() {
 
 	delete instance_;
 	instance_ = nullptr;
 }
 
-SpriteRenderer* SpriteRenderer::instance_ = nullptr;
+ParticleRenderer* ParticleRenderer::instance_ = nullptr;
 
-SpriteRenderer* SpriteRenderer::GetInstance() {
-	
+ParticleRenderer* ParticleRenderer::GetInstance() {
+
 	if (instance_ == nullptr) {
-		instance_ = new SpriteRenderer;
+		instance_ = new ParticleRenderer;
 	}
 	return instance_;
 }

@@ -1,9 +1,6 @@
 #include "GamePlayScene.h"
 #include "Input.h"
 #include "Texture/TextureManager.h"
-#include "Sprite/SpriteRenderer.h"
-#include "Object/Object3dCommon.h"
-#include "Skybox/SkyboxCommon.h"
 #include "Vector3.h"
 #include "SceneManager.h"
 #include "OffscreenRendering/FilterManager.h"
@@ -12,12 +9,21 @@
 #include "Easing.h"
 #include "WinApp.h"
 
+#include "Sprite/SpriteRenderer.h"
+#include "Object/Object3dRenderer.h"
+#include "Particle/ParticleRenderer.h"
+
 #include <imgui.h>
 
 using namespace Engine;
 using namespace Easing;
 
 void GamePlayScene::Initialize() {
+
+	// インスタンス取得
+	spriteRenderer_ = SpriteRenderer::GetInstance();
+	object3dRenderer_ = Object3dRenderer::GetInstance();
+	particleRenderer_ = ParticleRenderer::GetInstance();
 
 	// カメラの生成&初期化
 	camera_ = std::make_unique<Engine::Camera>();
@@ -30,12 +36,8 @@ void GamePlayScene::Initialize() {
 	cameraController_->SetCamera(camera_.get());
 
 	// カメラの設定
-	SkyboxCommon::GetInstance()->SetDefaultCamera(camera_.get());
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+	object3dRenderer_->SetDefaultCamera(camera_.get());
 	FilterManager::GetInstance()->SetCamera(camera_.get());
-
-	// インスタンス取得
-	spriteRenderer_ = SpriteRenderer::GetInstance();
 
 	particleManager_->SetCamera(camera_.get());
 
@@ -59,14 +61,6 @@ void GamePlayScene::Initialize() {
 	// シリンダーの生成
 	cylinder_ = std::make_unique<Cylinder>();
 	cylinder_->Initialize();
-
-	// スカイボックスの生成
-	skyBox_ = std::make_unique<SkyBoxGame>();
-	skyBox_->Initialize();
-	// カメラを設定
-	skyBox_->SetCamera(camera_.get());
-	// プレイヤーを設定
-	skyBox_->SetPlayer(player_.get());
 
 	// ゴールの生成&初期化
 	goal_ = std::make_unique<Goal>();
@@ -128,9 +122,6 @@ void GamePlayScene::Update() {
 	// シリンダーの更新
 	cylinder_->Update();
 
-	// スカイボックスの更新
-	skyBox_->Update();
-
 	// オリジンシフトの確認と実行
 	CheckOriginShift();
 
@@ -157,7 +148,7 @@ void GamePlayScene::Update() {
 void GamePlayScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawingOpaque();
+	object3dRenderer_->SettingDrawingOpaque();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 
@@ -189,13 +180,13 @@ void GamePlayScene::DrawFiltered() {
 	player_->Draw();
 
 	/// === 半透明オブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawingAlpha();
+	object3dRenderer_->SettingDrawingAlpha();
 
 	// ゴールの描画
 	goal_->Draw();
 
 	/// === パーティクルの描画準備 === ///
-	particleCommon->SettingDrawing();
+	particleRenderer_->SettingDrawing();
 
 	// パーティクルシステムの描画
 	particleManager_->Draw();
@@ -264,8 +255,6 @@ void GamePlayScene::ShowImGui() {
 	floor_->ShowImGui();
 
 	cylinder_->ShowImGui();
-
-	skyBox_->ShowImGui();
 
 	ruleUI_->ShowImGui();
 

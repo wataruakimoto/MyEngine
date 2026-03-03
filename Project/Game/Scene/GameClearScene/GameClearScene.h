@@ -10,7 +10,10 @@
 
 /// ===== 前方宣言 ===== ///
 
-class Engine::SpriteRenderer;
+namespace Engine {
+
+	class SpriteRenderer;
+}
 
 /// ===== ゲームクリアシーン ===== ///
 class GameClearScene : public BaseScene {

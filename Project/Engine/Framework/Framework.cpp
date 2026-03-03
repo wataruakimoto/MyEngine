@@ -6,13 +6,13 @@
 #include "AudioManager.h"
 #include "Input.h"
 #include "Texture/TextureManager.h"
-#include "Object/Object3dCommon.h"
 #include "Model/ModelManager.h"
-#include "Particle/ParticleCommon.h"
-#include "Skybox/SkyboxCommon.h"
 #include "SceneManager.h"
 
 #include "Sprite/SpriteRenderer.h"
+#include "Object/Object3dRenderer.h"
+#include "Skybox/SkyBoxRenderer.h"
+#include "Particle/ParticleRenderer.h"
 
 using namespace Engine;
 
@@ -28,7 +28,7 @@ void Framework::Initialize() {
 	// DirectX初期化
 	DirectXUtility::GetInstance()->Initialize();
 
-	// SrVマネージャ初期化
+	// Srvマネージャ初期化
 	SrvManager::GetInstance()->Initialize();
 
 	// オーディオマネージャ初期化
@@ -47,14 +47,17 @@ void Framework::Initialize() {
 	// モデルマネージャ初期化
 	ModelManager::GetInstance()->Initialize();
 
-	// 3Dオブジェクト共通部初期化
-	Object3dCommon::GetInstance()->Initialize();
+	// 3Dオブジェクトレンダラー初期化
+	object3dRenderer_ = Object3dRenderer::GetInstance();
+	object3dRenderer_->Initialize();
 
-	// パーティクル基盤初期化
-	ParticleCommon::GetInstance()->Initialize();
+	// パーティクルレンダラー初期化
+	particleRenderer_ = ParticleRenderer::GetInstance();
+	particleRenderer_->Initialize();
 
-	// Skybox共通部初期化
-	SkyboxCommon::GetInstance()->Initialize();
+	// スカイボックスレンダラー初期化
+	skyBoxRenderer_ = SkyBoxRenderer::GetInstance();
+	skyBoxRenderer_->Initialize();
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
@@ -92,14 +95,14 @@ void Framework::Finalize() {
 	// ImGuiの終了
 	ImGuiManager::GetInstance()->Finalize();
 
-	// Skybox共通部の終了
-	SkyboxCommon::GetInstance()->Finalize();
+	// スカイボックスレンダラーの終了
+	skyBoxRenderer_->Finalize();
 
-	// パーティクル基盤の終了
-	ParticleCommon::GetInstance()->Finalize();
+	// パーティクルレンダラーの終了
+	particleRenderer_->Finalize();
 
 	// 3Dオブジェクト共通部の解放
-	Object3dCommon::GetInstance()->Finalize();
+	object3dRenderer_->Finalize();
 
 	// スプライトレンダラーの終了
 	spriteRenderer_->Finalize();

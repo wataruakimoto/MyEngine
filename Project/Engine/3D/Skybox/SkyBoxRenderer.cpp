@@ -1,10 +1,10 @@
-#include "SpriteRenderer.h"
+#include "SkyBoxRenderer.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 
 using namespace Engine;
 
-void SpriteRenderer::Initialize() {
+void SkyBoxRenderer::Initialize() {
 
 	// DirectXユーティリティのインスタンス取得
 	dxUtility_ = DirectXUtility::GetInstance();
@@ -29,13 +29,13 @@ void SpriteRenderer::Initialize() {
 	pipelineBuilder_.SetPixelShaderFileName(pixelShaderFileName);
 
 	// ブレンドモードの設定 アルファブレンド
-	pipelineBuilder_.SetBlendMode(GraphicsPipelineBuilder::BlendMode::Alpha);
+	pipelineBuilder_.SetBlendMode(GraphicsPipelineBuilder::BlendMode::None);
 
 	// カリングモードの設定 なし
 	pipelineBuilder_.SetCullMode(GraphicsPipelineBuilder::CullMode::None);
 
 	// 深度モードの設定 無効化
-	pipelineBuilder_.SetDepthMode(GraphicsPipelineBuilder::DepthMode::Disabled);
+	pipelineBuilder_.SetDepthMode(GraphicsPipelineBuilder::DepthMode::ReadOnly);
 
 	// インプットエレメントの追加 POSITION0 float4
 	pipelineBuilder_.AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
@@ -50,7 +50,7 @@ void SpriteRenderer::Initialize() {
 	pipelineBuilder_.Build();
 }
 
-void SpriteRenderer::SettingDrawing() {
+void SkyBoxRenderer::SettingDrawing() {
 
 	// コマンドリストを取得
 	ID3D12GraphicsCommandList* commandList = dxUtility_->GetCommandList().Get();
@@ -71,18 +71,18 @@ void SpriteRenderer::SettingDrawing() {
 	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 }
 
-void SpriteRenderer::Finalize() {
+void SkyBoxRenderer::Finalize() {
 
 	delete instance_;
 	instance_ = nullptr;
 }
 
-SpriteRenderer* SpriteRenderer::instance_ = nullptr;
+SkyBoxRenderer* SkyBoxRenderer::instance_ = nullptr;
 
-SpriteRenderer* SpriteRenderer::GetInstance() {
-	
+SkyBoxRenderer* SkyBoxRenderer::GetInstance() {
+
 	if (instance_ == nullptr) {
-		instance_ = new SpriteRenderer;
+		instance_ = new SkyBoxRenderer;
 	}
 	return instance_;
 }

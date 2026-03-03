@@ -7,11 +7,12 @@ namespace Engine {
 	/// ===== 前方宣言 ===== ///
 	class DirectXUtility;
 	class SrvManager;
+	class Camera;
 
 	/// <summary>
-	/// スプライトのレンダラー
+	/// スカイボックスのレンダラー
 	/// </summary>
-	class SpriteRenderer {
+	class SkyBoxRenderer {
 
 	///-------------------------------------------/// 
 	/// シングルトン
@@ -19,16 +20,16 @@ namespace Engine {
 	private:
 
 		// インスタンス
-		static SpriteRenderer* instance_;
+		static SkyBoxRenderer* instance_;
 
 		// コンストラクタ隠蔽
-		SpriteRenderer() = default;
+		SkyBoxRenderer() = default;
 		// デストラクタ隠蔽
-		~SpriteRenderer() = default;
+		~SkyBoxRenderer() = default;
 		// コピーコンストラクタ禁止
-		SpriteRenderer(SpriteRenderer&) = delete;
+		SkyBoxRenderer(SkyBoxRenderer&) = delete;
 		// コピーオペレータ禁止
-		SpriteRenderer& operator=(SpriteRenderer&) = delete;
+		SkyBoxRenderer& operator=(SkyBoxRenderer&) = delete;
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -59,7 +60,24 @@ namespace Engine {
 		/// インスタンスの取得
 		/// </summary>
 		/// <returns>インスタンス</returns>
-		static SpriteRenderer* GetInstance();
+		static SkyBoxRenderer* GetInstance();
+
+		/// <summary>
+		/// デフォルトカメラのゲッター
+		/// </summary>
+		/// <returns>カメラのポインタ</returns>
+		Camera* GetDefaultCamera() const { return defaultCamera_; }
+
+	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// デフォルトカメラのセッター
+		/// </summary>
+		/// <param name="camera">カメラのポインタ</param>
+		void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -70,16 +88,21 @@ namespace Engine {
 		GraphicsPipelineBuilder pipelineBuilder_;
 
 		// 頂点シェーダーのファイル名
-		std::wstring vertexShaderFileName = L"Sprite/Sprite.VS.hlsl";
+		std::wstring vertexShaderFileName = L"SkyBox/Skybox.VS.hlsl";
 
 		// ピクセルシェーダーのファイル名
-		std::wstring pixelShaderFileName = L"Sprite/Sprite.PS.hlsl";
+		std::wstring pixelShaderFileName = L"SkyBox/Skybox.PS.hlsl";
 
+		/// ===== 借りポインタ・インスタンス ===== ///
+		
 		// DirectXユーティリティのインスタンス
 		DirectXUtility* dxUtility_ = nullptr;
 
 		// SrvManagerのインスタンス
 		SrvManager* srvManager_ = nullptr;
+
+		// デフォルトカメラ
+		Camera* defaultCamera_ = nullptr;
 	};
 }
 
