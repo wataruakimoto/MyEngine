@@ -45,10 +45,15 @@ void Enemy::Initialize() {
 
 	isDead = false;
 
+	// コライダーの形状をAABBに設定
+	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
+
 	// コライダーの初期化
 	Collider::Initialize();
 	// コライダーにIDを設定
 	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemy));
+	// コライダーに形状を設定
+	Collider::SetAABB(colliderShape_);
 
 	// エミッタ生成
 	particleEmitterBlack = std::make_unique<ParticleEmitter>("EnemyDeathBlack", EmitterType::OneShot, 40);
@@ -124,6 +129,10 @@ void Enemy::Update() {
 
 	// ワールド変換の更新
 	worldTransform_.UpdateMatrix();
+
+	// コライダーの形状をワールド座標に変換して更新
+	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
+	Collider::SetAABB(colliderShape_);
 
 	object->SetTranslate(worldTransform_.GetTranslate());
 	object->SetRotate(worldTransform_.GetRotate());

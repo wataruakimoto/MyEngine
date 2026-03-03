@@ -4,7 +4,7 @@
 #include "Data/TransformationData.h"
 #include "Vector2.h"
 #include "Vector4.h"
-#include "Data/Transform.h"
+#include "WorldTransform.h"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -86,19 +86,19 @@ namespace Engine {
 		/// 拡縮のセッター
 		/// </summary>
 		/// <param name="scale"></param>
-		void SetScale(const Vector3& scale) { transform.scale = scale; }
+		void SetScale(const Vector3& scale) { this->worldTransform.SetScale(scale); }
 
 		/// <summary>
 		/// 回転のセッター
 		/// </summary>
 		/// <param name="rotate"></param>
-		void SetRotate(const Vector3& rotate) { transform.rotate = rotate; }
+		void SetRotate(const Vector3& rotate) { this->worldTransform.SetRotate(rotate); }
 
 		/// <summary>
 		/// 平行移動のセッター
 		/// </summary>
 		/// <param name="translate"></param>
-		void SetTranslate(const Vector3& translate) { transform.translate = translate; }
+		void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
 
 		///-------------------------------------------/// 
 		/// 構造体
@@ -152,7 +152,7 @@ namespace Engine {
 		uint32_t textureSrvIndex = 0;
 
 		// 変換データ
-		Transform transform = {};
+		WorldTransform worldTransform = {};
 
 		// カメラの借りポインタ
 		Camera* camera = nullptr;

@@ -1,15 +1,19 @@
 #include "TitleScene.h"
-#include "Skybox/SkyboxCommon.h"
-#include "Object/Object3dCommon.h"
-#include "Sprite/SpriteCommon.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "WinApp.h"
+
+#include "Sprite/SpriteRenderer.h"
+#include "Object/Object3dRenderer.h"
 
 #include <imgui.h>
 
 using namespace Engine;
 
 void TitleScene::Initialize() {
+
+	// インスタンス取得
+	spriteRenderer_ = SpriteRenderer::GetInstance();
+	object3dRenderer_ = Object3dRenderer::GetInstance();
 
 	// カメラの生成&初期化
 	camera_ = std::make_unique<Engine::Camera>();
@@ -22,8 +26,7 @@ void TitleScene::Initialize() {
 	cameraController_->SetCamera(camera_.get());
 
 	// カメラの設定
-	SkyboxCommon::GetInstance()->SetDefaultCamera(camera_.get());
-	Object3dCommon::GetInstance()->SetDefaultCamera(camera_.get());
+	object3dRenderer_->SetDefaultCamera(camera_.get());
 
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
@@ -201,7 +204,7 @@ void TitleScene::Update() {
 void TitleScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
-	Object3dCommon::GetInstance()->SettingDrawingOpaque();
+	object3dRenderer_->SettingDrawingOpaque();
 
 	// シリンダーの描画
 	cylinder_->Draw();
@@ -216,7 +219,7 @@ void TitleScene::DrawFiltered() {
 void TitleScene::DrawUnfiltered() {
 
 	/// === 2Dオブジェクトの描画準備(最前面) === ///
-	SpriteCommon::GetInstance()->SettingDrawing();
+	spriteRenderer_->SettingDrawing();
 
 	// スタートUIの描画
 	startUI_->Draw();
@@ -353,6 +356,8 @@ void TitleScene::WaitInputInitialize() {
 
 	// スタートUIを表示に設定
 	startUI_->SetVisible(true);
+
+	titleUI_->StartHoverAnimation();
 }
 
 void TitleScene::WaitInputUpdate() {

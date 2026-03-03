@@ -6,7 +6,7 @@
 ///-------------------------------------------/// 
 /// キャラクター基底クラス
 ///-------------------------------------------///
-class BaseCharacter : public Collider {
+class BaseCharacter : public Engine::Collider {
 
 public:
 
@@ -22,9 +22,6 @@ public:
 /// ゲッター
 ///-------------------------------------------///
 public:
-
-	// 中心座標の取得
-	const Engine::Vector3 GetCenterPosition() const { return worldTransform_.GetWorldPosition(); }
 
 	/// <summary>
 	/// ワールド変換のゲッター

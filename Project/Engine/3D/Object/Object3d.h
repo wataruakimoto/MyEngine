@@ -15,6 +15,7 @@ namespace Engine {
 	/// === 前方宣言 === ///
 	class Camera;
 	class DirectXUtility;
+	class Object3dRenderer;
 
 	/// === 3Dオブジェクト === ///
 	class Object3d {
@@ -272,5 +273,8 @@ namespace Engine {
 
 		// DirectXUtilityのインスタンス
 		DirectXUtility* dxUtility = nullptr;
+
+		// Object3dRendererのインスタンス
+		Object3dRenderer* object3dRenderer_ = nullptr;
 	};
 }

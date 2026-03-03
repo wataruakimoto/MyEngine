@@ -2,6 +2,7 @@
 #include "MathVector.h"
 
 #include <cmath>
+#include <numbers>
 
 using namespace Engine;
 using namespace MathVector;
@@ -26,9 +27,19 @@ Vector4 Easing::Lerp(const Vector4& start, const Vector4& end, float t) {
 	return start + (end - start) * t;
 }
 
+float Engine::Easing::EaseInSine(float t) {
+	
+	return 1.0f - std::cosf((t * std::numbers::pi_v<float>) / 2.0f);
+}
+
 float Easing::EaseInCubic(float t) {
 	
 	return t * t * t;
+}
+
+float Engine::Easing::EaseOutSine(float t) {
+	
+	return std::sinf((t * std::numbers::pi_v<float>) / 2.0f);
 }
 
 float Easing::EaseOutQuad(float t) {
@@ -69,6 +80,11 @@ float Easing::EaseOutBounce(float t) {
 	}
 }
 
+float Engine::Easing::EaseInOutSine(float t) {
+	
+	return -(std::cosf(std::numbers::pi_v<float> *t) - 1.0f) / 2.0f;
+}
+
 float Easing::EaseInOutQuad(float t) {
 
 	if (t < 0.5f) {
@@ -78,5 +94,17 @@ float Easing::EaseInOutQuad(float t) {
 	else {
 
 		return -1.0f + (4.0f - 2.0f * t) * t;
+	}
+}
+
+float Engine::Easing::EaseInOutCubic(float t) {
+	
+	if (t < 0.5f) {
+
+		return 4.0f * t * t * t;
+	}
+	else {
+
+		return 1.0f - std::powf(-2.0f * t + 2.0f, 3) / 2.0f;
 	}
 }

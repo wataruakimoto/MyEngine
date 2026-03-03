@@ -58,11 +58,11 @@ void CylinderRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, c
 	// 参照バッファビューを設定
 	dxUtility->GetCommandList()->IASetIndexBuffer(&indexBufferView);
 
-	// マテリアルCBufferの場所を設定
-	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
-
 	/// === InstanceDataのCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager->GetGPUDescriptorHandle(instanceSrvIndex));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager->GetGPUDescriptorHandle(instanceSrvIndex));
+
+	// マテリアルCBufferの場所を設定
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));

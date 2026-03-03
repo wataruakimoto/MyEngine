@@ -1,5 +1,5 @@
 #include "Object3d.h"
-#include "Object3dCommon.h"
+#include "Object3dRenderer.h"
 #include "MathVector.h"
 #include "MathMatrix.h"
 #include "WinApp.h"
@@ -22,8 +22,11 @@ void Object3d::Initialize() {
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
+	// Object3dRendererのインスタンスを取得
+	object3dRenderer_ = Object3dRenderer::GetInstance();
+
 	// デフォルトカメラをセット
-	this->camera = Object3dCommon::GetInstance()->GetDefaultCamera();
+	this->camera = object3dRenderer_->GetDefaultCamera();
 
 	// ワールド変換の初期化
 	worldTransform.Initialize();
@@ -86,22 +89,22 @@ void Object3d::Draw() {
 	if (isDraw) {
 
 		/// === 座標変換行列CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationMatrixResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixResource->GetGPUVirtualAddress());
 
 		/// === 平行光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, directionalLightResource->GetGPUVirtualAddress());
 
 		/// === 点光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(3, pointLightResource->GetGPUVirtualAddress());
 
 		/// === スポットライトCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(4, spotLightResource->GetGPUVirtualAddress());
 		
 		/// === 環境CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(7, environmentResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(5, environmentResource->GetGPUVirtualAddress());
 
 		/// === カメラCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(8, cameraResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {
