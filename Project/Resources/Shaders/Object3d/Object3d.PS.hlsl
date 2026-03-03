@@ -40,17 +40,17 @@ struct Camera {
     float3 worldPosition;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<Material> gMaterial : register(b1);
 
-ConstantBuffer<DirectionalLight> gDirectionalLight : register(b1);
+ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
 
-ConstantBuffer<PointLight> gPointLight : register(b2);
+ConstantBuffer<PointLight> gPointLight : register(b3);
 
-ConstantBuffer<SpotLight> gSpotLight : register(b3);
+ConstantBuffer<SpotLight> gSpotLight : register(b4);
 
-ConstantBuffer<Environment> gEnvironment : register(b4);
+ConstantBuffer<Environment> gEnvironment : register(b5);
 
-ConstantBuffer<Camera> gCamera : register(b5);
+ConstantBuffer<Camera> gCamera : register(b6);
 
 Texture2D<float4> gTexture : register(t0);
 

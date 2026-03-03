@@ -32,13 +32,13 @@ void Model::Draw() {
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource->GetGPUVirtualAddress());
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableを設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
 
 	// SRVのDescriptorTableを設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(3, TextureManager::GetInstance()->GetSRVGPUHandle(environmentMapFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(8, TextureManager::GetInstance()->GetSRVGPUHandle(environmentMapFilePath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), 1, 0, 0);

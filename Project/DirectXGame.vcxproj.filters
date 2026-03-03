@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="Resources\shaders\Sprite.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\Sprite\Sprite.PS.hlsl">
       <Filter>Engine\2D\Sprite</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\Sprite.VS.hlsl">
+    <FxCompile Include="Resources\Shaders\Sprite\Sprite.VS.hlsl">
       <Filter>Engine\2D\Sprite</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\Object3d.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\Object3d\Object3d.PS.hlsl">
       <Filter>Engine\3D\Object</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\Object3d.VS.hlsl">
+    <FxCompile Include="Resources\Shaders\Object3d\Object3d.VS.hlsl">
       <Filter>Engine\3D\Object</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\Skybox.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\SkyBox\Skybox.PS.hlsl">
       <Filter>Engine\3D\Skybox</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\Skybox.VS.hlsl">
+    <FxCompile Include="Resources\Shaders\SkyBox\Skybox.VS.hlsl">
       <Filter>Engine\3D\Skybox</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\Particle.PS.hlsl">
+    <FxCompile Include="Resources\Shaders\Particle\Particle.PS.hlsl">
       <Filter>Engine\3D\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\shaders\Particle.VS.hlsl">
+    <FxCompile Include="Resources\Shaders\Particle\Particle.VS.hlsl">
       <Filter>Engine\3D\Particle</Filter>
     </FxCompile>
     <FxCompile Include="Resources\Shaders\DepthOutline.PS.hlsl">
@@ -72,9 +72,6 @@
     <ClCompile Include="Engine\2D\Sprite\Sprite.cpp">
       <Filter>Engine\2D\Sprite</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\2D\Sprite\SpriteCommon.cpp">
-      <Filter>Engine\2D\Sprite</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3D\Model\ModelManager.cpp">
       <Filter>Engine\3D\Model</Filter>
     </ClCompile>
@@ -84,17 +81,8 @@
     <ClCompile Include="Engine\3D\Object\Object3d.cpp">
       <Filter>Engine\3D\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\3D\Object\Object3dCommon.cpp">
-      <Filter>Engine\3D\Object</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\3D\Skybox\Skybox.cpp">
       <Filter>Engine\3D\Skybox</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3D\Skybox\SkyboxCommon.cpp">
-      <Filter>Engine\3D\Skybox</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\3D\Particle\ParticleCommon.cpp">
-      <Filter>Engine\3D\Particle</Filter>
     </ClCompile>
     <ClCompile Include="Engine\3D\Particle\ParticleEmitter.cpp">
       <Filter>Engine\3D\Particle</Filter>
@@ -133,9 +121,6 @@
       <Filter>Engine\Math</Filter>
     </ClCompile>
     <ClCompile Include="Engine\base\DirectXUtility.cpp">
-      <Filter>Engine\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine\Base\GraphicsPipelineCreator.cpp">
       <Filter>Engine\Base</Filter>
     </ClCompile>
     <ClCompile Include="Engine\base\SrvManager.cpp">
@@ -324,15 +309,16 @@
     <ClCompile Include="Engine\Line\LineRenderer.cpp" />
     <ClCompile Include="Engine\Line\LineManager.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipelineBuilder.cpp" />
+    <ClCompile Include="Engine\2D\Sprite\SpriteRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Object\Object3dRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Skybox\SkyBoxRenderer.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
       <Filter>Engine\2D\Texture</Filter>
     </ClInclude>
     <ClInclude Include="Engine\2D\Sprite\Sprite.h">
-      <Filter>Engine\2D\Sprite</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\2D\Sprite\SpriteCommon.h">
       <Filter>Engine\2D\Sprite</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\Model\Model.h">
@@ -344,17 +330,8 @@
     <ClInclude Include="Engine\3D\Object\Object3d.h">
       <Filter>Engine\3D\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3D\Object\Object3dCommon.h">
-      <Filter>Engine\3D\Object</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3D\Skybox\Skybox.h">
       <Filter>Engine\3D\Skybox</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3D\Skybox\SkyboxCommon.h">
-      <Filter>Engine\3D\Skybox</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3D\Particle\ParticleCommon.h">
-      <Filter>Engine\3D\Particle</Filter>
     </ClInclude>
     <ClInclude Include="Engine\3D\Particle\ParticleData.h">
       <Filter>Engine\3D\Particle</Filter>
@@ -426,9 +403,6 @@
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
     <ClInclude Include="Engine\base\DirectXUtility.h">
-      <Filter>Engine\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Base\GraphicsPipelineCreator.h">
       <Filter>Engine\Base</Filter>
     </ClInclude>
     <ClInclude Include="Engine\base\SrvManager.h">
@@ -642,18 +616,22 @@
     <ClInclude Include="Engine\Line\LineRenderer.h" />
     <ClInclude Include="Engine\Line\LineManager.h" />
     <ClInclude Include="Engine\Base\GraphicsPipelineBuilder.h" />
+    <ClInclude Include="Engine\2D\Sprite\SpriteRenderer.h" />
+    <ClInclude Include="Engine\3D\Object\Object3dRenderer.h" />
+    <ClInclude Include="Engine\3D\Skybox\SkyBoxRenderer.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleRenderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\shaders\Sprite.hlsli">
+    <None Include="Resources\Shaders\Sprite\Sprite.hlsli">
       <Filter>Engine\2D\Sprite</Filter>
     </None>
-    <None Include="Resources\shaders\Object3d.hlsli">
+    <None Include="Resources\Shaders\Object3d\Object3d.hlsli">
       <Filter>Engine\3D\Object</Filter>
     </None>
-    <None Include="Resources\Shaders\Skybox.hlsli">
+    <None Include="Resources\Shaders\SkyBox\Skybox.hlsli">
       <Filter>Engine\3D\Skybox</Filter>
     </None>
-    <None Include="Resources\shaders\Particle.hlsli">
+    <None Include="Resources\Shaders\Particle\Particle.hlsli">
       <Filter>Engine\3D\Particle</Filter>
     </None>
     <None Include="Resources\shaders\FullScreen.hlsli">

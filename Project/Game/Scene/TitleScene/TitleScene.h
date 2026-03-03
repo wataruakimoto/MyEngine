@@ -18,7 +18,12 @@
 #include <memory>
 #include <optional>
 
-class RadialBlurFilter;
+namespace Engine {
+
+    class SpriteRenderer;
+	class Object3dRenderer;
+    class RadialBlurFilter;
+}
 
 // タイトルの流れの状態
 enum class TitleFlowState {
@@ -182,4 +187,10 @@ private:
 
     // ループさせる距離
 	const float kLoopDistance = 1000.0f;
+
+    // スプライトレンダラーのインスタンス
+    Engine::SpriteRenderer* spriteRenderer_ = nullptr;
+
+	// 3Dオブジェクトレンダラーのインスタンス
+	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
 };

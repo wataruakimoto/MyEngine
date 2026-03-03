@@ -14,6 +14,11 @@ namespace Engine {
 	class WinApp;
 	class DirectXUtility;
 
+	class SpriteRenderer;
+	class Object3dRenderer;
+	class SkyBoxRenderer;
+	class ParticleRenderer;
+
 	/// === フレームワーク === ///
 	class Framework {
 
@@ -75,5 +80,19 @@ namespace Engine {
 
 		// ゲーム終了フラグ
 		bool endRequest_ = false;
+
+		/// ===== シングルトン ===== ///
+
+		// スプライトレンダラーのインスタンス
+		SpriteRenderer* spriteRenderer_ = nullptr;
+
+		// 3Dオブジェクトレンダラーのインスタンス
+		Object3dRenderer* object3dRenderer_ = nullptr;
+
+		// スカイボックスレンダラーのインスタンス
+		SkyBoxRenderer* skyBoxRenderer_ = nullptr;
+
+		// パーティクルレンダラーのインスタンス
+		ParticleRenderer* particleRenderer_ = nullptr;
 	};
 }

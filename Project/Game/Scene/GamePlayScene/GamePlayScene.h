@@ -3,7 +3,6 @@
 #include "PlayState.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleManager.h"
-#include "Particle/ParticleCommon.h"
 #include "Player/Player.h"
 #include "Player/Bullet.h"
 #include "Enemy/Enemy.h"
@@ -12,7 +11,6 @@
 #include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
-#include "SkyBox/SkyBoxGame.h"
 #include "UI/RuleUI.h"
 #include "UI/NormaUI.h"
 #include "UI/ResultUI.h"
@@ -25,6 +23,15 @@
 #include <sstream>
 #include <memory>
 #include <optional>
+
+/// ===== 前方宣言 ===== ///
+
+namespace Engine {
+
+	class SpriteRenderer;
+	class Object3dRenderer;
+	class ParticleRenderer;
+}
 
 /// ===== ゲームプレイシーン ===== ///
 class GamePlayScene : public BaseScene {
@@ -216,9 +223,6 @@ private:
 	// シリンダーのポインタ
 	std::unique_ptr<Cylinder> cylinder_ = nullptr;
 
-	// スカイボックスのポインタ
-	std::unique_ptr<SkyBoxGame> skyBox_ = nullptr;
-
 	// ゴールのポインタ
 	std::unique_ptr<Goal> goal_ = nullptr;
 
@@ -253,6 +257,12 @@ private:
 	// パーティクルマネージャのインスタンス
 	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
 
-	// パーティクル共通のインスタンス
-	Engine::ParticleCommon* particleCommon = Engine::ParticleCommon::GetInstance();
+	// スプライトレンダラーのインスタンス
+	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
+
+	// 3Dオブジェクトレンダラーのインスタンス
+	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+
+	// パーティクルレンダラーのインスタンス
+	Engine::ParticleRenderer* particleRenderer_ = nullptr;
 };
