@@ -4,12 +4,14 @@
 
 namespace Engine {
 
-	/// ===== ガウシアンブラーフィルター ===== ///
+	/// <summary>
+	/// ガウシアンブラーフィルター
+	/// </summary>
 	class GaussianBlurFilter : public BaseFilter {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -27,54 +29,22 @@ namespace Engine {
 		/// </summary>
 		void ShowImGui() override;
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// クラス内関数
+	///-------------------------------------------///
 	private:
 
 		/// <summary>
-		/// RootSignature作成
-		/// </summary>
-		void CreateRootSignature() override;
-
-		/// <summary>
-		/// InputLayout作成
-		/// </summary>
-		void CreateInputLayout() override;
-
-		/// <summary>
-		/// BlendState作成
-		/// </summary>
-		void CreateBlendState() override;
-
-		/// <summary>
-		/// RasterizerState作成
-		/// </summary>
-		void CreateRasterizerState() override;
-
-		/// <summary>
-		/// VertexShader作成
-		/// </summary>
-		void CreateVertexShader() override;
-
-		/// <summary>
-		/// PixelShader作成
-		/// </summary>
-		void CreatePixelShader() override;
-
-		/// <summary>
-		/// DepthStencilState作成
-		/// </summary>
-		void CreateDepthStencilState() override;
-
-		/// <summary>
-		/// GraphicsPipeline作成
+		/// グラフィックスパイプラインの生成
 		/// </summary>
 		void CreateGraphicsPipeline() override;
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 	private:
+
+		// ピクセルシェーダーのファイル名
+		std::wstring pixelShaderFileName_ = L"Filter/GaussianBlur.PS.hlsl";
 	};
 }

@@ -5,12 +5,14 @@
 
 namespace Engine {
 
-	/// ===== ビネットフィルター ===== ///
+	/// <summary>
+	/// ビネットフィルター
+	/// </summary>
 	class VignetteFilter : public BaseFilter {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -28,49 +30,11 @@ namespace Engine {
 		/// </summary>
 		void ShowImGui() override;
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// クラス内関数
+	///-------------------------------------------///
 	private:
 
-		/// <summary>
-		/// RootSignature作成
-		/// </summary>
-		void CreateRootSignature() override;
-
-		/// <summary>
-		/// InputLayout作成
-		/// </summary>
-		void CreateInputLayout() override;
-
-		/// <summary>
-		/// BlendState作成
-		/// </summary>
-		void CreateBlendState() override;
-
-		/// <summary>
-		/// RasterizerState作成
-		/// </summary>
-		void CreateRasterizerState() override;
-
-		/// <summary>
-		/// VertexShader作成
-		/// </summary>
-		void CreateVertexShader() override;
-
-		/// <summary>
-		/// PixelShader作成
-		/// </summary>
-		void CreatePixelShader() override;
-
-		/// <summary>
-		/// DepthStencilState作成
-		/// </summary>
-		void CreateDepthStencilState() override;
-
-		/// <summary>
-		/// GraphicsPipeline作成
-		/// </summary>
 		void CreateGraphicsPipeline() override;
 
 		/// <summary>
@@ -78,30 +42,28 @@ namespace Engine {
 		/// </summary>
 		void CreateConfigData();
 
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
 	public:
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
-	public:
+		void SetColor(const Vector3& color) { configData_->color = color; }
 
-		void SetColor(const Vector3& color) { configData->color = color; }
+		void SetIntensity(float intensity) { configData_->intensity = intensity; }
 
-		void SetIntensity(float intensity) { configData->intensity = intensity; }
+		void SetScale(float scale) { configData_->scale = scale; }
 
-		void SetScale(float scale) { configData->scale = scale; }
+		void SetRange(float range) { configData_->range = range; }
 
-		void SetRange(float range) { configData->range = range; }
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+	private:
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
-	public:
-
-		struct Config {
+		/// <summary>
+		/// コンフィグデータ
+		/// </summary>
+		struct ConfigData {
 
 			Vector3 color; // 色
 			float intensity; // 強さ
@@ -109,15 +71,18 @@ namespace Engine {
 			float range; // 範囲
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 	private:
 
-		// コンフィグデータ
-		Config* configData = nullptr;
+		// ピクセルシェーダーのファイル名
+		std::wstring pixelShaderFileName_ = L"Filter/Vignette.PS.hlsl";
 
-		// コンフィグ用リソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
+		// コンフィグ用のバッファリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configBuffer_ = nullptr;
+
+		// コンフィグデータ
+		ConfigData* configData_ = nullptr;
 	};
 }

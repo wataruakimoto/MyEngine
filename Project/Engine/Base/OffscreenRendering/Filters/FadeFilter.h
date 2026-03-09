@@ -5,9 +5,9 @@
 namespace Engine {
 
 	/// <summary>
-	/// フルスクリーンフィルター
+	/// フェードフィルター
 	/// </summary>
-	class FullScreenFilter : public BaseFilter {
+	class FadeFilter : public BaseFilter {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -39,12 +39,37 @@ namespace Engine {
 		/// </summary>
 		void CreateGraphicsPipeline() override;
 
+		/// <summary>
+		/// コンフィグデータの生成
+		/// </summary>
+		void CreateConfigData();
+
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+	private:
+
+		/// <summary>
+		/// コンフィグデータ
+		/// </summary>
+		struct ConfigData {
+
+			Vector4 color; // フェード色
+		};
+
 	///-------------------------------------------/// 
 	/// メンバ変数
 	///-------------------------------------------///
 	private:
 
 		// ピクセルシェーダーのファイル名
-		std::wstring pixelShaderFileName_ = L"Filter/FullScreen.PS.hlsl";
+		std::wstring pixelShaderFileName_ = L"Filter/Fade.PS.hlsl";
+
+		// コンフィグ用のバッファリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configBuffer_ = nullptr;
+
+		// コンフィグデータ
+		ConfigData* configData_ = nullptr;
 	};
 }
+

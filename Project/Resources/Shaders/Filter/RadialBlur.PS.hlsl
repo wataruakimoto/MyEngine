@@ -1,12 +1,5 @@
 #include "FullScreen.hlsli"
 
-Texture2D<float4> gTexture : register(t0);
-SamplerState gSampler : register(s0);
-
-struct PixelShaderOutput {
-    float4 color : SV_TARGET0;
-};
-
 struct Config {
     
     float3 glowColor; // グローの色
@@ -15,6 +8,15 @@ struct Config {
 };
 
 ConstantBuffer<Config> gConfig : register(b0);
+
+Texture2D<float4> gTexture : register(t0);
+
+SamplerState gSampler : register(s0);
+
+struct PixelShaderOutput {
+    
+    float4 color : SV_TARGET0;
+};
 
 static const int kNumSamples = 10; // サンプリング数。多いほど滑らかだが重い
 

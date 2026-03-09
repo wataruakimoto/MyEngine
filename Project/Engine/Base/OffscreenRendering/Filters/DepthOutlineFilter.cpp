@@ -1,7 +1,6 @@
 #include "DepthOutlineFilter.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
-#include "Logger.h"
 #include "Camera.h"
 #include "MathMatrix.h"
 
@@ -9,51 +8,51 @@
 
 using namespace Engine;
 using namespace Microsoft::WRL;
-using namespace Logger;
 using namespace MathMatrix;
 
 void DepthOutlineFilter::Initialize() {
 
-	// DirectXUtilityのインスタンスを取得
-	dxUtility = DirectXUtility::GetInstance();
+	// DirectXユーティリティのインスタンス取得
+	dxUtility_ = DirectXUtility::GetInstance();
 
-	// パイプライン作成
+	// SrvManagerのインスタンス取得
+	srvManager_ = SrvManager::GetInstance();
+
+	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
 
-	// マテリアルデータの生成
-	GenerateMaterialData();
+	// コンフィグデータの生成
+	CreateConfigData();
 }
 
 void DepthOutlineFilter::Draw() {
 
-	/// === ルートシグネチャをセットするコマンド === ///
-	dxUtility->GetCommandList()->SetGraphicsRootSignature(rootSignature.Get());
+	// コマンドリストを取得
+	ID3D12GraphicsCommandList* commandList = dxUtility_->GetCommandList().Get();
 
-	/// === グラフィックスパイプラインステートをセットするコマンド === ///
-	dxUtility->GetCommandList()->SetPipelineState(graphicsPipelineState.Get());
+	// ルートシグネチャを設定
+	commandList->SetGraphicsRootSignature(pipelineBuilder_.GetRootSignature().Get());
 
-	/// === プリミティブトポロジーをセットするコマンド === ///
-	dxUtility->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// パイプラインを設定
+	commandList->SetPipelineState(pipelineBuilder_.GetGraphicsPipeline().Get());
 
-	ID3D12DescriptorHeap* descriptorHeaps[] = { SrvManager::GetInstance()->GetDescriptorHeap().Get() };
-	dxUtility->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
+	// プリミティブトポロジーを線で設定
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// カメラから投影逆行列を取得
-	Matrix4x4 projectionInverse = camera->GetProjectionMatrixInverse();
+	// ディスクリプタヒープを取得
+	ID3D12DescriptorHeap* descriptorHeaps[] = { srvManager_->GetDescriptorHeap().Get() };
 
-	// マテリアルデータに投影逆行列をセット
-	materialData->projectionInverse = projectionInverse;
+	// ディスクリプタヒープを設定
+	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 
-	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex));
-	/// === SRVのDescriptorTableを設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(1, SrvManager::GetInstance()->GetGPUDescriptorHandle(depthSrvIndex));
+	// ConfigのCBVをルートパラメータに設定
+	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(0, configBuffer_->GetGPUVirtualAddress());
 
-	/// === マテリアルCBufferの場所を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
+	// SRVをルートパラメータに設定
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
 	// 3頂点を1回描画する
-	dxUtility->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+	dxUtility_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
 void DepthOutlineFilter::ShowImGui() {
@@ -63,7 +62,7 @@ void DepthOutlineFilter::ShowImGui() {
 	if (ImGui::TreeNode("DepthOutlineFilter")) {
 
 		// 有効化フラグのチェックボックス
-		ImGui::Checkbox("IsActive", &isActive);
+		ImGui::Checkbox("IsActive", &isActive_);
 		// ImGuiのツリーを閉じる
 		ImGui::TreePop();
 	}
@@ -71,189 +70,58 @@ void DepthOutlineFilter::ShowImGui() {
 #endif // USE_IMGUI
 }
 
-void DepthOutlineFilter::CreateRootSignature() {
-
-	// RootSignatureを生成する
-	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
-	descriptionRootSignature.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
-
-	// DescriptorRangeを作成
-	D3D12_DESCRIPTOR_RANGE descriptorRange[2] = {};
-
-	// gTexture SRV t0
-	descriptorRange[0].BaseShaderRegister = 0; // 0から始まる
-	descriptorRange[0].NumDescriptors = 1; // 数は1つ
-	descriptorRange[0].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
-	descriptorRange[0].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
-
-	// gDepthTexture SRV t1
-	descriptorRange[1].BaseShaderRegister = 1; // 1から始まる
-	descriptorRange[1].NumDescriptors = 1; // 数は1つ
-	descriptorRange[1].RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_SRV; // SRVを使う
-	descriptorRange[1].OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND; // Offsetを自動計算
-
-	// RootParameter作成。PixelShaderのMaterialとVertexShaderのTransform
-	D3D12_ROOT_PARAMETER rootParameters[3] = {};
-
-	// gTexture SRV t0
-	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
-	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	rootParameters[0].DescriptorTable.pDescriptorRanges = &descriptorRange[0]; // Tableの中身の配列を指定
-	rootParameters[0].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
-
-	// gDepthTexture SRV t1
-	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE; // DescriptorTableを使う
-	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	rootParameters[1].DescriptorTable.pDescriptorRanges = &descriptorRange[1]; // Tableの中身の配列を指定
-	rootParameters[1].DescriptorTable.NumDescriptorRanges = 1; // Tableで利用する数
-
-	// gMaterial CBV b0
-	rootParameters[2].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV; // CBVを使う
-	rootParameters[2].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-	rootParameters[2].Descriptor.ShaderRegister = 0; // レジスタ番号0を使う
-
-	descriptionRootSignature.pParameters = rootParameters; // ルートパラメータ配列のポインタ
-	descriptionRootSignature.NumParameters = _countof(rootParameters); // 配列の長さ
-
-	// Samplerの作成
-	D3D12_STATIC_SAMPLER_DESC staticSamplers[2] = {};
-
-	// gSampler s0
-	staticSamplers[0].Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR; // バイリニアフィルタ
-	staticSamplers[0].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
-	staticSamplers[0].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[0].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
-	staticSamplers[0].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
-	staticSamplers[0].ShaderRegister = 0; // レジスタ番号0を使う
-	staticSamplers[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-
-	// gSamplerPoint s1
-	staticSamplers[1].Filter = D3D12_FILTER_MIN_MAG_MIP_POINT; // ポイントフィルタ
-	staticSamplers[1].AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP; // 0~1の範囲外をリピート
-	staticSamplers[1].AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[1].AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
-	staticSamplers[1].ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER; // 比較しない
-	staticSamplers[1].MaxLOD = D3D12_FLOAT32_MAX; // ありったけのMipmapを使う
-	staticSamplers[1].ShaderRegister = 1; // レジスタ番号1を使う
-	staticSamplers[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL; // PixelShaderで使う
-
-	descriptionRootSignature.pStaticSamplers = staticSamplers; // StaticSamplerの配列のポインタ
-	descriptionRootSignature.NumStaticSamplers = _countof(staticSamplers); // 配列の長さ
-
-	// シリアライズしてバイナリにする
-	ComPtr <ID3DBlob> signatureBlob = nullptr;
-	ComPtr <ID3DBlob> errorBlob = nullptr;
-	hr = D3D12SerializeRootSignature(&descriptionRootSignature,
-		D3D_ROOT_SIGNATURE_VERSION_1, &signatureBlob, &errorBlob);
-	if (FAILED(hr)) {
-		Log(reinterpret_cast<char*>(errorBlob->GetBufferPointer()));
-		assert(false);
-	}
-	// バイナリを元に生成
-	hr = dxUtility->GetDevice()->CreateRootSignature(0, signatureBlob->GetBufferPointer(),
-		signatureBlob->GetBufferSize(), IID_PPV_ARGS(&rootSignature));
-	assert(SUCCEEDED(hr));
-}
-
-void DepthOutlineFilter::CreateInputLayout() {
-
-	// InputLayoutの設定をしない 頂点にはデータを入力しないから
-	inputLayoutDesc.pInputElementDescs = nullptr;
-	inputLayoutDesc.NumElements = 0;
-}
-
-void DepthOutlineFilter::CreateBlendState() {
-
-	// すべての色要素を書き込む
-	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-}
-
-void DepthOutlineFilter::CreateRasterizerState() {
-
-	// 裏面(時計回り)を表示しない
-	rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
-	// 三角形の中を塗りつぶす
-	rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-}
-
-void DepthOutlineFilter::CreateVertexShader() {
-
-	// シェーダコンパイルを行う
-	vertexShaderBlob = dxUtility->CompileShader(L"resources/shaders/FullScreen.VS.hlsl", L"vs_6_0");
-	assert(vertexShaderBlob != nullptr);
-}
-
-void DepthOutlineFilter::CreatePixelShader() {
-
-	// シェーダコンパイルを行う
-	pixelShaderBlob = dxUtility->CompileShader(L"resources/shaders/DepthOutline.PS.hlsl", L"ps_6_0");
-	assert(pixelShaderBlob != nullptr);
-}
-
-void DepthOutlineFilter::CreateDepthStencilState() {
-
-	// 全画面に対して処理を行うので、比較や書き込みの必要がない
-	depthStencilDesc.DepthEnable = false;
-}
-
 void DepthOutlineFilter::CreateGraphicsPipeline() {
 
-	// PSOを生成する
-	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
+	// gConfig CBV b0 ピクセルシェーダーで使う
+	pipelineBuilder_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	/// === RootSignature === ///
-	CreateRootSignature();
-	graphicsPipelineStateDesc.pRootSignature = rootSignature.Get();
+	// gTexture SRV t0 ピクセルシェーダーで使う
+	pipelineBuilder_.AddRootParameterTable(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	/// === InputLayout === ///
-	CreateInputLayout();
-	graphicsPipelineStateDesc.InputLayout = inputLayoutDesc;
+	// gDepthTexture SRV t1 ピクセルシェーダーで使う
+	pipelineBuilder_.AddRootParameterTable(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	/// === BlendState === ///
-	CreateBlendState();
-	graphicsPipelineStateDesc.BlendState = blendDesc;
+	// gSampler 線形フィルタ、テクスチャ端は繰り返し、s0、ピクセルシェーダーで使う
+	pipelineBuilder_.AddStaticSampler(D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_CLAMP, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	/// === RasterizerState === ///
-	CreateRasterizerState();
-	graphicsPipelineStateDesc.RasterizerState = rasterizerDesc;
+	// gSamplerPoint ポイントフィルタ、テクスチャ端は繰り返し、s1、ピクセルシェーダーで使う
+	pipelineBuilder_.AddStaticSampler(D3D12_FILTER_MIN_MAG_MIP_POINT, D3D12_TEXTURE_ADDRESS_MODE_CLAMP, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	/// === VertexShader === ///
-	CreateVertexShader();
-	graphicsPipelineStateDesc.VS = { vertexShaderBlob->GetBufferPointer(), vertexShaderBlob->GetBufferSize() };
+	// シェーダーをパイプラインに設定
+	pipelineBuilder_.SetVertexShaderFileName(vertexShaderFileName_);
+	pipelineBuilder_.SetPixelShaderFileName(pixelShaderFileName_);
 
-	/// === PixelShader === ///
-	CreatePixelShader();
-	graphicsPipelineStateDesc.PS = { pixelShaderBlob->GetBufferPointer(), pixelShaderBlob->GetBufferSize() };
+	// ブレンドモードの設定 アルファブレンド
+	pipelineBuilder_.SetBlendMode(GraphicsPipelineBuilder::BlendMode::None);
 
-	/// === DepthStencilState === ///
-	CreateDepthStencilState();
-	graphicsPipelineStateDesc.DepthStencilState = depthStencilDesc;
-	graphicsPipelineStateDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// カリングモードの設定 なし
+	pipelineBuilder_.SetCullMode(GraphicsPipelineBuilder::CullMode::None);
 
-	// 書き込むRTVの情報
-	graphicsPipelineStateDesc.NumRenderTargets = 1;
-	graphicsPipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	// 利用するトポロジ(形状)のタイプ。三角形
-	graphicsPipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-	// どのように画面に色を打ち込むかの設定(気にしなくて良い)
-	graphicsPipelineStateDesc.SampleDesc.Count = 1;
-	graphicsPipelineStateDesc.SampleMask = D3D12_DEFAULT_SAMPLE_MASK;
-	// 実際に生成
-	hr = dxUtility->GetDevice()->CreateGraphicsPipelineState(&graphicsPipelineStateDesc,
-		IID_PPV_ARGS(&graphicsPipelineState));
-	assert(SUCCEEDED(hr));
+	// 深度モードの設定 無効化
+	pipelineBuilder_.SetDepthMode(GraphicsPipelineBuilder::DepthMode::Disabled);
+
+	// インプットエレメントの追加 POSITION0 float4
+	pipelineBuilder_.AddInputElement("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT);
+
+	// インプットエレメントの追加 TEXCOORD0 float2
+	pipelineBuilder_.AddInputElement("TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT);
+
+	// トポロジーモードの設定
+	pipelineBuilder_.SetTopologyMode(GraphicsPipelineBuilder::TopologyMode::Triangle);
+
+	// パイプライン作成
+	pipelineBuilder_.Build();
 }
 
-void DepthOutlineFilter::GenerateMaterialData() {
+void DepthOutlineFilter::CreateConfigData() {
 
-	/// === MaterialResourceを作る === ///
-	materialResource = dxUtility->CreateBufferResource(sizeof(Material));
+	// コンフィグバッファを生成
+	configBuffer_ = dxUtility_->CreateBufferResource(sizeof(ConfigData));
 
-	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
-	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+	// VRAMにデータを書き込むためにアドレスを取得して割り当てる
+	configBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&configData_));
 
-	/// === MaterialDataの初期値を書き込む === ///
-	materialData->projectionInverse = MakeIdentity4x4(); // 単位行列を設定
+	// 初期値をセット
+	configData_->projectionInverse = MakeIdentity4x4(); // 単位行列で初期化
 }
 

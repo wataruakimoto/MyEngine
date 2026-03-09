@@ -7,12 +7,14 @@
 
 namespace Engine {
 
-	/// ===== ディゾルブフィルター ===== ///
+	/// <summary>
+	/// ディゾルブフィルター
+	/// </summary>
 	class DissolveFilter : public BaseFilter {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -30,48 +32,13 @@ namespace Engine {
 		/// </summary>
 		void ShowImGui() override;
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// クラス内関数
+	///-------------------------------------------///
 	private:
 
 		/// <summary>
-		/// RootSignature作成
-		/// </summary>
-		void CreateRootSignature() override;
-
-		/// <summary>
-		/// InputLayout作成
-		/// </summary>
-		void CreateInputLayout() override;
-
-		/// <summary>
-		/// BlendState作成
-		/// </summary>
-		void CreateBlendState() override;
-
-		/// <summary>
-		/// RasterizerState作成
-		/// </summary>
-		void CreateRasterizerState() override;
-
-		/// <summary>
-		/// VertexShader作成
-		/// </summary>
-		void CreateVertexShader() override;
-
-		/// <summary>
-		/// PixelShader作成
-		/// </summary>
-		void CreatePixelShader() override;
-
-		/// <summary>
-		/// DepthStencilState作成
-		/// </summary>
-		void CreateDepthStencilState() override;
-
-		/// <summary>
-		/// GraphicsPipeline作成
+		/// グラフィックスパイプラインの生成
 		/// </summary>
 		void CreateGraphicsPipeline() override;
 
@@ -80,9 +47,9 @@ namespace Engine {
 		/// </summary>
 		void CreateConfigData();
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -91,12 +58,12 @@ namespace Engine {
 		/// <param name="relativePath">相対パス</param>
 		void SetMaskTextureFilePath(const std::string relativePath);
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
-	public:
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+	private:
 
-		struct Config {
+		struct ConfigData {
 
 			float threshold;	  // 閾値
 			Vector3 edgeColor;    // エッジの色
@@ -104,10 +71,13 @@ namespace Engine {
 			float padding[3];      // パディング
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 	private:
+
+		// ピクセルシェーダーのファイル名
+		std::wstring pixelShaderFileName_ = L"Filter/Dissolve.PS.hlsl";
 
 		// maskテクスチャのフルパス
 		std::string maskTextureFullPath = "";
@@ -115,9 +85,10 @@ namespace Engine {
 		// マスクテクスチャのSRVインデックス
 		uint32_t maskTextureSrvIndex = 0;
 
+		// コンフィグ用のバッファリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configBuffer_ = nullptr;
+
 		// コンフィグデータ
-		Config* configData = nullptr;
-		// コンフィグのリソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
+		ConfigData* configData_ = nullptr;
 	};
 }

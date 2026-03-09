@@ -1,4 +1,6 @@
 #include "SceneManager.h"
+#include "TransitionManager.h"
+#include "BaseTransition.h"
 
 #include <cassert>
 #include <imgui.h>
@@ -16,6 +18,9 @@ SceneManager* SceneManager::GetInstance() {
 }
 
 void SceneManager::Update() {
+
+	// 遷移の更新
+	TransitionManager::GetInstance()->Update();
 
 	// 次のシーン予約が入っていたら
 	if (nextScene_) {
@@ -46,6 +51,9 @@ void SceneManager::DrawFiltered() {
 void SceneManager::DrawUnfiltered() {
 
 	scene_->DrawUnfiltered();
+
+	// 遷移の描画
+	TransitionManager::GetInstance()->Draw();
 }
 
 void SceneManager::Finalize() {
@@ -65,11 +73,24 @@ void SceneManager::ShowImGui() {
 	sceneFactory_->ShowImGui();
 }
 
-void SceneManager::ChangeScene(const std::string& sceneName) {
+void SceneManager::ChangeScene(const std::string& sceneName, std::unique_ptr<BaseTransition> transition, float duration) {
 
 	assert(sceneFactory_);
 	assert(nextScene_ == nullptr);
 
-	// ファクトリーから次のシーンを生成する
-	nextScene_ = sceneFactory_->CreateScene(sceneName);
+	// 遷移の指定がなければ
+	if (!transition) {
+
+		// 次のシーンを生成してすぐ切り替える
+		nextScene_ = sceneFactory_->CreateScene(sceneName);
+	}
+	// 遷移の指定があれば
+	else {
+
+		TransitionManager::GetInstance()->StartTransition(
+			std::move(transition),										   // 遷移の仕方
+			[&]() { nextScene_ = sceneFactory_->CreateScene(sceneName); }, // 遷移完了時の処理
+			duration													   // 遷移にかける時間
+		);
+	}
 }
