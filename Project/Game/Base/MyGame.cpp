@@ -13,7 +13,7 @@ using namespace Engine;
 
 void MyGame::Initialize() {
 
-	// 基底クラス初期化
+	// エンジン層の初期化
 	Framework::Initialize();
 
 	// テクスチャマネージャのインスタンス取得
@@ -37,44 +37,19 @@ void MyGame::Initialize() {
 
 void MyGame::Update() {
 
-	// Windowにメッセージが来てたら最優先で処理させる
-	if (winApp->ProcessMessage()) {
-
-		// ゲームループを抜ける
-		endRequest_ = true;
-
-	}
-	else {
+	// エンジン層の更新
+	Framework::Update();
 
 #ifdef _DEBUG
 
-		// Tabキーが押されたら
-		if (Input::GetInstance()->TriggerKey(VK_TAB)) {
+	// Tabキーが押されたら
+	if (Input::GetInstance()->TriggerKey(VK_TAB)) {
 
-			// エディットモード切り替え
-			isEditMode_ = !isEditMode_;
-		}
+		// エディットモード切り替え
+		isEditMode_ = !isEditMode_;
+	}
 
 #endif // _DEBUG
-
-		// 基底クラス更新
-		Framework::Update();
-
-		/// === ImGui開始 === ///
-		ImGuiManager::GetInstance()->Begin();
-
-		// シーンマネージャの更新
-		SceneManager::GetInstance()->Update();
-
-		// シーンのImGui表示
-		SceneManager::GetInstance()->ShowImGui();
-
-		// シーンビュー作成
-		sceneBuffer->CreateSceneView();
-
-		/// === ImGui終了 === ///
-		ImGuiManager::GetInstance()->End();
-	}
 }
 
 void MyGame::Draw() {

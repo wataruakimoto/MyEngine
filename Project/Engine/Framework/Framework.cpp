@@ -1,18 +1,17 @@
 #include "Framework.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
+#include "Texture/TextureManager.h"
+#include "Sprite/SpriteRenderer.h"
+#include "Model/ModelManager.h"
+#include "Object/Object3dRenderer.h"
+#include "Skybox/SkyBoxRenderer.h"
+#include "Particle/ParticleRenderer.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "ImGuiManager.h"
 #include "AudioManager.h"
 #include "Input.h"
-#include "Texture/TextureManager.h"
-#include "Model/ModelManager.h"
 #include "SceneManager.h"
-
-#include "Sprite/SpriteRenderer.h"
-#include "Object/Object3dRenderer.h"
-#include "Skybox/SkyBoxRenderer.h"
-#include "Particle/ParticleRenderer.h"
 
 using namespace Engine;
 
@@ -25,39 +24,13 @@ void Framework::Initialize() {
 	// ウィンドウを表示する
 	ShowWindow(winApp->GetHwnd(), SW_SHOW);
 
-	// DirectX初期化
-	DirectXUtility::GetInstance()->Initialize();
+	// DirectXユーティリティの初期化
+	dxUtility_ = DirectXUtility::GetInstance();
+	dxUtility_->Initialize();
 
 	// Srvマネージャ初期化
-	SrvManager::GetInstance()->Initialize();
-
-	// オーディオマネージャ初期化
-	AudioManager::GetInstance()->Initialize();
-
-	// 入力の初期化
-	Input::GetInstance()->Initialize(winApp.get());
-
-	// テクスチャマネージャ初期化
-	TextureManager::GetInstance()->Initialize();
-
-	// スプライトレンダラーの初期化
-	spriteRenderer_ = SpriteRenderer::GetInstance();
-	spriteRenderer_->Initialize();
-
-	// モデルマネージャ初期化
-	ModelManager::GetInstance()->Initialize();
-
-	// 3Dオブジェクトレンダラー初期化
-	object3dRenderer_ = Object3dRenderer::GetInstance();
-	object3dRenderer_->Initialize();
-
-	// パーティクルレンダラー初期化
-	particleRenderer_ = ParticleRenderer::GetInstance();
-	particleRenderer_->Initialize();
-
-	// スカイボックスレンダラー初期化
-	skyBoxRenderer_ = SkyBoxRenderer::GetInstance();
-	skyBoxRenderer_->Initialize();
+	srvManager_ = SrvManager::GetInstance();
+	srvManager_->Initialize();
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
@@ -72,59 +45,120 @@ void Framework::Initialize() {
 	postProcessBuffer->Initialize();
 
 	// フィルターマネージャ初期化
-	FilterManager::GetInstance()->Initialize();
+	filterManager_ = FilterManager::GetInstance();
+	filterManager_->Initialize();
 
 	// ImGuiの初期化
-	ImGuiManager::GetInstance()->Initialize(winApp.get(), swapChain.get());
+	imguiManager_ = ImGuiManager::GetInstance();
+	imguiManager_->Initialize(winApp.get(), swapChain.get());
+
+	// テクスチャマネージャ初期化
+	textureManager_ = TextureManager::GetInstance();
+	textureManager_->Initialize();
+
+	// スプライトレンダラーの初期化
+	spriteRenderer_ = SpriteRenderer::GetInstance();
+	spriteRenderer_->Initialize();
+
+	// モデルマネージャ初期化
+	modelManager_ = ModelManager::GetInstance();
+	modelManager_->Initialize();
+
+	// 3Dオブジェクトレンダラー初期化
+	object3dRenderer_ = Object3dRenderer::GetInstance();
+	object3dRenderer_->Initialize();
+
+	// スカイボックスレンダラー初期化
+	skyBoxRenderer_ = SkyBoxRenderer::GetInstance();
+	skyBoxRenderer_->Initialize();
+
+	// パーティクルレンダラー初期化
+	particleRenderer_ = ParticleRenderer::GetInstance();
+	particleRenderer_->Initialize();
+
+	// オーディオマネージャ初期化
+	audioManager_ = AudioManager::GetInstance();
+	audioManager_->Initialize();
+
+	// 入力の初期化
+	input_ = Input::GetInstance();
+	input_->Initialize(winApp.get());
+
+	// シーンマネージャのインスタンス取得
+	sceneManager_ = SceneManager::GetInstance();
 }
 
 void Framework::Update() {
 
-	// 入力の更新
-	Input::GetInstance()->Update();
+	// Windowにメッセージが来てたら最優先で処理させる
+	if (winApp->ProcessMessage()) {
+
+		// ゲームループを抜ける
+		endRequest_ = true;
+	}
+	else {
+
+		// 入力の更新
+		Input::GetInstance()->Update();
+
+		/// === ImGui開始 === ///
+		imguiManager_->Begin();
+
+		// シーンマネージャの更新
+		sceneManager_->Update();
+
+		// シーンのImGui表示
+		sceneManager_->ShowImGui();
+
+		// シーンビュー作成
+		sceneBuffer->CreateSceneView();
+
+		/// === ImGui終了 === ///
+		imguiManager_->End();
+	}
 }
 
 void Framework::Finalize() {
 
 	// シーンマネージャ終了
-	SceneManager::GetInstance()->Finalize();
+	sceneManager_->Finalize();
 
-	// フィルターマネージャの終了
-	FilterManager::GetInstance()->Finalize();
+	// 入力の終了
+	input_->Finalize();
 
-	// ImGuiの終了
-	ImGuiManager::GetInstance()->Finalize();
-
-	// スカイボックスレンダラーの終了
-	skyBoxRenderer_->Finalize();
+	// オーディオマネージャ終了
+	audioManager_->Finalize();
 
 	// パーティクルレンダラーの終了
 	particleRenderer_->Finalize();
 
-	// 3Dオブジェクト共通部の解放
+	// スカイボックスレンダラーの終了
+	skyBoxRenderer_->Finalize();
+
+	// 3Dオブジェクトレンダラーの終了
 	object3dRenderer_->Finalize();
+
+	// モデルマネージャの終了
+	modelManager_->Finalize();
 
 	// スプライトレンダラーの終了
 	spriteRenderer_->Finalize();
 
-	// モデルマネージャの終了
-	ModelManager::GetInstance()->Finalize();
-
 	// テクスチャマネージャの終了
-	TextureManager::GetInstance()->Finalize();
+	textureManager_->Finalize();
 
-	// 入力の終了
-	Input::GetInstance()->Finalize();
+	// ImGuiマネージャの終了
+	imguiManager_->Finalize();
 
-	// オーディオマネージャ終了
-	AudioManager::GetInstance()->Finalize();
+	// フィルタマネージャの終了
+	filterManager_->Finalize();
 
 	// Srvマネージャの終了
-	SrvManager::GetInstance()->Finalize();
+	srvManager_->Finalize();
 
-	// DirectX機能の終了
-	DirectXUtility::GetInstance()->Finalize();
-	
+	// DirectXユーティリティの終了
+	dxUtility_->Finalize();
+
 	// WindowsAPIの終了処理
 	winApp->Finalize();
 }

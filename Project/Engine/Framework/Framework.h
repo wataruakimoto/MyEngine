@@ -5,19 +5,27 @@
 #include "SceneBuffer.h"
 #include "OffscreenRendering/PostProcessBuffer.h"
 #include "AbstractSceneFactory.h"
+#include "OffscreenRendering/FilterManager.h"
 
 #include <memory>
 
 namespace Engine {
 
 	/// === 前方宣言 === ///
-	class WinApp;
+	
 	class DirectXUtility;
-
+	class SrvManager;
+	class FilterManager;
+	class ImGuiManager;
+	class TextureManager;
 	class SpriteRenderer;
+	class ModelManager;
 	class Object3dRenderer;
 	class SkyBoxRenderer;
 	class ParticleRenderer;
+	class AudioManager;
+	class Input;
+	class SceneManager;
 
 	/// === フレームワーク === ///
 	class Framework {
@@ -63,8 +71,19 @@ namespace Engine {
 		///-------------------------------------------///
 	protected:
 
+		// ゲーム終了フラグ
+		bool endRequest_ = false;
+
+		/// ===== ポインタ・インスタンス ===== ///
+
 		// WindowsAPIのポインタ
 		std::unique_ptr<WinApp> winApp = nullptr;
+
+		// DirectXユーティリティのインスタンス
+		DirectXUtility* dxUtility_ = nullptr;
+
+		// Srvマネージャのインスタンス
+		SrvManager* srvManager_ = nullptr;
 
 		// スワップチェインのポインタ
 		std::unique_ptr<SwapChain> swapChain = nullptr;
@@ -75,16 +94,20 @@ namespace Engine {
 		// ポストプロセスバッファのポインタ
 		std::unique_ptr<PostProcessBuffer> postProcessBuffer = nullptr;
 
-		// シーンファクトリー
-		std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+		// フィルタマネージャのインスタンス
+		FilterManager* filterManager_ = nullptr;
 
-		// ゲーム終了フラグ
-		bool endRequest_ = false;
+		// ImGuiマネージャのインスタンス
+		ImGuiManager* imguiManager_ = nullptr;
 
-		/// ===== シングルトン ===== ///
+		// テクスチャマネージャのインスタンス
+		TextureManager* textureManager_ = nullptr;
 
 		// スプライトレンダラーのインスタンス
 		SpriteRenderer* spriteRenderer_ = nullptr;
+
+		// モデルマネージャのインスタンス
+		ModelManager* modelManager_ = nullptr;
 
 		// 3Dオブジェクトレンダラーのインスタンス
 		Object3dRenderer* object3dRenderer_ = nullptr;
@@ -94,5 +117,17 @@ namespace Engine {
 
 		// パーティクルレンダラーのインスタンス
 		ParticleRenderer* particleRenderer_ = nullptr;
+
+		// シーンファクトリー
+		std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;
+
+		// オーディオマネージャのインスタンス
+		AudioManager* audioManager_ = nullptr;
+
+		// 入力のインスタンス
+		Input* input_ = nullptr;
+
+		// シーンマネージャのインスタンス
+		SceneManager* sceneManager_ = nullptr;
 	};
 }
