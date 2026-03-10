@@ -45,6 +45,17 @@ namespace Engine {
 		void CreateConfigData();
 
 	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
+	public:
+
+		/// <summary>
+		/// 色の設定
+		/// </summary>
+		/// <param name="color"></param>
+		void SetColor(const Vector4& color) { configData_->color = color; }
+
+	///-------------------------------------------/// 
 	/// 構造体
 	///-------------------------------------------///
 	private:

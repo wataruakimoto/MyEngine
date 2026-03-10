@@ -94,5 +94,6 @@ void GaussianBlurFilter::CreateGraphicsPipeline() {
 	pipelineBuilder_.SetTopologyMode(GraphicsPipelineBuilder::TopologyMode::Triangle);
 
 	// パイプライン作成
+	pipelineBuilder_.Build();
 }
 

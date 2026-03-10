@@ -55,6 +55,17 @@ void FadeFilter::ShowImGui() {
 
 #ifdef USE_IMGUI
 
+	if(ImGui::TreeNode("FadeFilter")) {
+
+		// 有効化フラグの編集
+		ImGui::Checkbox("Active", &isActive_);
+
+		// 色の編集
+		ImGui::ColorEdit4("Color", &configData_->color.x);
+
+		ImGui::TreePop();
+	}
+
 #endif // USE_IMGUI
 }
 

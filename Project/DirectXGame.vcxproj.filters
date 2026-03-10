@@ -292,6 +292,7 @@
     <ClCompile Include="Engine\3D\Particle\ParticleRenderer.cpp" />
     <ClCompile Include="Engine\Scene\TransitionManager.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.cpp" />
+    <ClCompile Include="Game\Scene\System\Transition\FadeTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -602,6 +603,7 @@
     <ClInclude Include="Engine\Scene\BaseTransition.h" />
     <ClInclude Include="Engine\Scene\TransitionManager.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
+    <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

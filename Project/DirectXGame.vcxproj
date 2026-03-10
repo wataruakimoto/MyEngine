@@ -119,6 +119,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\MathRandom.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FogFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.cpp" />
+    <ClCompile Include="Game\Scene\System\Transition\FadeTransition.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
@@ -218,6 +219,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Scene\BaseTransition.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
+    <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />

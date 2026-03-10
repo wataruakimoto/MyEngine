@@ -51,6 +51,9 @@ void DepthOutlineFilter::Draw() {
 	// SRVをルートパラメータに設定
 	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
+	// 深度SRVをルートパラメータに設定
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager_->GetGPUDescriptorHandle(depthSrvIndex));
+
 	// 3頂点を1回描画する
 	dxUtility_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
