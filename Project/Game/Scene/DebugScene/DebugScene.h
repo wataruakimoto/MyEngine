@@ -2,10 +2,17 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
-#include "LineManager.h"
-#include "OffscreenRendering/FilterManager.h"
-#include "TransitionManager.h"
-#include "Input.h"
+
+namespace Engine {
+
+	/// ===== 前方宣言 ===== ///
+
+	class LineManager;
+	class FilterManager;
+	class TransitionManager;
+	class SceneManager;
+	class Input;
+}
 
 /// ===== デバッグシーン ===== ///
 class DebugScene : public BaseScene {
@@ -61,6 +68,9 @@ private:
 
 	// 遷移マネージャのポインタ
 	Engine::TransitionManager* transitionManager = nullptr;
+
+	// シーンマネージャのポインタ
+	Engine::SceneManager* sceneManager = nullptr;
 
 	// 入力のポインタ
 	Engine::Input* input = nullptr;

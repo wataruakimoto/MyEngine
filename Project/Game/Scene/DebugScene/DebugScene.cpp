@@ -1,6 +1,11 @@
 #include "DebugScene.h"
+#include "LineManager.h"
+#include "OffscreenRendering/FilterManager.h"
+#include "TransitionManager.h"
+#include "SceneManager.h"
 #include "Input.h"
 #include "Transition/FadeTransition.h"
+#include "Transition/SlideTransition.h"
 
 #include <imgui.h>
 
@@ -25,6 +30,9 @@ void DebugScene::Initialize() {
 	// 遷移マネージャの初期化
 	transitionManager = TransitionManager::GetInstance();
 
+	// シーンマネージャのインスタンス取得
+	sceneManager = SceneManager::GetInstance();
+
 	// 入力の初期化
 	input = Input::GetInstance();
 }
@@ -35,11 +43,9 @@ void DebugScene::Update() {
 	if (input->TriggerKey(VK_SPACE)) {
 
 		// フェードアウト開始
-		transitionManager->StartTransition(
-			std::make_unique<FadeTransition>(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }),
-			[]() {
-				// 遷移完了後の処理 (ここでは何もしない)
-			},
+		transitionManager->StartOutTransition(
+			std::make_unique<SlideTransition>( Vector2{ 1280.0f, 0.0f }),
+			[]() { SceneManager::GetInstance()->ChangeScene("TITLE"); },
 			2.0f // 遷移にかける時間 (秒)
 			);
 	}

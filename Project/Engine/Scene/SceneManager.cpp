@@ -19,9 +19,6 @@ SceneManager* SceneManager::GetInstance() {
 
 void SceneManager::Update() {
 
-	// 遷移の更新
-	TransitionManager::GetInstance()->Update();
-
 	// 次のシーン予約が入っていたら
 	if (nextScene_) {
 
@@ -87,7 +84,7 @@ void SceneManager::ChangeScene(const std::string& sceneName, std::unique_ptr<Bas
 	// 遷移の指定があれば
 	else {
 
-		TransitionManager::GetInstance()->StartTransition(
+		TransitionManager::GetInstance()->StartInTransition(
 			std::move(transition),										   // 遷移の仕方
 			[&]() { nextScene_ = sceneFactory_->CreateScene(sceneName); }, // 遷移完了時の処理
 			duration													   // 遷移にかける時間

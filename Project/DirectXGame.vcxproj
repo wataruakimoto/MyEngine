@@ -203,6 +203,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Skybox\SkyBoxRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleRenderer.cpp" />
     <ClCompile Include="Engine\Scene\TransitionManager.cpp" />
+    <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Math\AABB.h" />
@@ -318,6 +319,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Skybox\SkyBoxRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleRenderer.h" />
     <ClInclude Include="Engine\Scene\TransitionManager.h" />
+    <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

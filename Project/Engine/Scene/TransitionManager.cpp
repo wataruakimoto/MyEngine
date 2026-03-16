@@ -5,72 +5,73 @@ using namespace Engine;
 
 void TransitionManager::Update() {
 
-	// 遷移が進行中でなければ更新しない
-	if (state_ == TransitionState::None || !currentTransition_) return;
+	// 遷移がない場合は何もしない
+	if (!outTransition_ && !inTransition_) return;
 
 	// 進行度を計算
 	float addProgress = deltaTime_ / duration_;
 
-	switch (state_) {
+	// 入りの遷移がある場合
+	if (outTransition_) {
 
-	case TransitionManager::TransitionState::None:
+		// 1 になるまで 進行度を加算する処理
+		progress_ = std::min(progress_ + addProgress, 1.0f);
 
-		// 何もしない
+		// 遷移の演出を更新
+		outTransition_->Update(progress_);
 
-		break;
-
-	case TransitionManager::TransitionState::Out:
-
-		// 遷移の進行度を加算
-		progress_ += addProgress;
-
-		// 遷移が完了したら
+		// 進行度が 1 になったら
 		if (progress_ >= 1.0f) {
 
-			// 進行度を1に固定
-			progress_ = 1.0f;
+			// コールバック関数を呼び出す
+			onTransitionComplete_;
 
-			// コールバック関数があれば呼び出す
-			if (onTransitionComplete_) {
-
-				onTransitionComplete_();
-			}
+			// 入りの遷移をリセット
+			outTransition_ = nullptr;
 		}
 
-		break;
-
-	case TransitionManager::TransitionState::In:
-
-		// 遷移の進行度を減算
-		progress_ -= addProgress;
-
-		// 遷移が完了したら
-		if (progress_ <= 0.0f) {
-
-			// 進行度を0に固定
-			progress_ = 0.0f;
-
-			// 遷移状態を遷移なしに設定
-			state_ = TransitionState::None;
-
-			// 現在の遷移を破棄
-			currentTransition_.reset();
-		}
-
-		break;
+		// 
+		return;
 	}
 
-	// 現在の遷移を更新
-	currentTransition_->Update(progress_);
+	// 抜けの遷移がある場合
+	if (inTransition_) {
+
+		// 1 になるまで 進行度を加算する処理
+		progress_ = std::min(progress_ + addProgress, 1.0f);
+
+		// 遷移の演出を更新
+		inTransition_->Update(progress_);
+
+		// 進行度が 1 になったら
+		if (progress_ >= 1.0f) {
+
+			// コールバック関数を呼び出す
+			onTransitionComplete_;
+
+			// 抜けの遷移をリセット
+			inTransition_ = nullptr;
+		}
+	}
 }
 
 void TransitionManager::Draw() {
 
-	// 遷移が進行中でなければ更新しない
-	if (state_ == TransitionState::None || !currentTransition_) return;
+	// 入りの遷移演出があるなら
+	if (outTransition_) {
 
-	// 現在の遷移を描画
-	currentTransition_->Draw();
+		// 描画
+		outTransition_->Draw();
+
+		return;
+	}
+
+	// 抜けの遷移演出があるなら
+	if (inTransition_) {
+
+		// 描画
+		inTransition_->Draw();
+	}
 }
 
 void TransitionManager::Finalize() {
@@ -80,18 +81,26 @@ void TransitionManager::Finalize() {
 	instance = nullptr;
 }
 
-void TransitionManager::StartTransition(std::unique_ptr<BaseTransition> transition, std::function<void()> onComplete, float duration) {
+void TransitionManager::StartOutTransition(std::unique_ptr<BaseTransition> transition, std::function<void()> onComplete, float duration) {
 
 	// 引数をメンバ変数に保存
-	currentTransition_ = std::move(transition);
+	outTransition_ = std::move(transition);
 	duration_ = duration;
 	onTransitionComplete_ = onComplete;
 
 	// 遷移の進行度をリセット
 	progress_ = 0.0f;
+}
 
-	// 遷移状態を開始に設定
-	state_ = TransitionState::Out;
+void TransitionManager::StartInTransition(std::unique_ptr<BaseTransition> transition, std::function<void()> onComplete, float duration) {
+
+	// 引数をメンバ変数に保存
+	inTransition_ = std::move(transition);
+	duration_ = duration;
+	onTransitionComplete_ = onComplete;
+
+	// 遷移の進行度をリセット
+	progress_ = 0.0f;
 }
 
 TransitionManager* TransitionManager::instance = nullptr;
