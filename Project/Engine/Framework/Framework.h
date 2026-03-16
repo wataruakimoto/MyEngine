@@ -23,6 +23,7 @@ namespace Engine {
 	class Object3dRenderer;
 	class SkyBoxRenderer;
 	class ParticleRenderer;
+	class LineRenderer;
 	class AudioManager;
 	class Input;
 	class SceneManager;
@@ -99,6 +100,9 @@ namespace Engine {
 
 		// パーティクルレンダラーのインスタンス
 		ParticleRenderer* particleRenderer_ = nullptr;
+
+		// 線のレンダラーのインスタンス
+		LineRenderer* lineRenderer_ = nullptr;
 
 		// スワップチェインのポインタ
 		std::unique_ptr<SwapChain> swapChain = nullptr;

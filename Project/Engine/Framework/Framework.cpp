@@ -7,6 +7,7 @@
 #include "Object/Object3dRenderer.h"
 #include "Skybox/SkyBoxRenderer.h"
 #include "Particle/ParticleRenderer.h"
+#include "Line/LineRenderer.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "ImGuiManager.h"
 #include "AudioManager.h"
@@ -55,6 +56,10 @@ void Framework::Initialize() {
 	// パーティクルレンダラー初期化
 	particleRenderer_ = ParticleRenderer::GetInstance();
 	particleRenderer_->Initialize();
+
+	// 線のレンダラー初期化
+	lineRenderer_ = LineRenderer::GetInstance();
+	lineRenderer_->Initialize();
 
 	// スワップチェイン初期化
 	swapChain = std::make_unique <SwapChain>();
@@ -128,6 +133,9 @@ void Framework::Finalize() {
 
 	// オーディオマネージャ終了
 	audioManager_->Finalize();
+
+	// 線のレンダラーの終了
+	lineRenderer_->Finalize();
 
 	// パーティクルレンダラーの終了
 	particleRenderer_->Finalize();
