@@ -85,6 +85,21 @@ namespace Engine {
 		// Srvマネージャのインスタンス
 		SrvManager* srvManager_ = nullptr;
 
+		// スプライトレンダラーのインスタンス
+		SpriteRenderer* spriteRenderer_ = nullptr;
+
+		// モデルマネージャのインスタンス
+		ModelManager* modelManager_ = nullptr;
+
+		// 3Dオブジェクトレンダラーのインスタンス
+		Object3dRenderer* object3dRenderer_ = nullptr;
+
+		// スカイボックスレンダラーのインスタンス
+		SkyBoxRenderer* skyBoxRenderer_ = nullptr;
+
+		// パーティクルレンダラーのインスタンス
+		ParticleRenderer* particleRenderer_ = nullptr;
+
 		// スワップチェインのポインタ
 		std::unique_ptr<SwapChain> swapChain = nullptr;
 
@@ -102,21 +117,6 @@ namespace Engine {
 
 		// テクスチャマネージャのインスタンス
 		TextureManager* textureManager_ = nullptr;
-
-		// スプライトレンダラーのインスタンス
-		SpriteRenderer* spriteRenderer_ = nullptr;
-
-		// モデルマネージャのインスタンス
-		ModelManager* modelManager_ = nullptr;
-
-		// 3Dオブジェクトレンダラーのインスタンス
-		Object3dRenderer* object3dRenderer_ = nullptr;
-
-		// スカイボックスレンダラーのインスタンス
-		SkyBoxRenderer* skyBoxRenderer_ = nullptr;
-
-		// パーティクルレンダラーのインスタンス
-		ParticleRenderer* particleRenderer_ = nullptr;
 
 		// シーンファクトリー
 		std::unique_ptr<AbstractSceneFactory> sceneFactory_ = nullptr;

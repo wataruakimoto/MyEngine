@@ -32,26 +32,6 @@ void Framework::Initialize() {
 	srvManager_ = SrvManager::GetInstance();
 	srvManager_->Initialize();
 
-	// スワップチェイン初期化
-	swapChain = std::make_unique <SwapChain>();
-	swapChain->Initialize(winApp.get());
-
-	// シーンバッファ初期化
-	sceneBuffer = std::make_unique<SceneBuffer>();
-	sceneBuffer->Initialize();
-
-	// ポストプロセスバッファ初期化
-	postProcessBuffer = std::make_unique<PostProcessBuffer>();
-	postProcessBuffer->Initialize();
-
-	// フィルターマネージャ初期化
-	filterManager_ = FilterManager::GetInstance();
-	filterManager_->Initialize();
-
-	// ImGuiの初期化
-	imguiManager_ = ImGuiManager::GetInstance();
-	imguiManager_->Initialize(winApp.get(), swapChain.get());
-
 	// テクスチャマネージャ初期化
 	textureManager_ = TextureManager::GetInstance();
 	textureManager_->Initialize();
@@ -75,6 +55,26 @@ void Framework::Initialize() {
 	// パーティクルレンダラー初期化
 	particleRenderer_ = ParticleRenderer::GetInstance();
 	particleRenderer_->Initialize();
+
+	// スワップチェイン初期化
+	swapChain = std::make_unique <SwapChain>();
+	swapChain->Initialize(winApp.get());
+
+	// シーンバッファ初期化
+	sceneBuffer = std::make_unique<SceneBuffer>();
+	sceneBuffer->Initialize();
+
+	// ポストプロセスバッファ初期化
+	postProcessBuffer = std::make_unique<PostProcessBuffer>();
+	postProcessBuffer->Initialize();
+
+	// フィルターマネージャ初期化
+	filterManager_ = FilterManager::GetInstance();
+	filterManager_->Initialize();
+
+	// ImGuiの初期化
+	imguiManager_ = ImGuiManager::GetInstance();
+	imguiManager_->Initialize(winApp.get(), swapChain.get());
 
 	// オーディオマネージャ初期化
 	audioManager_ = AudioManager::GetInstance();

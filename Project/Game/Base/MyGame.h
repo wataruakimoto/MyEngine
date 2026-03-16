@@ -58,12 +58,4 @@ private:
 #else
 	bool isEditMode_ = false;
 #endif
-
-	/// ===== インスタンス ===== ///
-
-	// テクスチャマネージャのインスタンス
-	Engine::TextureManager* textureManager = nullptr;
-
-	// モデルマネージャのインスタンス
-	Engine::ModelManager* modelManager = nullptr;
 };
