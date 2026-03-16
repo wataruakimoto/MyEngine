@@ -7,12 +7,13 @@
 #include "Object/Object3dRenderer.h"
 #include "Skybox/SkyBoxRenderer.h"
 #include "Particle/ParticleRenderer.h"
-#include "Line/LineRenderer.h"
+#include "LineRenderer.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "ImGuiManager.h"
 #include "AudioManager.h"
 #include "Input.h"
 #include "SceneManager.h"
+#include "LineManager.h"
 
 using namespace Engine;
 
@@ -91,6 +92,10 @@ void Framework::Initialize() {
 
 	// シーンマネージャのインスタンス取得
 	sceneManager_ = SceneManager::GetInstance();
+
+	// 線マネージャの初期化
+	lineManager_ = LineManager::GetInstance();
+	lineManager_->Initialize();
 }
 
 void Framework::Update() {
@@ -105,6 +110,9 @@ void Framework::Update() {
 
 		// 入力の更新
 		Input::GetInstance()->Update();
+
+		// 線マネージャのリセット
+		lineManager_->Clear();
 
 		/// === ImGui開始 === ///
 		imguiManager_->Begin();
@@ -124,6 +132,9 @@ void Framework::Update() {
 }
 
 void Framework::Finalize() {
+
+	// 線マネージャの終了
+	lineManager_->Finalize();
 
 	// シーンマネージャ終了
 	sceneManager_->Finalize();

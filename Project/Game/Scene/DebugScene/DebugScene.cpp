@@ -13,13 +13,9 @@ void DebugScene::Initialize() {
 	camera->Initialize();
 	camera->SetTranslate({ 0.0f,0.0f,-20.0f });
 
-	// 線描画レンダラーの初期化
-	lineRenderer = LineRenderer::GetInstance();
-	lineRenderer->Initialize();
-
-	// 線描画マネージャの初期化
+	// 線描画マネージャのインスタンス取得
 	lineManager = LineManager::GetInstance();
-	lineManager->Initialize();
+	// 線描画マネージャにデフォルトカメラをセット
 	lineManager->SetDefaultCamera(camera.get());
 
 	// フィルターマネージャの初期化
@@ -50,12 +46,6 @@ void DebugScene::Update() {
 
 	// カメラの更新
 	camera->Update();
-
-	// 線描画マネージャのクリア
-	lineManager->Clear();
-
-	// 遷移マネージャの更新
-	transitionManager->Update();
 }
 
 void DebugScene::DrawFiltered() {
@@ -63,21 +53,10 @@ void DebugScene::DrawFiltered() {
 
 void DebugScene::DrawUnfiltered() {
 
-	// 線描画の設定
-	lineRenderer->SettingDrawing();
-
 	lineManager->DrawSphere({ 0.0f, 0.0f, 0.0f }, 2.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, 16);
-
-	// 線描画
-	lineManager->Render();
 }
 
 void DebugScene::Finalize() {
-
-	// 線描画マネージャの終了
-	lineManager->Finalize();
-	// 線描画レンダラーの終了
-	lineRenderer->Finalize();
 }
 
 void DebugScene::ShowImGui() {

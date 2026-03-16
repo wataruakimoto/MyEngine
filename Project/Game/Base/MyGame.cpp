@@ -8,6 +8,9 @@
 #include "Input.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
+#include "LineRenderer.h"
+#include "LineManager.h"
+#include "TransitionManager.h"
 
 using namespace Engine;
 
@@ -23,16 +26,27 @@ void MyGame::Initialize() {
 	sceneManager_->SetSceneFactory(sceneFactory_.get());
 
 	// シーンマネージャに最初のシーンをセット
+#ifdef _DEBUG
+	sceneManager_->ChangeScene("DEBUG");
+#else
 	sceneManager_->ChangeScene("TITLE");
+#endif
 
 	// パーティクルマネージャの初期化
-	ParticleManager::GetInstance()->Initialize();
+	particleManager_ = ParticleManager::GetInstance();
+	particleManager_->Initialize();
+
+	// 遷移マネージャのインスタンス取得
+	transitionManager_ = TransitionManager::GetInstance();
 }
 
 void MyGame::Update() {
 
 	// エンジン層の更新
 	Framework::Update();
+
+	// 遷移マネージャの更新
+	transitionManager_->Update();
 
 #ifdef _DEBUG
 
@@ -66,6 +80,12 @@ void MyGame::Draw() {
 
 	sceneManager_->DrawUnfiltered();
 
+	// 線描画の設定
+	lineRenderer_->SettingDrawing();
+
+	// 線描画
+	lineManager_->Render();
+
 	sceneBuffer->PostDraw();
 
 	/// ========== ゲームシーンの描画終了 ========== ///
@@ -96,7 +116,7 @@ void MyGame::Draw() {
 void MyGame::Finalize() {
 
 	// パーティクルマネージャの終了
-	ParticleManager::GetInstance()->Finalize();
+	particleManager_->Finalize();
 
 	// 基底クラス解放
 	Framework::Finalize();

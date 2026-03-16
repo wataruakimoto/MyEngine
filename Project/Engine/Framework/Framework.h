@@ -27,6 +27,7 @@ namespace Engine {
 	class AudioManager;
 	class Input;
 	class SceneManager;
+	class LineManager;
 
 	/// === フレームワーク === ///
 	class Framework {
@@ -133,5 +134,8 @@ namespace Engine {
 
 		// シーンマネージャのインスタンス
 		SceneManager* sceneManager_ = nullptr;
+
+		// 線マネージャのインスタンス
+		LineManager* lineManager_ = nullptr;
 	};
 }

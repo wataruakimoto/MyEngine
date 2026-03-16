@@ -3,7 +3,6 @@
 #include "BaseScene.h"
 #include "Camera.h"
 #include "LineManager.h"
-#include "LineRenderer.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "TransitionManager.h"
 #include "Input.h"
@@ -53,9 +52,6 @@ private:
 
 	// カメラのポインタ
 	std::unique_ptr<Engine::Camera> camera = nullptr;
-
-	// 線描画レンダラーのポインタ
-	Engine::LineRenderer* lineRenderer = nullptr;
 
 	// 線描画マネージャのポインタ
 	Engine::LineManager* lineManager = nullptr;
