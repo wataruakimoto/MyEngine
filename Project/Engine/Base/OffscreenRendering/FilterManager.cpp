@@ -68,6 +68,11 @@ void FilterManager::Initialize() {
 	filters_["Fog"] = std::move(fogFilter_);
 	filterOrder.push_back("Fog");
 
+	fadeFilter_ = std::make_unique<FadeFilter>();
+	fadeFilter_->Initialize();
+	filters_["Fade"] = std::move(fadeFilter_);
+	filterOrder.push_back("Fade");
+
 	/// ===== 描画順序の設定 ===== ///
 
 	// 一旦クリア
@@ -92,6 +97,7 @@ void FilterManager::Initialize() {
 		// その他
 		"Vignette",
 		"Fog",
+		"Fade",
 
 		"FullScreen" // 最後にフルスクリーンフィルターでシーンに書き戻す
 	};

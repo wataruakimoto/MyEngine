@@ -25,44 +25,21 @@
     <FxCompile Include="Resources\Shaders\Particle\Particle.VS.hlsl">
       <Filter>Engine\3D\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="Resources\Shaders\DepthOutline.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\BoxBlur.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\Dissolve.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\Fog.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\shaders\FullScreen.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\shaders\FullScreen.VS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\GaussianBlur.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\shaders\Grayscale.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\LuminanceOutline.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\RadialBlur.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\Shaders\Random.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
-    <FxCompile Include="Resources\shaders\Vignette.PS.hlsl">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </FxCompile>
     <FxCompile Include="Resources\Shaders\Line\Line.VS.hlsl" />
     <FxCompile Include="Resources\Shaders\Line\Line.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\Fade.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\Dissolve.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\BoxBlur.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\DepthOutline.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\Fog.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\FullScreen.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\FullScreen.VS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\GaussianBlur.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\Grayscale.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\LuminanceOutline.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\RadialBlur.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\Random.PS.hlsl" />
+    <FxCompile Include="Resources\Shaders\Filter\Vignette.PS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -313,6 +290,10 @@
     <ClCompile Include="Engine\3D\Object\Object3dRenderer.cpp" />
     <ClCompile Include="Engine\3D\Skybox\SkyBoxRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleRenderer.cpp" />
+    <ClCompile Include="Engine\Scene\TransitionManager.cpp" />
+    <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.cpp" />
+    <ClCompile Include="Game\Scene\System\Transition\FadeTransition.cpp" />
+    <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -620,6 +601,11 @@
     <ClInclude Include="Engine\3D\Object\Object3dRenderer.h" />
     <ClInclude Include="Engine\3D\Skybox\SkyBoxRenderer.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleRenderer.h" />
+    <ClInclude Include="Engine\Scene\BaseTransition.h" />
+    <ClInclude Include="Engine\Scene\TransitionManager.h" />
+    <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
+    <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
+    <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">
@@ -634,10 +620,8 @@
     <None Include="Resources\Shaders\Particle\Particle.hlsli">
       <Filter>Engine\3D\Particle</Filter>
     </None>
-    <None Include="Resources\shaders\FullScreen.hlsli">
-      <Filter>Engine\Base\PostProcess\Filters</Filter>
-    </None>
     <None Include="Resources\Shaders\Line\Line.hlsli" />
+    <None Include="Resources\Shaders\Filter\FullScreen.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">

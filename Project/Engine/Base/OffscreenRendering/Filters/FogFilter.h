@@ -5,12 +5,17 @@
 
 namespace Engine {
 
-	/// ===== フォグフィルター ===== ///
+	/// ===== 前方宣言 ===== ///
+	class Camera;
+
+	/// <summary>
+	/// フォグフィルター
+	/// </summary>
 	class FogFilter : public BaseFilter {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -28,48 +33,13 @@ namespace Engine {
 		/// </summary>
 		void ShowImGui() override;
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// クラス内関数
+	///-------------------------------------------///
 	private:
 
 		/// <summary>
-		/// RootSignature作成
-		/// </summary>
-		void CreateRootSignature() override;
-
-		/// <summary>
-		/// InputLayout作成
-		/// </summary>
-		void CreateInputLayout() override;
-
-		/// <summary>
-		/// BlendState作成
-		/// </summary>
-		void CreateBlendState() override;
-
-		/// <summary>
-		/// RasterizerState作成
-		/// </summary>
-		void CreateRasterizerState() override;
-
-		/// <summary>
-		/// VertexShader作成
-		/// </summary>
-		void CreateVertexShader() override;
-
-		/// <summary>
-		/// PixelShader作成
-		/// </summary>
-		void CreatePixelShader() override;
-
-		/// <summary>
-		/// DepthStencilState作成
-		/// </summary>
-		void CreateDepthStencilState() override;
-
-		/// <summary>
-		/// GraphicsPipeline作成
+		/// グラフィックスパイプラインの生成
 		/// </summary>
 		void CreateGraphicsPipeline() override;
 
@@ -78,11 +48,6 @@ namespace Engine {
 		/// </summary>
 		void CreateConfigData();
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
-	private:
-
 		/// <summary>
 		/// 距離を深度に変換する
 		/// </summary>
@@ -90,9 +55,9 @@ namespace Engine {
 		/// <returns>深度</returns>
 		float ConvertDistanceToDepth(float distance);
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -101,18 +66,21 @@ namespace Engine {
 		/// <param name="depthSrvIndex">深度用Srvインデックス</param>
 		void SetDepthSrvIndex(uint32_t depthSrvIndex) { this->depthSrvIndex = depthSrvIndex; }
 
-		void SetCamera(Camera* camera) { this->camera = camera; }
+		void SetCamera(Camera* camera) { this->camera_ = camera; }
 
-		void SetColor(const Vector4& color) { configData->color = color; }
+		void SetColor(const Vector4& color) { configData_->color = color; }
 
 		void SetStartDistance(float startDistance) { this->startDistance = startDistance; }
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
 	public:
 
-		struct Config {
+		/// <summary>
+		/// コンフィグデータ
+		/// </summary>
+		struct ConfigData {
 
 			Vector4 color; // 発光色
 			float start;   // フォグ開始距離
@@ -120,16 +88,10 @@ namespace Engine {
 			float padding[2];
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 	private:
-
-		// コンフィグデータ
-		Config* configData = nullptr;
-
-		// コンフィグデータ用リソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
 
 		// 深度用SRVインデックス
 		uint32_t depthSrvIndex = 0;
@@ -140,7 +102,16 @@ namespace Engine {
 		float nearClip = 0.1f;
 		float farClip = 1000.0f;
 
+		// ピクセルシェーダーのファイル名
+		std::wstring pixelShaderFileName_ = L"Filter/Fog.PS.hlsl";
+
+		// コンフィグ用のバッファリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configBuffer_ = nullptr;
+
+		// コンフィグデータ
+		ConfigData* configData_ = nullptr;
+
 		// カメラの借りポインタ
-		Camera* camera = nullptr;
+		Camera* camera_ = nullptr;
 	};
 }

@@ -1,14 +1,13 @@
 #pragma once
 
 #include "BaseFilter.h"
-#include "Vector3.h"
 
 namespace Engine {
 
 	/// <summary>
-	/// ビネットフィルター
+	/// フェードフィルター
 	/// </summary>
-	class VignetteFilter : public BaseFilter {
+	class FadeFilter : public BaseFilter {
 
 	///-------------------------------------------/// 
 	/// メンバ関数
@@ -35,6 +34,9 @@ namespace Engine {
 	///-------------------------------------------///
 	private:
 
+		/// <summary>
+		/// グラフィックスパイプラインの生成
+		/// </summary>
 		void CreateGraphicsPipeline() override;
 
 		/// <summary>
@@ -47,13 +49,11 @@ namespace Engine {
 	///-------------------------------------------///
 	public:
 
-		void SetColor(const Vector3& color) { configData_->color = color; }
-
-		void SetIntensity(float intensity) { configData_->intensity = intensity; }
-
-		void SetScale(float scale) { configData_->scale = scale; }
-
-		void SetRange(float range) { configData_->range = range; }
+		/// <summary>
+		/// 色の設定
+		/// </summary>
+		/// <param name="color"></param>
+		void SetColor(const Vector4& color) { configData_->color = color; }
 
 	///-------------------------------------------/// 
 	/// 構造体
@@ -65,10 +65,7 @@ namespace Engine {
 		/// </summary>
 		struct ConfigData {
 
-			Vector3 color; // 色
-			float intensity; // 強さ
-			float scale; // スケール
-			float range; // 範囲
+			Vector4 color; // フェード色
 		};
 
 	///-------------------------------------------/// 
@@ -77,7 +74,7 @@ namespace Engine {
 	private:
 
 		// ピクセルシェーダーのファイル名
-		std::wstring pixelShaderFileName_ = L"Filter/Vignette.PS.hlsl";
+		std::wstring pixelShaderFileName_ = L"Filter/Fade.PS.hlsl";
 
 		// コンフィグ用のバッファリソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> configBuffer_ = nullptr;
@@ -86,3 +83,4 @@ namespace Engine {
 		ConfigData* configData_ = nullptr;
 	};
 }
+

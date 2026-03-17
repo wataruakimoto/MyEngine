@@ -12,6 +12,7 @@
 #include "Filters/DissolveFilter.h"
 #include "Filters/RandomFilter.h"
 #include "Filters/FogFilter.h"
+#include "Filters/FadeFilter.h"
 
 #include <unordered_map>
 #include <vector>
@@ -112,6 +113,12 @@ namespace Engine {
 		/// <returns></returns>
 		FogFilter* GetFogFilter() const { return static_cast<FogFilter*>(filters_.at("Fog").get()); }
 
+		/// <summary>
+		/// フェードフィルターのゲッター
+		/// </summary>
+		/// <returns></returns>
+		FadeFilter* GetFadeFilter() const { return static_cast<FadeFilter*>(filters_.at("Fade").get()); }
+
 		///-------------------------------------------/// 
 		/// セッター
 		///-------------------------------------------///
@@ -166,6 +173,9 @@ namespace Engine {
 
 		// フォグフィルター
 		std::unique_ptr<FogFilter> fogFilter_ = nullptr;
+
+		// フェードフィルター
+		std::unique_ptr<FadeFilter> fadeFilter_ = nullptr;
 
 		// カメラの借りポインタ
 		Camera* camera = nullptr;

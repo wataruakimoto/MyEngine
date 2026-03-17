@@ -1,21 +1,24 @@
 #include "FullScreen.hlsli"
 
-Texture2D<float4> gTexture : register(t0);
-Texture2D<float> gDepthTexture : register(t1);
-SamplerState gSampler : register(s0);
-
-struct PixelShaderOutput {
-    float4 color : SV_TARGET0;
-};
-
 // フォグの設定
 struct Config {
     float4 color; // フォグの色
-    float start;  // フォグの開始距離
-    float end;    // フォグの終了距離
+    float start; // フォグの開始距離
+    float end; // フォグの終了距離
 };
 
 ConstantBuffer<Config> gConfig : register(b0);
+
+Texture2D<float4> gTexture : register(t0);
+
+Texture2D<float> gDepthTexture : register(t1);
+
+SamplerState gSampler : register(s0);
+
+struct PixelShaderOutput {
+    
+    float4 color : SV_TARGET0;
+};
 
 PixelShaderOutput main(VertexShaderOutput input) {
     
