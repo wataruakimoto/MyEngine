@@ -1,10 +1,14 @@
 #include "Collider.h"
+#include "LineManager.h"
 
 #include <imgui.h>
 
 using namespace Engine;
 
 void Collider::Initialize() {
+
+	// インスタンスを取得
+	lineManager_ = LineManager::GetInstance();
 }
 
 void Collider::Update() {
@@ -12,7 +16,21 @@ void Collider::Update() {
 
 void Collider::Draw() {
 
-	// 将来的にはワイヤーフレーム等で描画する予定
+	// 形状に応じて描画
+	if( std::holds_alternative<Sphere>( shape_ ) ) {
+
+		const Sphere& sphere = std::get<Sphere>( shape_ );
+
+		// 線描画マネージャで球を描画
+		lineManager_->DrawSphere( sphere.center, sphere.radius, { 1.0f, 1.0f, 1.0f, 1.0f } );
+	}
+	else if (std::holds_alternative<AABB>(shape_)) {
+
+		const AABB& aabb = std::get<AABB>(shape_);
+
+		// 線描画マネージャでAABBを描画
+		lineManager_->DrawAABB( aabb.min, aabb.max, { 1.0f, 1.0f, 1.0f, 1.0f } );
+	}
 }
 
 void Collider::SetShape(const CollisionShape& shape) {

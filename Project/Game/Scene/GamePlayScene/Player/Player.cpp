@@ -32,7 +32,7 @@ void Player::Initialize() {
 	object->SetModel(model.get());
 	object->SetScale({ 1.0f, 1.0f, 1.0f });
 
-	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 0.5f, 0.5f, 0.5f });
+	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
 
 	// コライダーの初期化
 	Collider::Initialize();
@@ -148,6 +148,8 @@ void Player::Update() {
 }
 
 void Player::Draw() {
+
+	Collider::Draw();
 
 	if (!isGroundHit_) {
 

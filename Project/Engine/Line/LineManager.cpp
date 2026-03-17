@@ -114,6 +114,38 @@ void LineManager::DrawSphere(const Vector3& center, float radius, const Vector4&
 	}
 }
 
+void LineManager::DrawAABB( const Vector3& min, const Vector3& max, const Vector4& color ) {
+
+	// AABBの8頂点を定義
+	Vector3 vertices[8] = {
+		{ min.x, min.y, min.z }, // 0: 最小点
+		{ max.x, min.y, min.z }, // 1: x最大
+		{ max.x, max.y, min.z }, // 2: x最大、y最大
+		{ min.x, max.y, min.z }, // 3: y最大
+		{ min.x, min.y, max.z }, // 4: z最大
+		{ max.x, min.y, max.z }, // 5: x最大、z最大
+		{ max.x, max.y, max.z }, // 6: x最大、y最大、z最大
+		{ min.x, max.y, max.z }  // 7: y最大、z最大
+	};
+
+	// AABBの12辺を描画
+
+	DrawLine( vertices[0], vertices[1], color ); // 下辺1
+	DrawLine( vertices[1], vertices[2], color ); // 下辺2
+	DrawLine( vertices[2], vertices[3], color ); // 下辺3
+	DrawLine( vertices[3], vertices[0], color ); // 下辺4
+
+	DrawLine( vertices[4], vertices[5], color ); // 上辺1
+	DrawLine( vertices[5], vertices[6], color ); // 上辺2
+	DrawLine( vertices[6], vertices[7], color ); // 上辺3
+	DrawLine( vertices[7], vertices[4], color ); // 上辺4
+
+	DrawLine( vertices[0], vertices[4], color ); // 垂直辺1
+	DrawLine( vertices[1], vertices[5], color ); // 垂直辺2
+	DrawLine( vertices[2], vertices[6], color ); // 垂直辺3
+	DrawLine( vertices[3], vertices[7], color ); // 垂直辺4
+}
+
 void LineManager::Render() {
 
 	// 頂点データがなければ描画しない
