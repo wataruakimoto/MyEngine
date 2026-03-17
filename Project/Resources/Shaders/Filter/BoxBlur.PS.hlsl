@@ -1,6 +1,7 @@
 #include "FullScreen.hlsli"
 
 Texture2D<float4> gTexture : register(t0);
+
 SamplerState gSampler : register(s0);
 
 static const float2 kIndex3x3[3][3] = {
@@ -32,6 +33,7 @@ static const float kKernel5x5[5][5] = {
 };
 
 struct PixelShaderOutput {
+    
     float4 color : SV_TARGET0;
 };
 

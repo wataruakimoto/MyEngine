@@ -1,15 +1,19 @@
 #include "FullScreen.hlsli"
 
-Texture2D<float4> gTexture : register(t0);
-SamplerState gSampler : register(s0);
-
-struct PixelShaderOutput {
-    float4 color : SV_TARGET0;
-};
-
 struct Config {
     
     float time; // 時間
+};
+
+ConstantBuffer<Config> gConfig : register(b0);
+
+Texture2D<float4> gTexture : register(t0);
+
+SamplerState gSampler : register(s0);
+
+struct PixelShaderOutput {
+    
+    float4 color : SV_TARGET0;
 };
 
 float rand2dTo1d(float2 value, float2 dotDir = float2(12.9898, 78.233)) {
@@ -19,8 +23,6 @@ float rand2dTo1d(float2 value, float2 dotDir = float2(12.9898, 78.233)) {
     random = frac(sin(random) * 143758.5453);
     return random;
 }
-
-ConstantBuffer<Config> gConfig : register(b0);
 
 PixelShaderOutput main(VertexShaderOutput input) {
     

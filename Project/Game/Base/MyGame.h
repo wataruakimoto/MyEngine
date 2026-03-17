@@ -5,8 +5,9 @@
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
-	class TextureManager;
-	class ModelManager;
+	
+	class ParticleManager;
+	class TransitionManager;
 }
 
 /// === ゲーム関連 === ///
@@ -59,11 +60,9 @@ private:
 	bool isEditMode_ = false;
 #endif
 
-	/// ===== インスタンス ===== ///
+	// パーティクルマネージャのインスタンス
+	Engine::ParticleManager* particleManager_ = nullptr;
 
-	// テクスチャマネージャのインスタンス
-	Engine::TextureManager* textureManager = nullptr;
-
-	// モデルマネージャのインスタンス
-	Engine::ModelManager* modelManager = nullptr;
+	// 遷移マネージャのインスタンス
+	Engine::TransitionManager* transitionManager_ = nullptr;
 };

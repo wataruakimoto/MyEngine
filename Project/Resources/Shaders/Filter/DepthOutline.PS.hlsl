@@ -1,20 +1,24 @@
 #include "FullScreen.hlsli"
 
-Texture2D<float4> gTexture : register(t0);
-Texture2D<float> gDepthTexture : register(t1);
-SamplerState gSampler : register(s0);
-SamplerState gSamplerPoint : register(s1);
-
-struct PixelShaderOutput {
-    float4 color : SV_TARGET0;
-};
-
-struct Material {
+struct Config {
     
     float4x4 projectionInverse;
 };
 
-ConstantBuffer<Material> gMaterial : register(b0);
+ConstantBuffer<Config> gConfig : register(b0);
+
+Texture2D<float4> gTexture : register(t0);
+
+Texture2D<float> gDepthTexture : register(t1);
+
+SamplerState gSampler : register(s0);
+
+SamplerState gSamplerPoint : register(s1);
+
+struct PixelShaderOutput {
+    
+    float4 color : SV_TARGET0;
+};
 
 static const float2 kIndex3x3[3][3] = {
     { { -1.0f, -1.0f }, { 0.0f, -1.0f }, { 1.0f, -1.0f } },
@@ -58,7 +62,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
             float ndcDepth = gDepthTexture.Sample(gSamplerPoint, texcoord);
             
             // NDC -> View P^{-1} においてx,yはz,wに影響を与えないので何でも良い
-            float4 viewSpace = mul(float4(0.0f, 0.0f, ndcDepth, 1.0f), gMaterial.projectionInverse);
+            float4 viewSpace = mul(float4(0.0f, 0.0f, ndcDepth, 1.0f), gConfig.projectionInverse);
             float viewZ = viewSpace.z * rcp(viewSpace.w); // 同次座標系からデカルト座標系へ変換
             difference.x += viewZ * kPrewittHorizontalKernel[x][y];
             difference.y += viewZ * kPrewittVerticalKernel[x][y];

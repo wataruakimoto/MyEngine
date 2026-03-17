@@ -8,73 +8,56 @@
 #include "Input.h"
 #include "Texture/TextureManager.h"
 #include "Model/ModelManager.h"
+#include "LineRenderer.h"
+#include "LineManager.h"
+#include "TransitionManager.h"
 
 using namespace Engine;
 
 void MyGame::Initialize() {
 
-	// 基底クラス初期化
+	// エンジン層の初期化
 	Framework::Initialize();
-
-	// テクスチャマネージャのインスタンス取得
-	textureManager = TextureManager::GetInstance();
-
-	// モデルマネージャのインスタンス取得
-	modelManager = ModelManager::GetInstance();
 
 	LoadAllResource();
 
 	// シーンファクトリーを生成
 	sceneFactory_ = std::make_unique <SceneFactory>();
-	SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
+	sceneManager_->SetSceneFactory(sceneFactory_.get());
 
 	// シーンマネージャに最初のシーンをセット
-	SceneManager::GetInstance()->ChangeScene("TITLE");
+#ifdef _DEBUG
+	sceneManager_->ChangeScene("DEBUG");
+#else
+	sceneManager_->ChangeScene("TITLE");
+#endif
 
 	// パーティクルマネージャの初期化
-	ParticleManager::GetInstance()->Initialize();
+	particleManager_ = ParticleManager::GetInstance();
+	particleManager_->Initialize();
+
+	// 遷移マネージャのインスタンス取得
+	transitionManager_ = TransitionManager::GetInstance();
 }
 
 void MyGame::Update() {
 
-	// Windowにメッセージが来てたら最優先で処理させる
-	if (winApp->ProcessMessage()) {
+	// エンジン層の更新
+	Framework::Update();
 
-		// ゲームループを抜ける
-		endRequest_ = true;
-
-	}
-	else {
+	// 遷移マネージャの更新
+	transitionManager_->Update();
 
 #ifdef _DEBUG
 
-		// Tabキーが押されたら
-		if (Input::GetInstance()->TriggerKey(VK_TAB)) {
+	// Tabキーが押されたら
+	if (input_->TriggerKey(VK_TAB)) {
 
-			// エディットモード切り替え
-			isEditMode_ = !isEditMode_;
-		}
+		// エディットモード切り替え
+		isEditMode_ = !isEditMode_;
+	}
 
 #endif // _DEBUG
-
-		// 基底クラス更新
-		Framework::Update();
-
-		/// === ImGui開始 === ///
-		ImGuiManager::GetInstance()->Begin();
-
-		// シーンマネージャの更新
-		SceneManager::GetInstance()->Update();
-
-		// シーンのImGui表示
-		SceneManager::GetInstance()->ShowImGui();
-
-		// シーンビュー作成
-		sceneBuffer->CreateSceneView();
-
-		/// === ImGui終了 === ///
-		ImGuiManager::GetInstance()->End();
-	}
 }
 
 void MyGame::Draw() {
@@ -85,17 +68,23 @@ void MyGame::Draw() {
 
 	sceneBuffer->PreDrawFiltered();
 
-	SceneManager::GetInstance()->DrawFiltered();
+	sceneManager_->DrawFiltered();
 
 	sceneBuffer->PostDraw();
 
-	FilterManager::GetInstance()->Draw(sceneBuffer.get(), postProcessBuffer.get());
+	filterManager_->Draw(sceneBuffer.get(), postProcessBuffer.get());
 
 	/// ===== フィルター適応のない描画 ===== ///
 
 	sceneBuffer->PreDrawUnfiltered();
 
-	SceneManager::GetInstance()->DrawUnfiltered();
+	sceneManager_->DrawUnfiltered();
+
+	// 線描画の設定
+	lineRenderer_->SettingDrawing();
+
+	// 線描画
+	lineManager_->Render();
 
 	sceneBuffer->PostDraw();
 
@@ -108,12 +97,12 @@ void MyGame::Draw() {
 	// エディットモードの場合
 	if (isEditMode_) {
 
-		ImGuiManager::GetInstance()->Draw();
+		imguiManager_->Draw();
 	}
 	// エディットモードでない場合
 	else {
 
-		FilterManager::GetInstance()->DrawTexture(sceneBuffer->GetSrvIndex());
+		filterManager_->DrawTexture(sceneBuffer->GetSrvIndex());
 	}
 
 	/// ========== 画面への描画終了 ========== ///
@@ -121,13 +110,13 @@ void MyGame::Draw() {
 	swapChain->PostDraw();
 
 	// DirectXユーティリティの描画後処理
-	DirectXUtility::GetInstance()->PostDraw();
+	dxUtility_->PostDraw();
 }
 
 void MyGame::Finalize() {
 
 	// パーティクルマネージャの終了
-	ParticleManager::GetInstance()->Finalize();
+	particleManager_->Finalize();
 
 	// 基底クラス解放
 	Framework::Finalize();
@@ -137,48 +126,48 @@ void MyGame::LoadAllResource() {
 
 	/// ===== テクスチャの読み込み ===== ///
 
-	textureManager->LoadTextureRelative("BlackScreen.png");
-	textureManager->LoadTextureRelative("start.png");
-	textureManager->LoadTextureRelative("title.png");
-	textureManager->LoadTextureRelative("White1280x720.png");
-	textureManager->LoadTextureRelative("Black1280x720.png");
-	textureManager->LoadTextureRelative("LockOn.png");
-	textureManager->LoadTextureRelative("2DReticle.png");
-	textureManager->LoadTextureRelative("Rule/Rule.png");
-	textureManager->LoadTextureRelative("Rule/Operation.png");
-	textureManager->LoadTextureRelative("Norma/NormaText.png");
-	textureManager->LoadTextureRelative("Norma/Slash.png");
-	textureManager->LoadTextureRelative("Numbers.png");
-	textureManager->LoadTextureRelative("Result/Clear.png");
-	textureManager->LoadTextureRelative("Result/GameOver.png");
-	textureManager->LoadTextureRelative("GameClear.png");
-	textureManager->LoadTextureRelative("GameOver.png");
-	textureManager->LoadTextureRelative("Guide/Mouse.png");
-	textureManager->LoadTextureRelative("Guide/MouseClick.png");
-	textureManager->LoadTextureRelative("Guide/ButtonA.png");
-	textureManager->LoadTextureRelative("Guide/ButtonD.png");
-	textureManager->LoadTextureRelative("Guide/PushA.png");
-	textureManager->LoadTextureRelative("Guide/PushD.png");
-	textureManager->LoadTextureRelative("Guide/Pause.png");
-	textureManager->LoadTextureRelative("Guide/Back.png");
-	textureManager->LoadTextureRelative("White1x1.png");
-	textureManager->LoadTextureRelative("PauseUI/ResumeButton.png");
-	textureManager->LoadTextureRelative("PauseUI/RestartButton.png");
-	textureManager->LoadTextureRelative("PauseUI/QuitButton.png");
-	textureManager->LoadTextureRelative("PauseUI/Frame.png");
+	textureManager_->LoadTextureRelative("BlackScreen.png");
+	textureManager_->LoadTextureRelative("start.png");
+	textureManager_->LoadTextureRelative("title.png");
+	textureManager_->LoadTextureRelative("White1280x720.png");
+	textureManager_->LoadTextureRelative("Black1280x720.png");
+	textureManager_->LoadTextureRelative("LockOn.png");
+	textureManager_->LoadTextureRelative("2DReticle.png");
+	textureManager_->LoadTextureRelative("Rule/Rule.png");
+	textureManager_->LoadTextureRelative("Rule/Operation.png");
+	textureManager_->LoadTextureRelative("Norma/NormaText.png");
+	textureManager_->LoadTextureRelative("Norma/Slash.png");
+	textureManager_->LoadTextureRelative("Numbers.png");
+	textureManager_->LoadTextureRelative("Result/Clear.png");
+	textureManager_->LoadTextureRelative("Result/GameOver.png");
+	textureManager_->LoadTextureRelative("GameClear.png");
+	textureManager_->LoadTextureRelative("GameOver.png");
+	textureManager_->LoadTextureRelative("Guide/Mouse.png");
+	textureManager_->LoadTextureRelative("Guide/MouseClick.png");
+	textureManager_->LoadTextureRelative("Guide/ButtonA.png");
+	textureManager_->LoadTextureRelative("Guide/ButtonD.png");
+	textureManager_->LoadTextureRelative("Guide/PushA.png");
+	textureManager_->LoadTextureRelative("Guide/PushD.png");
+	textureManager_->LoadTextureRelative("Guide/Pause.png");
+	textureManager_->LoadTextureRelative("Guide/Back.png");
+	textureManager_->LoadTextureRelative("White1x1.png");
+	textureManager_->LoadTextureRelative("PauseUI/ResumeButton.png");
+	textureManager_->LoadTextureRelative("PauseUI/RestartButton.png");
+	textureManager_->LoadTextureRelative("PauseUI/QuitButton.png");
+	textureManager_->LoadTextureRelative("PauseUI/Frame.png");
 
-	textureManager->LoadTextureRelative("rostock_laage_airport_4k.dds");
+	textureManager_->LoadTextureRelative("rostock_laage_airport_4k.dds");
 
 	/// ===== モデルの読み込み ===== ///
 
-	modelManager->LoadModelData("Player", "player.obj");
-	modelManager->LoadModelData("Cylinder", "cylinder.obj");
-	modelManager->LoadModelData("Floor", "floor.obj");
-	modelManager->LoadModelData("PlayerBullet", "PlayerBullet.obj");
-	modelManager->LoadModelData("Enemy", "enemy.obj");
-	modelManager->LoadModelData("Enemy", "Kamikaze.obj");
-	modelManager->LoadModelData("EnemyBullet", "EnemyBullet.obj");
-	modelManager->LoadModelData("Goal", "Goal.obj");
-	modelManager->LoadModelData("Gate", "Gate.obj");
-	modelManager->LoadModelData("Reticle", "Reticle.obj");
+	modelManager_->LoadModelData("Player", "player.obj");
+	modelManager_->LoadModelData("Cylinder", "cylinder.obj");
+	modelManager_->LoadModelData("Floor", "floor.obj");
+	modelManager_->LoadModelData("PlayerBullet", "PlayerBullet.obj");
+	modelManager_->LoadModelData("Enemy", "enemy.obj");
+	modelManager_->LoadModelData("Enemy", "Kamikaze.obj");
+	modelManager_->LoadModelData("EnemyBullet", "EnemyBullet.obj");
+	modelManager_->LoadModelData("Goal", "Goal.obj");
+	modelManager_->LoadModelData("Gate", "Gate.obj");
+	modelManager_->LoadModelData("Reticle", "Reticle.obj");
 }

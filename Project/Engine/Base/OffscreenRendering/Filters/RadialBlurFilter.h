@@ -6,12 +6,14 @@
 
 namespace Engine {
 
-	/// ===== ラジアルブラーフィルター ===== ///
+	/// <summary>
+	/// ラジアルブラーフィルター
+	/// </summary>
 	class RadialBlurFilter : public BaseFilter {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ関数
+	///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -29,95 +31,66 @@ namespace Engine {
 		/// </summary>
 		void ShowImGui() override;
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// クラス内関数
+	///-------------------------------------------///
 	private:
 
 		/// <summary>
-		/// RootSignature作成
-		/// </summary>
-		void CreateRootSignature() override;
-
-		/// <summary>
-		/// InputLayout作成
-		/// </summary>
-		void CreateInputLayout() override;
-
-		/// <summary>
-		/// BlendState作成
-		/// </summary>
-		void CreateBlendState() override;
-
-		/// <summary>
-		/// RasterizerState作成
-		/// </summary>
-		void CreateRasterizerState() override;
-
-		/// <summary>
-		/// VertexShader作成
-		/// </summary>
-		void CreateVertexShader() override;
-
-		/// <summary>
-		/// PixelShader作成
-		/// </summary>
-		void CreatePixelShader() override;
-
-		/// <summary>
-		/// DepthStencilState作成
-		/// </summary>
-		void CreateDepthStencilState() override;
-
-		/// <summary>
-		/// GraphicsPipeline作成
+		/// グラフィックスパイプラインの生成
 		/// </summary>
 		void CreateGraphicsPipeline() override;
 
 		/// <summary>
-		/// コンフィグデータ生成
+		/// コンフィグデータの生成
 		/// </summary>
 		void CreateConfigData();
 
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// ゲッター
+	///-------------------------------------------///
 	public:
 
-		float GetBlurStrength() { return configData->blurStrength; }
+		float GetBlurStrength() { return configData_->blurStrength; }
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// セッター
+	///-------------------------------------------///
 	public:
 
-		void SetGlowColor(const Vector3& glowColor) { configData->glowColor = glowColor; }
+		void SetGlowColor(const Vector3& glowColor) { configData_->glowColor = glowColor; }
 
-		void SetBlurStrength(float blurStrength) { configData->blurStrength = blurStrength; }
+		void SetBlurStrength(float blurStrength) { configData_->blurStrength = blurStrength; }
 
-		void SetCenter(const Vector2& center) { configData->center = center; }
+		void SetCenter(const Vector2& center) { configData_->center = center; }
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
-	public:
+	///-------------------------------------------/// 
+	/// 構造体
+	///-------------------------------------------///
+	private:
 
-		struct Config {
+		/// <summary>
+		/// コンフィグデータ
+		/// </summary>
+		struct ConfigData {
 
 			Vector3 glowColor;  // 発光色
 			float blurStrength; // ぼかし強度
 			Vector2 center;	    // 中心点
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	///-------------------------------------------/// 
+	/// メンバ変数
+	///-------------------------------------------///
 	private:
 
-		// コンフィグデータ
-		Config* configData = nullptr;
+		// ピクセルシェーダーのファイル名
+		std::wstring pixelShaderFileName_ = L"Filter/RadialBlur.PS.hlsl";
 
-		// コンフィグデータ用リソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> configResource = nullptr;
+		// コンフィグ用のバッファリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> configBuffer_ = nullptr;
+
+		// コンフィグデータ
+		ConfigData* configData_ = nullptr;
 	};
 }

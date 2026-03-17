@@ -2,6 +2,9 @@
 
 #include "BaseScene.h"
 #include "AbstractSceneFactory.h"
+#include "BaseTransition.h"
+
+#include <memory>
 
 namespace Engine {
 
@@ -71,7 +74,13 @@ namespace Engine {
 		/// シーンを変更
 		/// </summary>
 		/// <param name="sceneName">シーン名</param>
-		void ChangeScene(const std::string& sceneName);
+		/// <param name="transition">遷移の仕方</param>
+		/// <param name="duration">遷移にかける時間</param>
+		void ChangeScene(
+			const std::string& sceneName,
+			std::unique_ptr<BaseTransition> transition = nullptr,
+			float duration = 1.0f
+		);
 
 		///-------------------------------------------/// 
 		/// メンバ変数

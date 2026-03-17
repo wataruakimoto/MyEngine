@@ -1,4 +1,4 @@
-#include "FullScreenFilter.h"
+#include "FadeFilter.h"
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 
@@ -6,7 +6,7 @@
 
 using namespace Engine;
 
-void FullScreenFilter::Initialize() {
+void FadeFilter::Initialize() {
 
 	// DirectXユーティリティのインスタンス取得
 	dxUtility_ = DirectXUtility::GetInstance();
@@ -16,9 +16,12 @@ void FullScreenFilter::Initialize() {
 
 	// グラフィックスパイプラインの生成
 	CreateGraphicsPipeline();
+
+	// コンフィグデータの生成
+	CreateConfigData();
 }
 
-void FullScreenFilter::Draw() {
+void FadeFilter::Draw() {
 
 	// コマンドリストを取得
 	ID3D12GraphicsCommandList* commandList = dxUtility_->GetCommandList().Get();
@@ -38,29 +41,38 @@ void FullScreenFilter::Draw() {
 	// ディスクリプタヒープを設定
 	dxUtility_->GetCommandList()->SetDescriptorHeaps(1, descriptorHeaps);
 
+	// ConfigのCBVをルートパラメータに設定
+	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(0, configBuffer_->GetGPUVirtualAddress());
+
 	// SRVをルートパラメータに設定
-	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager_->GetGPUDescriptorHandle(srvIndex_));
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvManager_->GetGPUDescriptorHandle(srvIndex_));
 
 	// 3頂点を1回描画する
 	dxUtility_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 }
 
-void FullScreenFilter::ShowImGui() {
+void FadeFilter::ShowImGui() {
 
 #ifdef USE_IMGUI
 
-	if (ImGui::TreeNode("FullScreenFilter")) {
+	if(ImGui::TreeNode("FadeFilter")) {
 
-		// 有効化フラグのチェックボックス
-		ImGui::Checkbox("IsActive", &isActive_);
-		// ImGuiのツリーを閉じる
+		// 有効化フラグの編集
+		ImGui::Checkbox("Active", &isActive_);
+
+		// 色の編集
+		ImGui::ColorEdit4("Color", &configData_->color.x);
+
 		ImGui::TreePop();
 	}
 
 #endif // USE_IMGUI
 }
 
-void FullScreenFilter::CreateGraphicsPipeline() {
+void FadeFilter::CreateGraphicsPipeline() {
+
+	// gConfig CBV b0 ピクセルシェーダーで使う
+	pipelineBuilder_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	// gTexture SRV t0 ピクセルシェーダーで使う
 	pipelineBuilder_.AddRootParameterTable(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 0, D3D12_SHADER_VISIBILITY_PIXEL);
@@ -94,3 +106,14 @@ void FullScreenFilter::CreateGraphicsPipeline() {
 	pipelineBuilder_.Build();
 }
 
+void FadeFilter::CreateConfigData() {
+
+	// コンフィグバッファを生成
+	configBuffer_ = dxUtility_->CreateBufferResource(sizeof(ConfigData));
+
+	// VRAMにデータを書き込むためにアドレスを取得して割り当てる
+	configBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&configData_));
+
+	// 初期値をセット
+	configData_->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白で初期化
+}

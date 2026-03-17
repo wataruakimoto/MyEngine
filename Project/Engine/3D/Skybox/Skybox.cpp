@@ -1,5 +1,4 @@
 #include "Skybox.h"
-#include "SkyboxCommon.h"
 #include "DirectXUtility.h"
 #include "Texture/TextureManager.h"
 #include "MathMatrix.h"
