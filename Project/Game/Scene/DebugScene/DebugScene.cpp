@@ -45,6 +45,7 @@ void DebugScene::Update() {
 		// フェードアウト開始
 		transitionManager->StartOutTransition(
 			std::make_unique<SlideTransition>( Vector2{ 1280.0f, 0.0f }),
+			//std::make_unique<FadeTransition>(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }),
 			[]() { SceneManager::GetInstance()->ChangeScene("TITLE"); },
 			2.0f // 遷移にかける時間 (秒)
 			);

@@ -27,5 +27,10 @@ namespace Engine {
 		/// 描画
 		/// </summary>
 		virtual void Draw() = 0;
+
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		virtual void ShowImGui() = 0;
 	};
 }

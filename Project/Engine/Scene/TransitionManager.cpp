@@ -24,7 +24,7 @@ void TransitionManager::Update() {
 		if (progress_ >= 1.0f) {
 
 			// コールバック関数を呼び出す
-			onTransitionComplete_;
+			onTransitionComplete_();
 
 			// 入りの遷移をリセット
 			outTransition_ = nullptr;
@@ -47,7 +47,7 @@ void TransitionManager::Update() {
 		if (progress_ >= 1.0f) {
 
 			// コールバック関数を呼び出す
-			onTransitionComplete_;
+			onTransitionComplete_();
 
 			// 抜けの遷移をリセット
 			inTransition_ = nullptr;

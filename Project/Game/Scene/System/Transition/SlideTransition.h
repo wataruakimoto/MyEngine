@@ -6,6 +6,16 @@
 
 #include <memory>
 
+namespace Engine {
+	
+	/// ========== 前方宣言 ========== ///
+
+	class SpriteRenderer;
+}
+
+/// <summary>
+/// スライド遷移クラス
+/// </summary>
 class SlideTransition : public Engine::BaseTransition {
 
 ///-------------------------------------------/// 
@@ -35,18 +45,26 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
 	// 画面の中心座標
-	Engine::Vector2 centerPosition_ = { 640.0f, 360.0f };
+	Engine::Vector2 startPosition_  = { 0.0f, 0.0f };
 
 	// 終了座標
 	Engine::Vector2 endPosition_ = { 0.0f, 0.0f };
 
 	// スプライト
 	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
+
+	// スプライトレンダラーのポインタ
+	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
 };
 
