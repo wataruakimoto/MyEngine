@@ -60,7 +60,7 @@ void DebugScene::DrawFiltered() {
 
 void DebugScene::DrawUnfiltered() {
 
-	//lineManager->DrawSphere({ 0.0f, 0.0f, 0.0f }, 2.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, 16);
+	lineManager->DrawSphere({ 0.0f, 0.0f, 0.0f }, 2.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, 8);
 
 	lineManager->DrawAABB( { -2.0f, -2.0f, -2.0f }, { 2.0f, 2.0f, 2.0f }, { 1.0f, 1.0f, 1.0f, 1.0f } );
 }

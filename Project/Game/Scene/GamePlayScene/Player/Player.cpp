@@ -135,7 +135,7 @@ void Player::Update() {
 	worldTransform_.UpdateMatrix();
 
 	// コライダーの形状をワールド座標に合わせて更新
-	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 0.5f, 0.5f, 0.5f });
+	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
 	Collider::SetAABB(colliderShape_);
 
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());

@@ -143,6 +143,8 @@ void Enemy::Update() {
 
 void Enemy::Draw() {
 
+	Collider::Draw();
+
 	// 3Dオブジェクトの描画
 	object->Draw();
 }

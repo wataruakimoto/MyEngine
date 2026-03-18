@@ -17,19 +17,19 @@ void Collider::Update() {
 void Collider::Draw() {
 
 	// 形状に応じて描画
-	if( std::holds_alternative<Sphere>( shape_ ) ) {
+	if (std::holds_alternative<Sphere>(shape_)) {
 
-		const Sphere& sphere = std::get<Sphere>( shape_ );
+		const Sphere& sphere = std::get<Sphere>(shape_);
 
 		// 線描画マネージャで球を描画
-		lineManager_->DrawSphere( sphere.center, sphere.radius, { 1.0f, 1.0f, 1.0f, 1.0f } );
+		lineManager_->DrawSphere(sphere.center, sphere.radius, { 1.0f, 1.0f, 1.0f, 1.0f }, 4);
 	}
 	else if (std::holds_alternative<AABB>(shape_)) {
 
 		const AABB& aabb = std::get<AABB>(shape_);
 
 		// 線描画マネージャでAABBを描画
-		lineManager_->DrawAABB( aabb.min, aabb.max, { 1.0f, 1.0f, 1.0f, 1.0f } );
+		lineManager_->DrawAABB(aabb.min, aabb.max, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 }
 
@@ -37,7 +37,7 @@ void Collider::SetShape(const CollisionShape& shape) {
 
 	// Noneが設定されていたら
 	if (std::holds_alternative<None>(shape_)) {
-		
+
 		// 形状を設定
 		shape_ = shape;
 	}

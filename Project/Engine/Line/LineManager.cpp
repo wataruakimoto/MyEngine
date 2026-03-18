@@ -175,8 +175,12 @@ void LineManager::Render() {
 	// 座標変換バッファのCBufferの場所を設定
 	commandList->SetGraphicsRootConstantBufferView(0, transformationBuffer_->GetGPUVirtualAddress());
 
+#ifdef _DEBUG
+
 	// 描画
 	commandList->DrawInstanced(static_cast<UINT>(vertexDatas_.size()), 1, 0, 0);
+
+#endif // _DEBUG
 }
 
 void LineManager::Finalize() {

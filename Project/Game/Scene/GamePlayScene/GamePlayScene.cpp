@@ -12,6 +12,7 @@
 #include "Sprite/SpriteRenderer.h"
 #include "Object/Object3dRenderer.h"
 #include "Particle/ParticleRenderer.h"
+#include "LineManager.h"
 
 #include <imgui.h>
 
@@ -24,6 +25,7 @@ void GamePlayScene::Initialize() {
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 	object3dRenderer_ = Object3dRenderer::GetInstance();
 	particleRenderer_ = ParticleRenderer::GetInstance();
+	lineManager_ = LineManager::GetInstance();
 
 	// カメラの生成&初期化
 	camera_ = std::make_unique<Engine::Camera>();
@@ -38,8 +40,8 @@ void GamePlayScene::Initialize() {
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
 	FilterManager::GetInstance()->SetCamera(camera_.get());
-
 	particleManager_->SetCamera(camera_.get());
+	lineManager_->SetDefaultCamera(camera_.get());
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<Engine::CollisionManager>();

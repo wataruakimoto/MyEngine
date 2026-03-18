@@ -75,6 +75,8 @@ void Bullet::Update() {
 
 void Bullet::Draw() {
 
+	Collider::Draw();
+
 	object->Draw();
 };
 

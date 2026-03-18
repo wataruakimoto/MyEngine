@@ -69,6 +69,8 @@ void EnemyBullet::Update() {
 
 void EnemyBullet::Draw() {
 
+	Collider::Draw();
+
 	object->Draw();
 };
 
