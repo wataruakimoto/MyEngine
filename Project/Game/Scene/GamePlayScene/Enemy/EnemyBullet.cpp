@@ -58,7 +58,7 @@ void EnemyBullet::Update() {
 		deathTimer_--;
 	}
 
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	// コライダーの更新
 	colliderShape_ = CreateSphere(worldTransform_.GetWorldPosition(), 0.5f);

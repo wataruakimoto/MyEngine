@@ -128,7 +128,7 @@ void Enemy::Update() {
 	}
 
 	// ワールド変換の更新
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	// コライダーの形状をワールド座標に変換して更新
 	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });

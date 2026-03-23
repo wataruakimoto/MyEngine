@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector3.h"
+#include "WorldTransform.h"
 #include "Sphere.h"
 #include "Plane.h"
 #include "AABB.h"
@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <variant>
+#include <functional>
 
 namespace Engine {
 
@@ -15,14 +16,14 @@ namespace Engine {
 
 	class LineManager;
 
-	///-------------------------------------------/// 
-	/// 衝突判定オブジェクト
-	///-------------------------------------------///
+	/// <summary>
+	/// 当たり判定クラス
+	/// </summary>
 	class Collider {
 
-		///-------------------------------------------/// 
-		/// 型の定義
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
 	public:
 
 		// 衝突形状なしの型
@@ -36,25 +37,49 @@ namespace Engine {
 	/// ================================================== ///
 	public:
 
-		// 仮想デストラクタ
-		virtual ~Collider() = default;
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
+		/// <param name="shape">判定の形状</param>
+		/// <param name="typeID">種別ID</param>
+		Collider(const CollisionShape& shape, uint32_t typeID);
 
-		// 初期化
+		/// <summary>
+		/// デストラクタ
+		/// </summary>
+		~Collider();
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
 		void Initialize();
 
-		// 更新
+		/// <summary>
+		/// 更新
+		/// </summary>
 		void Update();
 
-		// 描画
+		/// <summary>
+		/// 描画
+		/// </summary>
 		void Draw();
 
-		// 衝突時のコールバック関数
-		virtual void OnCollision([[maybe_unused]] Collider* other) = 0;
+		/// <summary>
+		/// 衝突時のコールバック関数の呼び出し
+		/// </summary>
+		/// <param name="other">衝突相手</param>
+		void OnCollision(Collider* other);
 
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
+
+		/// <summary>
+		/// ワールド座標変換の取得
+		/// </summary>
+		/// <returns>ワールド座標変換</returns>
+		const WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 		// 形状のゲッター
 		const CollisionShape& GetShape() const { return shape_; }
@@ -62,10 +87,16 @@ namespace Engine {
 		// 種別IDのゲッター
 		uint32_t GetTypeID() const { return typeID_; }
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
+
+		/// <summary>
+		/// ワールド座標変換の設定
+		/// </summary>
+		/// <param name="worldTransform">ワールド変換</param>
+		void SetWorldTransform(const WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
 
 		// 形状のセッター
 		void SetShape(const CollisionShape& shape);
@@ -85,16 +116,28 @@ namespace Engine {
 		// OBBのセッター
 		void SetOBB(const OBB& obb);
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+		/// <summary>
+		/// 衝突時のコールバック関数の設定
+		/// </summary>
+		/// <param name="callback"></param>
+		void SetOnCollision(const std::function<void(Collider*)>& callback) { onCollisionCallback_ = callback; }
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
+
+		// ワールド座標変換
+		WorldTransform worldTransform_;
 
 		// 形状
 		CollisionShape shape_;
 
 		// 種別ID
 		uint32_t typeID_ = 0u;
+
+		// 衝突時のコールバック関数
+		std::function<void(Collider*)> onCollisionCallback_ = nullptr;
 
 		// 線描画マネージャのポインタ
 		LineManager* lineManager_ = nullptr;

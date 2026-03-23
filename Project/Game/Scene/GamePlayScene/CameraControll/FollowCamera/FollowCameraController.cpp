@@ -37,7 +37,7 @@ void FollowCameraController::Update() {
 	DynamicFov();
 
 	// ワールド変換の更新
-	worldTransform.UpdateMatrix();
+	worldTransform.Update();
 
 	// 位置を取得
 	camera->SetTranslate(worldTransform.GetTranslate());

@@ -58,7 +58,7 @@ void Bullet::Update() {
 	Move();
 
 	// ワールド変換の更新
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	// 3Dオブジェクトの更新
 	object->SetRotate(worldTransform_.GetRotate());

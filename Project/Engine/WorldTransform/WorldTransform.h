@@ -1,39 +1,24 @@
 #pragma once
+
 #include "Vector3.h"
 #include "Matrix4x4.h"
 
-#include <d3d12.h>
-#include <wrl.h>
-
 namespace Engine {
 
-	/// ===== 前方宣言 ===== ///
-	class DirectXUtility;
-	class Camera;
-
-	/// ===== ワールド変換 ===== ///
+	/// <summary>
+	/// ワールド座標変換クラス
+	/// </summary>
 	class WorldTransform {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
 		/// 初期化
 		/// </summary>
 		void Initialize();
-
-		/// <summary>
-		/// 行列の更新
-		/// </summary>
-		void UpdateMatrix();
-
-		/// <summary>
-		/// 行列の転送
-		/// </summary>
-		void TransferMatrix();
-
 		/// <summary>
 		/// 更新
 		/// </summary>
@@ -56,9 +41,9 @@ namespace Engine {
 		/// <param name="value"></param>
 		void AddTranslate(const Vector3& value);
 
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -91,9 +76,9 @@ namespace Engine {
 		/// <returns></returns>
 		Vector3 GetWorldPosition() const;
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -120,31 +105,9 @@ namespace Engine {
 		/// <param name="parent">親のワールド変換クラス</param>
 		void SetParent(const WorldTransform* parent) { parent_ = parent; }
 
-		/// <summary>
-		/// DirectXユーティリティのセッター
-		/// </summary>
-		void SetDirectXUtility(DirectXUtility* dxUtility) { dxUtility_ = dxUtility; }
-
-		/// <summary>
-		/// カメラのセッター
-		/// </summary>
-		void SetCamera(Camera* camera) { camera_ = camera; }
-
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
-	public:
-
-		// 座標変換
-		struct Transformation {
-			Matrix4x4 worldMatrix;  // ワールド行列
-			Matrix4x4 WVPMatrix;	// ワールドビュープロジェクション行列
-			Matrix4x4 worldInverseTranspose; // ワールド逆転置行列
-		};
-
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// 拡縮
@@ -159,22 +122,7 @@ namespace Engine {
 		// ワールド行列
 		Matrix4x4 worldMatrix_ = {};
 
-		// ワールドビュープロジェクション行列
-		Matrix4x4 WVPMatrix_ = {};
-
 		// 親のワールド変換クラス
 		const WorldTransform* parent_ = nullptr;
-
-		// 座標変換データ
-		Transformation transformationData_ = {};
-
-		// 座標変換リソース
-		Microsoft::WRL::ComPtr<ID3D12Resource> transformationResource_ = nullptr;
-
-		// DirectXUtilityのインスタンス
-		DirectXUtility* dxUtility_ = nullptr;
-
-		// カメラの借りポインタ
-		Camera* camera_ = nullptr;
 	};
 }

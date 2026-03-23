@@ -87,8 +87,6 @@ namespace Engine {
 		/// </summary>
 		void Draw();
 
-		void Draw(WorldTransform worldTransform);
-
 		/// <summary>
 		/// ImGui表示
 		/// </summary>

@@ -36,7 +36,7 @@ void Skybox::Initialize(const std::string relativePath) {
 void Skybox::Update() {
 
 	// ワールド変換の更新
-	worldTransform.UpdateMatrix();
+	worldTransform.Update();
 
 	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
 

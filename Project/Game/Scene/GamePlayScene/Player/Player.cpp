@@ -3,12 +3,10 @@
 #include "Player.h"
 #include "Input.h"
 #include "GamePlayScene.h"
-#include "Bullet.h"
 #include "Collision/CollisionTypeIDDef.h"
 #include "MathVector.h"
 #include "Easing.h"
 
-#include <list>
 #include <algorithm>
 #include <imgui.h>
 
@@ -32,14 +30,17 @@ void Player::Initialize() {
 	object->SetModel(model.get());
 	object->SetScale({ 1.0f, 1.0f, 1.0f });
 
-	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
-
+	// コライダーの生成
+	collider_ = std::make_unique<Collider>(
+		AABB{},
+		static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)
+	);
 	// コライダーの初期化
-	Collider::Initialize();
-	// コライダーにIDを設定
-	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kPlayer));
-	// コライダーに形状を設定
-	Collider::SetAABB(colliderShape_);
+	collider_->Initialize();
+	// コライダーにワールド座標変換を設定
+	collider_->SetWorldTransform(worldTransform_);
+	// コライダーに衝突時のコールバック関数を設定
+	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
 
 	isDead_ = false;
 
@@ -132,11 +133,9 @@ void Player::Update() {
 	}
 
 	// ワールド変換の更新
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
-	// コライダーの形状をワールド座標に合わせて更新
-	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
-	Collider::SetAABB(colliderShape_);
+	collider_->Update();
 
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
 
@@ -149,7 +148,7 @@ void Player::Update() {
 
 void Player::Draw() {
 
-	Collider::Draw();
+	collider_->Draw();
 
 	if (!isGroundHit_) {
 

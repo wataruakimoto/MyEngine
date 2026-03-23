@@ -53,7 +53,7 @@ void Reticle::Update() {
 	worldTransform_.SetTranslate(worldPosition);
 
 	// ワールド変換の更新
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	// オブジェクトの座標を設定
 	object_->SetTranslate(worldTransform_.GetTranslate());

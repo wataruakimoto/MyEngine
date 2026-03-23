@@ -281,18 +281,18 @@ void GamePlayScene::CheckAllCollisions() {
 	collisionManager_->Reset();
 
 	// コライダーをリストに追加
-	collisionManager_->AddCollider(player_.get());
+	collisionManager_->AddCollider(player_->GetCollider());
 
 	for (std::unique_ptr<Enemy>& enemy : enemies_) {
-		collisionManager_->AddCollider(enemy.get());
+		collisionManager_->AddCollider(enemy->GetCollider());
 	}
 
 	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
-		collisionManager_->AddCollider(bullet.get());
+		collisionManager_->AddCollider(bullet->GetCollider());
 	}
 
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-		collisionManager_->AddCollider(bullet.get());
+		collisionManager_->AddCollider(bullet->GetCollider());
 	}
 
 	// 衝突判定と応答

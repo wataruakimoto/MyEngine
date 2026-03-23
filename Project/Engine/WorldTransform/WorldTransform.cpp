@@ -1,6 +1,4 @@
 #include "WorldTransform.h"
-#include "DirectXUtility.h"
-#include "Camera.h"
 #include "MathVector.h"
 #include "MathMatrix.h"
 
@@ -12,22 +10,16 @@ using namespace MathMatrix;
 
 void WorldTransform::Initialize() {
 
-	// DirectXUtilityのインスタンスを取得
-	dxUtility_ = DirectXUtility::GetInstance();
+	scale_ = { 1.0f, 1.0f, 1.0f };
 
-	// リソース作成
-	transformationResource_ = dxUtility_->CreateBufferResource(sizeof(Transformation));
+	rotate_ = { 0.0f, 0.0f, 0.0f };
 
-	// リソースにデータを書き込むためのアドレスを取得、割り当てする
-	transformationResource_->Map(0, nullptr, reinterpret_cast<void**>(&transformationData_));
+	translate_ = { 0.0f, 0.0f, 0.0f };
 
-	// 座標変換データの初期化
-	transformationData_.worldMatrix = MakeIdentity4x4(); // 単位行列を書き込む
-	transformationData_.WVPMatrix = MakeIdentity4x4(); // 単位行列を書き込む
-	transformationData_.worldInverseTranspose = MakeIdentity4x4(); // 単位行列を書き込む
+	worldMatrix_ = MakeIdentity4x4();
 }
 
-void WorldTransform::UpdateMatrix() {
+void WorldTransform::Update() {
 
 	// ワールド行列を作成
 	worldMatrix_ = MakeAffineMatrix(scale_, rotate_, translate_);
@@ -38,41 +30,6 @@ void WorldTransform::UpdateMatrix() {
 		// 親のワールド行列を掛け合わせる
 		worldMatrix_ *= parent_->worldMatrix_;
 	}
-
-	// カメラが割り当てられていたら
-	if (camera_) {
-
-		// ビュープロジェクション行列を取得
-		Matrix4x4 viewProjectionMatrix = camera_->GetViewProjectionMatrix();
-
-		// ワールド行列とビュープロジェクション行列を掛け合わせてWVP行列を作成
-		WVPMatrix_ = worldMatrix_ * viewProjectionMatrix;
-	}
-	else {
-
-		// WVP行列はワールド行列と同じにしておく
-		WVPMatrix_ = worldMatrix_;
-	}
-
-	// 座標変換データに書き込む
-	transformationData_.worldMatrix = worldMatrix_;
-	transformationData_.WVPMatrix = WVPMatrix_;
-	transformationData_.worldInverseTranspose = Inverse(worldMatrix_);
-}
-
-void WorldTransform::TransferMatrix() {
-
-	// コマンドリストにリソースを転送
-	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(1, transformationResource_->GetGPUVirtualAddress());
-}
-
-void WorldTransform::Update() {
-
-	// 行列の更新
-	UpdateMatrix();
-
-	// 行列の転送
-	TransferMatrix();
 }
 
 void WorldTransform::ShowImGui() {
