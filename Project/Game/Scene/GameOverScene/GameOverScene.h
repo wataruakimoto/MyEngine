@@ -6,6 +6,7 @@
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
 #include "Player/Player.h"
+#include "Sprite/Sprite.h"
 
 #include <memory>
 #include <optional>
@@ -16,10 +17,13 @@ namespace Engine {
 
 	class Object3dRenderer;
 	class FilterManager;
-	class FogFilter;
-	class RadialBlurFilter;
 	class Input;
 	class SceneManager;
+	class TransitionManager;
+	class FogFilter;
+	class RadialBlurFilter;
+
+	class SpriteRenderer;
 }
 
 /// ===== ゲームオーバーシーン ===== ///
@@ -116,6 +120,8 @@ private:
 	// 状態リクエスト
 	std::optional<GameOverFlowState> stateRequest_ = std::nullopt;
 
+	std::unique_ptr<Engine::Sprite> text_ = nullptr;
+
 	/// ===== インスタンス・借りポインタ ===== ///
 
 	// オブジェクトレンダラーのインスタンス
@@ -130,9 +136,15 @@ private:
 	// シーンマネージャのインスタンス
 	Engine::SceneManager* sceneManager_ = nullptr;
 
+	// 遷移マネージャのポインタ
+	Engine::TransitionManager* transitionManager = nullptr;
+
 	// フォグの借りポインタ
 	Engine::FogFilter* fogFilter_ = nullptr;
 
 	// ラジアルブラーの借りポインタ
 	Engine::RadialBlurFilter* radialBlurFilter_ = nullptr;
+
+	// スプライトレンダラーのインスタンス
+	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
 };

@@ -4,9 +4,12 @@
 #include "OffscreenRendering/FilterManager.h"
 #include "Input.h"
 #include "SceneManager.h"
+#include "TransitionManager.h"
 #include "OffscreenRendering/Filters/FogFilter.h"
 #include "OffscreenRendering/Filters/RadialBlurFilter.h"
+#include "Transition/FadeTransition.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
+#include "Sprite/SpriteRenderer.h"
 
 using namespace Engine;
 
@@ -17,6 +20,8 @@ void GameOverScene::Initialize() {
 	filterManager_ = FilterManager::GetInstance();
 	input_ = Input::GetInstance();
 	sceneManager_ = SceneManager::GetInstance();
+	transitionManager = TransitionManager::GetInstance();
+	spriteRenderer_ = SpriteRenderer::GetInstance();
 
 	// フォグをフィルターマネージャから受け取っとく
 	fogFilter_ = filterManager_->GetFogFilter();
@@ -60,6 +65,10 @@ void GameOverScene::Initialize() {
 
 	// キャストし追従カメラの方を呼び出す
 	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
+
+	// テキストスプライトの生成&初期化
+	text_ = std::make_unique<Engine::Sprite>();
+	text_->Initialize("GameOver.png");
 }
 
 void GameOverScene::Update() {
@@ -123,6 +132,9 @@ void GameOverScene::Update() {
 
 	// プレイヤー更新
 	player_->Update();
+
+	// テキストスプライトの更新
+	text_->Update();
 }
 
 void GameOverScene::DrawFiltered() {
@@ -141,6 +153,12 @@ void GameOverScene::DrawFiltered() {
 }
 
 void GameOverScene::DrawUnfiltered() {
+
+	// スプライトの描画設定
+	spriteRenderer_->SettingDrawing();
+
+	// スプライトの描画
+	text_->Draw();
 }
 
 void GameOverScene::Finalize() {
@@ -158,11 +176,23 @@ void GameOverScene::WaitInputInitialize() {
 
 void GameOverScene::WaitInputUpdate() {
 
+	//// フェードアウト開始
+	//transitionManager->StartOutTransition(
+	//	std::make_unique<FadeTransition>(Vector4{ 0.0f, 0.0f, 0.0f, 1.0f }, 1.0f, 0.0f),
+	//	[]() {},
+	//	1.0f // 遷移にかける時間 (秒)
+	//);
+
 	// スペースキーでシーン切り替え
 	if (input_->TriggerKey(VK_SPACE)) {
 
 		// 状態を加速に変更
 		stateRequest_ = GameOverFlowState::SpeedUp;
+	}
+
+	if (input_->TriggerKey(0x1B)) {
+		
+		sceneManager_->ChangeScene("TITLE");
 	}
 }
 
@@ -202,7 +232,13 @@ void GameOverScene::SpeedUpUpdate() {
 	// ブラーの強さが最大値付近になったら
 	if (blurStrength_ >= kMaxBlurStrength) {
 
-		// シーンをゲームプレイシーンに切り替える
+		//// フェードアウト開始
+		//transitionManager->StartInTransition(
+		//	std::make_unique<FadeTransition>(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }, 0.0f, 1.0f),
+		//	[]() { SceneManager::GetInstance()->ChangeScene("PLAY"); },
+		//	1.0f // 遷移にかける時間 (秒)
+		//);
+
 		sceneManager_->ChangeScene("PLAY");
 	}
 }
