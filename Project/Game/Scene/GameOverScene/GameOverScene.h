@@ -5,8 +5,10 @@
 #include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
+#include "Player/Player.h"
 
 #include <memory>
+#include <optional>
 
 /// ===== 前方宣言 ===== ///
 
@@ -15,6 +17,7 @@ namespace Engine {
 	class Object3dRenderer;
 	class FilterManager;
 	class FogFilter;
+	class RadialBlurFilter;
 	class Input;
 	class SceneManager;
 }
@@ -57,6 +60,24 @@ public:
 	/// </summary>
 	void ShowImGui() override;
 
+private:
+
+	void WaitInputInitialize();
+
+	void WaitInputUpdate();
+
+	void SpeedUpInitialize();
+
+	void SpeedUpUpdate();
+
+private:
+
+	enum class GameOverFlowState {
+		
+		WaitInput,	// 入力待ち
+		SpeedUp, 	// 自機を加速させる
+	};
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
@@ -74,6 +95,29 @@ private:
 	// シリンダー
 	std::unique_ptr<Cylinder> cylinder_ = nullptr;
 
+	// プレイヤー
+	std::unique_ptr<Player> player_ = nullptr;
+
+	// プレイヤーの移動速度
+	float playerMoveSpeed_ = 0.0f;
+
+	// ブラーの中心点
+	Engine::Vector2 blurCenter_ = { 0.5f, 0.5f };
+
+	// ブラーの強さ
+	float blurStrength_ = 0.0f;
+
+	// ブラーの最大値
+	const float kMaxBlurStrength = 0.1f;
+
+	// 状態
+	GameOverFlowState gameOverFlowState_ = GameOverFlowState::WaitInput;
+
+	// 状態リクエスト
+	std::optional<GameOverFlowState> stateRequest_ = std::nullopt;
+
+	/// ===== インスタンス・借りポインタ ===== ///
+
 	// オブジェクトレンダラーのインスタンス
 	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
 
@@ -88,4 +132,7 @@ private:
 
 	// フォグの借りポインタ
 	Engine::FogFilter* fogFilter_ = nullptr;
+
+	// ラジアルブラーの借りポインタ
+	Engine::RadialBlurFilter* radialBlurFilter_ = nullptr;
 };
