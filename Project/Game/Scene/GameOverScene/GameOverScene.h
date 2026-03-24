@@ -1,10 +1,10 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "SceneManager.h"
-#include "Input.h"
-#include "Texture/TextureManager.h"
-#include "Sprite/Sprite.h"
+#include "Camera.h"
+#include "CameraControll/ICameraController.h"
+#include "Floor/Floor.h"
+#include "Cylinder/Cylinder.h"
 
 #include <memory>
 
@@ -12,7 +12,11 @@
 
 namespace Engine {
 
-	class SpriteRenderer;
+	class Object3dRenderer;
+	class FilterManager;
+	class FogFilter;
+	class Input;
+	class SceneManager;
 }
 
 /// ===== ゲームオーバーシーン ===== ///
@@ -58,18 +62,30 @@ public:
 ///-------------------------------------------///
 private:
 
-	// シーンマネージャのインスタンス
-	Engine::SceneManager* sceneManager_ = Engine::SceneManager::GetInstance();
+	// カメラ
+	std::unique_ptr<Engine::Camera> camera_ = nullptr;
+
+	// カメラコントローラ
+	std::unique_ptr<ICameraController> cameraController_ = nullptr;
+
+	// 床
+	std::unique_ptr<Floor> floor_ = nullptr;
+
+	// シリンダー
+	std::unique_ptr<Cylinder> cylinder_ = nullptr;
+
+	// オブジェクトレンダラーのインスタンス
+	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+
+	// フィルターマネージャのインスタンス
+	Engine::FilterManager* filterManager_ = nullptr;
 
 	// インプットのインスタンス
-	Engine::Input* input_ = Engine::Input::GetInstance();
+	Engine::Input* input_ = nullptr;
 
-	// テクスチャマネージャのインスタンス
-	Engine::TextureManager* textureManager_ = Engine::TextureManager::GetInstance();
+	// シーンマネージャのインスタンス
+	Engine::SceneManager* sceneManager_ = nullptr;
 
-	// スプライトレンダラーのインスタンス
-	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
-
-	// スプライト
-	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
+	// フォグの借りポインタ
+	Engine::FogFilter* fogFilter_ = nullptr;
 };
