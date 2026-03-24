@@ -45,7 +45,7 @@ void ParticleEmitter::Update() {
 	}
 
 	// ワールド変換の更新
-	worldTransform.UpdateMatrix();
+	worldTransform.Update();
 }
 
 void ParticleEmitter::Emit() {

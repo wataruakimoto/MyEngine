@@ -15,13 +15,6 @@ void CollisionManager::Initialize() {
 
 void CollisionManager::Update() {
 
-	// 表示しないなら
-	if (!isDraw) {
-
-		// 更新しない
-		return;
-	}
-
 	// 全てのコライダーについて
 	for (Collider* collider : colliders_) {
 

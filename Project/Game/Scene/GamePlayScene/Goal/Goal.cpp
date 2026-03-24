@@ -50,7 +50,7 @@ void Goal::Update() {
 	/// ===== ゴールの更新 ===== ///
 
 	// ワールド変換の更新
-	worldTransform_.UpdateMatrix();
+	worldTransform_.Update();
 
 	object_->SetTranslate(worldTransform_.GetWorldPosition());
 	object_->SetRotate(worldTransform_.GetRotate());
@@ -77,7 +77,7 @@ void Goal::Update() {
 	gateWorldTransform_.SetTranslate(gatePos);
 
 	// ゲート用のワールド変換の更新
-	gateWorldTransform_.UpdateMatrix();
+	gateWorldTransform_.Update();
 
 	gateObject_->SetTranslate(gateWorldTransform_.GetWorldPosition());
 

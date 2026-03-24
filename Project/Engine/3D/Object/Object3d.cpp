@@ -47,7 +47,7 @@ void Object3d::Initialize() {
 void Object3d::Update() {
 
 	// ワールド変換の行列の更新
-	worldTransform.UpdateMatrix();
+	worldTransform.Update();
 
 	/// === TransformからWorldMatrixを作る === ///
 	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
@@ -108,35 +108,6 @@ void Object3d::Draw() {
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {
-			model->Draw();
-		}
-	}
-}
-
-void Object3d::Draw(WorldTransform worldTransform) {
-
-	// 引数のワールド変換をメンバのワールド変換に上書き
-	this->worldTransform = worldTransform;
-
-	if (isDraw) {
-		
-		// ワールド変換の行列の転送
-		this->worldTransform.TransferMatrix();
-
-		/// === 平行光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(4, directionalLightResource->GetGPUVirtualAddress());
-		/// === 点光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(5, pointLightResource->GetGPUVirtualAddress());
-		/// === スポットライトCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(6, spotLightResource->GetGPUVirtualAddress());
-		/// === 環境CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(7, environmentResource->GetGPUVirtualAddress());
-		/// === カメラCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(8, cameraResource->GetGPUVirtualAddress());
-
-		// 3Dモデルが割り当てられていれば描画する
-		if (model) {
-
 			model->Draw();
 		}
 	}

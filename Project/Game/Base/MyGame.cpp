@@ -83,8 +83,12 @@ void MyGame::Draw() {
 	// 線描画の設定
 	lineRenderer_->SettingDrawing();
 
+#ifdef _DEBUG
+
 	// 線描画
 	lineManager_->Render();
+
+#endif // _DEBUG
 
 	sceneBuffer->PostDraw();
 

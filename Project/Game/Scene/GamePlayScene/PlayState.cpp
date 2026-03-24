@@ -176,6 +176,9 @@ void PlayState::Update() {
 
 	/// ===== 各種オブジェクトの更新 ===== ///
 
+	// 敵発生コマンドの更新
+	scene_->UpdateEnemyPopCommands();
+
 	// プレイヤー更新
 	player_->Update();
 
@@ -195,9 +198,6 @@ void PlayState::Update() {
 
 	// ガイドUIの更新
 	guideUI_->Update();
-
-	// 敵発生コマンドの更新
-	scene_->UpdateEnemyPopCommands();
 
 	// パーティクルマネージャの更新
 	ParticleManager::GetInstance()->Update();
