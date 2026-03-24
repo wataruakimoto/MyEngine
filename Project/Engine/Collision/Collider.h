@@ -65,6 +65,11 @@ namespace Engine {
 		void Draw();
 
 		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
+
+		/// <summary>
 		/// 衝突時のコールバック関数の呼び出し
 		/// </summary>
 		/// <param name="other">衝突相手</param>

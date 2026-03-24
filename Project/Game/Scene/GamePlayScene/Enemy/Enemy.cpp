@@ -45,15 +45,15 @@ void Enemy::Initialize() {
 
 	isDead = false;
 
-	// コライダーの形状をAABBに設定
-	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
-
+	// コライダーの生成
+	collider_ = std::make_unique<Collider>(
+		AABB{},
+		static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)
+	);
 	// コライダーの初期化
-	Collider::Initialize();
-	// コライダーにIDを設定
-	Collider::SetTypeID(static_cast<uint32_t>(CollisionTypeIDDef::kEnemy));
-	// コライダーに形状を設定
-	Collider::SetAABB(colliderShape_);
+	collider_->Initialize();
+	// コライダーに衝突時のコールバック関数を設定
+	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
 
 	// エミッタ生成
 	particleEmitterBlack = std::make_unique<ParticleEmitter>("EnemyDeathBlack", EmitterType::OneShot, 40);
@@ -130,9 +130,10 @@ void Enemy::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	// コライダーの形状をワールド座標に変換して更新
-	colliderShape_ = CreateAABBFromCenter(worldTransform_.GetWorldPosition(), { 1.0f, 1.0f, 1.0f });
-	Collider::SetAABB(colliderShape_);
+	// コライダーにワールド座標変換を設定
+	collider_->SetWorldTransform(worldTransform_);
+	// コライダーの更新
+	collider_->Update();
 
 	object->SetTranslate(worldTransform_.GetTranslate());
 	object->SetRotate(worldTransform_.GetRotate());
@@ -143,7 +144,8 @@ void Enemy::Update() {
 
 void Enemy::Draw() {
 
-	Collider::Draw();
+	// コライダーの描画
+	collider_->Draw();
 
 	// 3Dオブジェクトの描画
 	object->Draw();
@@ -159,6 +161,8 @@ void Enemy::ShowImGui() {
 	ImGui::Begin("Enemy");
 
 	worldTransform_.ShowImGui();
+
+	collider_->ShowImGui();
 
 	ImGui::End();
 
@@ -190,6 +194,7 @@ void Enemy::OnCollision(Collider* other) {
 	}
 	// 衝突相手がプレイヤーの場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)) {
+
 		// 死亡
 		isDead = true;
 	}

@@ -37,19 +37,31 @@ void WorldTransform::ShowImGui() {
 #ifdef USE_IMGUI
 
 	// ツリーで表示
-	if (ImGui::TreeNode("WorldTransform")) {
+	if (ImGui::TreeNodeEx("ワールド座標変換", ImGuiTreeNodeFlags_Framed)) {
 
 		// 各種値を表示
-		ImGui::DragFloat3("Scale", &scale_.x, 0.1f);
-		ImGui::DragFloat3("Rotate", &rotate_.x, 0.01f);
-		ImGui::DragFloat3("Translate", &translate_.x, 0.1f);
+		ImGui::DragFloat3("拡大縮小", &scale_.x, 0.1f);
+		ImGui::DragFloat3("回転", &rotate_.x, 0.01f);
+		ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
 
 		// ワールド行列を表示
-		if (ImGui::TreeNode("WorldMatrix")) {
+		if (ImGui::TreeNodeEx("ワールド行列", ImGuiTreeNodeFlags_DefaultOpen)) {
 
-			for (int i = 0; i < 4; ++i) {
-				
-				ImGui::Text("%f, %f, %f, %f", worldMatrix_.m[i][0], worldMatrix_.m[i][1], worldMatrix_.m[i][2], worldMatrix_.m[i][3]);
+			if (ImGui::BeginTable("MatrixTable", 4, ImGuiTableFlags_Borders)) {
+
+				for (int row = 0; row < 4; ++row) {
+
+					ImGui::TableNextRow();
+
+					for (int col = 0; col < 4; ++col) {
+
+						ImGui::TableSetColumnIndex(col);
+
+						ImGui::Text("%.2f", worldMatrix_.m[row][col]);
+					}
+				}
+
+				ImGui::EndTable();
 			}
 			
 			ImGui::TreePop();

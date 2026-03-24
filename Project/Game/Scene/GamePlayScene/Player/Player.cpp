@@ -37,8 +37,6 @@ void Player::Initialize() {
 	);
 	// コライダーの初期化
 	collider_->Initialize();
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
 
@@ -135,6 +133,9 @@ void Player::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
+	// コライダーにワールド座標変換を設定
+	collider_->SetWorldTransform(worldTransform_);
+	// コライダーの更新
 	collider_->Update();
 
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
@@ -148,6 +149,7 @@ void Player::Update() {
 
 void Player::Draw() {
 
+	// コライダーの描画
 	collider_->Draw();
 
 	if (!isGroundHit_) {
@@ -176,6 +178,8 @@ void Player::ShowImGui() {
 	ImGui::Begin("Player");
 
 	worldTransform_.ShowImGui();
+
+	collider_->ShowImGui();
 
 	ImGui::SliderFloat3("Velocity", &velocity_.x, -0.2f, 0.2f);
 

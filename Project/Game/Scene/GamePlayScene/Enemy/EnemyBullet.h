@@ -51,7 +51,7 @@ public:
 	/// <summary>
 	/// 衝突時の処理
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void OnCollision(Engine::Collider* other) override;
 
 ///-------------------------------------------/// 
 /// セッター
@@ -91,6 +91,4 @@ private:
 
 	// エミッターのポインタ
 	std::unique_ptr<Engine::ParticleEmitter> particleEmitter = nullptr;
-
-	Engine::Sphere colliderShape_ = {};
 };

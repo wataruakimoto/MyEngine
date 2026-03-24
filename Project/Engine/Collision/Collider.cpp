@@ -4,6 +4,7 @@
 #include "LineManager.h"
 
 #include <algorithm>
+#include <imgui.h>
 
 using namespace Engine;
 
@@ -57,9 +58,9 @@ void Collider::Update() {
 
 		AABB& aabb = std::get<AABB>(shape_);
 
-		// ワールド座標から拡縮の半分で計算
-		aabb.min = worldPosition - scale / 2.0f;
-		aabb.max = worldPosition + scale / 2.0f;
+		// ワールド座標と拡縮で計算
+		aabb.min = worldPosition - scale;
+		aabb.max = worldPosition + scale;
 	}
 }
 
@@ -80,6 +81,26 @@ void Collider::Draw() {
 		// 線描画マネージャでAABBを描画
 		lineManager_->DrawAABB(aabb.min, aabb.max, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
+}
+
+void Collider::ShowImGui() {
+
+#ifdef USE_IMGUI
+
+	// ツリーで表示
+	if (ImGui::TreeNodeEx("コライダー", ImGuiTreeNodeFlags_Framed)) {
+
+		// ワールド座標変換を表示
+		worldTransform_.ShowImGui();
+
+		// IDを表示
+		ImGui::Text("タイプID: %u", typeID_);
+		
+		// ツリーを終了
+		ImGui::TreePop();
+	}
+
+#endif // USE_IMGUI
 }
 
 void Collider::OnCollision(Collider* other) {

@@ -8,7 +8,7 @@
 /// <summary>
 /// キャラクターの基底クラス
 /// </summary>
-class BaseCharacter : public Engine::Collider {
+class BaseCharacter {
 
 /// ================================================== ///
 /// メンバ関数
@@ -34,7 +34,7 @@ public:
 	/// 衝突時のコールバック
 	/// </summary>
 	/// <param name="other">衝突相手</param>
-	virtual void OnCollision(Collider* other) = 0;
+	virtual void OnCollision(Engine::Collider* other) = 0;
 
 /// ================================================== ///
 /// ゲッター
