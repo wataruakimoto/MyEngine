@@ -5,10 +5,10 @@
 using namespace Engine;
 using namespace Easing;
 
-FadeTransition::FadeTransition(Vector4 color, float startAlpha, float endAlpha) {
+FadeTransition::FadeTransition(Vector3 color, float startAlpha, float endAlpha) {
 
 	// 引数をメンバ変数に保存
-	color_ = color;
+	color_ = { color.x, color.y, color.z, startAlpha };
 	startAlpha_ = startAlpha;
 	endAlpha_ = endAlpha;
 
@@ -27,13 +27,12 @@ FadeTransition::FadeTransition(Vector4 color, float startAlpha, float endAlpha) 
 
 void FadeTransition::Update(float progress) {
 
-	progress = std::clamp(progress, 0.0f, 1.0f);
+	float alpha = Lerp(startAlpha_, endAlpha_, progress);
+	
+	color_.w = alpha;
 
-	const float a = Lerp(startAlpha_, endAlpha_, progress);
-	Vector4 c = color_;
-	c.w = a;
+	sprite_->SetColor(color_);
 
-	sprite_->SetColor(c);
 	sprite_->Update();
 }
 

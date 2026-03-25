@@ -52,6 +52,11 @@ namespace Engine {
 		void Finalize();
 
 		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
+
+		/// <summary>
 		/// 遷移の入りの開始
 		/// </summary>
 		/// <param name="transition">遷移の仕方</param>
@@ -103,8 +108,9 @@ namespace Engine {
 		float progress_ = 0.0f;
 
 		// 遷移の総時間 (秒)
-		float duration_ = 1.0f;
+		float duration_ = 0.0f;
 
+		// Δt 約0.016秒
 		const float deltaTime_ = 1.0f / 60.0f;
 	};
 }

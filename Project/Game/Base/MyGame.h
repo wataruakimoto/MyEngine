@@ -38,6 +38,11 @@ public:
 	/// </summary>
 	void Finalize() override;
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
+
 ///-------------------------------------------/// 
 /// クラス内関数
 ///-------------------------------------------///

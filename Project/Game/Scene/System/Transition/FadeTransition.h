@@ -2,6 +2,7 @@
 
 #include "BaseTransition.h"
 #include "Sprite/Sprite.h"
+#include "Vector3.h"
 #include "Vector4.h"
 
 #include <memory>
@@ -27,7 +28,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="color">色</param>
-	FadeTransition(Engine::Vector4 color, float startAlpha, float endAlpha);
+	FadeTransition(Engine::Vector3 color, float startAlpha, float endAlpha);
 
 	/// <summary>
 	/// デストラクタ

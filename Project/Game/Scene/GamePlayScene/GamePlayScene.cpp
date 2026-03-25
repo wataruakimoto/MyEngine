@@ -268,10 +268,6 @@ void GamePlayScene::ShowImGui() {
 
 	whiteFade_->ShowImGui();
 
-	FilterManager::GetInstance()->ShowImGui();
-
-	particleManager_->ShowImGui();
-
 	goal_->ShowImGui();
 }
 

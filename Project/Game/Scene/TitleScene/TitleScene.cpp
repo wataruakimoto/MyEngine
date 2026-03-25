@@ -263,8 +263,6 @@ void TitleScene::ShowImGui() {
 	// WhiteFadeのImGui表示
 	whiteFade_->ShowImGui();
 
-	filterManager_->ShowImGui();
-
 #ifdef USE_IMGUI
 
 	ImGui::Begin("TitleScene");

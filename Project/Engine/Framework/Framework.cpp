@@ -120,11 +120,7 @@ void Framework::Update() {
 		// シーンマネージャの更新
 		sceneManager_->Update();
 
-		// シーンのImGui表示
-		sceneManager_->ShowImGui();
-
-		// シーンビュー作成
-		sceneBuffer->CreateSceneView();
+		ShowImGui();
 
 		/// === ImGui終了 === ///
 		imguiManager_->End();
@@ -180,6 +176,18 @@ void Framework::Finalize() {
 
 	// WindowsAPIの終了処理
 	winApp->Finalize();
+}
+
+void Framework::ShowImGui() {
+
+	// シーンビュー作成
+	sceneBuffer->CreateSceneView();
+
+	// フィルターマネージャのImGui表示                                                                                           
+	filterManager_->ShowImGui();
+
+	// シーンのImGui表示
+	sceneManager_->ShowImGui();
 }
 
 void Framework::Run() {

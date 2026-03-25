@@ -126,6 +126,15 @@ void MyGame::Finalize() {
 	Framework::Finalize();
 }
 
+void MyGame::ShowImGui() {
+
+	Framework::ShowImGui();
+
+	particleManager_->ShowImGui();
+
+	transitionManager_->ShowImGui();
+}
+
 void MyGame::LoadAllResource() {
 
 	/// ===== テクスチャの読み込み ===== ///
