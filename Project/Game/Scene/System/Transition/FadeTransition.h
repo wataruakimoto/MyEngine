@@ -1,14 +1,16 @@
 #pragma once
 
 #include "BaseTransition.h"
+#include "Sprite/Sprite.h"
 #include "Vector4.h"
+
+#include <memory>
 
 namespace Engine {
 
-	/// ===== 前方宣言 ===== ///
+	/// ========== 前方宣言 ========== ///
 
-	class FilterManager;
-	class FadeFilter;
+	class SpriteRenderer;
 }
 
 /// <summary>
@@ -25,7 +27,7 @@ public:
 	/// コンストラクタ
 	/// </summary>
 	/// <param name="color">色</param>
-	FadeTransition(Engine::Vector4 color);
+	FadeTransition(Engine::Vector4 color, float startAlpha, float endAlpha);
 
 	/// <summary>
 	/// デストラクタ
@@ -43,18 +45,26 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	/// <summary>
+	/// ImGui表示
+	/// </summary>
+	void ShowImGui() override;
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
 	// フェードの色
-	Engine::Vector4 fadeColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+	Engine::Vector4 color_ = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-	// フィルターマネージャのインスタンス
-	Engine::FilterManager* filterManager = nullptr;
+	float startAlpha_ = 0.0f;
+	float endAlpha_ = 1.0f;
 
-	// フェードフィルターのポインタ
-	Engine::FadeFilter* fadeFilter = nullptr;
+	// スプライト
+	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
+
+	// スプライトレンダラーのポインタ
+	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
 };
 
