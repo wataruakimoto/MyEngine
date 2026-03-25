@@ -87,12 +87,16 @@ void TransitionManager::Finalize() {
 
 void TransitionManager::ShowImGui() {
 
+#ifdef USE_IMGUI
+
 	ImGui::Begin("遷移マネージャ");
 
 	// 進行度を表示
 	ImGui::ProgressBar(progress_);
 
 	ImGui::End();
+
+#endif // USE_IMGUI
 }
 
 void TransitionManager::StartOutTransition(std::unique_ptr<BaseTransition> transition, std::function<void()> onComplete, float duration) {
