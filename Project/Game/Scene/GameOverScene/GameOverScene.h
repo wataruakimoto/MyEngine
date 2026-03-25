@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <optional>
+#include <string>
 
 /// ===== 前方宣言 ===== ///
 
@@ -66,6 +67,10 @@ public:
 
 private:
 
+	void FadeOutInitialize();
+
+	void FadeOutUpdate();
+
 	void WaitInputInitialize();
 
 	void WaitInputUpdate();
@@ -74,12 +79,18 @@ private:
 
 	void SpeedUpUpdate();
 
+	void FadeInInitialize();
+
+	void FadeInUpdate();
+
 private:
 
 	enum class GameOverFlowState {
 		
-		WaitInput,	// 入力待ち
-		SpeedUp, 	// 自機を加速させる
+		FadeOut,   // フェードアウト
+		WaitInput, // 入力待ち
+		SpeedUp,   // 自機を加速させる
+		FadeIn,    // フェードイン
 	};
 
 ///-------------------------------------------/// 
@@ -113,6 +124,12 @@ private:
 
 	// ブラーの最大値
 	const float kMaxBlurStrength = 0.1f;
+
+	// フェードの色
+	Engine::Vector3 fadeColor_ = {};
+
+	// 次のシーン
+	std::string nextScene_;
 
 	// 状態
 	GameOverFlowState gameOverFlowState_ = GameOverFlowState::WaitInput;
