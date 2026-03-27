@@ -71,7 +71,7 @@ namespace Engine {
 
 		//void DrawBox(const Vector3& center, const Vector3& halfSize, const Vector4& color);
 		
-		//void DrawBox(const Vector3& min, const Vector3& max, const Vector4& color);
+		void DrawAABB(const Vector3& min, const Vector3& max, const Vector4& color);
 
 		/// <summary>
 		/// 一括描画

@@ -5,7 +5,6 @@
 #include "SceneBuffer.h"
 #include "OffscreenRendering/PostProcessBuffer.h"
 #include "AbstractSceneFactory.h"
-#include "OffscreenRendering/FilterManager.h"
 
 #include <memory>
 
@@ -56,6 +55,11 @@ namespace Engine {
 		/// 終了
 		/// </summary>
 		virtual void Finalize();
+
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		virtual void ShowImGui();
 
 		/// <summary>
 		/// 終了フラグのチェック

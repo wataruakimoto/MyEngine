@@ -1,16 +1,13 @@
 #pragma once
 
-#include "Sprite/Sprite.h"
 #include "Model/Model.h"
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
-#include "Collision/CollisionManager.h"
 #include "Particle/ParticleEmitter.h"
 #include "PlayerCommand.h"
 #include "Reticle/Reticle.h"
 #include "LockOn/LockOn.h"
 
-#include <list>
 #include <memory>
 #include <optional>
 #include <numbers>
@@ -72,7 +69,7 @@ public:
 	/// <summary>
 	/// 衝突時の処理
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void OnCollision(Engine::Collider * other) override;
 
 	/// <summary>
 	/// ゲート衝突時の処理
@@ -340,6 +337,4 @@ private:
 
 	// 状態変更リクエスト
 	std::optional<PlayerState> stateRequest_ = std::nullopt;
-
-	Engine::AABB colliderShape_ = {};
 };

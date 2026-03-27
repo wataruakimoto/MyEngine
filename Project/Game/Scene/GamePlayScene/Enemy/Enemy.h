@@ -3,7 +3,6 @@
 #include "Model/Model.h"
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
-#include "Collision/CollisionManager.h"
 #include "Particle/ParticleEmitter.h"
 
 #include <memory>
@@ -54,7 +53,7 @@ public:
 	/// <summary>
 	/// 衝突時の処理
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void OnCollision(Engine::Collider* other) override;
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -156,6 +155,4 @@ private:
 	float drillRotation_ = 0.0f; // ドリル回転角度（ラジアン）
 
 	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
-
-	Engine::AABB colliderShape_ = {};
 };

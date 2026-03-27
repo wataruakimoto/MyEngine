@@ -3,9 +3,7 @@
 #include "Model/Model.h"
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
-#include "Collision/CollisionManager.h"
 #include "Particle/ParticleEmitter.h"
-#include "Data/Transform.h"
 
 #include <memory>
 
@@ -51,7 +49,7 @@ public:
 	/// <summary>
 	/// 衝突時の処理
 	/// </summary>
-	void OnCollision(Collider* other) override;
+	void OnCollision(Engine::Collider* other) override;
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -105,6 +103,4 @@ private:
 
 	// ロックオンしているかどうか
 	bool isLockedOn_ = false;
-
-	Engine::Sphere colliderShape_ = {};
 };

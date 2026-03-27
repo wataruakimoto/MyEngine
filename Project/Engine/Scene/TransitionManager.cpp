@@ -1,6 +1,8 @@
 #include "TransitionManager.h"
 #include "BaseTransition.h"
 
+#include <imgui.h>
+
 using namespace Engine;
 
 void TransitionManager::Update() {
@@ -23,14 +25,14 @@ void TransitionManager::Update() {
 		// 進行度が 1 になったら
 		if (progress_ >= 1.0f) {
 
-			// コールバック関数を呼び出す
-			onTransitionComplete_();
-
 			// 入りの遷移をリセット
 			outTransition_ = nullptr;
+
+			// コールバック関数を呼び出す
+			onTransitionComplete_();
 		}
 
-		// 
+		//
 		return;
 	}
 
@@ -46,12 +48,14 @@ void TransitionManager::Update() {
 		// 進行度が 1 になったら
 		if (progress_ >= 1.0f) {
 
-			// コールバック関数を呼び出す
-			onTransitionComplete_();
-
 			// 抜けの遷移をリセット
 			inTransition_ = nullptr;
+
+			// コールバック関数を呼び出す
+			onTransitionComplete_();
 		}
+
+		return;
 	}
 }
 
@@ -79,6 +83,20 @@ void TransitionManager::Finalize() {
 	// インスタンスの解放
 	delete instance;
 	instance = nullptr;
+}
+
+void TransitionManager::ShowImGui() {
+
+#ifdef USE_IMGUI
+
+	ImGui::Begin("遷移マネージャ");
+
+	// 進行度を表示
+	ImGui::ProgressBar(progress_);
+
+	ImGui::End();
+
+#endif // USE_IMGUI
 }
 
 void TransitionManager::StartOutTransition(std::unique_ptr<BaseTransition> transition, std::function<void()> onComplete, float duration) {

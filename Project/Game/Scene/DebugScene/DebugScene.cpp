@@ -35,20 +35,26 @@ void DebugScene::Initialize() {
 
 	// 入力の初期化
 	input = Input::GetInstance();
+
+	// フェードアウト開始
+	transitionManager->StartInTransition(
+		std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 1.0f, 0.0f),
+		[]() {},
+		2.0f // 遷移にかける時間 (秒)
+	);
 }
 
 void DebugScene::Update() {
 
-	// スペースキーがトリガーされたら
-	if (input->TriggerKey(VK_SPACE)) {
+	// 2番キーを押したら
+	if (input->TriggerKey('2')) {
 
 		// フェードアウト開始
 		transitionManager->StartOutTransition(
-			std::make_unique<SlideTransition>( Vector2{ 1280.0f, 0.0f }),
-			//std::make_unique<FadeTransition>(Vector4{ 1.0f, 1.0f, 1.0f, 1.0f }),
-			[]() { SceneManager::GetInstance()->ChangeScene("TITLE"); },
+			std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 0.0f, 1.0f),
+			[]() {},
 			2.0f // 遷移にかける時間 (秒)
-			);
+		);
 	}
 
 	// カメラの更新
@@ -60,7 +66,9 @@ void DebugScene::DrawFiltered() {
 
 void DebugScene::DrawUnfiltered() {
 
-	lineManager->DrawSphere({ 0.0f, 0.0f, 0.0f }, 2.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, 16);
+	lineManager->DrawSphere({ 0.0f, 0.0f, 0.0f }, 2.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, 8);
+
+	lineManager->DrawAABB({ -2.0f, -2.0f, -2.0f }, { 2.0f, 2.0f, 2.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 void DebugScene::Finalize() {
@@ -70,7 +78,4 @@ void DebugScene::ShowImGui() {
 
 	// カメラのImGui表示
 	camera->ShowImGui("Camera");
-
-	// フィルターマネージャのImGui表示
-	filterManager->ShowImGui();
 }

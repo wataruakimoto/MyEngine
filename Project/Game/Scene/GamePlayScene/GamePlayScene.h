@@ -31,6 +31,7 @@ namespace Engine {
 	class SpriteRenderer;
 	class Object3dRenderer;
 	class ParticleRenderer;
+	class LineManager;
 }
 
 /// ===== ゲームプレイシーン ===== ///
@@ -265,4 +266,7 @@ private:
 
 	// パーティクルレンダラーのインスタンス
 	Engine::ParticleRenderer* particleRenderer_ = nullptr;
+
+	// ラインマネージャのインスタンス
+	Engine::LineManager* lineManager_ = nullptr;
 };

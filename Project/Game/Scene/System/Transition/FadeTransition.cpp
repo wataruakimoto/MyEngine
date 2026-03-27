@@ -1,34 +1,49 @@
 #include "FadeTransition.h"
-#include "OffscreenRendering/FilterManager.h"
-#include "OffscreenRendering/Filters/FadeFilter.h"
+#include "Sprite/SpriteRenderer.h"
+#include "Easing.h"
 
 using namespace Engine;
+using namespace Easing;
 
-FadeTransition::FadeTransition(Vector4 color) {
+FadeTransition::FadeTransition(Vector3 color, float startAlpha, float endAlpha) {
 
-	// フィルターマネージャのインスタンスを取得
-	filterManager = Engine::FilterManager::GetInstance();
+	// 引数をメンバ変数に保存
+	color_ = { color.x, color.y, color.z, startAlpha };
+	startAlpha_ = startAlpha;
+	endAlpha_ = endAlpha;
 
-	// フェードフィルターのポインタを取得
-	fadeFilter = filterManager->GetFadeFilter();
+	// スプライトレンダラーのインスタンス取得
+	spriteRenderer_ = SpriteRenderer::GetInstance();
 
-	// フェードの色を設定
-	fadeColor = color;
-	fadeColor.w = 0.0f; // 初期のアルファ値は0 (完全に透明)
+	// スプライトの初期化
+	sprite_ = std::make_unique<Sprite>();
+	sprite_->Initialize("White1x1.png");
+	sprite_->SetSize({ 1280.0f, 720.0f }); // 画面全体を覆うサイズに設定
 
-	// フェードフィルターの色を設定
-	fadeFilter->SetColor(fadeColor);
-	fadeFilter->SetIsActive(true);
+	// 初期アルファ
+	color_.w = startAlpha_;
+	sprite_->SetColor(color_);
 }
 
 void FadeTransition::Update(float progress) {
 
-	// フェードの進行度に応じてアルファ値を更新
-	fadeColor.w = progress;
+	float alpha = Lerp(startAlpha_, endAlpha_, progress);
+	
+	color_.w = alpha;
 
-	// フェードフィルターの色を更新
-	fadeFilter->SetColor(fadeColor);
+	sprite_->SetColor(color_);
+
+	sprite_->Update();
 }
 
 void FadeTransition::Draw() {
+
+	// スプライトの描画設定
+	spriteRenderer_->SettingDrawing();
+
+	// スプライトの描画
+	sprite_->Draw();
+}
+
+void FadeTransition::ShowImGui() {
 }
