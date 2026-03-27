@@ -13,7 +13,6 @@
 #include "UI/TitleUI.h"
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
-#include "Fade/WhiteFade.h"
 
 #include <memory>
 #include <optional>
@@ -23,6 +22,7 @@ namespace Engine {
     class SpriteRenderer;
 	class Object3dRenderer;
     class RadialBlurFilter;
+    class TransitionManager;
 }
 
 // タイトルの流れの状態
@@ -149,9 +149,6 @@ private:
     // 黒画面UI
     std::unique_ptr<BlackScreen> blackScreen_ = nullptr;
 
-    // 白フェード
-    std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
-
     // タイトルUI
     std::unique_ptr<TitleUI> titleUI_ = nullptr;
 
@@ -193,4 +190,7 @@ private:
 
 	// 3Dオブジェクトレンダラーのインスタンス
 	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+
+    // 遷移マネージャのインスタンス
+    Engine::TransitionManager* transitionManager_ = nullptr;
 };
