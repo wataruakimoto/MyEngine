@@ -159,7 +159,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Bullet.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Player.cpp" />
-    <ClCompile Include="Engine\Level\Loader.cpp" />
+    <ClCompile Include="Game\Level\Loader.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
@@ -280,8 +280,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\System\SceneFactory.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\3d\Data\VertexData.h" />
-    <ClInclude Include="Engine\Level\Loader.h" />
-    <ClInclude Include="Engine\Level\LevelData.h" />
+    <ClInclude Include="Game\Level\Loader.h" />
+    <ClInclude Include="Game\Level\LevelData.h" />
     <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.h" />
