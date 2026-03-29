@@ -339,6 +339,34 @@ void ParticleManager::AddInstance(const ParticleInstance& instance) {
 	}
 }
 
+void ParticleManager::Clear() {
+
+	// 板ポリのパーティクルをクリア
+	for (auto& [key, group] : planeGroups) {
+		group.particles.clear();
+	}
+
+	// リングのパーティクルをクリア
+	for (auto& [key, group] : ringGroups) {
+		group.particles.clear();
+	}
+
+	// シリンダーのパーティクルをクリア
+	for (auto& [key, group] : cylinderGroups) {
+		group.particles.clear();
+	}
+
+	// キューブのパーティクルをクリア
+	for (auto& [key, group] : cubeGroups) {
+		group.particles.clear();
+	}
+
+	// シャードのパーティクルをクリア
+	for (auto& [key, group] : shardGroups) {
+		group.particles.clear();
+	}
+}
+
 void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {
 
 	// 全パーティクルの更新

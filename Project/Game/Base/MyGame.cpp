@@ -119,6 +119,9 @@ void MyGame::Draw() {
 
 void MyGame::Finalize() {
 
+	// 遷移マネージャの終了
+	transitionManager_->Finalize();
+
 	// パーティクルマネージャの終了
 	particleManager_->Finalize();
 

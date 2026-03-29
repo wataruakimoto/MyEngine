@@ -176,9 +176,6 @@ void PlayState::Update() {
 
 	/// ===== 各種オブジェクトの更新 ===== ///
 
-	// 敵発生コマンドの更新
-	scene_->UpdateEnemyPopCommands();
-
 	// プレイヤー更新
 	player_->Update();
 
@@ -574,6 +571,10 @@ void PauseState::Update() {
 			// 白フェードの開始
 			whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
 			isSelectedRestart_ = true;
+
+			vignetteFilter_->SetIsActive(false);
+
+			scene_->Restart();
 		}
 
 		break;

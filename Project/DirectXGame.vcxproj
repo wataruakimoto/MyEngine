@@ -65,7 +65,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals;$(ProjectDir)Engine;$(ProjectDir)Game;$(ProjectDir)ImGui;$(ProjectDir)Externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Level;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -95,7 +95,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <TreatWarningAsError>false</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals;$(ProjectDir)Engine;$(ProjectDir)Game;$(ProjectDir)ImGui;$(ProjectDir)Externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Level;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
@@ -159,7 +159,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Bullet.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Player.cpp" />
-    <ClCompile Include="Game\Level\Loader.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
@@ -169,6 +168,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Line\LineRenderer.cpp" />
     <ClCompile Include="Engine\Line\LineManager.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipelineBuilder.cpp" />
+    <ClCompile Include="Game\Level\LevelLoader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -220,6 +220,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Scene\BaseTransition.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
+    <ClInclude Include="Game\Level\GameLevelData.h" />
     <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -280,8 +281,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\System\SceneFactory.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\3d\Data\VertexData.h" />
-    <ClInclude Include="Game\Level\Loader.h" />
-    <ClInclude Include="Game\Level\LevelData.h" />
     <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.h" />
@@ -320,6 +319,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ParticleRenderer.h" />
     <ClInclude Include="Engine\Scene\TransitionManager.h" />
     <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
+    <ClInclude Include="Game\Level\LevelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
