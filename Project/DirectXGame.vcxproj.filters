@@ -163,9 +163,6 @@
     <ClCompile Include="Engine\input\Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Level\Loader.cpp">
-      <Filter>Engine\Level</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
@@ -235,12 +232,6 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.cpp">
       <Filter>Game\Scene\GamePlayScene\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene\Floor\Floor.cpp">
       <Filter>Game\Scene\GamePlayScene\Floor</Filter>
     </ClCompile>
@@ -294,6 +285,9 @@
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\FadeTransition.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
+    <ClCompile Include="Game\Level\LevelLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -452,12 +446,6 @@
     <ClInclude Include="Engine\input\Input.h">
       <Filter>Engine\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Level\LevelData.h">
-      <Filter>Engine\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Level\Loader.h">
-      <Filter>Engine\Level</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Scene\AbstractSceneFactory.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
@@ -542,12 +530,6 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.h">
       <Filter>Game\Scene\GamePlayScene\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\Floor\Floor.h">
       <Filter>Game\Scene\GamePlayScene\Floor</Filter>
     </ClInclude>
@@ -606,6 +588,10 @@
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
     <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
     <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
+    <ClInclude Include="Game\Level\GameLevelData.h" />
+    <ClInclude Include="Game\Level\LevelLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

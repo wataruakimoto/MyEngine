@@ -82,6 +82,11 @@ namespace Engine {
 		/// <param effectName="instance">インスタンス</param>
 		void AddInstance(const ParticleInstance& instance);
 
+		/// <summary>
+		/// パーティクルのクリア
+		/// </summary>
+		void Clear();
+
 		///-------------------------------------------/// 
 		/// クラス内関数
 		///-------------------------------------------///

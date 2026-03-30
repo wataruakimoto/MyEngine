@@ -1,0 +1,59 @@
+{
+  "player": {
+    "position": {
+      "x": 0.0,
+      "y": 5.0,
+      "z": 0.0
+    }
+  },
+  "enemies": [
+    {
+      "position": {
+        "x": -3.0,
+        "y": 2.0,
+        "z": 800.0
+      },
+      "type": "Normal"
+    },
+    {
+      "position": {
+        "x": 7.0,
+        "y": 2.0,
+        "z": 930.0
+      },
+      "type": "Kamikaze"
+    },
+    {
+      "position": {
+        "x": 0.0,
+        "y": 2.0,
+        "z": 1060.0
+      },
+      "type": "Normal"
+    },
+    {
+      "position": {
+        "x": -10.0,
+        "y": 2.0,
+        "z": 1190.0
+      },
+      "type": "Kamikaze"
+    },
+    {
+      "position": {
+        "x": 5.0,
+        "y": 2.0,
+        "z": 1520.0
+      },
+      "type": "Normal"
+    },
+    {
+      "position": {
+        "x": 0.0,
+        "y": 2.0,
+        "z": 1600.0
+      },
+      "type": "Kamikaze"
+    }
+  ]
+}

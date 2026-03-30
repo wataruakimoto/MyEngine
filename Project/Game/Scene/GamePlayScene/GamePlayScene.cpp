@@ -1,23 +1,15 @@
 #include "GamePlayScene.h"
 #include "Input.h"
-#include "Texture/TextureManager.h"
 #include "Vector3.h"
-#include "SceneManager.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
-#include "CameraControll/RailCamera/RailCameraController.h"
-#include "Easing.h"
-#include "WinApp.h"
 
 #include "Sprite/SpriteRenderer.h"
 #include "Object/Object3dRenderer.h"
 #include "Particle/ParticleRenderer.h"
 #include "LineManager.h"
 
-#include <imgui.h>
-
 using namespace Engine;
-using namespace Easing;
 
 void GamePlayScene::Initialize() {
 
@@ -100,8 +92,9 @@ void GamePlayScene::Initialize() {
 	blackFade_ = std::make_unique<BlackFade>();
 	blackFade_->Initialize();
 
-	// 敵発生データの読み込み
-	LoadEnemyPopData();
+	/// ========== レベルロード ========== ///
+
+	LoadLevelAndApply();
 
 	// 初期状態をイントロに設定
 	ChangeState(std::make_unique<IntroState>());
@@ -316,102 +309,6 @@ void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
 	enemyBullets_.push_back(std::move(bullet));
 }
 
-void GamePlayScene::LoadEnemyPopData() {
-
-	// ファイルを開く
-	std::ifstream file;
-	file.open("./Resources/Datas/gameData/enemyPop.csv");
-	assert(file.is_open());
-
-	// ファイルの内容を文字列ストリームにコピー
-	enemyPopCommands << file.rdbuf();
-
-	// ファイルを閉じる
-	file.close();
-}
-
-void GamePlayScene::UpdateEnemyPopCommands() {
-
-	// 待機処理
-	if (isWait_ == true) {
-
-		standbyTimer_--;
-
-		if (standbyTimer_ <= 0) {
-			// 待機完了
-			isWait_ = false;
-		}
-
-		return;
-	}
-
-	// 1行分の文字列を入れる変数
-	std::string line;
-
-	// コマンド実行ループ
-	while (getline(enemyPopCommands, line)) {
-
-		// 1行分の文字列をストリームに変換して解析しやすくする
-		std::istringstream line_stream(line);
-
-		std::string word;
-		// ,区切りで行の先頭文字列を取得
-		getline(line_stream, word, ',');
-
-		// "//"から始まる行はコメント
-		if (word.find("//") == 0) {
-			// コメント行を飛ばす
-			continue;
-		}
-
-		// POPコマンド
-		if (word.find("POP") == 0) {
-
-			// x座標
-			getline(line_stream, word, ',');
-			float x = (float)std::atof(word.c_str());
-
-			// y座標
-			getline(line_stream, word, ',');
-			float y = (float)std::atof(word.c_str());
-
-			// z座標
-			getline(line_stream, word, ',');
-			float z = (float)std::atof(word.c_str());
-
-			// 生成する敵の種類
-			int type = 0; // デフォルトは0(Normal)
-			getline(line_stream, word, ',');
-			type = std::atoi(word.c_str()); // 数字に変換
-
-			// 敵の生成&初期化
-			std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-			enemy->SetEnemyType(static_cast<EnemyType>(type));
-			enemy->Initialize();
-			enemy->GetWorldTransform().SetTranslate({ x, y, z });
-			enemy->SetGamePlayScene(this);
-
-			// 敵をリストに追加
-			enemies_.push_back(std::move(enemy));
-
-		} // WAITコマンド
-		else if (word.find("WAIT") == 0) {
-
-			getline(line_stream, word, ',');
-
-			// 待ち時間
-			int32_t waitTime = atoi(word.c_str());
-
-			// 待機開始
-			isWait_ = true;
-			standbyTimer_ = waitTime;
-
-			// コマンドループを抜ける
-			break;
-		}
-	}
-}
-
 void GamePlayScene::UpdateListObjects() {
 
 	// デスフラグの立った敵を削除
@@ -497,13 +394,12 @@ void GamePlayScene::Restart() {
 	playerBullets_.clear();
 	enemyBullets_.clear();
 
+	particleManager_->Clear();
+
 	/// ===== 進行度のリセット ===== ///
 
 	killCount_ = 0;
 	normaUI_->SetCurrentValue(0);
-
-	// 敵発生データの読み込み
-	LoadEnemyPopData();
 
 	/// ===== 初期化 ===== ///
 
@@ -516,6 +412,9 @@ void GamePlayScene::Restart() {
 	goal_->Initialize();
 
 	ruleUI_->Initialize();
+
+	/// ========== レベルのリセット ========== ///
+	LoadLevelAndApply();
 
 	/// ===== フェードのリセット ===== ///
 
@@ -531,6 +430,32 @@ void GamePlayScene::Restart() {
 	ChangeState(std::make_unique<IntroState>());
 }
 
+void GamePlayScene::LoadLevelAndApply() {
+
+	levelLoader_.LoadLevel(kLevelDataFileName_);
+	const GameLevelData& levelData = levelLoader_.GetLevelData();
+
+	// プレイヤー開始位置（※メンバ名は必ず統一）
+	player_->GetWorldTransform().SetTranslate(levelData.playerPosition);
+
+	// 敵生成
+	SpawnEnemiesFromLevelData(levelData);
+}
+
+void GamePlayScene::SpawnEnemiesFromLevelData(const GameLevelData& levelData) {
+
+	enemies_.clear();
+
+	for (const EnemySpawnData& spawn : levelData.enemySpawnDatas) {
+		std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+		enemy->SetEnemyType(spawn.type);
+		enemy->Initialize();
+		enemy->GetWorldTransform().SetTranslate(spawn.position);
+		enemy->SetGamePlayScene(this);
+		enemies_.push_back(std::move(enemy));
+	}
+}
+
 void GamePlayScene::CheckOriginShift() {
 
 	float playerZ = player_->GetWorldTransform().GetWorldPosition().z;
@@ -544,6 +469,8 @@ void GamePlayScene::CheckOriginShift() {
 }
 
 void GamePlayScene::ShiftWorld(float shiftZ) {
+
+	worldShiftZ_ += shiftZ;
 
 	// カメラを手前にずらす
 	cameraController_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
