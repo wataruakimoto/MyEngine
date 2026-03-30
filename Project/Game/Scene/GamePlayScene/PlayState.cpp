@@ -275,7 +275,7 @@ void PlayState::UpdateVignetteEffect() {
 
 		// ビネットフィルターの設定
 		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
+		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
 		vignetteFilter_->SetIntensity(0.7f);
 		vignetteFilter_->SetScale(18.0f);
 		vignetteFilter_->SetRange(1.0f);
@@ -290,7 +290,7 @@ void PlayState::UpdateVignetteEffect() {
 
 		// ビネットフィルターの設定
 		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
+		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
 		vignetteFilter_->SetIntensity(0.7f);
 		vignetteFilter_->SetScale(18.0f);
 		vignetteFilter_->SetRange(1.0f);
@@ -312,7 +312,7 @@ void PlayState::UpdateVignetteEffect() {
 		float fadeOut = Lerp(1.0f, 0.0f, easeT); // 1から0へ線形補間
 
 		// ビネットフィルターの設定
-		vignetteFilter_->SetColor({ 1.0f * fadeOut, 0.0f, 0.0f });
+		vignetteFilter_->SetColor({ 1.0f, 0.0f, 0.0f, fadeOut });
 		vignetteFilter_->SetIntensity(0.6f);
 		vignetteFilter_->SetScale(20.0f);
 		vignetteFilter_->SetRange(1.0f);
@@ -323,7 +323,7 @@ void PlayState::UpdateVignetteEffect() {
 			vignetteFilter_->SetIsActive(false);
 
 			// デフォルト値に戻す
-			vignetteFilter_->SetColor({ 0.0f, 0.0f, 0.0f });
+			vignetteFilter_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 			vignetteFilter_->SetIntensity(0.8f);
 			vignetteFilter_->SetScale(16.0f);
 			vignetteFilter_->SetRange(1.0f);

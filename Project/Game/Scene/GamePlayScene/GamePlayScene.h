@@ -193,6 +193,8 @@ private:
 	// ループする距離
 	const float kLoopDistance = 1000.0f;
 
+	float worldShiftZ_ = 0.0f;
+
 	/// ========== レベルデータ ========== ///
 
 	LevelLoader levelLoader_;

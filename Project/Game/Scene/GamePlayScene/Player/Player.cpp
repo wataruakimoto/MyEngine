@@ -62,6 +62,8 @@ void Player::Initialize() {
 	normalShotCommand_ = std::make_unique<NormalShotCommand>();
 	lockOnAimCommand_ = std::make_unique<LockOnAimCommand>();
 	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
+
+	hp_ = 5;
 }
 
 void Player::Update() {

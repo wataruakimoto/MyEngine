@@ -47,7 +47,7 @@ namespace Engine {
 	///-------------------------------------------///
 	public:
 
-		void SetColor(const Vector3& color) { configData_->color = color; }
+		void SetColor(const Vector4& color) { configData_->color = color; }
 
 		void SetIntensity(float intensity) { configData_->intensity = intensity; }
 
@@ -65,7 +65,7 @@ namespace Engine {
 		/// </summary>
 		struct ConfigData {
 
-			Vector3 color; // 色
+			Vector4 color; // 色
 			float intensity; // 強さ
 			float scale; // スケール
 			float range; // 範囲
