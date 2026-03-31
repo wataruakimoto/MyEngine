@@ -19,6 +19,7 @@
 #include "Fade/BlackFade.h"
 #include "Goal/Goal.h"
 #include "LevelLoader.h"
+#include "Obstacle/Obstacle.h"
 
 #include <list>
 #include <memory>
@@ -142,6 +143,12 @@ private:
 	void SpawnEnemiesFromLevelData(const GameLevelData& levelData);
 
 	/// <summary>
+	/// レベルデータから障害物をスポーン
+	/// </summary>
+	/// <param name="levelData">レベルデータ</param>
+	void SpawnObstaclesFromLevelData(const GameLevelData& levelData);
+
+	/// <summary>
 	/// オリジンシフトの確認と実行
 	/// </summary>
 	void CheckOriginShift();
@@ -217,6 +224,9 @@ private:
 
 	// 敵の弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+
+	// 障害物のリスト
+	std::list<std::unique_ptr<Obstacle>> obstacles_;
 
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;

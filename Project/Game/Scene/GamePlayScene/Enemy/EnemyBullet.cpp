@@ -121,6 +121,17 @@ void EnemyBullet::OnCollision(Collider* other) {
 
 		isDead = true;
 	}
+	// 衝突相手が障害物の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
+
+		// エミッターの位置を設定
+		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
+
+		// パーティクル発生
+		particleEmitter->Emit();
+
+		isDead = true;
+	}
 	// その他と衝突した場合
 	else {
 

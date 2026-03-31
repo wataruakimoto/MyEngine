@@ -17,10 +17,17 @@ struct EnemySpawnData {
 	EnemyType type; // 敵の種類
 };
 
+// 障害物の出現データ
+struct ObstacleSpawnData {
+	Engine::Vector3 scale; // 大きさ
+	Engine::Vector3 position; // 出現位置
+};
+
 // ゲームのデータ
 struct GameLevelData {
 	Engine::Vector3 playerPosition; // プレイヤーの開始位置
 	std::vector<EnemySpawnData> enemySpawnDatas; // 敵の出現データのリスト
+	std::vector<ObstacleSpawnData> obstacleSpawnDatas; // 障害物の出現データのリスト
 };
 
 inline EnemyType EnemyTypeFromString(const std::string& typeStr) {
@@ -39,4 +46,9 @@ inline void from_json(const nlohmann::json& j, EnemySpawnData& data) {
 	std::string typeStr;
 	j.at("type").get_to(typeStr);
 	data.type = EnemyTypeFromString(typeStr);
+}
+
+inline void from_json(const nlohmann::json& j, ObstacleSpawnData& data) {
+	j.at("scale").get_to(data.scale);
+	j.at("position").get_to(data.position);
 }

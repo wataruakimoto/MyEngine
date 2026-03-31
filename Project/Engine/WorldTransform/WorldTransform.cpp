@@ -63,7 +63,7 @@ void WorldTransform::ShowImGui() {
 
 				ImGui::EndTable();
 			}
-			
+
 			ImGui::TreePop();
 		}
 
@@ -81,6 +81,17 @@ void WorldTransform::AddRotate(const Vector3& value) {
 void WorldTransform::AddTranslate(const Vector3& value) {
 
 	translate_ += value;
+}
+
+Vector3 WorldTransform::GetWorldScale() const {
+
+	Vector3 worldScale = {
+		Length(Vector3{ worldMatrix_.m[0][0], worldMatrix_.m[0][1], worldMatrix_.m[0][2] }),
+		Length(Vector3{ worldMatrix_.m[1][0], worldMatrix_.m[1][1], worldMatrix_.m[1][2] }),
+		Length(Vector3{ worldMatrix_.m[2][0], worldMatrix_.m[2][1], worldMatrix_.m[2][2] })
+	};
+
+	return worldScale;
 }
 
 Vector3 WorldTransform::GetWorldPosition() const {

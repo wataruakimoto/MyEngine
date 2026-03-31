@@ -18,12 +18,10 @@ void Obstacle::Initialize() {
 
 	// コライダー初期化
 	collider_->Initialize();
-
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) {OnCollision(other); });
-
 	// コライダーにワールド変換を設定
-	collider_->SetWorldTransform(worldTransform_);
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// モデルの生成
 	model_ = std::make_unique<Model>();
@@ -36,19 +34,15 @@ void Obstacle::Initialize() {
 	object_->Initialize();
 	// モデルを設定
 	object_->SetModel(model_.get());
+	// ワールド変換のスケールを3Dオブジェクトに設定
+	object_->GetWorldTransform().SetParent(&worldTransform_);
 }
 
 void Obstacle::Update() {
 
 	worldTransform_.Update();
 
-	collider_->SetWorldTransform(worldTransform_);
-
 	collider_->Update();
-
-	object_->SetRotate(worldTransform_.GetRotate());
-
-	object_->SetTranslate(worldTransform_.GetWorldPosition());
 
 	object_->Update();
 }
@@ -56,6 +50,8 @@ void Obstacle::Update() {
 void Obstacle::Draw() {
 
 	object_->Draw();
+
+	collider_->Draw();
 }
 
 void Obstacle::OnCollision(Engine::Collider* other) {
@@ -63,7 +59,9 @@ void Obstacle::OnCollision(Engine::Collider* other) {
 
 void Obstacle::ShowImGui() {
 
-	ImGui::Begin("Obstacle");
+#ifdef USE_IMGUI
+
+	ImGui::Begin("障害物");
 
 	worldTransform_.ShowImGui();
 
@@ -71,5 +69,9 @@ void Obstacle::ShowImGui() {
 
 	model_->ShowImGui();
 
+	collider_->ShowImGui();
+
 	ImGui::End();
+
+#endif // USE_IMGUI
 }
