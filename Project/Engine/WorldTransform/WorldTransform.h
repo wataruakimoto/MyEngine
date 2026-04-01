@@ -71,6 +71,12 @@ namespace Engine {
 		const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
 
 		/// <summary>
+		/// ワールド行列の拡縮の取得
+		/// </summary>
+		/// <returns>Vector3</returns>
+		Vector3 GetWorldScale() const;
+
+		/// <summary>
 		/// ワールド座標の取得
 		/// </summary>
 		/// <returns></returns>

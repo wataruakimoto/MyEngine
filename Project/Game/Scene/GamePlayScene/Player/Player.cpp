@@ -156,6 +156,12 @@ void Player::Draw() {
 
 	if (!isGroundHit_) {
 
+		if (invincibleTimer_ > 0.0f) {
+			if (static_cast<int>(invincibleTimer_) % 12 < 6) {
+				return; // 描画処理をスキップ
+			}
+		}
+
 		// 3Dオブジェクトの描画
 		object->Draw();
 	}
@@ -199,6 +205,8 @@ void Player::ShowImGui() {
 
 	ImGui::Text("speedPlay: %.2f", moveSpeedManual);
 
+	ImGui::Text("HP: %d", hp_);
+
 	object->ShowImGui();
 
 	model->ShowImGui();
@@ -239,14 +247,41 @@ void Player::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// 1ダメージを受ける
-		DamageProcess(1);
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
-		// 1ダメージを受ける
-		DamageProcess(1);
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
+	}
+	// 衝突相手が障害物の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
+
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
 	}
 	// その他と衝突した場合
 	else {
@@ -628,6 +663,11 @@ void Player::ManualUpdate() {
 
 	// ロックオンの更新
 	lockOn_->Update();
+
+	// 無敵タイマーの更新
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= 1.0f;
+	}
 }
 
 void Player::DeadInitialize() {
@@ -652,6 +692,11 @@ void Player::DeadInitialize() {
 }
 
 void Player::DeadUpdate() {
+
+	// 無敵タイマーの更新
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= 1.0f;
+	}
 
 	// タイマーを進める
 	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算

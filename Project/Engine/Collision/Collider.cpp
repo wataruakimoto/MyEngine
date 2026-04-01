@@ -35,7 +35,7 @@ void Collider::Update() {
 	worldTransform_.Update();
 
 	// ワールド座標変換から拡縮を取得
-	Vector3 scale = worldTransform_.GetScale();
+	Vector3 scale = worldTransform_.GetWorldScale();
 
 	// ワールド座標変換からワールド座標を取得
 	Vector3 worldPosition = worldTransform_.GetWorldPosition();

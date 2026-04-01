@@ -227,6 +227,12 @@ namespace Engine {
 		/// <returns></returns>
 		const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
 
+		/// <summary>
+		/// ワールド座標変換の取得
+		/// </summary>
+		/// <returns>ワールド座標変換</returns>
+		WorldTransform& GetWorldTransform() { return worldTransform; }
+
 		///-------------------------------------------/// 
 		/// メンバ変数
 		///-------------------------------------------///

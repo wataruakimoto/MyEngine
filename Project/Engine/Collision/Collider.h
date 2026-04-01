@@ -84,7 +84,7 @@ namespace Engine {
 		/// ワールド座標変換の取得
 		/// </summary>
 		/// <returns>ワールド座標変換</returns>
-		const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+		WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 		// 形状のゲッター
 		const CollisionShape& GetShape() const { return shape_; }

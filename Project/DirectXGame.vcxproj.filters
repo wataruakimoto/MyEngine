@@ -288,6 +288,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
     <ClCompile Include="Game\Level\LevelLoader.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -592,6 +593,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
     <ClInclude Include="Game\Level\GameLevelData.h" />
     <ClInclude Include="Game\Level\LevelLoader.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

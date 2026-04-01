@@ -171,6 +171,12 @@ void GamePlayScene::DrawFiltered() {
 		bullet->Draw();
 	}
 
+	// 障害物の描画
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+
+		obstacle->Draw();
+	}
+
 	// プレイヤー描画
 	player_->Draw();
 
@@ -247,6 +253,8 @@ void GamePlayScene::ShowImGui() {
 
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) { bullet->ShowImGui(); }
 
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) { obstacle->ShowImGui(); }
+
 	floor_->ShowImGui();
 
 	cylinder_->ShowImGui();
@@ -282,6 +290,10 @@ void GamePlayScene::CheckAllCollisions() {
 
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 		collisionManager_->AddCollider(bullet->GetCollider());
+	}
+
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		collisionManager_->AddCollider(obstacle->GetCollider());
 	}
 
 	// 衝突判定と応答
@@ -348,6 +360,12 @@ void GamePlayScene::UpdateListObjects() {
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 		bullet->Update();
 	}
+
+	// 障害物の更新
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+
+		obstacle->Update();
+	}
 }
 
 void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
@@ -393,6 +411,7 @@ void GamePlayScene::Restart() {
 	enemies_.clear();
 	playerBullets_.clear();
 	enemyBullets_.clear();
+	obstacles_.clear();
 
 	particleManager_->Clear();
 
@@ -440,6 +459,9 @@ void GamePlayScene::LoadLevelAndApply() {
 
 	// 敵生成
 	SpawnEnemiesFromLevelData(levelData);
+
+	// 障害物生成
+	SpawnObstaclesFromLevelData(levelData);
 }
 
 void GamePlayScene::SpawnEnemiesFromLevelData(const GameLevelData& levelData) {
@@ -453,6 +475,19 @@ void GamePlayScene::SpawnEnemiesFromLevelData(const GameLevelData& levelData) {
 		enemy->GetWorldTransform().SetTranslate(spawn.position);
 		enemy->SetGamePlayScene(this);
 		enemies_.push_back(std::move(enemy));
+	}
+}
+
+void GamePlayScene::SpawnObstaclesFromLevelData(const GameLevelData& levelData) {
+
+	obstacles_.clear();
+
+	for (const ObstacleSpawnData& spawn : levelData.obstacleSpawnDatas) {
+		std::unique_ptr<Obstacle> obstacle = std::make_unique<Obstacle>();
+		obstacle->Initialize();
+		obstacle->GetWorldTransform().SetScale(spawn.scale);
+		obstacle->GetWorldTransform().SetTranslate(spawn.position);
+		obstacles_.push_back(std::move(obstacle));
 	}
 }
 
@@ -487,8 +522,15 @@ void GamePlayScene::ShiftWorld(float shiftZ) {
 	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
 		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 	}
+
+	// 敵の弾を手前にずらす
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+	}
+
+	// 障害物を手前にずらす
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		obstacle->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 	}
 
 	// ゴールを手前にずらす

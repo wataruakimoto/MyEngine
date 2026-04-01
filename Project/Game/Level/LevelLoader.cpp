@@ -38,4 +38,11 @@ void LevelLoader::LoadLevel(const std::string& filePath) {
 			levelData_.enemySpawnDatas.push_back(enemyData.get<EnemySpawnData>());
 		}
 	}
+
+	// 障害物の出現データの読み込み
+	if (jsonData.contains("obstacles") && jsonData["obstacles"].is_array()) {
+		for (const auto& obstacleData : jsonData["obstacles"]) {
+			levelData_.obstacleSpawnDatas.push_back(obstacleData.get<ObstacleSpawnData>());
+		}
+	}
 }
