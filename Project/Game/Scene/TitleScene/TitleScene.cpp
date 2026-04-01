@@ -175,13 +175,13 @@ void TitleScene::Update() {
 	player_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldPosition());
+	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldPosition());
+	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();

@@ -20,7 +20,7 @@ void EnemyBullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.5f, 0.5f, 0.5f });
+	object->GetWorldTransform().SetScale({ 0.5f, 0.5f, 0.5f });
 
 	isDead = false;
 
@@ -33,6 +33,8 @@ void EnemyBullet::Initialize() {
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// エミッターの生成
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletRed", EmitterType::OneShot, 20);
@@ -47,7 +49,7 @@ void EnemyBullet::Update() {
 	// ワールド変換の平行移動に速度を加算
 	worldTransform_.AddTranslate(velocity_);
 
-	object->SetTranslate(worldTransform_.GetTranslate());
+	object->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 
 	if (deathTimer_ <= 0) {
 
@@ -60,8 +62,6 @@ void EnemyBullet::Update() {
 
 	worldTransform_.Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 

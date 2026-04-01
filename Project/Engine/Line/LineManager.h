@@ -3,6 +3,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "AABB.h"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -65,13 +66,33 @@ namespace Engine {
 		/// </summary>
 		/// <param name="center">中心点</param>
 		/// <param name="radius">半径</param>
+		/// <param name="subdivision">分割数</param>
 		/// <param name="color">色</param>
-		/// <param name="subdivision">分割数 デフォルト：16</param>
-		void DrawSphere(const Vector3& center, float radius, const Vector4& color, int subdivision = 16);
+		void DrawSphere(const Vector3& center, float radius, const uint32_t subdivision, const Vector4& color);
 
-		//void DrawBox(const Vector3& center, const Vector3& halfSize, const Vector4& color);
-		
+		/// <summary>
+		/// AABBの描画
+		/// </summary>
+		/// <param name="min">最小</param>
+		/// <param name="max">最大</param>
+		/// <param name="color">色</param>
 		void DrawAABB(const Vector3& min, const Vector3& max, const Vector4& color);
+
+		/// <summary>
+		/// AABBの描画
+		/// </summary>
+		/// <param name="aabb">AABB</param>
+		/// <param name="color">色</param>
+		void DrawAABB(const AABB& aabb, const Vector4& color);
+
+		/// <summary>
+		/// グリッドの描画
+		/// </summary>
+		/// <param name="center">中心点</param>
+		/// <param name="size">グリッド全体の大きさ</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawGrid(const Vector3& center, const float size, const uint32_t subdivision, const Vector4& color);
 
 		/// <summary>
 		/// 一括描画

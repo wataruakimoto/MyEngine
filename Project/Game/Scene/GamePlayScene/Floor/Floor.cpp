@@ -16,8 +16,8 @@ void Floor::Initialize() {
 		auto object = std::make_unique<Object3d>();
 		object->Initialize();
 		object->SetModel(model_.get());
-		object->SetScale({ 50.0f, 1.0f, 50.0f });
-		object->SetTranslate({ 0.0f, 0.0f, static_cast<float>(i) * object->GetScale().z });
+		object->GetWorldTransform().SetScale({ 50.0f, 1.0f, 50.0f });
+		object->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, static_cast<float>(i) * object->GetWorldTransform().GetScale().z });
 		objects_.push_back(std::move(object));
 	}
 }
@@ -25,10 +25,10 @@ void Floor::Initialize() {
 void Floor::Update() {
 
 	// リストの最後のオブジェクトのZスケールを取得
-	float objectScaleZ = objects_.back()->GetScale().z;
+	float objectScaleZ = objects_.back()->GetWorldTransform().GetScale().z;
 
 	// リストの最後のオブジェクトのZ座標を取得
-	float lastObjectZ = objects_.back()->GetTranslate().z;
+	float lastObjectZ = objects_.back()->GetWorldTransform().GetTranslate().z;
 
 	// 足し合わせて床の末端Z座標を計算
 	float endFloorZ = lastObjectZ + objectScaleZ;
@@ -43,8 +43,8 @@ void Floor::Update() {
 		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
 		object->Initialize();							 // 初期化
 		object->SetModel(model_.get());					 // モデルセット
-		object->SetScale({ 50.0f, 1.0f, 50.0f });		 // スケールセット
-		object->SetTranslate({ 0.0f, 0.0f, endFloorZ }); // 位置セット
+		object->GetWorldTransform().SetScale({ 50.0f, 1.0f, 50.0f });		 // スケールセット
+		object->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, endFloorZ }); // 位置セット
 		objects_.push_back(std::move(object));			 // リストに追加
 	}
 
@@ -76,7 +76,7 @@ void Floor::ShowImGui() {
 	for (size_t i = 0; i < objects_.size(); ++i) {
 
 		// オブジェクトの位置を表示
-		ImGui::Text("Position: (%.2f, %.2f, %.2f)", objects_[i]->GetTranslate().x, objects_[i]->GetTranslate().y, objects_[i]->GetTranslate().z);
+		ImGui::Text("Position: (%.2f, %.2f, %.2f)", objects_[i]->GetWorldTransform().GetTranslate().x, objects_[i]->GetWorldTransform().GetTranslate().y, objects_[i]->GetWorldTransform().GetTranslate().z);
 
 		// "Object #" + 番号のラベルを生成
 		std::string label = "Object " + std::to_string(i);

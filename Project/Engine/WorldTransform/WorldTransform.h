@@ -6,7 +6,7 @@
 namespace Engine {
 
 	/// <summary>
-	/// ワールド座標変換クラス
+	/// ワールド変換クラス
 	/// </summary>
 	class WorldTransform {
 
