@@ -28,7 +28,7 @@ void Player::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 1.0f, 1.0f, 1.0f });
+	object->GetWorldTransform().SetScale({ 1.0f, 1.0f, 1.0f });
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
@@ -39,6 +39,8 @@ void Player::Initialize() {
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead_ = false;
 
@@ -135,15 +137,13 @@ void Player::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
 
-	object->SetTranslate(worldTransform_.GetWorldPosition());
-	object->SetRotate(worldTransform_.GetRotate());
+	object->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
+	object->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -322,8 +322,8 @@ void Player::Fire(PlayerContext context) {
 	// 射撃アニメーション開始
 	isFiring_ = true;
 	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
-	object->SetScale(fireScale_);
-	object->SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
 }
 
 void Player::FireAnimationUpdate() {
@@ -336,7 +336,7 @@ void Player::FireAnimationUpdate() {
 	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
 
 	// スケールを設定
-	object->SetScale(newScale);
+	object->GetWorldTransform().SetScale(newScale);
 
 	// タイマーが0以下になったら
 	if (fireAnimationTimer_ <= 0.0f) {

@@ -60,7 +60,7 @@ void LineManager::DrawLine(const Vector3& start, const Vector3& end, const Vecto
 	vertexDatas_.push_back(endVertex);
 }
 
-void LineManager::DrawSphere(const Vector3& center, float radius, const Vector4& color, int subdivision) {
+void LineManager::DrawSphere(const Vector3& center, float radius, const uint32_t subdivision, const Vector4& color) {
 
 	// π
 	const float pi = std::numbers::pi_v<float>;
@@ -75,14 +75,14 @@ void LineManager::DrawSphere(const Vector3& center, float radius, const Vector4&
 	std::vector<std::vector<Vector3>> vertices(subdivision + 1, std::vector<Vector3>(subdivision));
 
 	// 全頂点を生成
-	for (int lat = 0; lat <= subdivision; ++lat) {
+	for (uint32_t lat = 0; lat <= subdivision; ++lat) {
 
 		float latitude = lat * latitudeStep;
 
 		float sinLat = std::sin(latitude);
 		float cosLat = std::cos(latitude);
 
-		for (int lon = 0; lon < subdivision; ++lon) {
+		for (uint32_t lon = 0; lon < subdivision; ++lon) {
 
 			float longitude = lon * longitudeStep;
 
@@ -98,9 +98,9 @@ void LineManager::DrawSphere(const Vector3& center, float radius, const Vector4&
 	}
 
 	// 線を描画
-	for (int lat = 0; lat < subdivision; ++lat) {
+	for (uint32_t lat = 0; lat < subdivision; ++lat) {
 
-		for (int lon = 0; lon < subdivision; ++lon) {
+		for (uint32_t lon = 0; lon < subdivision; ++lon) {
 
 			// 経度の次のインデックス (最後は0に戻る)
 			int nextLon = (lon + 1) % subdivision;
@@ -144,6 +144,36 @@ void LineManager::DrawAABB(const Vector3& min, const Vector3& max, const Vector4
 	DrawLine(vertices[1], vertices[5], color); // 垂直辺2
 	DrawLine(vertices[2], vertices[6], color); // 垂直辺3
 	DrawLine(vertices[3], vertices[7], color); // 垂直辺4
+}
+
+void LineManager::DrawAABB(const AABB& aabb, const Vector4& color) {
+
+	DrawAABB(aabb.min, aabb.max, color);
+}
+
+void LineManager::DrawGrid(const Vector3& center, const float size, const uint32_t subdivision, const Vector4& color) {
+
+	float halfSize = size / 2.0f;
+
+	float step = size / static_cast<float>(subdivision);
+
+	for (uint32_t i = 0; i <= subdivision; ++i) {
+
+		// 中心からのオフセット
+		float offset = -halfSize + (i * step);
+
+		/// ========== 縦線 ========== ///
+
+		Vector3 startX = { center.x - halfSize, center.y, center.z + offset };
+		Vector3 endX = { center.x + halfSize, center.y, center.z + offset };
+		DrawLine(startX, endX, color);
+
+		/// ========== 横線 ========== ///
+
+		Vector3 startZ = { center.x + offset, center.y, center.z - halfSize };
+		Vector3 endZ = { center.x + offset, center.y, center.z + halfSize };
+		DrawLine(startZ, endZ, color);
+	}
 }
 
 void LineManager::Render() {

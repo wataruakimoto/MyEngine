@@ -40,7 +40,7 @@ void FollowCameraController::Update() {
 	worldTransform.Update();
 
 	// 位置を取得
-	camera->SetTranslate(worldTransform.GetTranslate());
+	camera->GetWorldTransform().SetTranslate(worldTransform.GetTranslate());
 
 	// カメラの更新
 	camera->Update();

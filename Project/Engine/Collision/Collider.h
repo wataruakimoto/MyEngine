@@ -97,12 +97,6 @@ namespace Engine {
 	/// ================================================== ///
 	public:
 
-		/// <summary>
-		/// ワールド座標変換の設定
-		/// </summary>
-		/// <param name="worldTransform">ワールド変換</param>
-		void SetWorldTransform(const WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
-
 		// 形状のセッター
 		void SetShape(const CollisionShape& shape);
 

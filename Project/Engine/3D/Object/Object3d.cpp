@@ -62,7 +62,7 @@ void Object3d::Update() {
 		worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 		// カメラのワールド座標を代入
-		*cameraData = camera->GetWorldPosition();
+		*cameraData = camera->GetWorldTransform().GetWorldPosition();
 
 		// カメラがなければworldMatrixを代入
 	}
@@ -250,6 +250,6 @@ void Object3d::InitializeCameraData() {
 	// カメラを持っていたら
 	if (camera) {
 		// カメラのワールド座標を代入
-		*cameraData = camera->GetWorldPosition();
+		*cameraData = camera->GetWorldTransform().GetWorldPosition();
 	}
 }

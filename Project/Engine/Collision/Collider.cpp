@@ -72,7 +72,7 @@ void Collider::Draw() {
 		const Sphere& sphere = std::get<Sphere>(shape_);
 
 		// 線描画マネージャで球を描画
-		lineManager_->DrawSphere(sphere.center, sphere.radius, { 1.0f, 1.0f, 1.0f, 1.0f }, 4);
+		lineManager_->DrawSphere(sphere.center, sphere.radius, 4, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 	else if (std::holds_alternative<AABB>(shape_)) {
 

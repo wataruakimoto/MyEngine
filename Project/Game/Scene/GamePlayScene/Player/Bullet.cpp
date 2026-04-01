@@ -20,7 +20,7 @@ void Bullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.5f, 0.5f, 5.0f });
+	object->GetWorldTransform().SetScale({ 0.5f, 0.5f, 5.0f });
 
 	// デスタイマーの初期化
 	deathTimer_ = 0.0f;
@@ -37,6 +37,8 @@ void Bullet::Initialize() {
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// エミッターの生成・初期化
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", EmitterType::OneShot, 20);
@@ -61,12 +63,10 @@ void Bullet::Update() {
 	worldTransform_.Update();
 
 	// 3Dオブジェクトの更新
-	object->SetRotate(worldTransform_.GetRotate());
-	object->SetTranslate(worldTransform_.GetTranslate());
+	object->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
+	object->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 	object->Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 

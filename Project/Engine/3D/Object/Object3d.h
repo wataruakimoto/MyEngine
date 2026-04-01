@@ -20,9 +20,9 @@ namespace Engine {
 	/// === 3Dオブジェクト === ///
 	class Object3d {
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
 	public:
 
 		// 座標変換行列
@@ -67,9 +67,9 @@ namespace Engine {
 			float intensity; // 環境光の輝度
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -127,28 +127,10 @@ namespace Engine {
 		/// </summary>
 		void InitializeCameraData();
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
-
-		/// <summary>
-		/// 大きさのセッター
-		/// </summary>
-		/// <param name="scale">大きさ</param>
-		void SetScale(const Vector3& scale) { this->worldTransform.SetScale(scale); }
-
-		/// <summary>
-		/// 回転のセッター
-		/// </summary>
-		/// <param name="rotate">回転</param>
-		void SetRotate(const Vector3& rotate) { this->worldTransform.SetRotate(rotate); }
-
-		/// <summary>
-		/// 位置のセッター
-		/// </summary>
-		/// <param name="translate">位置</param>
-		void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
 
 		/// <summary>
 		/// モデルのセッター
@@ -180,28 +162,16 @@ namespace Engine {
 		/// <param name="intensity"></param>
 		void SetIntensity(float intensity) { this->directionalLightData->intensity = intensity; }
 
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
-		/// 大きさのゲッター
+		/// ワールド座標変換の取得
 		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetScale() const { return worldTransform.GetScale(); }
-
-		/// <summary>
-		/// 回転のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetRotate() const { return worldTransform.GetRotate(); }
-
-		/// <summary>
-		/// 位置のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetTranslate() const { return worldTransform.GetTranslate(); }
+		/// <returns>ワールド座標変換</returns>
+		WorldTransform& GetWorldTransform() { return worldTransform; }
 
 		/// <summary>
 		/// 色のゲッター
@@ -227,15 +197,9 @@ namespace Engine {
 		/// <returns></returns>
 		const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
 
-		/// <summary>
-		/// ワールド座標変換の取得
-		/// </summary>
-		/// <returns>ワールド座標変換</returns>
-		WorldTransform& GetWorldTransform() { return worldTransform; }
-
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// 座標変換行列リソース
