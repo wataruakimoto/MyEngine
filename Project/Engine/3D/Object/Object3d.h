@@ -191,12 +191,6 @@ namespace Engine {
 		/// <returns></returns>
 		float GetIntensity() const { return directionalLightData->intensity; }
 
-		/// <summary>
-		/// ワールド行列のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
-
 	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///

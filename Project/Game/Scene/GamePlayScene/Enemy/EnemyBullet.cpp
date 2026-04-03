@@ -11,6 +11,7 @@ void EnemyBullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 0.5f, 0.5f, 5.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -20,7 +21,7 @@ void EnemyBullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->GetWorldTransform().SetScale({ 0.5f, 0.5f, 0.5f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead = false;
 
@@ -48,8 +49,6 @@ void EnemyBullet::Update() {
 
 	// ワールド変換の平行移動に速度を加算
 	worldTransform_.AddTranslate(velocity_);
-
-	object->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 
 	if (deathTimer_ <= 0) {
 
