@@ -11,6 +11,7 @@ void Bullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 0.5f, 0.5f, 5.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -20,7 +21,7 @@ void Bullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->GetWorldTransform().SetScale({ 0.5f, 0.5f, 5.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	// デスタイマーの初期化
 	deathTimer_ = 0.0f;
@@ -63,8 +64,6 @@ void Bullet::Update() {
 	worldTransform_.Update();
 
 	// 3Dオブジェクトの更新
-	object->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
-	object->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 	object->Update();
 
 	// コライダーの更新

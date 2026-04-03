@@ -40,8 +40,7 @@ void Enemy::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->GetWorldTransform().SetScale({ 1.0f, 1.0f, 1.0f });
-	object->GetWorldTransform().SetTranslate({ 10.0f, 10.0f, 50.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead = false;
 
@@ -134,9 +133,6 @@ void Enemy::Update() {
 
 	// コライダーの更新
 	collider_->Update();
-
-	object->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
-	object->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
