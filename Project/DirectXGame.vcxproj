@@ -214,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ParticleRendererBase.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleData.h" />
+    <ClInclude Include="Engine\Math\Ellipsoid.h" />
     <ClInclude Include="Engine\Math\MathRandom.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FogFilter.h" />
     <ClInclude Include="Engine\Math\OBB.h" />

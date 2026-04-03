@@ -32,7 +32,7 @@ void Player::Initialize() {
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		AABB{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)
 	);
 	// コライダーの初期化

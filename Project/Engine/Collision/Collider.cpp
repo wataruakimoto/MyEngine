@@ -2,11 +2,13 @@
 
 #include "Collider.h"
 #include "LineManager.h"
+#include "MathVector.h"
 
 #include <algorithm>
 #include <imgui.h>
 
 using namespace Engine;
+using namespace MathVector;
 
 Collider::Collider(const CollisionShape& shape, uint32_t typeID) {
 
@@ -35,14 +37,14 @@ void Collider::Update() {
 	worldTransform_.Update();
 
 	// ワールド座標変換から拡縮を取得
-	Vector3 scale = worldTransform_.GetWorldScale();
+	Vector3 worldScale = worldTransform_.GetWorldScale();
 
 	// ワールド座標変換からワールド座標を取得
 	Vector3 worldPosition = worldTransform_.GetWorldPosition();
 
-	// 形状に応じて更新
+	/// ========== 形状に応じた更新 ========== ///
 
-	// 形状が球なら
+	// 球なら
 	if (std::holds_alternative<Sphere>(shape_)) {
 
 		Sphere& sphere = std::get<Sphere>(shape_);
@@ -51,35 +53,83 @@ void Collider::Update() {
 		sphere.center = worldPosition;
 
 		// 拡縮の最大値の半分を設定
-		sphere.radius = std::max({ scale.x, scale.y, scale.z }) / 2.0f;
+		sphere.radius = std::max({ worldScale.x, worldScale.y, worldScale.z }) / 2.0f;
 	}
-	// 形状がAABBなら
+	// AABBなら
 	else if (std::holds_alternative<AABB>(shape_)) {
 
 		AABB& aabb = std::get<AABB>(shape_);
 
 		// ワールド座標と拡縮で計算
-		aabb.min = worldPosition - scale;
-		aabb.max = worldPosition + scale;
+		aabb.min = worldPosition - worldScale;
+		aabb.max = worldPosition + worldScale;
+	}
+	// OBBなら
+	else if (std::holds_alternative<OBB>(shape_)) {
+
+		OBB& obb = std::get<OBB>(shape_);
+
+		// ワールド座標から中心座標を取得
+		obb.center = worldPosition;
+
+		// ワールド変換からワールド行列を取得
+		Matrix4x4 mat = worldTransform_.GetWorldMatrix();
+		obb.orientations[0] = Normalize({ mat.m[0][0], mat.m[0][1], mat.m[0][2] });
+		obb.orientations[1] = Normalize({ mat.m[1][0], mat.m[1][1], mat.m[1][2] });
+		obb.orientations[2] = Normalize({ mat.m[2][0], mat.m[2][1], mat.m[2][2] });
+
+		// ワールド変換の拡縮から半分にしたものを取得
+		Vector3 halfScale = worldTransform_.GetScale() / 2.0f;
+		obb.halfSize = halfScale;
+	}
+	// 楕円形なら
+	else if (std::holds_alternative<Ellipsoid>(shape_)) {
+
+		Ellipsoid& ellipsoid = std::get<Ellipsoid>(shape_);
+
+		// ワールド座標から中心座標を取得
+		ellipsoid.center = worldPosition;
+
+		// 拡縮の半分を設定
+		ellipsoid.radius = worldScale / 2.0f;
 	}
 }
 
 void Collider::Draw() {
 
-	// 形状に応じて描画
+	/// ========== 形状に応じた描画 ========== ///
+
+	// 球なら
 	if (std::holds_alternative<Sphere>(shape_)) {
 
 		const Sphere& sphere = std::get<Sphere>(shape_);
 
-		// 線描画マネージャで球を描画
-		lineManager_->DrawSphere(sphere.center, sphere.radius, 4, { 1.0f, 1.0f, 1.0f, 1.0f });
+		// 線で球を描画
+		lineManager_->DrawSphere(sphere, 8, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
+	// AABBなら
 	else if (std::holds_alternative<AABB>(shape_)) {
 
 		const AABB& aabb = std::get<AABB>(shape_);
 
-		// 線描画マネージャでAABBを描画
-		lineManager_->DrawAABB(aabb.min, aabb.max, { 1.0f, 1.0f, 1.0f, 1.0f });
+		// 線でAABBを描画
+		lineManager_->DrawAABB(aabb, { 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+	// OBBなら
+	else if (std::holds_alternative<OBB>(shape_)) {
+
+		const OBB& obb = std::get<OBB>(shape_);
+
+		// 線でOBBを描画
+		lineManager_->DrawOBB(obb, { 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+	// 楕円形なら
+	else if (std::holds_alternative<Ellipsoid>(shape_)) {
+
+		const Ellipsoid& ellipsoid = std::get<Ellipsoid>(shape_);
+
+		// 線で楕円形を描画
+		lineManager_->DrawEllipsoid(ellipsoid, 8, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 }
 
@@ -95,7 +145,7 @@ void Collider::ShowImGui() {
 
 		// IDを表示
 		ImGui::Text("タイプID: %u", typeID_);
-		
+
 		// ツリーを終了
 		ImGui::TreePop();
 	}
@@ -122,85 +172,4 @@ void Collider::SetShape(const CollisionShape& shape) {
 		shape_ = shape;
 	}
 }
-
-void Collider::SetSphere(const Sphere& sphere) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状を球に設定
-		shape_ = sphere;
-	}
-	// 球が設定されていたら
-	else if (std::holds_alternative<Sphere>(shape_)) {
-
-		// 形状を更新
-		shape_ = sphere;
-	}
-	else {
-
-		return;
-	}
-}
-
-void Collider::SetPlane(const Plane& plane) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状を平面に設定
-		shape_ = plane;
-	}
-	// 平面が設定されていたら
-	else if (std::holds_alternative<Plane>(shape_)) {
-
-		// 形状を更新
-		shape_ = plane;
-	}
-	else {
-
-		return;
-	}
-}
-
-void Collider::SetAABB(const AABB& aabb) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状をAABBに設定
-		shape_ = aabb;
-	}
-	// AABBが設定されていたら
-	else if (std::holds_alternative<AABB>(shape_)) {
-
-		// 形状を更新
-		shape_ = aabb;
-	}
-	else {
-
-		return;
-	}
-}
-
-void Collider::SetOBB(const OBB& obb) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状をOBBに設定
-		shape_ = obb;
-	}
-	// OBBが設定されていたら
-	else if (std::holds_alternative<OBB>(shape_)) {
-
-		// 形状を更新
-		shape_ = obb;
-	}
-	else {
-
-		return;
-	}
-}
-
 

@@ -11,7 +11,7 @@ void EnemyBullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ 0.5f, 0.5f, 5.0f });
+	worldTransform_.SetScale({ 0.5f, 0.5f, 0.5f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();

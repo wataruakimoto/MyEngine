@@ -31,7 +31,7 @@ void Bullet::Initialize() {
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		Sphere{},
+		Ellipsoid{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)
 	);
 	// コライダーの初期化
