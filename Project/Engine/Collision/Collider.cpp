@@ -42,6 +42,9 @@ void Collider::Update() {
 	// ワールド座標変換からワールド座標を取得
 	Vector3 worldPosition = worldTransform_.GetWorldPosition();
 
+	// ワールド変換からワールド行列を取得
+	Matrix4x4 worldMatrix = worldTransform_.GetWorldMatrix();
+
 	/// ========== 形状に応じた更新 ========== ///
 
 	// 球なら
@@ -72,14 +75,12 @@ void Collider::Update() {
 		// ワールド座標から中心座標を取得
 		obb.center = worldPosition;
 
-		// ワールド変換からワールド行列を取得
-		Matrix4x4 mat = worldTransform_.GetWorldMatrix();
-		obb.orientations[0] = Normalize({ mat.m[0][0], mat.m[0][1], mat.m[0][2] });
-		obb.orientations[1] = Normalize({ mat.m[1][0], mat.m[1][1], mat.m[1][2] });
-		obb.orientations[2] = Normalize({ mat.m[2][0], mat.m[2][1], mat.m[2][2] });
+		obb.orientations[0] = Normalize({ worldMatrix.m[0][0], worldMatrix.m[0][1], worldMatrix.m[0][2] });
+		obb.orientations[1] = Normalize({ worldMatrix.m[1][0], worldMatrix.m[1][1], worldMatrix.m[1][2] });
+		obb.orientations[2] = Normalize({ worldMatrix.m[2][0], worldMatrix.m[2][1], worldMatrix.m[2][2] });
 
 		// ワールド変換の拡縮から半分にしたものを取得
-		Vector3 halfScale = worldTransform_.GetScale() / 2.0f;
+		Vector3 halfScale = worldScale / 2.0f;
 		obb.halfSize = halfScale;
 	}
 	// 楕円形なら
