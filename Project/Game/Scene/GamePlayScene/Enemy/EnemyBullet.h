@@ -52,6 +52,16 @@ public:
 	/// 衝突時の処理
 	/// </summary>
 	void OnCollision(Engine::Collider* other) override;
+		
+/// ================================================== ///
+/// クラス内関数
+/// ================================================== ///
+private:
+
+	/// <summary>
+	/// 移動
+	/// </summary>
+	void Move();
 
 ///-------------------------------------------/// 
 /// セッター
@@ -59,10 +69,10 @@ public:
 public:
 
 	/// <summary>
-	/// 速度のセッター
+	/// 方向のセッター
 	/// </summary>
 	/// <param name="velocity"></param>
-	void SetVelocity(Engine::Vector3 velocity) { this->velocity_ = velocity; }
+	void SetDirection(const Engine::Vector3& direction) { direction_ = direction; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -75,17 +85,20 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Engine::Object3d> object = nullptr;
 
+	// 方向
+	Engine::Vector3 direction_ = { 0.0f, 0.0f, 1.0f };
+
 	// 速度
 	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	// 移動の速さ
-	float moveSpeed = 0.5f;
+	float moveSpeed = 1.0f;
 
-	// 寿命<frm>
-	static const int32_t kLifeTime = 60 * 4;
+	// 寿命 (秒)
+	const float kLifeTime = 1.0f;
 
 	// デスタイマー
-	int32_t deathTimer_ = kLifeTime;
+	float deathTimer_ = 0.0f;
 
 	bool isDead = false;
 

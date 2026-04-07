@@ -321,7 +321,6 @@ void Player::Fire(PlayerContext context) {
 	isFiring_ = true;
 	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
 	object->GetWorldTransform().SetScale(fireScale_);
-	object->GetWorldTransform().SetScale(fireScale_);
 }
 
 void Player::FireAnimationUpdate() {
@@ -564,42 +563,51 @@ void Player::ManualUpdate() {
 
 	/// ===== 射撃処理 ===== ///
 
+	//// 左クリックしている間
+	//if (isMouseLeftPush) {
+	//
+	//	// 押されている時間を加算
+	//	pressTimer_ += 1.0f / 60.0f;
+	//
+	//	// 一定時間以上押し続けたら
+	//	if (pressTimer_ > kLockOnDuration_) {
+	//
+	//		// ロックオンモードへ移行
+	//		isLockOnMode_ = true;
+	//
+	//		// ロックオンエイムコマンド実行
+	//		lockOnAimCommand_->Execute(context);
+	//	}
+	//}
+	//
+	//// 左クリックを離したとき
+	//if (isMouseLeftRelease) {
+	//
+	//	// タイマーが0以下なら
+	//	if (fireTimer_ <= 0) {
+	//
+	//		// 射撃
+	//		Fire(context);
+	//	}
+	//
+	//	// 押下時間をリセット
+	//	pressTimer_ = 0.0f;
+	//
+	//	// ロックオンモード解除
+	//	isLockOnMode_ = false;
+	//
+	//	// ロックオンターゲットをクリア
+	//	lockOn_->ClearTarget();
+	//
+	//}
+
 	// 左クリックしている間
 	if (isMouseLeftPush) {
-
-		// 押されている時間を加算
-		pressTimer_ += 1.0f / 60.0f;
-
-		// 一定時間以上押し続けたら
-		if (pressTimer_ > kLockOnDuration_) {
-
-			// ロックオンモードへ移行
-			isLockOnMode_ = true;
-
-			// ロックオンエイムコマンド実行
-			lockOnAimCommand_->Execute(context);
-		}
-	}
-
-	// 左クリックを離したとき
-	if (isMouseLeftRelease) {
-
 		// タイマーが0以下なら
 		if (fireTimer_ <= 0) {
-
 			// 射撃
 			Fire(context);
 		}
-
-		// 押下時間をリセット
-		pressTimer_ = 0.0f;
-
-		// ロックオンモード解除
-		isLockOnMode_ = false;
-
-		// ロックオンターゲットをクリア
-		lockOn_->ClearTarget();
-
 	}
 
 	if (isFiring_) {

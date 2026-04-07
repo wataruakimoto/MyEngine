@@ -11,7 +11,7 @@ void EnemyBullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ 0.5f, 0.5f, 0.5f });
+	worldTransform_.SetScale({ 1.0f, 1.0f, 5.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -27,7 +27,7 @@ void EnemyBullet::Initialize() {
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		Sphere{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)
 	);
 	// コライダーの初期化
@@ -44,20 +44,17 @@ void EnemyBullet::Initialize() {
 
 void EnemyBullet::Update() {
 
-	// 速度は向きだけもらってきたから正規化して速さをかける
-	velocity_ = Normalize(velocity_) * moveSpeed;
+	// デスタイマーの更新
+	deathTimer_ += 1.0f / 60.0f;
 
-	// ワールド変換の平行移動に速度を加算
-	worldTransform_.AddTranslate(velocity_);
-
-	if (deathTimer_ <= 0) {
+	// デスタイマーが寿命を超えたら
+	if (deathTimer_ >= kLifeTime) {
 
 		isDead = true;
 	}
-	else {
 
-		deathTimer_--;
-	}
+	// 移動処理
+	Move();
 
 	worldTransform_.Update();
 
@@ -65,6 +62,9 @@ void EnemyBullet::Update() {
 	collider_->Update();
 
 	object->Update();
+
+	// エミッターの更新
+	particleEmitter->Update();
 };
 
 void EnemyBullet::Draw() {
@@ -137,4 +137,29 @@ void EnemyBullet::OnCollision(Collider* other) {
 		// 何もしない
 		return;
 	}
+}
+
+void EnemyBullet::Move() {
+
+	/// ===== 向きの処理 ===== ///
+
+	// ヨー(Y軸回りの回転)の計算
+	float yaw = atan2f(direction_.x, direction_.z);
+
+	// 水壁距離の計算
+	float horizontalLength = Length(direction_.x, direction_.z);
+
+	// ピッチ(X軸回りの回転)の計算
+	float pitch = atan2f(-direction_.y, horizontalLength);
+
+	// 回転の設定
+	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+
+	/// ===== 速度の処理 ===== ///
+
+	// 速度に向きをかける
+	velocity_ = direction_ * moveSpeed;
+
+	// ワールド変換の平行移動に速度を加算
+	worldTransform_.AddTranslate(velocity_);
 }
