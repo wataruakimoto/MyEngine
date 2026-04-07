@@ -83,16 +83,34 @@ void Collider::Update() {
 		Vector3 halfScale = worldScale / 2.0f;
 		obb.halfSize = halfScale;
 	}
-	// 楕円形なら
-	else if (std::holds_alternative<Ellipsoid>(shape_)) {
+	// カプセルなら
+	else if (std::holds_alternative<Capsule>(shape_)) {
 
-		Ellipsoid& ellipsoid = std::get<Ellipsoid>(shape_);
+		Capsule& capsule = std::get<Capsule>(shape_);
 
-		// ワールド座標から中心座標を取得
-		ellipsoid.center = worldPosition;
+		// --- 設定 ---
+		// ※ここではカプセルの「ローカルでの長さの基本値」を1.0(中心から±0.5)と仮定します
+		float localHalfLength = 0.5f;
+		float localRadius = 1.0f; // 基本の半径
+		// -----------
 
-		// 拡縮の半分を設定
-		ellipsoid.radius = worldScale / 2.0f;
+		// 1. Z軸方向のベクトル（進行方向）をワールド行列の3行目(m[2])から取り出す
+		Vector3 zAxis = { worldMatrix.m[2][0], worldMatrix.m[2][1], worldMatrix.m[2][2] };
+
+		// 2. 進行方向の向き（正規化ベクトル）を求める
+		Vector3 forwardDir = Normalize(zAxis);
+
+		// 3. Z方向の「実際の長さ（スケール）」は、zAxisベクトルの長さそのもの
+		// （※GetWorldScale().z を使っても同じ意味になります）
+		float scaledHalfLength = localHalfLength * worldScale.z;
+
+		// 4. カプセルの始点と終点を計算
+		// 中心座標から、進行方向に対して前後に長さを足し引きする
+		capsule.start = worldPosition - (forwardDir * scaledHalfLength);
+		capsule.end = worldPosition + (forwardDir * scaledHalfLength);
+
+		// 5. 半径を計算（太さはX軸とY軸のスケールのうち大きい方に依存させる）
+		capsule.radius = localRadius * std::max(worldScale.x, worldScale.y);
 	}
 }
 
@@ -124,13 +142,13 @@ void Collider::Draw() {
 		// 線でOBBを描画
 		lineManager_->DrawOBB(obb, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
-	// 楕円形なら
-	else if (std::holds_alternative<Ellipsoid>(shape_)) {
+	// カプセルなら
+	else if (std::holds_alternative<Capsule>(shape_)) {
 
-		const Ellipsoid& ellipsoid = std::get<Ellipsoid>(shape_);
+		const Capsule& capsule = std::get<Capsule>(shape_);
 
 		// 線で楕円形を描画
-		lineManager_->DrawEllipsoid(ellipsoid, 8, { 1.0f, 1.0f, 1.0f, 1.0f });
+		lineManager_->DrawCapsule(capsule, 8, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 }
 

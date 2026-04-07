@@ -5,7 +5,7 @@
 #include "Plane.h"
 #include "AABB.h"
 #include "OBB.h"
-#include "Ellipsoid.h"
+#include "Capsule.h"
 
 #include <cstdint>
 #include <variant>
@@ -31,7 +31,7 @@ namespace Engine {
 		struct None {};
 
 		// 衝突形状の型 5種類のいずれか1つを保持
-		using CollisionShape = std::variant<None, Sphere, Plane, AABB, OBB, Ellipsoid>;
+		using CollisionShape = std::variant<None, Sphere, Plane, AABB, OBB, Capsule>;
 		
 	/// ================================================== ///
 	/// メンバ関数

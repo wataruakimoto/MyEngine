@@ -1,38 +1,47 @@
 #pragma once
 
 #include "Vector3.h"
-#include "MathVector.h"
+
+#include <imgui.h>
 
 namespace Engine {
 
-	// 平面の構造体
+	/// <summary>
+	/// 平面
+	/// </summary>
 	struct Plane {
 		Vector3 normal; // 法線
 		float distance; // 距離
 	};
 
-	/// <summary>
-	/// 平面の作成関数
-	/// </summary>
-	/// <param name="normal">法線</param>
-	/// <param name="distance">距離</param>
-	/// <returns></returns>
-	inline Plane CreatePlane(const Vector3& normal, float distance) {
-		return Plane{ normal, distance };
-	};
+	inline void ShowImGuiPlane(const char* label, Plane& plane) {
 
-	/// <summary>
-	/// 平面の作成関数
-	/// </summary>
-	/// <param name="point">点</param>
-	/// <param name="normal">法線</param>
-	/// <returns></returns>
-	inline Plane CreatePlane(const Vector3& point, const Vector3& normal) {
-		
-		Plane plane;
-		plane.normal = MathVector::Normalize(normal);
-		plane.distance = MathVector::Dot(plane.normal, point);
+#ifdef USE_IMGUI
 
-		return plane;
-	};
+		ImGui::Begin(label);
+
+		ImGui::DragFloat3("法線", &plane.normal.x, 0.01f);
+
+		ImGui::DragFloat("距離", &plane.distance, 0.01f);
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+	}
+
+	inline void ShowImGuiPlaneTree(const char* label, Plane& plane) {
+
+#ifdef USE_IMGUI
+
+		if (ImGui::TreeNodeEx(label)) {
+
+			ImGui::DragFloat3("法線", &plane.normal.x, 0.01f);
+
+			ImGui::DragFloat("距離", &plane.distance, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+#endif // USE_IMGUI
+	}
 }

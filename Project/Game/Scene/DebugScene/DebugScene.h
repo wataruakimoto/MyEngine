@@ -2,6 +2,7 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
+#include "Capsule.h"
 
 namespace Engine {
 
@@ -74,4 +75,6 @@ private:
 
 	// 入力のポインタ
 	Engine::Input* input = nullptr;
+
+	Engine::Capsule capsule = {};
 };

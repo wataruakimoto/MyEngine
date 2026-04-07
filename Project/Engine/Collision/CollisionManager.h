@@ -4,13 +4,14 @@
 #include "Plane.h"
 #include "AABB.h"
 #include "OBB.h"
-#include "Ellipsoid.h"
+#include "Capsule.h"
 
 #include <list>
 
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
+
 	class Collider;
 
 	/// <summary>
@@ -86,6 +87,14 @@ namespace Engine {
 		bool CheckSphereToOBB(const Sphere* sphere, const OBB* obb);
 
 		/// <summary>
+		/// 球とカプセルの衝突判定
+		/// </summary>
+		/// <param name="sphere"球</param>
+		/// <param name="capsule">カプセル</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckSphereToCapsule(const Sphere* sphere, const Capsule* capsule);
+
+		/// <summary>
 		/// AABBとAABBの衝突判定
 		/// </summary>
 		/// <param name="aabbA">AABB A</param>
@@ -102,12 +111,36 @@ namespace Engine {
 		bool CheckAABBToOBB(const AABB* aabb, const OBB* obb);
 
 		/// <summary>
-		/// の衝突判定
+		/// AABBとカプセルの衝突判定
+		/// </summary>
+		/// <param name="aabb">AABB</param>
+		/// <param name="capsule">カプセル</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckAABBToCapsule(const AABB* aabb, const Capsule* capsule);
+
+		/// <summary>
+		/// OBBとOBBの衝突判定
 		/// </summary>
 		/// <param name="obbA">OBB A</param>
 		/// <param name="obbB">OBB B</param>
 		/// <returns>衝突しているかどうか</returns>
 		bool CheckOBBToOBB(const OBB* obbA, const OBB* obbB);
+
+		/// <summary>
+		/// OBBとカプセルの衝突判定
+		/// </summary>
+		/// <param name="obb">OBB</param>
+		/// <param name="capsule">カプセル</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckOBBToCapsule(const OBB* obb, const Capsule* capsule);
+		
+		/// <summary>
+		/// AABBとカプセルの衝突判定
+		/// </summary>
+		/// <param name="capsuleA">カプセルA</param>
+		/// <param name="capsuleB">カプセルB</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckCapsuleToCapsule(const Capsule* capsuleA, const Capsule* capsuleB);
 
 	/// ================================================== ///
 	/// メンバ変数

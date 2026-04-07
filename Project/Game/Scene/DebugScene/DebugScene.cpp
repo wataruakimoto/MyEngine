@@ -68,7 +68,7 @@ void DebugScene::DrawUnfiltered() {
 
 	lineManager->DrawSphere({ -1.0f,0.0f,0.0f }, 0.5f, 8, { 1.0f,1.0f,1.0f,1.0f });
 
-	lineManager->DrawEllipsoid({ 1.0f,0.0f,0.0f }, { 0.5f,0.5f,0.5f }, 8, { 1.0f,1.0f,1.0f,1.0f });
+	lineManager->DrawCapsule(capsule, 8, { 1.0f,1.0f,1.0f,1.0f });
 
 	lineManager->DrawGrid({ 0.0f, 0.0f, 0.0f }, 15.0f, 15, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
@@ -83,6 +83,8 @@ void DebugScene::ShowImGui() {
 	ImGui::Begin("デバッグシーン");
 
 	camera->ShowImGuiTree();
+
+	ShowImGuiCapsuleTree("カプセル", capsule);
 
 	ImGui::End();
 

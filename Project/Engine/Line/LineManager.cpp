@@ -1,12 +1,14 @@
 #include "LineManager.h"
 #include "DirectXUtility.h"
 #include "Camera.h"
+#include "MathVector.h"
 #include "MathMatrix.h"
 
 #include <cassert>
 #include <numbers>
 
 using namespace Engine;
+using namespace MathVector;
 using namespace MathMatrix;
 
 void LineManager::Initialize() {
@@ -211,6 +213,96 @@ void LineManager::DrawOBB(const Vector3& center, const Vector3 orientations[3], 
 void LineManager::DrawOBB(const OBB& obb, const Vector4& color) {
 
 	DrawOBB(obb.center, obb.orientations, obb.halfSize, color);
+}
+
+void LineManager::DrawCapsule(const Vector3& start, const Vector3& end, float radius, const uint32_t subdivision, const Vector4& color) {
+
+	// 円柱の軸ベクトルと長さを計算
+	Vector3 d = { end.x - start.x, end.y - start.y, end.z - start.z };
+	float length = std::sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
+
+	// 描画用のローカル座標系（Y軸をカプセルの向きとする）を設定
+	Vector3 localY = (length > 0.0001f) ? Vector3{ d.x / length, d.y / length, d.z / length } : Vector3{ 0, 1, 0 };
+	Vector3 up = (std::abs(localY.y) < 0.999f) ? Vector3{ 0, 1, 0 } : Vector3{ 1, 0, 0 };
+
+	// 外積 (Cross) と正規化 (Normalize) を用いて直交基底を作成
+	Vector3 localX = Normalize(Cross(up, localY));
+	Vector3 localZ = Normalize(Cross(localX, localY));
+
+	const float PI = 3.14159265359f;
+
+	// 赤道（phi=PI/2）を必ず計算できるように、極方向の分割数(rings)を偶数で保証する
+	uint32_t rings = (subdivision % 2 == 0) ? subdivision : subdivision + 1;
+	uint32_t slices = subdivision;
+	uint32_t halfRings = rings / 2;
+
+	// 球面の座標を計算し、指定した中心点(center)に対するワールド座標を返すラムダ
+	auto GetSpherePoint = [&](float theta, float phi, const Vector3& center) -> Vector3 {
+		// 標準的な球の座標計算
+		float x = std::sin(phi) * std::cos(theta);
+		float y = std::cos(phi);
+		float z = std::sin(phi) * std::sin(theta);
+
+		// カプセルの向きに合わせて回転
+		Vector3 rotated = {
+			localX.x * x + localY.x * y + localZ.x * z,
+			localX.y * x + localY.y * y + localZ.y * z,
+			localX.z * x + localY.z * y + localZ.z * z
+		};
+
+		// 中心点をオフセットしてスケール適用
+		return {
+			center.x + rotated.x * radius,
+			center.y + rotated.y * radius,
+			center.z + rotated.z * radius
+		};
+		};
+
+	// 球と全く同じ2重ループ（緯度・経度）を利用する
+	for (uint32_t i = 0; i < rings; ++i) {
+		float phi1 = PI * (float)i / rings;
+		float phi2 = PI * (float)(i + 1) / rings;
+
+		// Phiの角度に応じて、上半球は end、下半球は start を中心にする
+		Vector3 center1 = (i < halfRings) ? end : start;
+		Vector3 center2 = (i + 1 <= halfRings) ? end : start;
+
+		for (uint32_t j = 0; j < slices; ++j) {
+			float theta1 = 2.0f * PI * (float)j / slices;
+			float theta2 = 2.0f * PI * (float)(j + 1) / slices;
+
+			Vector3 p0 = GetSpherePoint(theta1, phi1, center1);
+			Vector3 p1 = GetSpherePoint(theta2, phi1, center1); // 水平リングの次点
+			Vector3 p2 = GetSpherePoint(theta1, phi2, center2); // 垂直ラインの次点
+
+			// 1. 水平方向のリング（緯線）線描画。一番上の極での縮退を防ぐため 0 より大きい場合のみ
+			if (i > 0) {
+				DrawLine(p0, p1, color);
+			}
+
+			// 2. 赤道（上半球と下半球の接続部分）における円柱側面の描画
+			if (i == halfRings - 1) {
+				// 上半球側の赤道リングを明示的に描画（通常の水平リングは phi1 に対して描かれるため）
+				Vector3 equatorEnd0 = p2; // phi2 = PI/2 における end 側の点
+				Vector3 equatorEnd1 = GetSpherePoint(theta2, phi2, center2);
+				DrawLine(equatorEnd0, equatorEnd1, color);
+
+				// 円柱の縦の側面ライン（上半球の赤道 〜 下半球の赤道）を描画
+				Vector3 equatorStart0 = GetSpherePoint(theta1, phi2, start);
+				DrawLine(equatorEnd0, equatorStart0, color);
+
+				// ※ 下半球側の赤道リングは、次のループ(i == halfRings)の水平リング(phi1)として描画される
+			}
+
+			// 3. 垂直方向（経線）の線描画（上半球から下半球へ飛ぶ瞬間以外は通常通り描画）
+			DrawLine(p0, p2, color);
+		}
+	}
+}
+
+void LineManager::DrawCapsule(const Capsule& capsule, const uint32_t subdivision, const Vector4& color) {
+
+	DrawCapsule(capsule.start, capsule.end, capsule.radius, subdivision, color);
 }
 
 void LineManager::DrawEllipsoid(const Vector3& center, const Vector3& radius, const uint32_t subdivision, const Vector4& color) {

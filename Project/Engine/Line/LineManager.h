@@ -6,6 +6,7 @@
 #include "Sphere.h"
 #include "AABB.h"
 #include "OBB.h"
+#include "Capsule.h"
 #include "Ellipsoid.h"
 
 #include <d3d12.h>
@@ -24,9 +25,9 @@ namespace Engine {
 	/// </summary>
 	class LineManager {
 
-		///-------------------------------------------/// 
-		/// シングルトン
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// シングルトン
+	/// ================================================== ///
 	private:
 
 		// インスタンス
@@ -41,9 +42,9 @@ namespace Engine {
 		// コピーオペレータ禁止
 		LineManager& operator=(LineManager&) = delete;
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -113,6 +114,24 @@ namespace Engine {
 		void DrawOBB(const OBB& obb, const Vector4& color);
 
 		/// <summary>
+		/// カプセルの線描画
+		/// </summary>
+		/// <param name="start">始点</param>
+		/// <param name="end">終点</param>
+		/// <param name="radius">半径</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawCapsule(const Vector3& start, const Vector3& end, float radius, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// カプセルの線描画
+		/// </summary>
+		/// <param name="capsule">カプセル</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawCapsule(const Capsule& capsule, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
 		/// 楕円形の線描画
 		/// </summary>
 		/// <param name="center">中心点</param>
@@ -148,9 +167,9 @@ namespace Engine {
 		/// </summary>
 		void Finalize();
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
 	private:
 
 		/// <summary>
@@ -163,9 +182,9 @@ namespace Engine {
 		/// </summary>
 		void GenerateTranformationBuffer();
 
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -174,9 +193,9 @@ namespace Engine {
 		/// <returns>インスタンス</returns>
 		static LineManager* GetInstance();
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -185,9 +204,9 @@ namespace Engine {
 		/// <param name="camera">カメラ</param>
 		void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
 	private:
 
 		// 頂点データ
@@ -201,9 +220,9 @@ namespace Engine {
 			Matrix4x4 viewProjection; // ビュー射影行列
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		/// ===== GPU用の変数 ===== ///

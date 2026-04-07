@@ -123,6 +123,17 @@ float MathVector::Dot(const Vector4& v1, const Vector4& v2) {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
 }
 
+Vector3 MathVector::Cross(const Vector3& v1, const Vector3& v2) {
+	
+	Vector3 result;
+
+	result.x = v1.y * v2.z - v1.z * v2.y;
+	result.y = v1.z * v2.x - v1.x * v2.z;
+	result.z = v1.x * v2.y - v1.y * v2.x;
+
+	return result;
+}
+
 float MathVector::Length(float f1, float f2) {
 
 	return sqrtf(f1 * f1 + f2 * f2);

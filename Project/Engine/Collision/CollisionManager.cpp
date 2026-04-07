@@ -123,6 +123,16 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			isColliding = CheckSphereToOBB(&shapeB, &shapeA);
 		}
 
+		// 球とカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Sphere> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckSphereToCapsule(&shapeA, &shapeB);
+		}
+
+		// カプセルと球の衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, Sphere>) {
+			isColliding = CheckSphereToCapsule(&shapeB, &shapeA);
+		}
+
 		// AABBとAABBの衝突判定
 		else if constexpr (std::is_same_v<TypeA, AABB> && std::is_same_v<TypeB, AABB>) {
 			isColliding = CheckAABBToAABB(&shapeA, &shapeB);
@@ -138,10 +148,36 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			isColliding = CheckAABBToOBB(&shapeB, &shapeA);
 		}
 
+		// AABBとカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, AABB> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckAABBToCapsule(&shapeA, &shapeB);
+		}
+
+		// カプセルとAABBの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, AABB>) {
+			isColliding = CheckAABBToCapsule(&shapeB, &shapeA);
+		}
+
 		// OBBとOBBの衝突判定
 		else if constexpr (std::is_same_v<TypeA, OBB> && std::is_same_v<TypeB, OBB>) {
 			isColliding = CheckOBBToOBB(&shapeA, &shapeB);
 		}
+
+		// OBBとカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, OBB> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckOBBToCapsule(&shapeA, &shapeB);
+		}
+
+		// カプセルとOBBの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, OBB>) {
+			isColliding = CheckOBBToCapsule(&shapeB, &shapeA);
+		}
+
+		// カプセルとカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckCapsuleToCapsule(&shapeA, &shapeB);
+		}
+
 		// その他・未実装の組み合わせ
 		else {
 			// 衝突していないとする
@@ -215,10 +251,50 @@ bool CollisionManager::CheckSphereToAABB(const Sphere* sphere, const AABB* aabb)
 
 bool CollisionManager::CheckSphereToOBB(const Sphere* sphere, const OBB* obb) {
 
-	// 実装困難なため、後回し
+	// OBBのローカル空間での球の中心座標を求める
+	Vector3 localPoint = sphere->center - obb->center;
 
-	//TODO: 球とOBBの衝突判定
-	return false;
+	float distX = Dot(localPoint, obb->orientations[0]);
+	float distY = Dot(localPoint, obb->orientations[1]);
+	float distZ = Dot(localPoint, obb->orientations[2]);
+
+	// OBBの範囲内にクランプして最近接点を求める
+	distX = std::clamp(distX, -obb->halfSize.x, obb->halfSize.x);
+	distY = std::clamp(distY, -obb->halfSize.y, obb->halfSize.y);
+	distZ = std::clamp(distZ, -obb->halfSize.z, obb->halfSize.z);
+
+	Vector3 closestPoint = obb->center +
+		obb->orientations[0] * distX +
+		obb->orientations[1] * distY +
+		obb->orientations[2] * distZ;
+
+	// 最近接点と球の中心点の距離を求める
+	float distance = Length(closestPoint - sphere->center);
+
+	// 距離が半径以下なら衝突している
+	return distance <= sphere->radius;
+}
+
+bool CollisionManager::CheckSphereToCapsule(const Sphere* sphere, const Capsule* capsule) {
+	
+	// 線分ベクトル
+	Vector3 d = capsule->end - capsule->start;
+	float lenSq = Dot(d, d);
+
+	float t = 0.0f;
+	if (lenSq > 0.0f) {
+		t = Dot(sphere->center - capsule->start, d) / lenSq;
+		t = std::clamp(t, 0.0f, 1.0f);
+	}
+
+	// カプセルの線分上の最近接点
+	Vector3 closestPoint = capsule->start + d * t;
+
+	// 距離を求める
+	float distance = Length(closestPoint - sphere->center);
+
+	// カプセルの半径と球の半径の和以下なら衝突
+	return distance <= (sphere->radius + capsule->radius);
 }
 
 bool CollisionManager::CheckAABBToAABB(const AABB* aabbA, const AABB* aabbB) {
@@ -238,18 +314,158 @@ bool CollisionManager::CheckAABBToAABB(const AABB* aabbA, const AABB* aabbB) {
 
 bool CollisionManager::CheckAABBToOBB(const AABB* aabb, const OBB* obb) {
 
-	// 実装困難なため、後回し
+	// AABBをOBBとして扱う
+	OBB aabb_obb;
+	aabb_obb.center = (aabb->min + aabb->max) * 0.5f;
+	aabb_obb.halfSize = (aabb->max - aabb->min) * 0.5f;
+	aabb_obb.orientations[0] = { 1.0f, 0.0f, 0.0f };
+	aabb_obb.orientations[1] = { 0.0f, 1.0f, 0.0f };
+	aabb_obb.orientations[2] = { 0.0f, 0.0f, 1.0f };
 
-	//TODO: AABBとOBBの衝突判定
-	return false;
+	return CheckOBBToOBB(&aabb_obb, obb);
+}
+
+bool CollisionManager::CheckAABBToCapsule(const AABB* aabb, const Capsule* capsule) {
+	
+	// AABBをOBBとして扱う
+	OBB aabb_obb;
+	aabb_obb.center = (aabb->min + aabb->max) * 0.5f;
+	aabb_obb.halfSize = (aabb->max - aabb->min) * 0.5f;
+	aabb_obb.orientations[0] = { 1.0f, 0.0f, 0.0f };
+	aabb_obb.orientations[1] = { 0.0f, 1.0f, 0.0f };
+	aabb_obb.orientations[2] = { 0.0f, 0.0f, 1.0f };
+
+	return CheckOBBToCapsule(&aabb_obb, capsule);
 }
 
 bool CollisionManager::CheckOBBToOBB(const OBB* obbA, const OBB* obbB) {
 
-	// 実装困難なため、後回し
+	Vector3 d = obbA->center - obbB->center;
 
-	//TODO: OBB同士の衝突判定
+	auto TestAxis = [&](const Vector3& axis) {
+		float lenSq = Dot(axis, axis);
+		if (lenSq < 1e-6f) return true;
+		Vector3 n = axis * (1.0f / std::sqrt(lenSq));
 
-	// 衝突していないとする
-	return false;
+		float rA = std::abs(Dot(n, obbA->orientations[0])) * obbA->halfSize.x +
+			std::abs(Dot(n, obbA->orientations[1])) * obbA->halfSize.y +
+			std::abs(Dot(n, obbA->orientations[2])) * obbA->halfSize.z;
+
+		float rB = std::abs(Dot(n, obbB->orientations[0])) * obbB->halfSize.x +
+			std::abs(Dot(n, obbB->orientations[1])) * obbB->halfSize.y +
+			std::abs(Dot(n, obbB->orientations[2])) * obbB->halfSize.z;
+
+		return std::abs(Dot(d, n)) <= rA + rB;
+		};
+
+	// 各OBBの3軸をテスト
+	for (int i = 0; i < 3; ++i) {
+		if (!TestAxis(obbA->orientations[i])) return false;
+		if (!TestAxis(obbB->orientations[i])) return false;
+	}
+	// それぞれの軸の外積をテスト
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			Vector3 cross = Cross(obbA->orientations[i], obbB->orientations[j]);
+			if (!TestAxis(cross)) return false;
+		}
+	}
+
+	return true;
+}
+
+bool CollisionManager::CheckOBBToCapsule(const OBB* obb, const Capsule* capsule) {
+	
+	Vector3 capDir = capsule->end - capsule->start;
+	float capLen = Length(capDir);
+	if (capLen > 1e-4f) {
+		capDir = capDir * (1.0f / capLen);
+	}
+
+	Vector3 capCenter = (capsule->start + capsule->end) * 0.5f;
+	float capHalfLen = capLen * 0.5f;
+	Vector3 d = obb->center - capCenter;
+
+	auto TestAxis = [&](const Vector3& axis) {
+		float lenSq = Dot(axis, axis);
+		if (lenSq < 1e-6f) return true;
+		Vector3 n = axis * (1.0f / std::sqrt(lenSq));
+
+		float rOBB = std::abs(Dot(n, obb->orientations[0])) * obb->halfSize.x +
+			std::abs(Dot(n, obb->orientations[1])) * obb->halfSize.y +
+			std::abs(Dot(n, obb->orientations[2])) * obb->halfSize.z;
+
+		float rCap = std::abs(Dot(n, capDir)) * capHalfLen + capsule->radius;
+
+		return std::abs(Dot(d, n)) <= rOBB + rCap;
+		};
+
+	// OBB の各軸
+	for (int i = 0; i < 3; ++i) {
+		if (!TestAxis(obb->orientations[i])) return false;
+	}
+	// Capsule の軸
+	if (!TestAxis(capDir)) return false;
+	// 外積
+	for (int i = 0; i < 3; ++i) {
+		Vector3 cross = Cross(obb->orientations[i], capDir);
+		if (!TestAxis(cross)) return false;
+	}
+
+	return true;
+}
+
+bool CollisionManager::CheckCapsuleToCapsule(const Capsule* capsuleA, const Capsule* capsuleB) {
+	
+	Vector3 d1 = capsuleA->end - capsuleA->start;
+	Vector3 d2 = capsuleB->end - capsuleB->start;
+	Vector3 r = capsuleA->start - capsuleB->start;
+	float a = Dot(d1, d1);
+	float e = Dot(d2, d2);
+	float f = Dot(d2, r);
+
+	float s = 0.0f, t = 0.0f;
+
+	if (a <= 1e-4f && e <= 1e-4f) {
+		s = t = 0.0f;
+	}
+	else if (a <= 1e-4f) {
+		s = 0.0f;
+		t = std::clamp(f / e, 0.0f, 1.0f);
+	}
+	else {
+		float c = Dot(d1, r);
+		if (e <= 1e-4f) {
+			t = 0.0f;
+			s = std::clamp(-c / a, 0.0f, 1.0f);
+		}
+		else {
+			float b = Dot(d1, d2);
+			float denom = a * e - b * b;
+
+			if (denom != 0.0f) {
+				s = std::clamp((b * f - c * e) / denom, 0.0f, 1.0f);
+			}
+			else {
+				s = 0.0f;
+			}
+			t = (b * s + f) / e;
+
+			if (t < 0.0f) {
+				t = 0.0f;
+				s = std::clamp(-c / a, 0.0f, 1.0f);
+			}
+			else if (t > 1.0f) {
+				t = 1.0f;
+				s = std::clamp((b - c) / a, 0.0f, 1.0f);
+			}
+		}
+	}
+
+	// 各線分上の最近接点
+	Vector3 c1 = capsuleA->start + d1 * s;
+	Vector3 c2 = capsuleB->start + d2 * t;
+
+	float dist = Length(c1 - c2);
+	return dist <= (capsuleA->radius + capsuleB->radius);
 }
