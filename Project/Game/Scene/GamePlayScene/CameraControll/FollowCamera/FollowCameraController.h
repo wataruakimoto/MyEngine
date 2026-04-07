@@ -86,7 +86,8 @@ private:
 	/// ===== 追従用 ===== ///
 
 	// 追従対象のオフセット
-	Engine::Vector3 baseOffset_ = { 0.0f, 4.0f, -12.0f };
+	Engine::Vector3 followOffsetRotation_ = { 0.2f, 0.0f, 0.0f };
+	Engine::Vector3 followOffsetTranslate_ = { 0.0f, 2.5f, -8.0f };
 
 	// 追従の補間
 	float followLerp_ = 0.1f;

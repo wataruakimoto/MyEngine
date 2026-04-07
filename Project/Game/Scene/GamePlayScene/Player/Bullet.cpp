@@ -11,7 +11,7 @@ void Bullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ 0.5f, 0.5f, 5.0f });
+	worldTransform_.SetScale({ 1.0f, 1.0f, 5.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -31,7 +31,7 @@ void Bullet::Initialize() {
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		Capsule{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)
 	);
 	// コライダーの初期化

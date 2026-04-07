@@ -25,8 +25,8 @@ void TitleScene::Initialize() {
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->Initialize();
 	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
 
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
