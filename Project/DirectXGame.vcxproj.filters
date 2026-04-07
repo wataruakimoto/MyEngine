@@ -594,6 +594,8 @@
     <ClInclude Include="Game\Level\GameLevelData.h" />
     <ClInclude Include="Game\Level\LevelLoader.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
+    <ClInclude Include="Engine\Math\Capsule.h" />
+    <ClInclude Include="Engine\Math\Ellipsoid.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

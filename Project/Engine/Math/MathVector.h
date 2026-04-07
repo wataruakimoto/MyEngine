@@ -33,6 +33,10 @@ namespace Engine {
 		float Dot(const Vector3& v1, const Vector3& v2);
 		float Dot(const Vector4& v1, const Vector4& v2);
 
+		// クロス
+		Vector2 Cross(const Vector2& v1, const Vector2& v2);
+		Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
 		// 長さ
 		float Length(float f1, float f2);
 		float Length(const Vector2& v);

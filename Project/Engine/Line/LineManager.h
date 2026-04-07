@@ -3,7 +3,11 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "Sphere.h"
 #include "AABB.h"
+#include "OBB.h"
+#include "Capsule.h"
+#include "Ellipsoid.h"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -21,9 +25,9 @@ namespace Engine {
 	/// </summary>
 	class LineManager {
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// シングルトン
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		// インスタンス
@@ -38,11 +42,11 @@ namespace Engine {
 		// コピーオペレータ禁止
 		LineManager& operator=(LineManager&) = delete;
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// メンバ関数
-	///-------------------------------------------///
+	/// ================================================== ///
 	public:
-		
+
 		/// <summary>
 		/// 初期化
 		/// </summary>
@@ -62,7 +66,7 @@ namespace Engine {
 		void DrawLine(const Vector3& start, const Vector3& end, const Vector4& color);
 
 		/// <summary>
-		/// 球の描画
+		/// 球の線描画
 		/// </summary>
 		/// <param name="center">中心点</param>
 		/// <param name="radius">半径</param>
@@ -71,7 +75,15 @@ namespace Engine {
 		void DrawSphere(const Vector3& center, float radius, const uint32_t subdivision, const Vector4& color);
 
 		/// <summary>
-		/// AABBの描画
+		/// 球の線描画
+		/// </summary>
+		/// <param name="sphere">球</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawSphere(const Sphere& sphere, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// AABBの線描画
 		/// </summary>
 		/// <param name="min">最小</param>
 		/// <param name="max">最大</param>
@@ -79,14 +91,65 @@ namespace Engine {
 		void DrawAABB(const Vector3& min, const Vector3& max, const Vector4& color);
 
 		/// <summary>
-		/// AABBの描画
+		/// AABBの線描画
 		/// </summary>
 		/// <param name="aabb">AABB</param>
 		/// <param name="color">色</param>
 		void DrawAABB(const AABB& aabb, const Vector4& color);
 
 		/// <summary>
-		/// グリッドの描画
+		/// OBBの線描画
+		/// </summary>
+		/// <param name="center">中心点</param>
+		/// <param name="orientations">方向ベクトル</param>
+		/// <param name="halfSize">中心から面までの距離</param>
+		/// <param name="color">色</param>
+		void DrawOBB(const Vector3& center, const Vector3 orientations[3], const Vector3& halfSize, const Vector4& color);
+
+		/// <summary>
+		/// OBBの線描画
+		/// </summary>
+		/// <param name="obb">OBB</param>
+		/// <param name="color">色</param>
+		void DrawOBB(const OBB& obb, const Vector4& color);
+
+		/// <summary>
+		/// カプセルの線描画
+		/// </summary>
+		/// <param name="start">始点</param>
+		/// <param name="end">終点</param>
+		/// <param name="radius">半径</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawCapsule(const Vector3& start, const Vector3& end, float radius, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// カプセルの線描画
+		/// </summary>
+		/// <param name="capsule">カプセル</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawCapsule(const Capsule& capsule, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// 楕円形の線描画
+		/// </summary>
+		/// <param name="center">中心点</param>
+		/// <param name="radius">半径</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawEllipsoid(const Vector3& center, const Vector3& radius, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// 楕円形の線描画
+		/// </summary>
+		/// <param name="ellipsoid">楕円形</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawEllipsoid(const Ellipsoid& ellipsoid, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// グリッドの線描画
 		/// </summary>
 		/// <param name="center">中心点</param>
 		/// <param name="size">グリッド全体の大きさ</param>
@@ -104,9 +167,9 @@ namespace Engine {
 		/// </summary>
 		void Finalize();
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// クラス内関数
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		/// <summary>
@@ -119,9 +182,9 @@ namespace Engine {
 		/// </summary>
 		void GenerateTranformationBuffer();
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// ゲッター
-	///-------------------------------------------///
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -130,20 +193,20 @@ namespace Engine {
 		/// <returns>インスタンス</returns>
 		static LineManager* GetInstance();
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// セッター
-	///-------------------------------------------///
+	/// ================================================== ///
 	public:
-		
+
 		/// <summary>
 		/// デフォルトカメラの設定
 		/// </summary>
 		/// <param name="camera">カメラ</param>
 		void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// 構造体
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		// 頂点データ
@@ -157,9 +220,9 @@ namespace Engine {
 			Matrix4x4 viewProjection; // ビュー射影行列
 		};
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// メンバ変数
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		/// ===== GPU用の変数 ===== ///

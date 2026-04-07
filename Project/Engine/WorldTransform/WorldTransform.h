@@ -77,6 +77,12 @@ namespace Engine {
 		Vector3 GetWorldScale() const;
 
 		/// <summary>
+		/// ワールド行列の回転の取得
+		/// </summary>
+		/// <returns></returns>
+		Vector3 GetWorldRotate() const;
+
+		/// <summary>
 		/// ワールド座標の取得
 		/// </summary>
 		/// <returns></returns>

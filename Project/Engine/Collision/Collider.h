@@ -5,6 +5,7 @@
 #include "Plane.h"
 #include "AABB.h"
 #include "OBB.h"
+#include "Capsule.h"
 
 #include <cstdint>
 #include <variant>
@@ -30,7 +31,7 @@ namespace Engine {
 		struct None {};
 
 		// 衝突形状の型 5種類のいずれか1つを保持
-		using CollisionShape = std::variant<None, Sphere, Plane, AABB, OBB>;
+		using CollisionShape = std::variant<None, Sphere, Plane, AABB, OBB, Capsule>;
 		
 	/// ================================================== ///
 	/// メンバ関数
@@ -102,18 +103,6 @@ namespace Engine {
 
 		// 種別IDのセッター
 		void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
-
-		// 球のセッター
-		void SetSphere(const Sphere& sphere);
-
-		// 平面のセッター
-		void SetPlane(const Plane& plane);
-
-		// AABBのセッター
-		void SetAABB(const AABB& aabb);
-
-		// OBBのセッター
-		void SetOBB(const OBB& obb);
 
 		/// <summary>
 		/// 衝突時のコールバック関数の設定

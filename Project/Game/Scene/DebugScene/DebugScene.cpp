@@ -16,7 +16,7 @@ void DebugScene::Initialize() {
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->GetWorldTransform().SetTranslate({ 0.0f,0.0f,-20.0f });
+	camera->GetWorldTransform().SetTranslate({ 0.0f,0.0f,-10.0f });
 
 	// 線描画マネージャのインスタンス取得
 	lineManager = LineManager::GetInstance();
@@ -66,6 +66,10 @@ void DebugScene::DrawFiltered() {
 
 void DebugScene::DrawUnfiltered() {
 
+	lineManager->DrawSphere({ -1.0f,0.0f,0.0f }, 0.5f, 8, { 1.0f,1.0f,1.0f,1.0f });
+
+	lineManager->DrawCapsule(capsule, 8, { 1.0f,1.0f,1.0f,1.0f });
+
 	lineManager->DrawGrid({ 0.0f, 0.0f, 0.0f }, 15.0f, 15, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
@@ -74,6 +78,15 @@ void DebugScene::Finalize() {
 
 void DebugScene::ShowImGui() {
 
-	// カメラのImGui表示
-	camera->ShowImGui("Camera");
+#ifdef USE_IMGUI
+
+	ImGui::Begin("デバッグシーン");
+
+	camera->ShowImGuiTree();
+
+	ShowImGuiCapsuleTree("カプセル", capsule);
+
+	ImGui::End();
+
+#endif // USE_IMGUI
 }

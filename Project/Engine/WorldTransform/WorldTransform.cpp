@@ -94,6 +94,29 @@ Vector3 WorldTransform::GetWorldScale() const {
 	return worldScale;
 }
 
+Vector3 WorldTransform::GetWorldRotate() const {
+
+	// 拡縮を取得
+	Vector3 worldScale = GetWorldScale();
+
+	// ワールド行列から回転成分を取得
+	Matrix4x4 rotationMatrix = {
+		worldMatrix_.m[0][0] / worldScale.x, worldMatrix_.m[0][1] / worldScale.x, worldMatrix_.m[0][2] / worldScale.x, 0.0f,
+		worldMatrix_.m[1][0] / worldScale.y, worldMatrix_.m[1][1] / worldScale.y, worldMatrix_.m[1][2] / worldScale.y, 0.0f,
+		worldMatrix_.m[2][0] / worldScale.z, worldMatrix_.m[2][1] / worldScale.z, worldMatrix_.m[2][2] / worldScale.z, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+	// 回転行列からオイラー角を取得
+	Vector3 worldRotate = {
+		atan2f(rotationMatrix.m[2][1], rotationMatrix.m[2][2]),
+		atan2f(-rotationMatrix.m[2][0], sqrtf(rotationMatrix.m[0][0] * rotationMatrix.m[0][0] + rotationMatrix.m[1][0] * rotationMatrix.m[1][0])),
+		atan2f(rotationMatrix.m[1][0], rotationMatrix.m[0][0])
+	};
+
+	return worldRotate;
+}
+
 Vector3 WorldTransform::GetWorldPosition() const {
 
 	Vector3 worldPosition = {

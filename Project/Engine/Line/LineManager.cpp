@@ -1,12 +1,14 @@
 #include "LineManager.h"
 #include "DirectXUtility.h"
 #include "Camera.h"
+#include "MathVector.h"
 #include "MathMatrix.h"
 
 #include <cassert>
 #include <numbers>
 
 using namespace Engine;
+using namespace MathVector;
 using namespace MathMatrix;
 
 void LineManager::Initialize() {
@@ -65,58 +67,73 @@ void LineManager::DrawSphere(const Vector3& center, float radius, const uint32_t
 	// π
 	const float pi = std::numbers::pi_v<float>;
 
-	// 分割した緯度1つ分の角度
-	const float latitudeStep = pi / subdivision;
-
-	// 分割した経度1つ分の角度
-	const float longitudeStep = 2.0f * pi / subdivision;
-
-	// 頂点の２次元配列 (分割数+1 × 分割数)
-	std::vector<std::vector<Vector3>> vertices(subdivision + 1, std::vector<Vector3>(subdivision));
+	// 1分割あたりの角度
+	const float kLonEvery = pi * 2.0f / static_cast<float>(subdivision);
+	const float kLatEvery = pi / static_cast<float>(subdivision);
 
 	// 全頂点を生成
-	for (uint32_t lat = 0; lat <= subdivision; ++lat) {
+	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
 
-		float latitude = lat * latitudeStep;
+		float lat = -pi / 2.0f + kLatEvery * latIndex;
+		float nextLat = lat + kLatEvery;
 
-		float sinLat = std::sin(latitude);
-		float cosLat = std::cos(latitude);
+		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
 
-		for (uint32_t lon = 0; lon < subdivision; ++lon) {
+			float lon = lonIndex * kLonEvery;
+			float nextLon = (lonIndex + 1) * kLonEvery;
 
-			float longitude = lon * longitudeStep;
+			/// ========== 現在の点 ========== ///
 
-			float sinLon = std::sin(longitude);
-			float cosLon = std::cos(longitude);
-
-			vertices[lat][lon] = {
-				center.x + radius * sinLat * cosLon, // x座標
-				center.y + radius * cosLat,          // y座標
-				center.z + radius * sinLat * sinLon  // z座標
+			Vector3 a = {
+				std::cos(lat) * std::cos(lon) * radius,
+				std::sin(lat) * radius,
+				std::cos(lat) * std::sin(lon) * radius,
 			};
-		}
-	}
 
-	// 線を描画
-	for (uint32_t lat = 0; lat < subdivision; ++lat) {
+			// 中心座標を加算
+			a += center;
 
-		for (uint32_t lon = 0; lon < subdivision; ++lon) {
+			/// ========== 隣の横の点 ========== ///
 
-			// 経度の次のインデックス (最後は0に戻る)
-			int nextLon = (lon + 1) % subdivision;
+			Vector3 b = {
+				std::cos(lat) * std::cos(nextLon) * radius,
+				std::sin(lat) * radius,
+				std::cos(lat) * std::sin(nextLon) * radius,
+			};
 
-			// 緯度線
-			DrawLine(vertices[lat][lon], vertices[lat][nextLon], color);
+			// 中心座標を加算
+			b += center;
 
-			// 経度線
-			DrawLine(vertices[lat][lon], vertices[lat + 1][lon], color);
+			/// ========== 隣の縦の点 ========== ///
+
+			Vector3 c = {
+				std::cos(nextLat) * std::cos(lon) * radius,
+				std::sin(nextLat) * radius,
+				std::cos(nextLat) * std::sin(lon) * radius,
+			};
+
+			// 中心座標を加算
+			c += center;
+
+			/// ========== 線を引く ========== ///
+
+			// 横線
+			DrawLine(a, b, color);
+
+			// 縦線
+			DrawLine(a, c, color);
 		}
 	}
 }
 
+void LineManager::DrawSphere(const Sphere& sphere, const uint32_t subdivision, const Vector4& color) {
+
+	DrawSphere(sphere.center, sphere.radius, subdivision, color);
+}
+
 void LineManager::DrawAABB(const Vector3& min, const Vector3& max, const Vector4& color) {
 
-	// AABBの8頂点を定義
+	// 8頂点を定義
 	Vector3 vertices[8] = {
 		{ min.x, min.y, min.z }, // 0: 最小点
 		{ max.x, min.y, min.z }, // 1: x最大
@@ -128,7 +145,7 @@ void LineManager::DrawAABB(const Vector3& min, const Vector3& max, const Vector4
 		{ min.x, max.y, max.z }  // 7: y最大、z最大
 	};
 
-	// AABBの12辺を描画
+	// 12辺を描画
 
 	DrawLine(vertices[0], vertices[1], color); // 下辺1
 	DrawLine(vertices[1], vertices[2], color); // 下辺2
@@ -149,6 +166,212 @@ void LineManager::DrawAABB(const Vector3& min, const Vector3& max, const Vector4
 void LineManager::DrawAABB(const AABB& aabb, const Vector4& color) {
 
 	DrawAABB(aabb.min, aabb.max, color);
+}
+
+void LineManager::DrawOBB(const Vector3& center, const Vector3 orientations[3], const Vector3& halfSize, const Vector4& color) {
+
+	// 中心から面までの距離ベクトルを計算
+	Vector3 axes[3] = {
+		orientations[0] * halfSize.x,
+		orientations[1] * halfSize.y,
+		orientations[2] * halfSize.z
+	};
+
+	// 8頂点を定義
+	Vector3 vertices[8] = {
+		center - axes[0] + axes[1] - axes[2], // 左上前
+		center + axes[0] + axes[1] - axes[2], // 右上前
+		center + axes[0] - axes[1] - axes[2], // 右下前
+		center - axes[0] - axes[1] - axes[2], // 左下前
+		center - axes[0] + axes[1] + axes[2], // 左上奥
+		center + axes[0] + axes[1] + axes[2], // 右上奥
+		center + axes[0] - axes[1] + axes[2], // 右下奥
+		center - axes[0] - axes[1] + axes[2], // 左下奥
+	};
+
+	// 12辺を描画
+
+	// 手前の面
+	DrawLine(vertices[0], vertices[1], color);
+	DrawLine(vertices[1], vertices[2], color);
+	DrawLine(vertices[2], vertices[3], color);
+	DrawLine(vertices[3], vertices[0], color);
+
+	// 奥の面
+	DrawLine(vertices[4], vertices[5], color);
+	DrawLine(vertices[5], vertices[6], color);
+	DrawLine(vertices[6], vertices[7], color);
+	DrawLine(vertices[7], vertices[4], color);
+
+	// 手前と奥を繋ぐ辺
+	DrawLine(vertices[0], vertices[4], color);
+	DrawLine(vertices[1], vertices[5], color);
+	DrawLine(vertices[2], vertices[6], color);
+	DrawLine(vertices[3], vertices[7], color);
+}
+
+void LineManager::DrawOBB(const OBB& obb, const Vector4& color) {
+
+	DrawOBB(obb.center, obb.orientations, obb.halfSize, color);
+}
+
+void LineManager::DrawCapsule(const Vector3& start, const Vector3& end, float radius, const uint32_t subdivision, const Vector4& color) {
+
+	// 円柱の軸ベクトルと長さを計算
+	Vector3 d = { end.x - start.x, end.y - start.y, end.z - start.z };
+	float length = std::sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
+
+	// 描画用のローカル座標系（Y軸をカプセルの向きとする）を設定
+	Vector3 localY = (length > 0.0001f) ? Vector3{ d.x / length, d.y / length, d.z / length } : Vector3{ 0, 1, 0 };
+	Vector3 up = (std::abs(localY.y) < 0.999f) ? Vector3{ 0, 1, 0 } : Vector3{ 1, 0, 0 };
+
+	// 外積 (Cross) と正規化 (Normalize) を用いて直交基底を作成
+	Vector3 localX = Normalize(Cross(up, localY));
+	Vector3 localZ = Normalize(Cross(localX, localY));
+
+	const float PI = 3.14159265359f;
+
+	// 赤道（phi=PI/2）を必ず計算できるように、極方向の分割数(rings)を偶数で保証する
+	uint32_t rings = (subdivision % 2 == 0) ? subdivision : subdivision + 1;
+	uint32_t slices = subdivision;
+	uint32_t halfRings = rings / 2;
+
+	// 球面の座標を計算し、指定した中心点(center)に対するワールド座標を返すラムダ
+	auto GetSpherePoint = [&](float theta, float phi, const Vector3& center) -> Vector3 {
+		// 標準的な球の座標計算
+		float x = std::sin(phi) * std::cos(theta);
+		float y = std::cos(phi);
+		float z = std::sin(phi) * std::sin(theta);
+
+		// カプセルの向きに合わせて回転
+		Vector3 rotated = {
+			localX.x * x + localY.x * y + localZ.x * z,
+			localX.y * x + localY.y * y + localZ.y * z,
+			localX.z * x + localY.z * y + localZ.z * z
+		};
+
+		// 中心点をオフセットしてスケール適用
+		return {
+			center.x + rotated.x * radius,
+			center.y + rotated.y * radius,
+			center.z + rotated.z * radius
+		};
+		};
+
+	// 球と全く同じ2重ループ（緯度・経度）を利用する
+	for (uint32_t i = 0; i < rings; ++i) {
+		float phi1 = PI * (float)i / rings;
+		float phi2 = PI * (float)(i + 1) / rings;
+
+		// Phiの角度に応じて、上半球は end、下半球は start を中心にする
+		Vector3 center1 = (i < halfRings) ? end : start;
+		Vector3 center2 = (i + 1 <= halfRings) ? end : start;
+
+		for (uint32_t j = 0; j < slices; ++j) {
+			float theta1 = 2.0f * PI * (float)j / slices;
+			float theta2 = 2.0f * PI * (float)(j + 1) / slices;
+
+			Vector3 p0 = GetSpherePoint(theta1, phi1, center1);
+			Vector3 p1 = GetSpherePoint(theta2, phi1, center1); // 水平リングの次点
+			Vector3 p2 = GetSpherePoint(theta1, phi2, center2); // 垂直ラインの次点
+
+			// 1. 水平方向のリング（緯線）線描画。一番上の極での縮退を防ぐため 0 より大きい場合のみ
+			if (i > 0) {
+				DrawLine(p0, p1, color);
+			}
+
+			// 2. 赤道（上半球と下半球の接続部分）における円柱側面の描画
+			if (i == halfRings - 1) {
+				// 上半球側の赤道リングを明示的に描画（通常の水平リングは phi1 に対して描かれるため）
+				Vector3 equatorEnd0 = p2; // phi2 = PI/2 における end 側の点
+				Vector3 equatorEnd1 = GetSpherePoint(theta2, phi2, center2);
+				DrawLine(equatorEnd0, equatorEnd1, color);
+
+				// 円柱の縦の側面ライン（上半球の赤道 〜 下半球の赤道）を描画
+				Vector3 equatorStart0 = GetSpherePoint(theta1, phi2, start);
+				DrawLine(equatorEnd0, equatorStart0, color);
+
+				// ※ 下半球側の赤道リングは、次のループ(i == halfRings)の水平リング(phi1)として描画される
+			}
+
+			// 3. 垂直方向（経線）の線描画（上半球から下半球へ飛ぶ瞬間以外は通常通り描画）
+			DrawLine(p0, p2, color);
+		}
+	}
+}
+
+void LineManager::DrawCapsule(const Capsule& capsule, const uint32_t subdivision, const Vector4& color) {
+
+	DrawCapsule(capsule.start, capsule.end, capsule.radius, subdivision, color);
+}
+
+void LineManager::DrawEllipsoid(const Vector3& center, const Vector3& radius, const uint32_t subdivision, const Vector4& color) {
+
+	// π
+	const float pi = std::numbers::pi_v<float>;
+
+	// 1分割あたりの角度
+	const float kLonEvery = pi * 2.0f / static_cast<float>(subdivision);
+	const float kLatEvery = pi / static_cast<float>(subdivision);
+
+	// 全頂点を生成
+	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
+
+		float lat = -pi / 2.0f + kLatEvery * latIndex;
+		float nextLat = lat + kLatEvery;
+
+		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
+
+			float lon = lonIndex * kLonEvery;
+			float nextLon = (lonIndex + 1) * kLonEvery;
+
+			/// ========== 現在の点 ========== ///
+
+			Vector3 a = {
+				std::cos(lat) * std::cos(lon) * radius.x,
+				std::sin(lat) * radius.y,
+				std::cos(lat) * std::sin(lon) * radius.z,
+			};
+
+			// 中心座標を加算
+			a += center;
+
+			/// ========== 隣の横の点 ========== ///
+
+			Vector3 b = {
+				std::cos(lat) * std::cos(nextLon) * radius.x,
+				std::sin(lat) * radius.y,
+				std::cos(lat) * std::sin(nextLon) * radius.z,
+			};
+
+			// 中心座標を加算
+			b += center;
+
+			/// ========== 隣の縦の点 ========== ///
+
+			Vector3 c = {
+				std::cos(nextLat) * std::cos(lon) * radius.x,
+				std::sin(nextLat) * radius.y,
+				std::cos(nextLat) * std::sin(lon) * radius.z,
+			};
+
+			// 中心座標を加算
+			c += center;
+
+			/// ========== 線を引く ========== ///
+
+			// 横線
+			DrawLine(a, b, color);
+
+			// 縦線
+			DrawLine(a, c, color);
+		}
+	}
+}
+
+void LineManager::DrawEllipsoid(const Ellipsoid& ellipsoid, const uint32_t subdivision, const Vector4& color) {
+
+	DrawEllipsoid(ellipsoid.center, ellipsoid.radius, subdivision, color);
 }
 
 void LineManager::DrawGrid(const Vector3& center, const float size, const uint32_t subdivision, const Vector4& color) {

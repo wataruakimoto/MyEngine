@@ -18,6 +18,7 @@ void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 2.0f,2.0f,2.0f });
 	worldTransform_.SetTranslate({ 0.0f, 5.0f, 0.0f });
 
 	// モデルの生成・初期化
@@ -32,7 +33,7 @@ void Player::Initialize() {
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		AABB{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)
 	);
 	// コライダーの初期化
