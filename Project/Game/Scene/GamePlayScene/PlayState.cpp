@@ -526,6 +526,9 @@ void PauseState::Initialize(GamePlayScene* scene) {
 
 	// ビネットフィルターのポインタを取得
 	vignetteFilter_ = filterManager_->GetVignetteFilter();
+
+	// マウスカーソルを表示する
+	while (ShowCursor(TRUE) < 0);
 }
 
 void PauseState::Update() {
@@ -558,6 +561,9 @@ void PauseState::Update() {
 
 	case PauseSelect::Resume:
 
+		// マウスカーソルを非表示に戻す
+		while (ShowCursor(FALSE) >= 0);
+
 		scene_->TogglePause();
 
 		isFinished_ = true;
@@ -574,6 +580,9 @@ void PauseState::Update() {
 
 			vignetteFilter_->SetIsActive(false);
 
+			// マウスカーソルを非表示に戻す
+			while (ShowCursor(FALSE) >= 0);
+
 			scene_->Restart();
 		}
 
@@ -582,6 +591,9 @@ void PauseState::Update() {
 	case PauseSelect::Quit:
 
 		vignetteFilter_->SetIsActive(false);
+
+		// マウスカーソルを非表示に戻す
+		while (ShowCursor(FALSE) >= 0);
 
 		SceneManager::GetInstance()->ChangeScene("TITLE");
 		
@@ -593,6 +605,9 @@ void PauseState::Update() {
 	}
 
 	if(Input::GetInstance()->TriggerKey(VK_ESCAPE)){
+
+		// マウスカーソルを非表示に戻す
+		while (ShowCursor(FALSE) >= 0);
 
 		scene_->TogglePause();
 		

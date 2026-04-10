@@ -43,8 +43,8 @@ void GameOverScene::Initialize() {
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->Initialize();
 	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();

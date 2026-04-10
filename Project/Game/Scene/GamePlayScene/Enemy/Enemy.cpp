@@ -239,7 +239,7 @@ void Enemy::Fire() {
 	// プレイヤーとの方向を計算
 	Vector3 direction = playerPos - worldTransform_.GetTranslate();
 	direction = Normalize(direction);
-	bullet->SetVelocity(direction);
+	bullet->SetDirection(direction);
 
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddEnemyBullet(std::move(bullet));

@@ -45,7 +45,7 @@ public:
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	Engine::WorldTransform& GetWorldTransform() { return worldTransform; }
+	Engine::WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	///-------------------------------------------/// 
 	/// セッター
@@ -56,7 +56,7 @@ public:
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Engine::Camera* camera) { this->camera = camera; }
+	void SetCamera(Engine::Camera* camera) { this->camera_ = camera; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -64,8 +64,8 @@ public:
 protected:
 
 	// カメラのワールド変換
-	Engine::WorldTransform worldTransform;
+	Engine::WorldTransform worldTransform_;
 
 	// カメラ(ゲームシーンからの借りポインタ)
-	Engine::Camera* camera = nullptr;
+	Engine::Camera* camera_ = nullptr;
 };

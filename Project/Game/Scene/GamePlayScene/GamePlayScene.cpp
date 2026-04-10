@@ -26,8 +26,8 @@ void GamePlayScene::Initialize() {
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->Initialize();
 	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
 
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
@@ -498,8 +498,10 @@ void GamePlayScene::CheckOriginShift() {
 	// プレイヤーのZ座標がループ距離を超えたら
 	if (playerZ >= kLoopDistance) {
 
+		float shiftZ = kLoopDistance - 100;
+
 		// ワールドを手前にずらす
-		ShiftWorld(kLoopDistance);
+		ShiftWorld(shiftZ);
 	}
 }
 

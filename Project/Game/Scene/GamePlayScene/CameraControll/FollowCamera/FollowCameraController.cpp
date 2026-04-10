@@ -16,7 +16,14 @@ using namespace Easing;
 void FollowCameraController::Initialize() {
 
 	// ワールド変換の初期化
-	worldTransform.Initialize();
+	worldTransform_.Initialize();
+
+	// カメラのワールド変換の親をセット
+	camera_->GetWorldTransform().SetParent(&worldTransform_);
+
+	// カメラのワールド変換の初期化
+	camera_->GetWorldTransform().SetRotate({ 0.0f, 0.0f, 0.0f });
+	camera_->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, 0.0f });
 }
 
 void FollowCameraController::Update() {
@@ -37,13 +44,10 @@ void FollowCameraController::Update() {
 	DynamicFov();
 
 	// ワールド変換の更新
-	worldTransform.Update();
-
-	// 位置を取得
-	camera->GetWorldTransform().SetTranslate(worldTransform.GetTranslate());
+	worldTransform_.Update();
 
 	// カメラの更新
-	camera->Update();
+	camera_->Update();
 }
 
 void FollowCameraController::ShowImGui() {
@@ -52,13 +56,13 @@ void FollowCameraController::ShowImGui() {
 
 	ImGui::Begin("FollowCameraController");
 
-	ImGui::DragFloat3("BaseOffset", &baseOffset_.x, 0.1f);
+	ImGui::DragFloat3("BaseOffset", &followOffsetTranslate_.x, 0.1f);
 
 	// ワールド変換のImGui表示
-	worldTransform.ShowImGui();
+	worldTransform_.ShowImGui();
 
 	// ImGuiのツリー表示
-	camera->ShowImGuiTree();
+	camera_->ShowImGuiTree();
 
 	ImGui::End();
 
@@ -105,16 +109,16 @@ void FollowCameraController::Follow() {
 	if (player) {
 
 		// 回転行列を作成
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform.GetRotate());
+		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform_.GetRotate());
 
 		// オフセットを回転に合わせる
-		Vector3 offset = TransformNormal(baseOffset_, rotateMatrix);
+		Vector3 offset = TransformNormal(followOffsetTranslate_, rotateMatrix);
 
 		// 座標をコピーしてオフセット分ずらす
 		Vector3 targetPosition = player->GetWorldTransform().GetWorldPosition() + offset + shakeOffset_ + lookAheadOffset_;
 
 		// 現在地を取得
-		Vector3 currentPosition = worldTransform.GetTranslate();
+		Vector3 currentPosition = worldTransform_.GetTranslate();
 
 		// 新しい位置を計算
 		Vector3 newPosition;
@@ -124,7 +128,10 @@ void FollowCameraController::Follow() {
 		newPosition.z = targetPosition.z; // Z座標は直接設定
 
 		// ワールド変換の平行移動を設定
-		worldTransform.SetTranslate(newPosition);
+		worldTransform_.SetTranslate(newPosition);
+
+		// ワールド変換の回転を設定
+		worldTransform_.SetRotate(followOffsetRotation_);
 	}
 }
 
@@ -148,13 +155,13 @@ void FollowCameraController::DutchRoll() {
 		currentTilt_ = Lerp(currentTilt_, targetTilt, kTiltDelay_);
 
 		// 現在の回転を取得
-		Vector3 currentRotation = worldTransform.GetRotate();
+		Vector3 currentRotation = worldTransform_.GetRotate();
 
 		// Z軸に傾きを適用
 		currentRotation.z = currentTilt_;
 
 		// ワールド変換の回転を設定
-		worldTransform.SetRotate(currentRotation);
+		worldTransform_.SetRotate(currentRotation);
 	}
 }
 
@@ -170,13 +177,13 @@ void FollowCameraController::DynamicFov() {
 	float newFovY = Lerp(fovNormalRad, fovDashRad, playerSpeedRate);
 
 	// 現在のFovを取得
-	float currentFovY = camera->GetFovY();
+	float currentFovY = camera_->GetFovY();
 
 	// Fovを補間で滑らかに変更
 	float updatedFovY = Lerp(currentFovY, newFovY, 0.1f);
 
 	// カメラに設定
-	camera->SetFovY(updatedFovY);
+	camera_->SetFovY(updatedFovY);
 }
 
 void FollowCameraController::LookAhead() {
