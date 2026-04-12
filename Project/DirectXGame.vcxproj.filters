@@ -370,9 +370,6 @@
     <ClInclude Include="Engine\3d\Data\MaterialData.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3D\Data\TransformationData.h">
-      <Filter>Engine\3D\Data</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Data\ModelData.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>

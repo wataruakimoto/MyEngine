@@ -73,9 +73,6 @@ void WinApp::Initialize() {
 
 	// システムタイマーの分解能を上げる
 	timeBeginPeriod(1);
-
-	// マウスカーソルを非表示にする
-	ShowCursor(false);
 }
 
 void WinApp::Update() {

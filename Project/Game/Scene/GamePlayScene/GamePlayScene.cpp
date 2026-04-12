@@ -276,6 +276,8 @@ void GamePlayScene::ShowImGui() {
 	whiteFade_->ShowImGui();
 
 	goal_->ShowImGui();
+
+	lightManager_->ShowImGui();
 }
 
 void GamePlayScene::CheckAllCollisions() {

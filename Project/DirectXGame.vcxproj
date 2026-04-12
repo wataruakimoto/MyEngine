@@ -239,7 +239,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BaseFilter.h" />
-    <ClInclude Include="Engine\3D\Data\TransformationData.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
     <ClInclude Include="engine\3d\Data\ModelData.h" />
