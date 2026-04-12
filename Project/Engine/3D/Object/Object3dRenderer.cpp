@@ -74,22 +74,22 @@ void Object3dRenderer::CreateGraphicsPipelinOpaque() {
 	// gTransformationMatrix CBV、b0、頂点シェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
-	// gMaterial CBV、b1、ピクセルシェーダーで使う
+	// gCamera CBV、b1、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gDirectionalLight CBV、b2、ピクセルシェーダーで使う
+	// gMaterial CBV、b2、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 2, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gPointLight CBV、b3、ピクセルシェーダーで使う
+	// gDirectionalLight CBV、b3、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 3, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gSpotLight CBV、b4、ピクセルシェーダーで使う
+	// gPointLight CBV、b4、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 4, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gEnvironment CBV、b5、ピクセルシェーダーで使う
+	// gSpotLight CBV、b5、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 5, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gCamera CBV、b6、ピクセルシェーダーで使う
+	// gEnvironment CBV、b6、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 6, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	// gTexture SRV、t0、ピクセルシェーダーで使う

@@ -1,5 +1,9 @@
 #include "object3d.hlsli"
 
+struct Camera {
+    float3 worldPosition;
+};
+
 struct Material {
     float4 color;
     int lightingMode;
@@ -8,21 +12,20 @@ struct Material {
 };
 
 struct DirectionalLight {
-    float4 color; // 色
     float3 direction; // 向き
     float intensity; // 輝度
+    float4 color; // 色
 };
 
 struct PointLight {
-    float4 color; // 色
     float3 position; // 位置
     float intensity; // 輝度
     float distance; // 光の届く最大距離
     float decay; // 減衰率
+    float4 color; // 色
 };
 
 struct SpotLight {
-    float4 color; // 色
     float3 position; // 位置
     float3 direction; // 向き
     float intensity; // 輝度
@@ -30,27 +33,24 @@ struct SpotLight {
     float decay; // 減衰率
     float cosAngle; // 余弦
     float cosFalloffStart; // Falloffの開始角度
+    float4 color; // 色
 };
 
 struct Environment {
     float intensity; // 環境光の強度
 };
 
-struct Camera {
-    float3 worldPosition;
-};
+ConstantBuffer<Camera> gCamera : register(b1);
 
-ConstantBuffer<Material> gMaterial : register(b1);
+ConstantBuffer<Material> gMaterial : register(b2);
 
-ConstantBuffer<DirectionalLight> gDirectionalLight : register(b2);
+ConstantBuffer<DirectionalLight> gDirectionalLight : register(b3);
 
-ConstantBuffer<PointLight> gPointLight : register(b3);
+ConstantBuffer<PointLight> gPointLight : register(b4);
 
-ConstantBuffer<SpotLight> gSpotLight : register(b4);
+ConstantBuffer<SpotLight> gSpotLight : register(b5);
 
-ConstantBuffer<Environment> gEnvironment : register(b5);
-
-ConstantBuffer<Camera> gCamera : register(b6);
+ConstantBuffer<Environment> gEnvironment : register(b6);
 
 Texture2D<float4> gTexture : register(t0);
 
