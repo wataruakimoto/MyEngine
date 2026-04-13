@@ -7,7 +7,6 @@
 
 #include <d3d12.h>
 #include <wrl.h>
-#include <memory>
 
 namespace Engine {
 
@@ -25,11 +24,12 @@ namespace Engine {
 
 		// マテリアルデータ
 		struct Material {
-			Vector4 color;
-			int lightingMode;
-			float padding[3];
-			Matrix4x4 uvTransform;
-			float shininess;
+			Vector4 color;			    // 色
+			uint32_t diffuseSetting;    // 拡散反射の設定 0:使わない 1:Lambert反射 2:HalfLambert反射 
+			uint32_t specularSetting;   // 鏡面反射の設定 0:使わない 1:Phong反射 2:BlinnPhong反射
+			uint32_t useEnvironmentMap; // 環境マップの設定 0:使わない 1:使う
+			float shininess;		    // 明るさ
+			Matrix4x4 uvTransform;	    // UV座標
 		};
 
 		///-------------------------------------------/// 
@@ -73,18 +73,6 @@ namespace Engine {
 		/// ゲッター&セッター
 		///-------------------------------------------///
 	public:
-
-		/// <summary>
-		/// ライティングの種類のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const int& GetLightingMode() const { return materialData->lightingMode; }
-
-		/// <summary>
-		/// ライティングの種類のセッター
-		/// </summary>
-		/// <param name="lightingMode"></param>
-		void SetLightingMode(int lightingMode) { materialData->lightingMode = lightingMode; }
 
 		/// <summary>
 		/// ライトの明るさのゲッター

@@ -3,6 +3,7 @@
 #include "DirectXUtility.h"
 
 #include <numbers>
+#include <string>
 #include <imgui.h>
 
 using namespace Engine;
@@ -53,6 +54,18 @@ void LightManager::ShowImGui() {
 	ImGui::Begin("光源マネージャ");
 
 	if (ImGui::TreeNodeEx("平行光源")) {
+
+		//for (uint32_t i = 0; i < MAX_DIR_LIGHTS; i++) {
+		//
+		//	if (ImGui::TreeNodeEx(std::to_string(i).c_str())) {
+		//
+		//		ImGui::DragFloat3("向き", &directionalLightData_->lights[i].direction.x, 0.01f);
+		//		ImGui::DragFloat("輝度", &directionalLightData_->lights[i].intensity, 0.01f);
+		//		ImGui::ColorEdit4("色", &directionalLightData_->lights[i].color.x);
+		//
+		//		ImGui::TreePop();
+		//	}
+		//}
 
 		ImGui::DragFloat3("向き", &directionalLightData_->direction.x, 0.01f);
 		ImGui::DragFloat("輝度", &directionalLightData_->intensity, 0.01f);
@@ -110,6 +123,21 @@ void LightManager::CreateDirectionalLight() {
 	directionalLightData_->direction = { 0.0f, -1.0f, 0.0f }; // 下向き
 	directionalLightData_->intensity = 1.0f; // 輝度は最大
 	directionalLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 色は白
+	
+	//directionalLightData_->activeCount = 1; // 1つだけ有効にしておく
+	//
+	//// 0番目(メイン)の初期化
+	//directionalLightData_->lights[0].direction = { 0.0f, -1.0f, 0.0f }; // 下向き
+	//directionalLightData_->lights[0].intensity = 1.0f; // 輝度は最大
+	//directionalLightData_->lights[0].color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 色は白
+	//
+	//// 1番目以降の初期化
+	//for (uint32_t i = 1; i < MAX_DIR_LIGHTS; i++) {
+	//
+	//	directionalLightData_->lights[i].direction = { 0.0f, -1.0f, 0.0f }; // 下向き
+	//	directionalLightData_->lights[i].intensity = 0.0f; // 輝度を0
+	//	directionalLightData_->lights[i].color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 色は白
+	//}
 }
 
 void LightManager::CreatePointLight() {

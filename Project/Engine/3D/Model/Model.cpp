@@ -51,8 +51,12 @@ void Model::ShowImGui() {
 	if (ImGui::TreeNode("Model")) {
 		ImGui::Text("FilePath: %s", modelData->material.textureFilePath.c_str());
 		ImGui::ColorEdit4("Color", &materialData->color.x);
-		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0EnvironmentMap\0");
-		ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
+		ImGui::Combo("Diffuse", (int*)&materialData->diffuseSetting, "None\0Lambert\0Half-Lambert\0");
+		ImGui::Combo("Specular", (int*)&materialData->specularSetting, "None\0Phong\0Blinn-Phong\0");
+		bool useEnv = materialData->useEnvironmentMap;
+		if (ImGui::Checkbox("Use Environment Map", &useEnv)) {
+			materialData->useEnvironmentMap = useEnv ? 1 : 0;
+		}ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
 		ImGui::TreePop();
 	}
 
@@ -90,7 +94,9 @@ void Model::InitializeMaterialData() {
 
 	/// === MaterialDataの初期値を書き込む === ///
 	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
-	materialData->lightingMode = 0; // Lightingをしていない
-	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
+	materialData->diffuseSetting = 0; // 拡散反射は使わない
+	materialData->specularSetting = 0; // 鏡面反射は使わない
+	materialData->useEnvironmentMap = 0; // 環境マップは使わない
 	materialData->shininess = 70.0f;
+	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }

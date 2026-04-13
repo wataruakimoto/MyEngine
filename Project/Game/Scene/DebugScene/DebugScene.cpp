@@ -1,11 +1,7 @@
 #include "DebugScene.h"
 #include "LineManager.h"
-#include "OffscreenRendering/FilterManager.h"
-#include "TransitionManager.h"
 #include "SceneManager.h"
-#include "Input.h"
-#include "Transition/FadeTransition.h"
-#include "Transition/SlideTransition.h"
+#include "Object/Object3dRenderer.h"
 
 #include <imgui.h>
 
@@ -23,52 +19,48 @@ void DebugScene::Initialize() {
 	// 線描画マネージャにデフォルトカメラをセット
 	lineManager->SetDefaultCamera(camera.get());
 
-	// フィルターマネージャの初期化
-	filterManager = FilterManager::GetInstance();
-	filterManager->SetCamera(camera.get());
-
-	// 遷移マネージャの初期化
-	transitionManager = TransitionManager::GetInstance();
-
 	// シーンマネージャのインスタンス取得
 	sceneManager = SceneManager::GetInstance();
 
-	// 入力の初期化
-	input = Input::GetInstance();
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
 
-	// フェードアウト開始
-	transitionManager->StartInTransition(
-		std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 1.0f, 0.0f),
-		[]() {},
-		2.0f // 遷移にかける時間 (秒)
-	);
+	// インスタンス取得
+	object3dRenderer_ = Object3dRenderer::GetInstance();
+	object3dRenderer_->SetDefaultCamera(camera.get());
+
+	// モデルの生成
+	model_ = std::make_unique<Model>();
+	model_->Initialize("Sphere", "Sphere.obj");
+
+	// オブジェクトの生成
+	object_ = std::make_unique<Object3d>();
+	object_->Initialize();
+	object_->SetModel(model_.get());
 }
 
 void DebugScene::Update() {
 
-	// 2番キーを押したら
-	if (input->TriggerKey('2')) {
-
-		// フェードアウト開始
-		transitionManager->StartOutTransition(
-			std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 0.0f, 1.0f),
-			[]() {},
-			2.0f // 遷移にかける時間 (秒)
-		);
-	}
-
 	// カメラの更新
 	camera->Update();
+
+	// オブジェクトの更新
+	object_->Update();
 }
 
 void DebugScene::DrawFiltered() {
+
+	/// === 3Dオブジェクトの描画準備 === ///
+	object3dRenderer_->SettingDrawingOpaque();
+
+	lightManager_->Draw();
+
+	// オブジェクトの描画
+	object_->Draw();
 }
 
 void DebugScene::DrawUnfiltered() {
-
-	lineManager->DrawSphere({ -1.0f,0.0f,0.0f }, 0.5f, 8, { 1.0f,1.0f,1.0f,1.0f });
-
-	lineManager->DrawCapsule(capsule, 8, { 1.0f,1.0f,1.0f,1.0f });
 
 	lineManager->DrawGrid({ 0.0f, 0.0f, 0.0f }, 15.0f, 15, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
@@ -84,9 +76,13 @@ void DebugScene::ShowImGui() {
 
 	camera->ShowImGuiTree();
 
-	ShowImGuiCapsuleTree("カプセル", capsule);
+	object_->ShowImGui();
+
+	model_->ShowImGui();
 
 	ImGui::End();
+
+	lightManager_->ShowImGui();
 
 #endif // USE_IMGUI
 }

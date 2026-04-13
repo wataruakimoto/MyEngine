@@ -18,6 +18,13 @@ namespace Engine {
 	class LightManager {
 
 	/// ================================================== ///
+	/// 定数
+	/// ================================================== ///
+	public:
+
+		static const uint32_t MAX_DIR_LIGHTS = 4;
+
+	/// ================================================== ///
 	/// 構造体
 	/// ================================================== ///
 	public:
@@ -29,6 +36,12 @@ namespace Engine {
 			Vector3 direction; // 向き
 			float intensity;   // 輝度
 			Vector4 color;	   // 色
+		};
+
+		struct DirectionalLightList {
+			uint32_t activeCount; // 有効なライトの数
+			float padding[3];
+			DirectionalLight lights[MAX_DIR_LIGHTS];
 		};
 
 		/// <summary>
@@ -125,8 +138,11 @@ namespace Engine {
 		// 平行光源リソース
 		Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;
 
-		// 平行光源データ
+		// 平行光源のデータ
 		DirectionalLight* directionalLightData_ = nullptr;
+
+		// 平行光源リストのデータ
+		//DirectionalLightList* directionalLightData_ = nullptr;
 
 		/// ========== 点光源 ========== ///
 
