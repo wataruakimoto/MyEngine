@@ -13,6 +13,7 @@
 #include "UI/TitleUI.h"
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
+#include "Light/LightManager.h"
 
 #include <memory>
 #include <optional>
@@ -193,4 +194,7 @@ private:
 
     // 遷移マネージャのインスタンス
     Engine::TransitionManager* transitionManager_ = nullptr;
+
+    // ライトマネージャのポインタ
+    std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 };

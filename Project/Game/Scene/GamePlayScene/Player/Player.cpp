@@ -24,6 +24,7 @@ void Player::Initialize() {
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
 	model->Initialize("Player", "player.obj");
+	model->SetDiffuseSetting(2); // HalfLambert反射
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();

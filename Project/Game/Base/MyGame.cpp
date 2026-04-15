@@ -86,7 +86,7 @@ void MyGame::Draw() {
 #ifdef _DEBUG
 
 	// 線描画
-	lineManager_->Render();
+	//lineManager_->Render();
 
 #endif // _DEBUG
 
@@ -171,6 +171,7 @@ void MyGame::LoadAllResource() {
 	textureManager_->LoadTextureRelative("PauseUI/RestartButton.png");
 	textureManager_->LoadTextureRelative("PauseUI/QuitButton.png");
 	textureManager_->LoadTextureRelative("PauseUI/Frame.png");
+	textureManager_->LoadTextureRelative("SpaceToTitle.png");
 
 	textureManager_->LoadTextureRelative("rostock_laage_airport_4k.dds");
 

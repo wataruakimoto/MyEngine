@@ -18,6 +18,10 @@ void TitleScene::Initialize() {
 	object3dRenderer_ = Object3dRenderer::GetInstance();
 	transitionManager_ = TransitionManager::GetInstance();
 
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
+
 	// カメラの生成&初期化
 	camera_ = std::make_unique<Engine::Camera>();
 	camera_->Initialize();
@@ -203,6 +207,9 @@ void TitleScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	object3dRenderer_->SettingDrawingOpaque();
+
+	// ライトの描画
+	lightManager_->Draw();
 
 	// シリンダーの描画
 	cylinder_->Draw();
