@@ -187,4 +187,6 @@ void MyGame::LoadAllResource() {
 	modelManager_->LoadModelData("Gate", "Gate.obj");
 	modelManager_->LoadModelData("Reticle", "Reticle.obj");
 	modelManager_->LoadModelData("Obstacle", "Obstacle.obj");
+	modelManager_->LoadModelData("Sphere", "sphere.obj");
+	modelManager_->LoadModelData("Terrain", "terrain.obj");
 }

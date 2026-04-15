@@ -20,6 +20,7 @@
 #include "Goal/Goal.h"
 #include "LevelLoader.h"
 #include "Obstacle/Obstacle.h"
+#include "Light/LightManager.h"
 
 #include <list>
 #include <memory>
@@ -264,6 +265,9 @@ private:
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<Engine::CollisionManager> collisionManager_ = nullptr;
+
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 
 	// パーティクルマネージャのインスタンス
 	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();

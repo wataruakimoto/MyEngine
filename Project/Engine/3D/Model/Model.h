@@ -7,7 +7,6 @@
 
 #include <d3d12.h>
 #include <wrl.h>
-#include <memory>
 
 namespace Engine {
 
@@ -25,11 +24,12 @@ namespace Engine {
 
 		// マテリアルデータ
 		struct Material {
-			Vector4 color;
-			int lightingMode;
-			float padding[3];
-			Matrix4x4 uvTransform;
-			float shininess;
+			Vector4 color;			    // 色
+			uint32_t diffuseSetting;    // 拡散反射の設定 0:使わない 1:Lambert反射 2:HalfLambert反射 
+			uint32_t specularSetting;   // 鏡面反射の設定 0:使わない 1:Phong反射 2:BlinnPhong反射
+			uint32_t useEnvironmentMap; // 環境マップの設定 0:使わない 1:使う
+			float shininess;		    // 明るさ
+			Matrix4x4 uvTransform;	    // UV座標
 		};
 
 		///-------------------------------------------/// 
@@ -69,28 +69,22 @@ namespace Engine {
 		/// </summary>
 		void InitializeMaterialData();
 
-		///-------------------------------------------/// 
-		/// ゲッター&セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
-		/// ライティングの種類のゲッター
+		/// 色のセッター
 		/// </summary>
-		/// <returns></returns>
-		const int& GetLightingMode() const { return materialData->lightingMode; }
+		/// <param name="color"></param>
+		void SetColor(const Vector4& color) { materialData->color = color; }
 
-		/// <summary>
-		/// ライティングの種類のセッター
-		/// </summary>
-		/// <param name="lightingMode"></param>
-		void SetLightingMode(int lightingMode) { materialData->lightingMode = lightingMode; }
+		void SetDiffuseSetting(const uint32_t& diffuseSetting) { materialData->diffuseSetting = diffuseSetting; }
 
-		/// <summary>
-		/// ライトの明るさのゲッター
-		/// </summary>
-		/// <returns></returns>
-		const float& GetShininess() const { return materialData->shininess; }
+		void SetSpecularSetting(const uint32_t& specularSetting) { materialData->specularSetting = specularSetting; }
+
+		void SetUseEnvironmentMap(const uint32_t& useEnvironmentMap) { materialData->useEnvironmentMap = useEnvironmentMap; }
 
 		/// <summary>
 		/// ライトの明るさのセッター
@@ -98,21 +92,27 @@ namespace Engine {
 		/// <param name="shininess"></param>
 		void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
 
-		const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
-
 		/// <summary>
 		/// 環境マップのファイルパスのゲッター
 		/// </summary>
 		/// <param name="filePath"></param>
 		void SetEnvironmentMapFilePath(const std::string& filePath) { environmentMapFilePath = filePath; }
 
-		const Vector4& GetPosition() const { return vertexData->position; }
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+	public:
 
 		/// <summary>
-		/// 色のセッター
+		/// ライトの明るさのゲッター
 		/// </summary>
-		/// <param name="color"></param>
-		void SetColor(const Vector4& color) { materialData->color = color; }
+		/// <returns></returns>
+		const float& GetShininess() const { return materialData->shininess; }
+
+		const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
+
+		const Vector4& GetPosition() const { return vertexData->position; }
+
 
 		///-------------------------------------------/// 
 		/// メンバ変数

@@ -38,6 +38,10 @@ void GamePlayScene::Initialize() {
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<Engine::CollisionManager>();
 
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
+
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
 	player_->SetCamera(camera_.get());
@@ -144,6 +148,8 @@ void GamePlayScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	object3dRenderer_->SettingDrawingOpaque();
+
+	lightManager_->Draw();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
 
@@ -270,6 +276,8 @@ void GamePlayScene::ShowImGui() {
 	whiteFade_->ShowImGui();
 
 	goal_->ShowImGui();
+
+	lightManager_->ShowImGui();
 }
 
 void GamePlayScene::CheckAllCollisions() {

@@ -2,17 +2,19 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
-#include "Capsule.h"
+
+#include "Light/LightManager.h"
+#include "Object/Object3d.h"
+#include "Model/Model.h"
+
+#include <memory>
 
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
 
-	class LineManager;
-	class FilterManager;
-	class TransitionManager;
 	class SceneManager;
-	class Input;
+	class Object3dRenderer;
 }
 
 /// ===== デバッグシーン ===== ///
@@ -61,20 +63,24 @@ private:
 	// カメラのポインタ
 	std::unique_ptr<Engine::Camera> camera = nullptr;
 
-	// 線描画マネージャのポインタ
-	Engine::LineManager* lineManager = nullptr;
-
-	// フィルターマネージャのポインタ
-	Engine::FilterManager* filterManager = nullptr;
-
-	// 遷移マネージャのポインタ
-	Engine::TransitionManager* transitionManager = nullptr;
-
 	// シーンマネージャのポインタ
 	Engine::SceneManager* sceneManager = nullptr;
 
-	// 入力のポインタ
-	Engine::Input* input = nullptr;
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 
-	Engine::Capsule capsule = {};
+	// 3Dオブジェクトレンダラーのインスタンス
+	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+
+	// オブジェクト
+	std::unique_ptr <Engine::Object3d > object_ = nullptr;
+
+	// モデル
+	std::unique_ptr<Engine::Model> model_ = nullptr;
+
+	// オブジェクト
+	std::unique_ptr <Engine::Object3d > objectT_ = nullptr;
+
+	// モデル
+	std::unique_ptr<Engine::Model> modelT_ = nullptr;
 };

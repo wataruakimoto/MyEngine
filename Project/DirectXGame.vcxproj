@@ -169,6 +169,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Line\LineManager.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipelineBuilder.cpp" />
     <ClCompile Include="Game\Level\LevelLoader.cpp" />
+    <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -238,11 +239,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BaseFilter.h" />
-    <ClInclude Include="Engine\3D\Data\TransformationData.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
     <ClInclude Include="engine\3d\Data\ModelData.h" />
-    <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
     <ClInclude Include="Engine\Scene\AbstractSceneFactory.h" />
@@ -324,6 +323,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
     <ClInclude Include="Game\Level\LevelLoader.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
+    <ClInclude Include="Engine\3D\Light\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
