@@ -1,12 +1,14 @@
 #include "LightManager.h"
 
 #include "DirectXUtility.h"
+#include "MathVector.h"
 
 #include <numbers>
 #include <string>
 #include <imgui.h>
 
 using namespace Engine;
+using namespace MathVector;
 
 void LightManager::Initialize() {
 
@@ -27,6 +29,8 @@ void LightManager::Initialize() {
 }
 
 void LightManager::Update() {
+
+	directionalLightData_->direction = Normalize(directionalLightData_->direction);
 }
 
 void LightManager::Draw() {

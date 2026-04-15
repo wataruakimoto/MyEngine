@@ -13,7 +13,6 @@ namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
 
-	class LineManager;
 	class SceneManager;
 	class Object3dRenderer;
 }
@@ -64,9 +63,6 @@ private:
 	// カメラのポインタ
 	std::unique_ptr<Engine::Camera> camera = nullptr;
 
-	// 線描画マネージャのポインタ
-	Engine::LineManager* lineManager = nullptr;
-
 	// シーンマネージャのポインタ
 	Engine::SceneManager* sceneManager = nullptr;
 
@@ -81,4 +77,10 @@ private:
 
 	// モデル
 	std::unique_ptr<Engine::Model> model_ = nullptr;
+
+	// オブジェクト
+	std::unique_ptr <Engine::Object3d > objectT_ = nullptr;
+
+	// モデル
+	std::unique_ptr<Engine::Model> modelT_ = nullptr;
 };

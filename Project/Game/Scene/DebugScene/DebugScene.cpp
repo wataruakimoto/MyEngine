@@ -1,5 +1,4 @@
 #include "DebugScene.h"
-#include "LineManager.h"
 #include "SceneManager.h"
 #include "Object/Object3dRenderer.h"
 
@@ -12,12 +11,8 @@ void DebugScene::Initialize() {
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->GetWorldTransform().SetTranslate({ 0.0f,0.0f,-10.0f });
-
-	// 線描画マネージャのインスタンス取得
-	lineManager = LineManager::GetInstance();
-	// 線描画マネージャにデフォルトカメラをセット
-	lineManager->SetDefaultCamera(camera.get());
+	camera->GetWorldTransform().SetRotate({ 0.39f,0.0f,0.0f });
+	camera->GetWorldTransform().SetTranslate({ 0.0f,5.0f,-10.0f });
 
 	// シーンマネージャのインスタンス取得
 	sceneManager = SceneManager::GetInstance();
@@ -32,12 +27,21 @@ void DebugScene::Initialize() {
 
 	// モデルの生成
 	model_ = std::make_unique<Model>();
-	model_->Initialize("Sphere", "Sphere.obj");
+	model_->Initialize("Sphere", "sphere.obj");
 
 	// オブジェクトの生成
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize();
 	object_->SetModel(model_.get());
+
+	// モデルの生成
+	modelT_ = std::make_unique<Model>();
+	modelT_->Initialize("Terrain", "terrain.obj");
+
+	// オブジェクトの生成
+	objectT_ = std::make_unique<Object3d>();
+	objectT_->Initialize();
+	objectT_->SetModel(modelT_.get());
 }
 
 void DebugScene::Update() {
@@ -47,6 +51,8 @@ void DebugScene::Update() {
 
 	// オブジェクトの更新
 	object_->Update();
+
+	objectT_->Update();
 }
 
 void DebugScene::DrawFiltered() {
@@ -58,11 +64,11 @@ void DebugScene::DrawFiltered() {
 
 	// オブジェクトの描画
 	object_->Draw();
+
+	objectT_->Draw();
 }
 
 void DebugScene::DrawUnfiltered() {
-
-	lineManager->DrawGrid({ 0.0f, 0.0f, 0.0f }, 15.0f, 15, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 void DebugScene::Finalize() {
@@ -76,9 +82,23 @@ void DebugScene::ShowImGui() {
 
 	camera->ShowImGuiTree();
 
-	object_->ShowImGui();
+	if (ImGui::TreeNode("モンボ")) {
 
-	model_->ShowImGui();
+		object_->ShowImGui();
+
+		model_->ShowImGui();
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("地面")) {
+
+		objectT_->ShowImGui();
+
+		modelT_->ShowImGui();
+
+		ImGui::TreePop();
+	}
 
 	ImGui::End();
 

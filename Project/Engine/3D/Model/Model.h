@@ -69,9 +69,38 @@ namespace Engine {
 		/// </summary>
 		void InitializeMaterialData();
 
-		///-------------------------------------------/// 
-		/// ゲッター&セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// 色のセッター
+		/// </summary>
+		/// <param name="color"></param>
+		void SetColor(const Vector4& color) { materialData->color = color; }
+
+		void SetDiffuseSetting(const uint32_t& diffuseSetting) { materialData->diffuseSetting = diffuseSetting; }
+
+		void SetSpecularSetting(const uint32_t& specularSetting) { materialData->specularSetting = specularSetting; }
+
+		void SetUseEnvironmentMap(const uint32_t& useEnvironmentMap) { materialData->useEnvironmentMap = useEnvironmentMap; }
+
+		/// <summary>
+		/// ライトの明るさのセッター
+		/// </summary>
+		/// <param name="shininess"></param>
+		void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
+
+		/// <summary>
+		/// 環境マップのファイルパスのゲッター
+		/// </summary>
+		/// <param name="filePath"></param>
+		void SetEnvironmentMapFilePath(const std::string& filePath) { environmentMapFilePath = filePath; }
+
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -80,27 +109,10 @@ namespace Engine {
 		/// <returns></returns>
 		const float& GetShininess() const { return materialData->shininess; }
 
-		/// <summary>
-		/// ライトの明るさのセッター
-		/// </summary>
-		/// <param name="shininess"></param>
-		void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
-
 		const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
-
-		/// <summary>
-		/// 環境マップのファイルパスのゲッター
-		/// </summary>
-		/// <param name="filePath"></param>
-		void SetEnvironmentMapFilePath(const std::string& filePath) { environmentMapFilePath = filePath; }
 
 		const Vector4& GetPosition() const { return vertexData->position; }
 
-		/// <summary>
-		/// 色のセッター
-		/// </summary>
-		/// <param name="color"></param>
-		void SetColor(const Vector4& color) { materialData->color = color; }
 
 		///-------------------------------------------/// 
 		/// メンバ変数
