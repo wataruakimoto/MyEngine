@@ -7,6 +7,7 @@
 #include "Cylinder/Cylinder.h"
 #include "Player/Player.h"
 #include "Sprite/Sprite.h"
+#include "Light/LightManager.h"
 
 #include <memory>
 #include <optional>
@@ -139,6 +140,8 @@ private:
 
 	std::unique_ptr<Engine::Sprite> text_ = nullptr;
 
+	std::unique_ptr<Engine::Sprite> guide_ = nullptr;
+
 	/// ===== インスタンス・借りポインタ ===== ///
 
 	// オブジェクトレンダラーのインスタンス
@@ -164,4 +167,7 @@ private:
 
 	// スプライトレンダラーのインスタンス
 	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
+
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 };

@@ -23,6 +23,10 @@ void GameOverScene::Initialize() {
 	transitionManager = TransitionManager::GetInstance();
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
+
 	// フォグをフィルターマネージャから受け取っとく
 	fogFilter_ = filterManager_->GetFogFilter();
 	fogFilter_->SetStartDistance(500.0f); // フォグ開始距離を500に設定
@@ -69,6 +73,12 @@ void GameOverScene::Initialize() {
 	// テキストスプライトの生成&初期化
 	text_ = std::make_unique<Engine::Sprite>();
 	text_->Initialize("GameOver.png");
+
+	// ガイドスプライトの生成&初期化
+	guide_ = std::make_unique<Engine::Sprite>();
+	guide_->Initialize("SpaceToTitle.png");
+	guide_->SetPosition({ 640.0f, 600.0f });
+	guide_->SetAnchorPoint({ 0.5f, 0.5f });
 
 	// 最初の状態をリクエスト
 	stateRequest_ = GameOverFlowState::FadeOut;
@@ -162,12 +172,18 @@ void GameOverScene::Update() {
 
 	// テキストスプライトの更新
 	text_->Update();
+
+	// ガイドスプライトの更新
+	guide_->Update();
 }
 
 void GameOverScene::DrawFiltered() {
 
 	// オブジェクトレンダラーの描画設定
 	object3dRenderer_->SettingDrawingOpaque();
+
+	// ライトの描画
+	lightManager_->Draw();
 
 	// シリンダーの描画
 	cylinder_->Draw();
@@ -186,6 +202,9 @@ void GameOverScene::DrawUnfiltered() {
 
 	// スプライトの描画
 	text_->Draw();
+
+	// ガイドスプライトの描画
+	guide_->Draw();
 }
 
 void GameOverScene::Finalize() {
@@ -215,20 +234,20 @@ void GameOverScene::WaitInputInitialize() {
 void GameOverScene::WaitInputUpdate() {
 
 	// スペースを押したとき
-	if (input_->TriggerKey(VK_SPACE)) {
-
-		// 白色で設定
-		fadeColor_ = { 1.0f,1.0f,1.0f };
-
-		// 次のシーンをプレイに設定
-		nextScene_ = "PLAY";
-
-		// 状態を加速に変更
-		stateRequest_ = GameOverFlowState::SpeedUp;
-	}
+	//if (input_->TriggerKey(VK_SPACE)) {
+	//
+	//	// 白色で設定
+	//	fadeColor_ = { 1.0f,1.0f,1.0f };
+	//
+	//	// 次のシーンをプレイに設定
+	//	nextScene_ = "PLAY";
+	//
+	//	// 状態を加速に変更
+	//	stateRequest_ = GameOverFlowState::SpeedUp;
+	//}
 
 	// バックスペースを押したとき
-	if (input_->TriggerKey(VK_BACK)) {
+	if (input_->TriggerKey(VK_SPACE)) {
 
 		// 黒色で設定
 		fadeColor_ = { 0.0f,0.0f,0.0f };
