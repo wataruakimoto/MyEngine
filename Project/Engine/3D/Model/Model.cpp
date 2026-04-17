@@ -48,15 +48,17 @@ void Model::ShowImGui() {
 
 #ifdef USE_IMGUI
 
-	if (ImGui::TreeNode("Model")) {
-		ImGui::Text("FilePath: %s", modelData->material.textureFilePath.c_str());
-		ImGui::ColorEdit4("Color", &materialData->color.x);
-		ImGui::Combo("Diffuse", (int*)&materialData->diffuseSetting, "None\0Lambert\0Half-Lambert\0");
-		ImGui::Combo("Specular", (int*)&materialData->specularSetting, "None\0Phong\0Blinn-Phong\0");
+	if (ImGui::TreeNode("モデル")) {
+		ImGui::Text("ファイルパス: %s", modelData->material.textureFilePath.c_str());
+		ImGui::ColorEdit4("色", &materialData->color.x);
+		ImGui::ColorEdit3("鏡面反射色", &materialData->specularColor.x);
+		ImGui::Combo("拡散反射の設定", (int*)&materialData->diffuseSetting, "なし\0Lambert反射\0Half-Lambert反射\0");
+		ImGui::Combo("鏡面反射の設定", (int*)&materialData->specularSetting, "ない\0Phong反射\0Blinn-Phong反射\0");
 		bool useEnv = materialData->useEnvironmentMap;
-		if (ImGui::Checkbox("Use Environment Map", &useEnv)) {
+		if (ImGui::Checkbox("環境マップの設定", &useEnv)) {
 			materialData->useEnvironmentMap = useEnv ? 1 : 0;
-		}ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
+		}
+		ImGui::DragFloat("明るさ", &materialData->shininess, 0.01f);
 		ImGui::TreePop();
 	}
 
@@ -93,7 +95,8 @@ void Model::InitializeMaterialData() {
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 
 	/// === MaterialDataの初期値を書き込む === ///
-	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
+	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白
+	materialData->specularColor = Vector3(1.0f, 1.0f, 1.0f); // 白
 	materialData->diffuseSetting = 0; // 拡散反射は使わない
 	materialData->specularSetting = 0; // 鏡面反射は使わない
 	materialData->useEnvironmentMap = 0; // 環境マップは使わない

@@ -50,7 +50,7 @@ namespace Engine {
 		struct PointLight {
 			Vector3 position; // 位置
 			float intensity;  // 輝度
-			float distance;   // 光の届く最大距離
+			float radius;     // 光の届く半径
 			float decay;      // 減衰率
 			float padding[2]; // パディング
 			Vector4 color;    // 色
@@ -64,7 +64,7 @@ namespace Engine {
 			float padding;	   // パディング
 			Vector3 direction; // 向き
 			float intensity;   // 輝度
-			float distance;	   // 光の届く最大距離
+			float radius;	   // 光の届く半径
 			float decay;	   // 減衰率
 			float cosAngle;	   // 角度
 			float cosFalloffStart; // 減衰開始角度
