@@ -18,13 +18,6 @@ namespace Engine {
 	class LightManager {
 
 	/// ================================================== ///
-	/// 定数
-	/// ================================================== ///
-	public:
-
-		static const uint32_t MAX_DIR_LIGHTS = 4;
-
-	/// ================================================== ///
 	/// 構造体
 	/// ================================================== ///
 	public:
@@ -33,42 +26,38 @@ namespace Engine {
 		/// 平行光源
 		/// </summary>
 		struct DirectionalLight {
+			uint32_t active;   // 有効フラグ 0:無効 1:有効
+			Vector3 color;	   // 色
 			Vector3 direction; // 向き
 			float intensity;   // 輝度
-			Vector4 color;	   // 色
-		};
-
-		struct DirectionalLightList {
-			uint32_t activeCount; // 有効なライトの数
-			float padding[3];
-			DirectionalLight lights[MAX_DIR_LIGHTS];
 		};
 
 		/// <summary>
 		/// 点光源
 		/// </summary>
 		struct PointLight {
+			uint32_t active;  // 有効フラグ 0:無効 1:有効
+			Vector3 color;    // 色
 			Vector3 position; // 位置
 			float intensity;  // 輝度
-			float radius;     // 光の届く半径
+			float range;      // 距離 
 			float decay;      // 減衰率
-			float padding[2]; // パディング
-			Vector4 color;    // 色
 		};
 
 		/// <summary>
 		/// スポットライト
 		/// </summary>
 		struct SpotLight {
-			Vector3 position;  // 位置
-			float padding;	   // パディング
-			Vector3 direction; // 向き
-			float intensity;   // 輝度
-			float radius;	   // 光の届く半径
-			float decay;	   // 減衰率
-			float cosAngle;	   // 角度
+			uint32_t active;	   // 有効フラグ 0:無効 1:有効
+			Vector3 color;		   // 色
+			Vector3 position;      // 位置
+			float padding;	       // パディング
+			Vector3 direction;     // 向き
+			float intensity;       // 輝度
+			float range;	       // 距離
+			float decay;	       // 減衰率
+			float cosAngle;	       // 角度
 			float cosFalloffStart; // 減衰開始角度
-			Vector4 color;	   // 色
 		};
 
 		/// <summary>
@@ -140,9 +129,6 @@ namespace Engine {
 
 		// 平行光源のデータ
 		DirectionalLight* directionalLightData_ = nullptr;
-
-		// 平行光源リストのデータ
-		//DirectionalLightList* directionalLightData_ = nullptr;
 
 		/// ========== 点光源 ========== ///
 

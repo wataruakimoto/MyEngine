@@ -1,51 +1,47 @@
 #include "object3d.hlsli"
 
-#define MAX_DIR_LIGHTS 4
-
 struct Camera {
     float3 worldPosition;
 };
 
 struct Material {
-    float4 color; // 色
-    float3 specularColor; // 鏡面反射色
+    float4 color;           // 色
+    float3 specularColor;   // 鏡面反射色
     float padding;
-    uint diffuseSetting; // 拡散反射の設定 0:使わない 1:Lambert反射 2:HalfLambert反射 
-    uint specularSetting; // 鏡面反射の設定 0:使わない 1:Phong反射 2:BlinnPhong反射
+    uint diffuseSetting;    // 拡散反射の設定 0:使わない 1:Lambert反射 2:HalfLambert反射 
+    uint specularSetting;   // 鏡面反射の設定 0:使わない 1:Phong反射 2:BlinnPhong反射
     uint useEnvironmentMap; // 環境マップの設定 0:使わない 1:使う
-    float shininess; // 明るさ
-    float4x4 uvTransform; // UV座標
+    float shininess;        // 明るさ
+    float4x4 uvTransform;   // UV座標
 };
 
 struct DirectionalLight {
+    uint active;      // 有効フラグ 0:無効 1:有効
+    float3 color;     // 色
     float3 direction; // 向き
-    float intensity; // 輝度
-    float4 color; // 色
-};
-
-struct DirectionalLightList {
-    uint activeCount; // 有効なライトの数
-    float3 padding;
-    DirectionalLight lights[MAX_DIR_LIGHTS];
+    float intensity;  // 輝度
 };
 
 struct PointLight {
-    float3 position; // 位置
-    float intensity; // 輝度
-    float radius; // 光の届く半径
-    float decay; // 減衰率
-    float4 color; // 色
+    uint active;      // 有効フラグ 0:無効 1:有効
+    float3 color;     // 色
+    float3 position;  // 位置
+    float intensity;  // 輝度
+    float range;      // 距離
+    float decay;      // 減衰率
 };
 
 struct SpotLight {
-    float3 position; // 位置
-    float3 direction; // 向き
-    float intensity; // 輝度
-    float radius; // 光の届く半径
-    float decay; // 減衰率
-    float cosAngle; // 余弦
-    float cosFalloffStart; // Falloffの開始角度
-    float4 color; // 色
+    uint active;           // 有効フラグ 0:無効 1:有効
+    float3 color;          // 色
+    float3 position;       // 位置
+    float padding;         // パディング
+    float3 direction;      // 向き
+    float intensity;       // 輝度
+    float range;           // 距離
+    float decay;           // 減衰率
+    float cosAngle;        // 角度
+    float cosFalloffStart; // 減衰開始角度
 };
 
 struct Environment {
@@ -57,8 +53,6 @@ ConstantBuffer<Camera> gCamera : register(b1);
 ConstantBuffer<Material> gMaterial : register(b2);
 
 ConstantBuffer<DirectionalLight> gDirectionalLight : register(b3);
-
-//ConstantBuffer<DirectionalLightList> gDirectionalLightList : register(b3);
 
 ConstantBuffer<PointLight> gPointLight : register(b4);
 
@@ -85,164 +79,172 @@ PixelShaderOutput main(VertexShaderOutput input) {
 	/// 平行光源の計算
 	/// ================================================== ///
     
-    /// ========== 拡散反射の計算 ========== ///
-    
     float3 diffuseDirectional = float3(0.0f, 0.0f, 0.0f);
-    
-    float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
-    
-    // Lambert反射なら
-    if (gMaterial.diffuseSetting == 1) {
-        
-        float cos = saturate(NdotL);
-        
-        diffuseDirectional = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-    }
-    // HalfLambert反射なら
-    else if (gMaterial.diffuseSetting == 2) {
-        
-        float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
-        
-        diffuseDirectional = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color.rgb * cos * gDirectionalLight.intensity;
-    }
-    
-    /// ========== 鏡面反射の計算 ========== ///
-    
     float3 specularDirectional = float3(0.0f, 0.0f, 0.0f);
     
-    float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
+    if (gDirectionalLight.active != 0) {
     
-    // Phong反射なら
-    if (gMaterial.specularSetting == 1) {
+        /// ========== 拡散反射の計算 ========== ///
+    
+        float NdotL = dot(normalize(input.normal), -gDirectionalLight.direction);
+    
+        // Lambert反射なら
+        if (gMaterial.diffuseSetting == 1) {
         
-        float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
-        float RdotE = dot(toEye, reflectLight);
-        float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
+            float cos = saturate(NdotL);
         
-        specularDirectional = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * gMaterial.specularColor;
-    }
-    // BlinnPhong反射なら
-    else if (gMaterial.specularSetting == 2) {
+            diffuseDirectional = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+        }
+        // HalfLambert反射なら
+        else if (gMaterial.diffuseSetting == 2) {
         
-        float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
-        float NdotH = dot(normalize(input.normal), halfVector);
-        float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+            float cos = pow(NdotL * 0.5f + 0.5f, 2.0f);
         
-        specularDirectional = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * gMaterial.specularColor;
+            diffuseDirectional = gMaterial.color.rgb * textureColor.rgb * gDirectionalLight.color * cos * gDirectionalLight.intensity;
+        }
+    
+        /// ========== 鏡面反射の計算 ========== ///
+    
+        float3 toEye = normalize(gCamera.worldPosition - input.worldPosition);
+    
+        // Phong反射なら
+        if (gMaterial.specularSetting == 1) {
+        
+            float3 reflectLight = reflect(normalize(gDirectionalLight.direction), normalize(input.normal));
+            float RdotE = dot(toEye, reflectLight);
+            float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
+        
+            specularDirectional = gDirectionalLight.color * gDirectionalLight.intensity * specularPow * gMaterial.specularColor;
+        }
+        // BlinnPhong反射なら
+        else if (gMaterial.specularSetting == 2) {
+        
+            float3 halfVector = normalize(-gDirectionalLight.direction + toEye);
+            float NdotH = dot(normalize(input.normal), halfVector);
+            float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+        
+            specularDirectional = gDirectionalLight.color * gDirectionalLight.intensity * specularPow * gMaterial.specularColor;
+        }
     }
     
     /// ================================================== ///
 	/// 点光源の計算
 	/// ================================================== ///
     
-     /// ========== 拡散反射の計算 ========== ///
-    
     float3 diffusePoint = float3(0.0f, 0.0f, 0.0f);
-   
-    float3 directionToLight = input.worldPosition - gPointLight.position;
-    
-    float distanceToLight = length(directionToLight);
-    
-    float NdotLPoint = dot(normalize(input.normal), -normalize(directionToLight));
-    
-    float factor = pow(saturate(-distanceToLight / gPointLight.radius + 1.0f), gPointLight.decay);
-    
-    // Lambert反射なら
-    if (gMaterial.diffuseSetting == 1) {
-        
-        float cos = saturate(NdotLPoint);
-        
-        diffusePoint = gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
-    }
-    // HalfLambert反射なら
-    else if (gMaterial.diffuseSetting == 2) {
-        
-        float cos = pow(NdotLPoint * 0.5f + 0.5f, 2.0f);
-        
-        diffusePoint = gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
-    }
-    
-    /// ========== 鏡面反射の計算 ========== ///
-    
     float3 specularPoint = float3(0.0f, 0.0f, 0.0f);
     
-    float3 toEyePoint = normalize(gCamera.worldPosition - input.worldPosition);
+    if (gPointLight.active != 0) {
     
-    // Phong反射なら
-    if (gMaterial.specularSetting == 1) {
+        /// ========== 拡散反射の計算 ========== ///
+   
+        float3 directionToLight = input.worldPosition - gPointLight.position;
+    
+        float distanceToLight = length(directionToLight);
+    
+        float NdotLPoint = dot(normalize(input.normal), -normalize(directionToLight));
+    
+        float factor = pow(saturate(-distanceToLight / gPointLight.range + 1.0f), gPointLight.decay);
+    
+        // Lambert反射なら
+        if (gMaterial.diffuseSetting == 1) {
         
-        float3 reflectLight = reflect(normalize(directionToLight), normalize(input.normal));
-        float RdotE = dot(toEyePoint, reflectLight);
-        float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
+            float cos = saturate(NdotLPoint);
         
-        specularPoint = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * gMaterial.specularColor * factor;
-    }
-    // BlinnPhong反射なら
-    else if (gMaterial.specularSetting == 2) {
+            diffusePoint = gMaterial.color.rgb * textureColor.rgb * gPointLight.color * cos * gPointLight.intensity * factor;
+        }
+        // HalfLambert反射なら
+        else if (gMaterial.diffuseSetting == 2) {
         
-        float3 halfVector = normalize(-directionToLight + toEyePoint);
-        float NdotH = dot(normalize(input.normal), halfVector);
-        float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+            float cos = pow(NdotLPoint * 0.5f + 0.5f, 2.0f);
         
-        specularPoint = gPointLight.color.rgb * gPointLight.intensity * specularPow * gMaterial.specularColor * factor;
+            diffusePoint = gMaterial.color.rgb * textureColor.rgb * gPointLight.color * cos * gPointLight.intensity * factor;
+        }
+    
+        /// ========== 鏡面反射の計算 ========== ///
+    
+        float3 toEyePoint = normalize(gCamera.worldPosition - input.worldPosition);
+    
+        // Phong反射なら
+        if (gMaterial.specularSetting == 1) {
+        
+            float3 reflectLight = reflect(normalize(directionToLight), normalize(input.normal));
+            float RdotE = dot(toEyePoint, reflectLight);
+            float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
+        
+            specularPoint = gPointLight.color * gPointLight.intensity * specularPow * gMaterial.specularColor * factor;
+        }
+        // BlinnPhong反射なら
+        else if (gMaterial.specularSetting == 2) {
+        
+            float3 halfVector = normalize(-directionToLight + toEyePoint);
+            float NdotH = dot(normalize(input.normal), halfVector);
+            float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+        
+            specularPoint = gPointLight.color * gPointLight.intensity * specularPow * gMaterial.specularColor * factor;
+        }
     }
     
     /// ================================================== ///
 	/// スポットライトの計算
 	/// ================================================== ///
     
-    /// ========== 拡散反射の計算 ========== ///
-    
     float3 diffuseSpot = float3(0.0f, 0.0f, 0.0f);
-    
-    float3 directionToSpotLight = input.worldPosition - gSpotLight.position;
-    
-    float distanceToSpotLight = length(directionToSpotLight);
-    
-    float NdotLSpot = dot(normalize(input.normal), -normalize(directionToSpotLight));
-    
-    float spotCosAngle = dot(normalize(gSpotLight.direction), -normalize(directionToSpotLight));
-    
-    float falloffFactor = saturate((spotCosAngle - gSpotLight.cosAngle) / (gSpotLight.cosFalloffStart - gSpotLight.cosAngle));
-    
-    // Lambert反射なら
-    if (gMaterial.diffuseSetting == 1) {
-        
-        float cos = saturate(NdotLSpot);
-        
-        diffuseSpot = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color.rgb * cos * gSpotLight.intensity * falloffFactor;
-    }
-    // HalfLambert反射なら
-    else if (gMaterial.diffuseSetting == 2) {
-        
-        float cos = pow(NdotLSpot * 0.5f + 0.5f, 2.0f);
-        
-        diffuseSpot = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color.rgb * cos * gSpotLight.intensity * falloffFactor;
-    }
-    
-    /// ========== 鏡面反射の計算 ========== ///
-    
     float3 specularSpot = float3(0.0f, 0.0f, 0.0f);
     
-    float3 toEyeSpot = normalize(gCamera.worldPosition - input.worldPosition);
+    if (gSpotLight.active != 0) {
     
-    // Phong反射なら
-    if (gMaterial.specularSetting == 1) {
+        /// ========== 拡散反射の計算 ========== ///
+    
+        float3 directionToSpotLight = input.worldPosition - gSpotLight.position;
+    
+        float distanceToSpotLight = length(directionToSpotLight);
+    
+        float NdotLSpot = dot(normalize(input.normal), -normalize(directionToSpotLight));
+    
+        float spotCosAngle = dot(normalize(directionToSpotLight), gSpotLight.direction);
         
-        float3 reflectLight = reflect(normalize(directionToSpotLight), normalize(input.normal));
-        float RdotE = dot(toEyeSpot, reflectLight);
-        float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
+        float attenuationFactor = pow(saturate(-distanceToSpotLight / gSpotLight.range + 1.0f), gSpotLight.decay);
+    
+        float falloffFactor = saturate((spotCosAngle - gSpotLight.cosAngle) / (gSpotLight.cosFalloffStart - gSpotLight.cosAngle));
+    
+        // Lambert反射なら
+        if (gMaterial.diffuseSetting == 1) {
         
-        specularSpot = gSpotLight.color.rgb * gSpotLight.intensity * specularPow * gMaterial.specularColor * falloffFactor;
-    }
-    // BlinnPhong反射なら
-    else if (gMaterial.specularSetting == 2) {
+            float cos = saturate(NdotLSpot);
         
-        float3 halfVector = normalize(-directionToSpotLight + toEyeSpot);
-        float NdotH = dot(normalize(input.normal), halfVector);
-        float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+            diffuseSpot = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color * cos * gSpotLight.intensity * attenuationFactor * falloffFactor;
+        }
+        // HalfLambert反射なら
+        else if (gMaterial.diffuseSetting == 2) {
         
-        specularSpot = gSpotLight.color.rgb * gSpotLight.intensity * specularPow * gMaterial.specularColor * falloffFactor;
+            float cos = pow(NdotLSpot * 0.5f + 0.5f, 2.0f);
+        
+            diffuseSpot = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color * cos * gSpotLight.intensity * attenuationFactor * falloffFactor;
+        }
+    
+        /// ========== 鏡面反射の計算 ========== ///
+    
+        float3 toEyeSpot = normalize(gCamera.worldPosition - input.worldPosition);
+    
+        // Phong反射なら
+        if (gMaterial.specularSetting == 1) {
+        
+            float3 reflectLight = reflect(normalize(directionToSpotLight), normalize(input.normal));
+            float RdotE = dot(toEyeSpot, reflectLight);
+            float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
+        
+            specularSpot = gSpotLight.color * gSpotLight.intensity * specularPow * gMaterial.specularColor * attenuationFactor * falloffFactor;
+        }
+        // BlinnPhong反射なら
+        else if (gMaterial.specularSetting == 2) {
+        
+            float3 halfVector = normalize(-directionToSpotLight + toEyeSpot);
+            float NdotH = dot(normalize(input.normal), halfVector);
+            float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+        
+            specularSpot = gSpotLight.color * gSpotLight.intensity * specularPow * gMaterial.specularColor * attenuationFactor * falloffFactor;
+        }
     }
     
     /// ================================================== ///
