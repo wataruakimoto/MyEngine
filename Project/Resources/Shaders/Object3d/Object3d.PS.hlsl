@@ -158,6 +158,7 @@ PixelShaderOutput main(VertexShaderOutput input) {
     else if (gMaterial.diffuseSetting == 2) {
         
         float cos = pow(NdotLPoint * 0.5f + 0.5f, 2.0f);
+        
         diffusePoint = gMaterial.color.rgb * textureColor.rgb * gPointLight.color.rgb * cos * gPointLight.intensity * factor;
     }
     
@@ -174,12 +175,74 @@ PixelShaderOutput main(VertexShaderOutput input) {
         float RdotE = dot(toEyePoint, reflectLight);
         float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
         
-        specularPoint = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * gMaterial.specularColor;
+        specularPoint = gDirectionalLight.color.rgb * gDirectionalLight.intensity * specularPow * gMaterial.specularColor * factor;
     }
     // BlinnPhong反射なら
     else if (gMaterial.specularSetting == 2) {
         
-        float3 halfVector = normalize()
+        float3 halfVector = normalize(-directionToLight + toEyePoint);
+        float NdotH = dot(normalize(input.normal), halfVector);
+        float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+        
+        specularPoint = gPointLight.color.rgb * gPointLight.intensity * specularPow * gMaterial.specularColor * factor;
+    }
+    
+    /// ================================================== ///
+	/// スポットライトの計算
+	/// ================================================== ///
+    
+    /// ========== 拡散反射の計算 ========== ///
+    
+    float3 diffuseSpot = float3(0.0f, 0.0f, 0.0f);
+    
+    float3 directionToSpotLight = input.worldPosition - gSpotLight.position;
+    
+    float distanceToSpotLight = length(directionToSpotLight);
+    
+    float NdotLSpot = dot(normalize(input.normal), -normalize(directionToSpotLight));
+    
+    float spotCosAngle = dot(normalize(gSpotLight.direction), -normalize(directionToSpotLight));
+    
+    float falloffFactor = saturate((spotCosAngle - gSpotLight.cosAngle) / (gSpotLight.cosFalloffStart - gSpotLight.cosAngle));
+    
+    // Lambert反射なら
+    if (gMaterial.diffuseSetting == 1) {
+        
+        float cos = saturate(NdotLSpot);
+        
+        diffuseSpot = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color.rgb * cos * gSpotLight.intensity * falloffFactor;
+    }
+    // HalfLambert反射なら
+    else if (gMaterial.diffuseSetting == 2) {
+        
+        float cos = pow(NdotLSpot * 0.5f + 0.5f, 2.0f);
+        
+        diffuseSpot = gMaterial.color.rgb * textureColor.rgb * gSpotLight.color.rgb * cos * gSpotLight.intensity * falloffFactor;
+    }
+    
+    /// ========== 鏡面反射の計算 ========== ///
+    
+    float3 specularSpot = float3(0.0f, 0.0f, 0.0f);
+    
+    float3 toEyeSpot = normalize(gCamera.worldPosition - input.worldPosition);
+    
+    // Phong反射なら
+    if (gMaterial.specularSetting == 1) {
+        
+        float3 reflectLight = reflect(normalize(directionToSpotLight), normalize(input.normal));
+        float RdotE = dot(toEyeSpot, reflectLight);
+        float specularPow = pow(saturate(RdotE), gMaterial.shininess); // 反射強度
+        
+        specularSpot = gSpotLight.color.rgb * gSpotLight.intensity * specularPow * gMaterial.specularColor * falloffFactor;
+    }
+    // BlinnPhong反射なら
+    else if (gMaterial.specularSetting == 2) {
+        
+        float3 halfVector = normalize(-directionToSpotLight + toEyeSpot);
+        float NdotH = dot(normalize(input.normal), halfVector);
+        float specularPow = pow(saturate(NdotH), gMaterial.shininess); // 反射強度
+        
+        specularSpot = gSpotLight.color.rgb * gSpotLight.intensity * specularPow * gMaterial.specularColor * falloffFactor;
     }
     
     /// ================================================== ///
@@ -195,9 +258,14 @@ PixelShaderOutput main(VertexShaderOutput input) {
     }
     else {
         
-        // Diffuse と Specular を足す
-        resultColor = diffuseDirectional + specularDirectional;
-        //resultColor = diffusePoint + specularPoint;
+        // 拡散反射を合成
+        float3 diffuse = diffuseDirectional + diffusePoint + diffuseSpot;
+        
+        // 鏡面反射を合成
+        float3 specular = specularDirectional + specularPoint + specularSpot;
+        
+        // 反射を合成
+        resultColor = diffuse + specular;
     }
     
     /// ================================================== ///

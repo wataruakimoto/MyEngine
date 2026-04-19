@@ -53,12 +53,12 @@ void Model::ShowImGui() {
 		ImGui::ColorEdit4("色", &materialData->color.x);
 		ImGui::ColorEdit3("鏡面反射色", &materialData->specularColor.x);
 		ImGui::Combo("拡散反射の設定", (int*)&materialData->diffuseSetting, "なし\0Lambert反射\0Half-Lambert反射\0");
-		ImGui::Combo("鏡面反射の設定", (int*)&materialData->specularSetting, "ない\0Phong反射\0Blinn-Phong反射\0");
+		ImGui::Combo("鏡面反射の設定", (int*)&materialData->specularSetting, "なし\0Phong反射\0Blinn-Phong反射\0");
 		bool useEnv = materialData->useEnvironmentMap;
 		if (ImGui::Checkbox("環境マップの設定", &useEnv)) {
 			materialData->useEnvironmentMap = useEnv ? 1 : 0;
 		}
-		ImGui::DragFloat("明るさ", &materialData->shininess, 0.01f);
+		ImGui::DragFloat("明るさ", &materialData->shininess, 0.1f);
 		ImGui::TreePop();
 	}
 
@@ -100,6 +100,6 @@ void Model::InitializeMaterialData() {
 	materialData->diffuseSetting = 0; // 拡散反射は使わない
 	materialData->specularSetting = 0; // 鏡面反射は使わない
 	materialData->useEnvironmentMap = 0; // 環境マップは使わない
-	materialData->shininess = 70.0f;
+	materialData->shininess = 50.0f;
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
 }

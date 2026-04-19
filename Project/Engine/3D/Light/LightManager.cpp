@@ -155,7 +155,7 @@ void LightManager::CreatePointLight() {
 	// 点光源データの初期値を書き込む
 	pointLightData_->position = { 0.0f, 0.0f, 0.0f }; // 位置は原点
 	pointLightData_->intensity = 1.0f; // 輝度は最大
-	pointLightData_->radius = 10.0f; // 光の届く半径
+	pointLightData_->radius = 5.0f; // 光の届く半径
 	pointLightData_->decay = 2.0f; // 減衰率
 	pointLightData_->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 色は白
 }
@@ -172,7 +172,7 @@ void LightManager::CreateSpotLight() {
 	spotLightData_->position = { 0.0f, 0.0f, 0.0f }; // 位置は原点
 	spotLightData_->direction = { 0.0f, -1.0f, 0.0f }; // 下向き
 	spotLightData_->intensity = 1.0f; // 輝度は最大
-	spotLightData_->radius = 10.0f; // 光の届く半径
+	spotLightData_->radius = 5.0f; // 光の届く半径
 	spotLightData_->decay = 2.0f; // 減衰率
 	spotLightData_->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f); // π/3
 	spotLightData_->cosFalloffStart = spotLightData_->cosAngle + 0.01f; // cosAngleよりちょっと大きい
