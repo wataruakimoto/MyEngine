@@ -10,4 +10,5 @@ enum class CollisionTypeIDDef : uint32_t {
 	kEnemy, // 敵
 	kPlayerBullet, // 弾
 	kEnemyBullet, // 敵の弾
+	kObstacle, // 障害物
 };

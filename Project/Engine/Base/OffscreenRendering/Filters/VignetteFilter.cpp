@@ -60,7 +60,7 @@ void VignetteFilter::ShowImGui() {
 		// 有効化フラグのチェックボックス
 		ImGui::Checkbox("IsActive", &isActive_);
 
-		ImGui::ColorEdit3("Color", &configData_->color.x);
+		ImGui::ColorEdit4("Color", &configData_->color.x);
 		ImGui::SliderFloat("Intensity", &configData_->intensity, 0.0f, 5.0f);
 		ImGui::SliderFloat("Scale", &configData_->scale, 0.0f, 32.0f);
 		ImGui::SliderFloat("Range", &configData_->range, 0.0f, 2.0f);
@@ -118,7 +118,7 @@ void VignetteFilter::CreateConfigData() {
 	configBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&configData_));
 
 	// 初期値をセット
-	configData_->color = Vector3(0.0f, 0.0f, 0.0f);
+	configData_->color = { 1.0f,1.0f ,1.0f ,1.0f };
 	configData_->intensity = 0.8f;
 	configData_->scale = 16.0f;
 	configData_->range = 1.0f;

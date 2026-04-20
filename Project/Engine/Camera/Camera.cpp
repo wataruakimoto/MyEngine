@@ -21,11 +21,11 @@ void Camera::Initialize() {
 	// ファークリップ距離を設定
 	farClip = 100.0f;
 
-	// ワールド行列をアフィン変換行列で初期化
-	worldMatrix = MakeAffineMatrix(scale, rotate, translate);
+	// ワールド変換を初期化
+	worldTransform_.Initialize();
 
 	// ビュー行列をワールド行列の逆行列で初期化
-	viewMatrix = Inverse(worldMatrix);
+	viewMatrix = Inverse(worldTransform_.GetWorldMatrix());
 
 	// プロジェクション行列を透視投影行列で初期化
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
@@ -39,11 +39,11 @@ void Camera::Initialize() {
 
 void Camera::UpdateViewMatrix() {
 
-	// transformからアフィン変換行列を計算
-	worldMatrix = MakeAffineMatrix(scale, rotate, translate);
+	// ワールド変換を更新
+	worldTransform_.Update();
 
 	// worldMatrixの逆行列を代入
-	viewMatrix = Inverse(worldMatrix);
+	viewMatrix = Inverse(worldTransform_.GetWorldMatrix());
 }
 
 void Camera::UpdateProjectionMatrix() {
@@ -79,26 +79,14 @@ void Camera::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &translate.x, 0.01f);
-
 	ImGui::DragFloat("FovY", &fovY, 0.01f);
 	ImGui::DragFloat("NearClip", &nearClip, 0.01f);
 	ImGui::DragFloat("FarClip", &farClip, 0.01f);
 
-	// ワールド行列を表示
-	if (ImGui::TreeNode("WorldMatrix")) {
-
-		for (int i = 0; i < 4; ++i) {
-
-			ImGui::Text("%f, %f, %f, %f", worldMatrix.m[i][0], worldMatrix.m[i][1], worldMatrix.m[i][2], worldMatrix.m[i][3]);
-		}
-
-		ImGui::TreePop();
-	}
+	worldTransform_.ShowImGui();
 
 	// ビュー行列を表示
-	if (ImGui::TreeNode("ViewMatrix")) {
+	if (ImGui::TreeNodeEx("ビュー行列")) {
 
 		for (int i = 0; i < 4; ++i) {
 
@@ -117,28 +105,16 @@ void Camera::ShowImGuiTree() {
 
 #ifdef USE_IMGUI
 
-	if (ImGui::TreeNode("Camera")) {
-
-		ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
-		ImGui::DragFloat3("Translate", &translate.x, 0.01f);
+	if (ImGui::TreeNode("カメラ")) {
 
 		ImGui::DragFloat("FovY", &fovY, 0.01f);
 		ImGui::DragFloat("NearClip", &nearClip, 0.01f);
 		ImGui::DragFloat("FarClip", &farClip, 0.01f);
 
-		// ワールド行列を表示
-		if (ImGui::TreeNode("WorldMatrix")) {
-
-			for (int i = 0; i < 4; ++i) {
-
-				ImGui::Text("%f, %f, %f, %f", worldMatrix.m[i][0], worldMatrix.m[i][1], worldMatrix.m[i][2], worldMatrix.m[i][3]);
-			}
-
-			ImGui::TreePop();
-		}
+		worldTransform_.ShowImGui();
 
 		// ビュー行列を表示
-		if (ImGui::TreeNode("ViewMatrix")) {
+		if (ImGui::TreeNodeEx("ビュー行列")) {
 
 			for (int i = 0; i < 4; ++i) {
 
@@ -152,17 +128,4 @@ void Camera::ShowImGuiTree() {
 	}
 
 #endif // USE_IMGUI
-}
-
-const Vector3& Camera::GetWorldPosition() const {
-
-	// ワールド座標
-	static Vector3 worldPosition;
-
-	// ワールド行列から座標を取得
-	worldPosition.x = worldMatrix.m[3][0];
-	worldPosition.y = worldMatrix.m[3][1];
-	worldPosition.z = worldMatrix.m[3][2];
-
-	return worldPosition;
 }

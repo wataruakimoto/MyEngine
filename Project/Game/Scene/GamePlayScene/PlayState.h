@@ -175,7 +175,7 @@ private:
 	// ビネットエフェクト用変数
 	bool isDamageVignetteActive_ = false; // ダメージ時の一時ビネット有効フラグ
 	float damageVignetteTimer_ = 0.0f; // ダメージビネットのタイマー
-	const float kDamageVignetteDuration_ = 0.5f; // ダメージビネットの持続時間 (秒)
+	const float kDamageVignetteDuration_ = 1.0f; // ダメージビネットの持続時間 (秒)
 
 	/// ===== 借りポインタ・インスタンス ===== ///
 

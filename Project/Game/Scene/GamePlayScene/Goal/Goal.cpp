@@ -24,7 +24,7 @@ void Goal::Initialize() {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize();
 	object_->SetModel(model_.get());
-	object_->SetScale({ 50.0f, 50.0f, 1.0f });
+	object_->GetWorldTransform().SetScale({ 50.0f, 50.0f, 1.0f });
 
 	/// ===== ゲートの初期化 ===== ///
 
@@ -40,7 +40,7 @@ void Goal::Initialize() {
 	gateObject_ = std::make_unique<Object3d>();
 	gateObject_->Initialize();
 	gateObject_->SetModel(gateModel_.get());
-	gateObject_->SetScale({ 50.0f, 50.0f, 1.0f });
+	gateObject_->GetWorldTransform().SetScale({ 50.0f, 50.0f, 1.0f });
 
 	alpha_ = 1.0f;
 }
@@ -52,8 +52,8 @@ void Goal::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	object_->SetTranslate(worldTransform_.GetWorldPosition());
-	object_->SetRotate(worldTransform_.GetRotate());
+	object_->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
+	object_->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object_->Update();
@@ -79,7 +79,7 @@ void Goal::Update() {
 	// ゲート用のワールド変換の更新
 	gateWorldTransform_.Update();
 
-	gateObject_->SetTranslate(gateWorldTransform_.GetWorldPosition());
+	gateObject_->GetWorldTransform().SetTranslate(gateWorldTransform_.GetWorldPosition());
 
 	/// === 色の更新 === ///
 

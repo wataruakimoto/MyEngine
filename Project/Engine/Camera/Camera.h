@@ -2,15 +2,16 @@
 
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "WorldTransform.h"
 
 namespace Engine {
 
 	/// === カメラ === ///
 	class Camera {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -49,22 +50,10 @@ namespace Engine {
 		/// </summary>
 		void ShowImGuiTree();
 
-		///-------------------------------------------///
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
-
-		/// <summary>
-		/// 回転のセッター
-		/// </summary>
-		/// <param name="rotate">回転</param>
-		void SetRotate(const Vector3& rotate) { this->rotate = rotate; }
-
-		/// <summary>
-		/// 位置のセッター
-		/// </summary>
-		/// <param name="translate">位置</param>
-		void SetTranslate(const Vector3& translate) { this->translate = translate; }
 
 		/// <summary>
 		/// 水平方向視野のセッター
@@ -96,28 +85,16 @@ namespace Engine {
 		/// <param name="viewMatrix"></param>
 		void SetViewMatrix(const Matrix4x4& viewMatrix) { this->viewMatrix = viewMatrix; }
 
-		///-------------------------------------------///
-		/// ゲッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
-		/// 回転のゲッター
+		/// ワールド変換のゲッター
 		/// </summary>
-		/// <returns>Vector3</returns>
-		const Vector3& GetRotate() const { return rotate; }
-
-		/// <summary>
-		/// 位置のゲッター
-		/// </summary>
-		/// <returns>Vector3</returns>
-		const Vector3& GetTranslate() const { return translate; }
-
-		/// <summary>
-		/// ワールド行列のゲッター
-		/// </summary>
-		/// <returns>Matrix4x4</returns>
-		const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
+		/// <returns>WorldTransform</returns>
+		WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 		/// <summary>
 		/// ビュー行列のゲッター
@@ -144,12 +121,6 @@ namespace Engine {
 		const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
 
 		/// <summary>
-		/// ワールド座標のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetWorldPosition() const;
-
-		/// <summary>
 		/// ニアクリップ距離のゲッター
 		/// </summary>
 		/// <returns>ニアクリップ距離	</returns>
@@ -167,22 +138,13 @@ namespace Engine {
 		/// <returns>水平方向視野</returns>
 		const float& GetFovY() const { return fovY; }
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
-		// 拡縮
-		Vector3 scale = { 1.0f, 1.0f, 1.0f };
-
-		// 回転
-		Vector3 rotate = { 0.0f, 0.0f, 0.0f };
-
-		// 平行移動
-		Vector3 translate = { 0.0f, 0.0f, 0.0f };
-
-		// ワールド行列
-		Matrix4x4 worldMatrix;
+		// ワールド変換
+		WorldTransform worldTransform_;
 
 		// ビュー行列
 		Matrix4x4 viewMatrix;

@@ -56,7 +56,7 @@ void Reticle::Update() {
 	worldTransform_.Update();
 
 	// オブジェクトの座標を設定
-	object_->SetTranslate(worldTransform_.GetTranslate());
+	object_->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 	// オブジェクトの更新
 	object_->Update();
 }

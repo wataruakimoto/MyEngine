@@ -9,30 +9,30 @@ using namespace MathMatrix;
 void RailCameraController::Initialize() {
 	
 	// ワールド変換の初期化
-	worldTransform.Initialize();
-	worldTransform.SetTranslate({ 0.0f, 10.0f, 0.0f });
+	worldTransform_.Initialize();
+	worldTransform_.SetTranslate({ 0.0f, 10.0f, 0.0f });
 }
 
 void RailCameraController::Update() {
 
 	// Z方向にカメラを移動
-	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.2f });
+	worldTransform_.AddTranslate({ 0.0f, 0.0f, 0.2f });
 	
 	// ワールド変換の更新
-	worldTransform.Update();
+	worldTransform_.Update();
 
 	// ワールド行列をワールド変換から取得
-	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
+	Matrix4x4 worldMatrix = worldTransform_.GetWorldMatrix();
 
 	// ワールド行列を逆行列に変換
 	worldMatrix = Inverse(worldMatrix);
 
 	// カメラのビュー行列を設定
-	camera->SetViewMatrix(worldMatrix);
+	camera_->SetViewMatrix(worldMatrix);
 
 	// カメラの更新
-	camera->UpdateProjectionMatrix();
-	camera->UpdateViewProjectionMatrix();
+	camera_->UpdateProjectionMatrix();
+	camera_->UpdateViewProjectionMatrix();
 }
 
 void RailCameraController::ShowImGui() {
@@ -42,10 +42,10 @@ void RailCameraController::ShowImGui() {
 	ImGui::Begin("RailCameraController");
 
 	// ワールド変換のImGui表示
-	worldTransform.ShowImGui();
+	worldTransform_.ShowImGui();
 
 	// ImGuiのツリー表示
-	camera->ShowImGuiTree();
+	camera_->ShowImGuiTree();
 
 	ImGui::End();
 

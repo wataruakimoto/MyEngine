@@ -18,11 +18,12 @@
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
 #include "Goal/Goal.h"
+#include "LevelLoader.h"
+#include "Obstacle/Obstacle.h"
+#include "Light/LightManager.h"
 
 #include <list>
-#include <sstream>
 #include <memory>
-#include <optional>
 
 /// ===== 前方宣言 ===== ///
 
@@ -94,16 +95,6 @@ public:
 	/// </summary>
 	/// <param name="bullet"></param>
 	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
-
-	/// <summary>
-	/// 敵発生データの読み込み
-	/// </summary>
-	void LoadEnemyPopData();
-
-	/// <summary>
-	/// 敵発生コマンドの更新
-	/// </summary>
-	void UpdateEnemyPopCommands();
 	
 	/// <summary>
 	/// リストで管理しているオブジェクトの更新
@@ -140,6 +131,23 @@ public:
 /// クラス内関数
 ///-------------------------------------------///
 private:
+
+	/// <summary>
+	/// レベルデータの読み込みと適用
+	/// </summary>
+	void LoadLevelAndApply();
+
+	/// <summary>
+	/// レベルデータから敵をスポーン
+	/// </summary>
+	/// <param name="levelData">レベルデータ</param>
+	void SpawnEnemiesFromLevelData(const GameLevelData& levelData);
+
+	/// <summary>
+	/// レベルデータから障害物をスポーン
+	/// </summary>
+	/// <param name="levelData">レベルデータ</param>
+	void SpawnObstaclesFromLevelData(const GameLevelData& levelData);
 
 	/// <summary>
 	/// オリジンシフトの確認と実行
@@ -190,16 +198,16 @@ private:
 	// 敵を倒した数
 	int killCount_ = 0;
 
-	// 敵発生コマンド
-	std::stringstream enemyPopCommands;
-
-	// 待機中フラグ
-	bool isWait_ = true;
-	// 待機タイマー
-	int32_t standbyTimer_ = 0;
-
 	// ループする距離
 	const float kLoopDistance = 1000.0f;
+
+	float worldShiftZ_ = 0.0f;
+
+	/// ========== レベルデータ ========== ///
+
+	LevelLoader levelLoader_;
+
+	const std::string kLevelDataFileName_ = "LevelData.json";
 
 	/// ===== オブジェクト ===== ///
 
@@ -217,6 +225,9 @@ private:
 
 	// 敵の弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+
+	// 障害物のリスト
+	std::list<std::unique_ptr<Obstacle>> obstacles_;
 
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;
@@ -254,6 +265,9 @@ private:
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<Engine::CollisionManager> collisionManager_ = nullptr;
+
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 
 	// パーティクルマネージャのインスタンス
 	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();

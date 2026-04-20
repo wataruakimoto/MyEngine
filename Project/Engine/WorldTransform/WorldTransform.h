@@ -6,7 +6,7 @@
 namespace Engine {
 
 	/// <summary>
-	/// ワールド座標変換クラス
+	/// ワールド変換クラス
 	/// </summary>
 	class WorldTransform {
 
@@ -69,6 +69,18 @@ namespace Engine {
 		/// </summary>
 		/// <returns></returns>
 		const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
+
+		/// <summary>
+		/// ワールド行列の拡縮の取得
+		/// </summary>
+		/// <returns>Vector3</returns>
+		Vector3 GetWorldScale() const;
+
+		/// <summary>
+		/// ワールド行列の回転の取得
+		/// </summary>
+		/// <returns></returns>
+		Vector3 GetWorldRotate() const;
 
 		/// <summary>
 		/// ワールド座標の取得

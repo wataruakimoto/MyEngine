@@ -4,6 +4,8 @@
 
 #include "Sprite/SpriteRenderer.h"
 #include "Object/Object3dRenderer.h"
+#include "TransitionManager.h"
+#include "Transition/FadeTransition.h"
 
 #include <imgui.h>
 
@@ -14,6 +16,11 @@ void TitleScene::Initialize() {
 	// インスタンス取得
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 	object3dRenderer_ = Object3dRenderer::GetInstance();
+	transitionManager_ = TransitionManager::GetInstance();
+
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
 
 	// カメラの生成&初期化
 	camera_ = std::make_unique<Engine::Camera>();
@@ -22,8 +29,8 @@ void TitleScene::Initialize() {
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->Initialize();
 	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
 
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
@@ -57,11 +64,6 @@ void TitleScene::Initialize() {
 	blackScreen_ = std::make_unique<BlackScreen>();
 	blackScreen_->Initialize();
 
-	// 白フェードの生成&初期化
-	whiteFade_ = std::make_unique<WhiteFade>();
-	whiteFade_->Initialize();
-	whiteFade_->SetAlpha(0.0f);
-
 	// タイトルUIの生成&初期化
 	titleUI_ = std::make_unique<TitleUI>();
 	titleUI_->Initialize();
@@ -69,7 +71,7 @@ void TitleScene::Initialize() {
 	// スタートUIの生成&初期化
 	startUI_ = std::make_unique<StartUI>();
 	startUI_->Initialize();
-	
+
 	// フィルターマネージャにカメラを設定
 	filterManager_->SetCamera(camera_.get());
 
@@ -177,13 +179,13 @@ void TitleScene::Update() {
 	player_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldPosition());
+	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldPosition());
+	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();
@@ -205,6 +207,9 @@ void TitleScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	object3dRenderer_->SettingDrawingOpaque();
+
+	// ライトの描画
+	lightManager_->Draw();
 
 	// シリンダーの描画
 	cylinder_->Draw();
@@ -229,9 +234,6 @@ void TitleScene::DrawUnfiltered() {
 
 	// タイトルUIの描画
 	titleUI_->Draw();
-
-	// 白フェードの描画
-	whiteFade_->Draw();
 }
 
 void TitleScene::Finalize() {
@@ -259,9 +261,6 @@ void TitleScene::ShowImGui() {
 
 	// スタートUIのImGui表示
 	startUI_->ShowImGui();
-
-	// WhiteFadeのImGui表示
-	whiteFade_->ShowImGui();
 
 #ifdef USE_IMGUI
 
@@ -435,8 +434,13 @@ void TitleScene::SpeedUpUpdate() {
 }
 
 void TitleScene::WhiteFadeInitialize() {
-	
-	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
+
+	// フェードイン開始
+	transitionManager_->StartInTransition(
+		std::make_unique<FadeTransition>(Vector3{ 1.0f,1.0f,1.0f }, 0.0f, 1.0f),
+		[]() { SceneManager::GetInstance()->ChangeScene("PLAY"); },
+		2.0f // 遷移にかける時間 (秒)
+	);
 }
 
 void TitleScene::WhiteFadeUpdate() {
@@ -447,13 +451,4 @@ void TitleScene::WhiteFadeUpdate() {
 
 	// ブラーも最大値を維持
 	radialBlurFilter_->SetBlurStrength(kMaxBlurStrength);
-
-	// 白フェード更新
-	whiteFade_->Update();
-
-	if (whiteFade_->IsFadeFinished()) {
-
-		// ゲームプレイシーンへ
-		SceneManager::GetInstance()->ChangeScene("PLAY");
-	}
 }

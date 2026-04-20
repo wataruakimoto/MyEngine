@@ -17,6 +17,7 @@ void Enemy::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 2.0f,2.0f,2.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -40,20 +41,21 @@ void Enemy::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 1.0f, 1.0f, 1.0f });
-	object->SetTranslate({ 10.0f, 10.0f, 50.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead = false;
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		AABB{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)
 	);
 	// コライダーの初期化
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// エミッタ生成
 	particleEmitterBlack = std::make_unique<ParticleEmitter>("EnemyDeathBlack", EmitterType::OneShot, 40);
@@ -130,13 +132,8 @@ void Enemy::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
-
-	object->SetTranslate(worldTransform_.GetTranslate());
-	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -242,7 +239,7 @@ void Enemy::Fire() {
 	// プレイヤーとの方向を計算
 	Vector3 direction = playerPos - worldTransform_.GetTranslate();
 	direction = Normalize(direction);
-	bullet->SetVelocity(direction);
+	bullet->SetDirection(direction);
 
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddEnemyBullet(std::move(bullet));
@@ -253,8 +250,8 @@ void Enemy::Fire() {
 	// 射撃アニメーション開始
 	isFiring_ = true;
 	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
-	object->SetScale(fireScale_);
-	object->SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
 }
 
 void Enemy::FireAnimationUpdate() {
@@ -267,7 +264,7 @@ void Enemy::FireAnimationUpdate() {
 	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
 
 	// スケールを設定
-	object->SetScale(newScale);
+	object->GetWorldTransform().SetScale(newScale);
 
 	// タイマーが0以下になったら
 	if (fireAnimationTimer_ <= 0.0f) {

@@ -4,18 +4,13 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Particle/ParticleEmitter.h"
+#include "GameLevelData.h"
 
 #include <memory>
 
 /// === 前方宣言 === ///
 class Player;
 class GamePlayScene;
-
-// 敵の種類
-enum class EnemyType {
-	Normal,     // 通常（弾を撃つ）
-	Kamikaze,   // 特攻（プレイヤーに突っ込む）
-};
 
 /// ===== 敵 ===== ///
 class Enemy : public BaseCharacter {

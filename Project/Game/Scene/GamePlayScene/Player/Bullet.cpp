@@ -11,6 +11,7 @@ void Bullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 1.0f, 1.0f, 5.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -20,7 +21,7 @@ void Bullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.5f, 0.5f, 5.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	// デスタイマーの初期化
 	deathTimer_ = 0.0f;
@@ -30,13 +31,15 @@ void Bullet::Initialize() {
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		Sphere{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)
 	);
 	// コライダーの初期化
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// エミッターの生成・初期化
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", EmitterType::OneShot, 20);
@@ -61,12 +64,8 @@ void Bullet::Update() {
 	worldTransform_.Update();
 
 	// 3Dオブジェクトの更新
-	object->SetRotate(worldTransform_.GetRotate());
-	object->SetTranslate(worldTransform_.GetTranslate());
 	object->Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 
@@ -122,6 +121,17 @@ void Bullet::OnCollision(Collider* other) {
 
 			return;
 		}
+
+		// エミッターの位置を設定
+		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
+
+		// パーティクル発生
+		particleEmitter->Emit();
+
+		isDead = true;
+	}
+	// 衝突相手が障害物の場合
+	else if(typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
 
 		// エミッターの位置を設定
 		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());

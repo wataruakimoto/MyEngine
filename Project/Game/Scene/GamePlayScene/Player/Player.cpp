@@ -18,27 +18,31 @@ void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 2.0f,2.0f,2.0f });
 	worldTransform_.SetTranslate({ 0.0f, 5.0f, 0.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
 	model->Initialize("Player", "player.obj");
+	model->SetDiffuseSetting(2); // HalfLambert反射
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 1.0f, 1.0f, 1.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		AABB{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)
 	);
 	// コライダーの初期化
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead_ = false;
 
@@ -62,6 +66,8 @@ void Player::Initialize() {
 	normalShotCommand_ = std::make_unique<NormalShotCommand>();
 	lockOnAimCommand_ = std::make_unique<LockOnAimCommand>();
 	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
+
+	hp_ = 5;
 }
 
 void Player::Update() {
@@ -133,15 +139,10 @@ void Player::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
-
-	object->SetTranslate(worldTransform_.GetWorldPosition());
-	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -153,6 +154,12 @@ void Player::Draw() {
 	collider_->Draw();
 
 	if (!isGroundHit_) {
+
+		if (invincibleTimer_ > 0.0f) {
+			if (static_cast<int>(invincibleTimer_) % 12 < 6) {
+				return; // 描画処理をスキップ
+			}
+		}
 
 		// 3Dオブジェクトの描画
 		object->Draw();
@@ -197,6 +204,8 @@ void Player::ShowImGui() {
 
 	ImGui::Text("speedPlay: %.2f", moveSpeedManual);
 
+	ImGui::Text("HP: %d", hp_);
+
 	object->ShowImGui();
 
 	model->ShowImGui();
@@ -237,14 +246,41 @@ void Player::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// 1ダメージを受ける
-		DamageProcess(1);
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
-		// 1ダメージを受ける
-		DamageProcess(1);
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
+	}
+	// 衝突相手が障害物の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
+
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
 	}
 	// その他と衝突した場合
 	else {
@@ -285,8 +321,7 @@ void Player::Fire(PlayerContext context) {
 	// 射撃アニメーション開始
 	isFiring_ = true;
 	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
-	object->SetScale(fireScale_);
-	object->SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
 }
 
 void Player::FireAnimationUpdate() {
@@ -299,7 +334,7 @@ void Player::FireAnimationUpdate() {
 	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
 
 	// スケールを設定
-	object->SetScale(newScale);
+	object->GetWorldTransform().SetScale(newScale);
 
 	// タイマーが0以下になったら
 	if (fireAnimationTimer_ <= 0.0f) {
@@ -529,42 +564,51 @@ void Player::ManualUpdate() {
 
 	/// ===== 射撃処理 ===== ///
 
+	//// 左クリックしている間
+	//if (isMouseLeftPush) {
+	//
+	//	// 押されている時間を加算
+	//	pressTimer_ += 1.0f / 60.0f;
+	//
+	//	// 一定時間以上押し続けたら
+	//	if (pressTimer_ > kLockOnDuration_) {
+	//
+	//		// ロックオンモードへ移行
+	//		isLockOnMode_ = true;
+	//
+	//		// ロックオンエイムコマンド実行
+	//		lockOnAimCommand_->Execute(context);
+	//	}
+	//}
+	//
+	//// 左クリックを離したとき
+	//if (isMouseLeftRelease) {
+	//
+	//	// タイマーが0以下なら
+	//	if (fireTimer_ <= 0) {
+	//
+	//		// 射撃
+	//		Fire(context);
+	//	}
+	//
+	//	// 押下時間をリセット
+	//	pressTimer_ = 0.0f;
+	//
+	//	// ロックオンモード解除
+	//	isLockOnMode_ = false;
+	//
+	//	// ロックオンターゲットをクリア
+	//	lockOn_->ClearTarget();
+	//
+	//}
+
 	// 左クリックしている間
 	if (isMouseLeftPush) {
-
-		// 押されている時間を加算
-		pressTimer_ += 1.0f / 60.0f;
-
-		// 一定時間以上押し続けたら
-		if (pressTimer_ > kLockOnDuration_) {
-
-			// ロックオンモードへ移行
-			isLockOnMode_ = true;
-
-			// ロックオンエイムコマンド実行
-			lockOnAimCommand_->Execute(context);
-		}
-	}
-
-	// 左クリックを離したとき
-	if (isMouseLeftRelease) {
-
 		// タイマーが0以下なら
 		if (fireTimer_ <= 0) {
-
 			// 射撃
 			Fire(context);
 		}
-
-		// 押下時間をリセット
-		pressTimer_ = 0.0f;
-
-		// ロックオンモード解除
-		isLockOnMode_ = false;
-
-		// ロックオンターゲットをクリア
-		lockOn_->ClearTarget();
-
 	}
 
 	if (isFiring_) {
@@ -626,6 +670,11 @@ void Player::ManualUpdate() {
 
 	// ロックオンの更新
 	lockOn_->Update();
+
+	// 無敵タイマーの更新
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= 1.0f;
+	}
 }
 
 void Player::DeadInitialize() {
@@ -650,6 +699,11 @@ void Player::DeadInitialize() {
 }
 
 void Player::DeadUpdate() {
+
+	// 無敵タイマーの更新
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= 1.0f;
+	}
 
 	// タイマーを進める
 	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算

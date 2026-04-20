@@ -125,7 +125,7 @@ namespace Engine {
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
 		// クリアする色
-		const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
+		const Vector4 kRenderTargetClearValue = { 0.1f, 0.25f, 0.5f, 1.0f }; // 青っぽい色
 
 		/// ===== DSV用の変数 ===== ///
 

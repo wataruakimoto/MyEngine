@@ -66,7 +66,7 @@ void ParticleManager::Update() {
 	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
 
 	// ビルボード行列を計算
-	billboardMatrix = backToFrontMatrix * camera->GetWorldMatrix();
+	billboardMatrix = backToFrontMatrix * camera->GetWorldTransform().GetWorldMatrix();
 
 	// 行列の平行移動成分を排除する
 	billboardMatrix.m[3][0] = 0.0f;
@@ -336,6 +336,34 @@ void ParticleManager::AddInstance(const ParticleInstance& instance) {
 		shardGroups[key].particles.push_back(instance);
 
 		break;
+	}
+}
+
+void ParticleManager::Clear() {
+
+	// 板ポリのパーティクルをクリア
+	for (auto& [key, group] : planeGroups) {
+		group.particles.clear();
+	}
+
+	// リングのパーティクルをクリア
+	for (auto& [key, group] : ringGroups) {
+		group.particles.clear();
+	}
+
+	// シリンダーのパーティクルをクリア
+	for (auto& [key, group] : cylinderGroups) {
+		group.particles.clear();
+	}
+
+	// キューブのパーティクルをクリア
+	for (auto& [key, group] : cubeGroups) {
+		group.particles.clear();
+	}
+
+	// シャードのパーティクルをクリア
+	for (auto& [key, group] : shardGroups) {
+		group.particles.clear();
 	}
 }
 
