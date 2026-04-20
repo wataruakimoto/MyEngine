@@ -65,7 +65,7 @@ void Object3d::Update() {
 
 	transformationMatrixData->WVP = model->GetRootMatrix() * worldViewProjectionMatrix;
 	transformationMatrixData->world = model->GetRootMatrix() * worldMatrix;
-	transformationMatrixData->worldInverseTranspose = Inverse(model->GetRootMatrix() * worldMatrix);
+	transformationMatrixData->worldInverseTranspose = Inverse(Transpose(model->GetRootMatrix() * worldMatrix));
 }
 
 void Object3d::Draw() {

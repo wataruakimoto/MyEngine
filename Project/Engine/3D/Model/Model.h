@@ -24,7 +24,9 @@ namespace Engine {
 
 		// マテリアルデータ
 		struct Material {
-			Vector4 color;			    // 色
+			Vector4 color;			    // 色 (RGBA)
+			Vector3 specularColor;		// 鏡面反射色 (RGB)
+			float padding;
 			uint32_t diffuseSetting;    // 拡散反射の設定 0:使わない 1:Lambert反射 2:HalfLambert反射 
 			uint32_t specularSetting;   // 鏡面反射の設定 0:使わない 1:Phong反射 2:BlinnPhong反射
 			uint32_t useEnvironmentMap; // 環境マップの設定 0:使わない 1:使う
