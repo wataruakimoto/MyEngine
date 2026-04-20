@@ -21,9 +21,10 @@
 └── └── └── ├── Data/
 └── └── └── └── ├── MaterialData.h
 └── └── └── └── ├── ModelData.h
-└── └── └── └── ├── Transform.h
-└── └── └── └── ├── TransformationData.h
 └── └── └── └── └── VertexData.h
+└── └── └── ├── Light/
+└── └── └── └── ├── LightManager.cpp
+└── └── └── └── └── LightManager.h
 └── └── └── ├── Model/
 └── └── └── └── ├── Model.cpp
 └── └── └── └── ├── Model.h
@@ -127,10 +128,6 @@
 └── └── ├── Input/
 └── └── └── ├── Input.cpp
 └── └── └── └── Input.h
-└── └── ├── Level/
-└── └── └── ├── LevelData.h
-└── └── └── ├── Loader.cpp
-└── └── └── └── Loader.h
 └── └── ├── Line/
 └── └── └── ├── LineManager.cpp
 └── └── └── ├── LineManager.h
@@ -138,8 +135,10 @@
 └── └── └── └── LineRenderer.h
 └── └── ├── Math/
 └── └── └── ├── AABB.h
+└── └── └── ├── Capsule.h
 └── └── └── ├── Easing.cpp
 └── └── └── ├── Easing.h
+└── └── └── ├── Ellipsoid.h
 └── └── └── ├── MathMatrix.cpp
 └── └── └── ├── MathMatrix.h
 └── └── └── ├── MathRandom.cpp
@@ -331,6 +330,10 @@
 └── └── ├── Base/
 └── └── └── ├── MyGame.cpp
 └── └── └── └── MyGame.h
+└── └── ├── Level/
+└── └── └── ├── GameLevelData.h
+└── └── └── ├── LevelLoader.cpp
+└── └── └── └── LevelLoader.h
 └── └── └── Scene/
 └── └──     ├── DebugScene/
 └── └──     └── ├── DebugScene.cpp
@@ -377,6 +380,9 @@
 └── └──     └── ├── LockOn/
 └── └──     └── └── ├── LockOn.cpp
 └── └──     └── └── └── LockOn.h
+└── └──     └── ├── Obstacle/
+└── └──     └── └── ├── Obstacle.cpp
+└── └──     └── └── └── Obstacle.h
 └── └──     └── ├── PlayState.cpp
 └── └──     └── ├── PlayState.h
 └── └──     └── ├── Player/
@@ -424,8 +430,7 @@
 └── └──             └── TitleUI.h
 └── ├── Resources/
 └── └── ├── Datas/
-└── └── └── ├── GameData/
-└── └── └── ├── Levels/
+└── └── └── ├── GameLevel/
 └── └── └── └── Particles/
 └── └── ├── Fonts/
 └── └── ├── Models/
@@ -439,6 +444,7 @@
 └── └── └── ├── Ico/
 └── └── └── ├── MultiMaterial/
 └── └── └── ├── MultiMesh/
+└── └── └── ├── Obstacle/
 └── └── └── ├── Plane/
 └── └── └── ├── Player/
 └── └── └── ├── PlayerBullet/
@@ -539,7 +545,7 @@ File Path: Project/DirectXGame.vcxproj
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals;$(ProjectDir)Engine;$(ProjectDir)Game;$(ProjectDir)ImGui;$(ProjectDir)Externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Level;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
@@ -569,7 +575,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <TreatWarningAsError>false</TreatWarningAsError>
       <AdditionalIncludeDirectories>$(ProjectDir)Externals;$(ProjectDir)Engine;$(ProjectDir)Game;$(ProjectDir)ImGui;$(ProjectDir)Externals\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Externals\assimp\include;$(ProjectDir)Externals\DirectXTex;$(ProjectDir)Externals\ImGui;$(ProjectDir)Externals\nlohmann;$(ProjectDir)Engine\2D;$(ProjectDir)Engine\3D;$(ProjectDir)Engine\Audio;$(ProjectDir)Engine\Base;$(ProjectDir)Engine\Camera;$(ProjectDir)Engine\Collision;$(ProjectDir)Engine\Debug;$(ProjectDir)Engine\Framework;$(ProjectDir)Engine\Input;$(ProjectDir)Engine\Level;$(ProjectDir)Engine\Line;$(ProjectDir)Engine\Math;$(ProjectDir)Engine\Scene;$(ProjectDir)Engine\Utility;$(ProjectDir)Engine\WinApp;$(ProjectDir)Engine\WorldTransform;$(ProjectDir)Game\Base;$(ProjectDir)Game\Level;$(ProjectDir)Game\Scene\DebugScene;$(ProjectDir)Game\Scene\GameClearScene;$(ProjectDir)Game\Scene\GameOverScene;$(ProjectDir)Game\Scene\GamePlayScene;$(ProjectDir)Game\Scene\System;$(ProjectDir)Game\Scene\TitleScene;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>MinSpace</Optimization>
     </ClCompile>
     <Link>
@@ -633,7 +639,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Framework\Framework.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Bullet.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Player.cpp" />
-    <ClCompile Include="Engine\Level\Loader.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\LuminanceOutlineFilter.cpp" />
@@ -643,6 +648,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Line\LineRenderer.cpp" />
     <ClCompile Include="Engine\Line\LineManager.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipelineBuilder.cpp" />
+    <ClCompile Include="Game\Level\LevelLoader.cpp" />
+    <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -678,6 +685,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\ParticleRenderer.cpp" />
     <ClCompile Include="Engine\Scene\TransitionManager.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Math\AABB.h" />
@@ -687,6 +695,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ParticleEmitter.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\ParticleRendererBase.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleData.h" />
+    <ClInclude Include="Engine\Math\Capsule.h" />
+    <ClInclude Include="Engine\Math\Ellipsoid.h" />
     <ClInclude Include="Engine\Math\MathRandom.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FogFilter.h" />
     <ClInclude Include="Engine\Math\OBB.h" />
@@ -694,6 +704,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Scene\BaseTransition.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
+    <ClInclude Include="Game\Level\GameLevelData.h" />
     <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
@@ -708,11 +719,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BoxBlurFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\DissolveFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\BaseFilter.h" />
-    <ClInclude Include="Engine\3D\Data\TransformationData.h" />
     <ClInclude Include="engine\base\DirectXUtility.h" />
     <ClInclude Include="engine\3d\Data\MaterialData.h" />
     <ClInclude Include="engine\3d\Data\ModelData.h" />
-    <ClInclude Include="engine\3d\Data\Transform.h" />
     <ClInclude Include="Engine\Base\SwapChain.h" />
     <ClInclude Include="engine\camera\DebugCamera.h" />
     <ClInclude Include="Engine\Scene\AbstractSceneFactory.h" />
@@ -754,8 +763,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\System\SceneFactory.h" />
     <ClInclude Include="engine\base\SrvManager.h" />
     <ClInclude Include="engine\3d\Data\VertexData.h" />
-    <ClInclude Include="Engine\Level\Loader.h" />
-    <ClInclude Include="Engine\Level\LevelData.h" />
     <ClInclude Include="Engine\3D\Skybox\Skybox.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GrayscaleFilter.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\GaussianBlurFilter.h" />
@@ -794,6 +801,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ParticleRenderer.h" />
     <ClInclude Include="Engine\Scene\TransitionManager.h" />
     <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
+    <ClInclude Include="Game\Level\LevelLoader.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
+    <ClInclude Include="Engine\3D\Light\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -1091,9 +1101,6 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClCompile Include="Engine\input\Input.cpp">
       <Filter>Engine\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Level\Loader.cpp">
-      <Filter>Engine\Level</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Scene\SceneManager.cpp">
       <Filter>Engine\Scene</Filter>
     </ClCompile>
@@ -1163,12 +1170,6 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClCompile Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.cpp">
       <Filter>Game\Scene\GamePlayScene\Enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene\Floor\Floor.cpp">
       <Filter>Game\Scene\GamePlayScene\Floor</Filter>
     </ClCompile>
@@ -1222,6 +1223,11 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\FadeTransition.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
+    <ClCompile Include="Game\Level\LevelLoader.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
+    <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -1302,13 +1308,7 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClInclude Include="Engine\3d\Data\MaterialData.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\3D\Data\TransformationData.h">
-      <Filter>Engine\3D\Data</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\3d\Data\ModelData.h">
-      <Filter>Engine\3D\Data</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\3d\Data\Transform.h">
       <Filter>Engine\3D\Data</Filter>
     </ClInclude>
     <ClInclude Include="Engine\base\DirectXUtility.h">
@@ -1379,12 +1379,6 @@ File Path: Project/DirectXGame.vcxproj.filters
     </ClInclude>
     <ClInclude Include="Engine\input\Input.h">
       <Filter>Engine\Input</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Level\LevelData.h">
-      <Filter>Engine\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine\Level\Loader.h">
-      <Filter>Engine\Level</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Scene\AbstractSceneFactory.h">
       <Filter>Engine\Scene</Filter>
@@ -1470,12 +1464,6 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClInclude Include="Game\Scene\GamePlayScene\Enemy\EnemyBullet.h">
       <Filter>Game\Scene\GamePlayScene\Enemy</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h">
-      <Filter>Game\Scene\GamePlayScene\Fade</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\Floor\Floor.h">
       <Filter>Game\Scene\GamePlayScene\Floor</Filter>
     </ClInclude>
@@ -1534,6 +1522,14 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
     <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
     <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
+    <ClInclude Include="Game\Level\GameLevelData.h" />
+    <ClInclude Include="Game\Level\LevelLoader.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
+    <ClInclude Include="Engine\Math\Capsule.h" />
+    <ClInclude Include="Engine\Math\Ellipsoid.h" />
+    <ClInclude Include="Engine\3D\Light\LightManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">
@@ -2750,37 +2746,6 @@ namespace Engine {
 }
 
 ============================================================
-File Path: Project/Engine/3D/Data/Transform.h
-============================================================
-#pragma once
-
-#include "Vector3.h"
-
-namespace Engine {
-
-	// 変換データ
-	struct Transform {
-		Vector3 scale;
-		Vector3 rotate;
-		Vector3 translate;
-	};
-}
-
-============================================================
-File Path: Project/Engine/3D/Data/TransformationData.h
-============================================================
-#pragma once
-
-#include "Matrix4x4.h"
-
-namespace Engine {
-
-	struct TransformationData {
-		Matrix4x4 WVP;
-	};
-}
-
-============================================================
 File Path: Project/Engine/3D/Data/VertexData.h
 ============================================================
 #pragma once
@@ -2798,6 +2763,350 @@ namespace Engine {
 		Vector3 normal;
 	};
 }
+
+============================================================
+File Path: Project/Engine/3D/Light/LightManager.cpp
+============================================================
+#include "LightManager.h"
+
+#include "DirectXUtility.h"
+#include "MathVector.h"
+
+#include <numbers>
+#include <string>
+#include <imgui.h>
+
+using namespace Engine;
+using namespace MathVector;
+
+void LightManager::Initialize() {
+
+	// DirectXUtilityのインスタンスを取得
+	dxUtility_ = DirectXUtility::GetInstance();
+
+	// 平行光源を作成
+	CreateDirectionalLight();
+
+	// 点光源を作成
+	CreatePointLight();
+
+	// スポットライトを作成
+	CreateSpotLight();
+
+	// 環境マップを作成
+	CreateEnvironmentMap();
+}
+
+void LightManager::Update() {
+
+	directionalLightData_->direction = Normalize(directionalLightData_->direction);
+}
+
+void LightManager::Draw() {
+
+	// コマンドリストを取得
+	ID3D12GraphicsCommandList* commandList = dxUtility_->GetCommandList().Get();
+
+	/// === 平行光源CBufferの場所を設定 === ///
+	commandList->SetGraphicsRootConstantBufferView(3, directionalLightResource_->GetGPUVirtualAddress());
+
+	/// === 点光源CBufferの場所を設定 === ///
+	commandList->SetGraphicsRootConstantBufferView(4, pointLightResource_->GetGPUVirtualAddress());
+
+	/// === スポットライトCBufferの場所を設定 === ///
+	commandList->SetGraphicsRootConstantBufferView(5, spotLightResource_->GetGPUVirtualAddress());
+
+	/// === 環境マップCBufferの場所を設定 === ///
+	commandList->SetGraphicsRootConstantBufferView(6, environmentMapResource_->GetGPUVirtualAddress());
+}
+
+void LightManager::ShowImGui() {
+
+#ifdef USE_IMGUI
+
+	ImGui::Begin("光源マネージャ");
+
+	if (ImGui::TreeNodeEx("平行光源")) {
+
+		ImGui::Checkbox("有効", reinterpret_cast<bool*>(&directionalLightData_->active));
+		ImGui::ColorEdit3("色", &directionalLightData_->color.x);
+		ImGui::DragFloat3("向き", &directionalLightData_->direction.x, 0.01f);
+		ImGui::DragFloat("輝度", &directionalLightData_->intensity, 0.01f);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNodeEx("点光源")) {
+
+		ImGui::Checkbox("有効", reinterpret_cast<bool*>(&pointLightData_->active));
+		ImGui::ColorEdit3("色", &pointLightData_->color.x);
+		ImGui::DragFloat3("位置", &pointLightData_->position.x, 0.01f);
+		ImGui::DragFloat("輝度", &pointLightData_->intensity, 0.01f);
+		ImGui::DragFloat("距離", &pointLightData_->range, 0.01f);
+		ImGui::DragFloat("減衰率", &pointLightData_->decay, 0.01f);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNodeEx("スポットライト")) {
+
+		ImGui::Checkbox("有効", reinterpret_cast<bool*>(&spotLightData_->active));
+		ImGui::ColorEdit3("色", &spotLightData_->color.x);
+		ImGui::DragFloat3("位置", &spotLightData_->position.x, 0.01f);
+		ImGui::DragFloat3("向き", &spotLightData_->direction.x, 0.01f);
+		ImGui::DragFloat("輝度", &spotLightData_->intensity, 0.01f);
+		ImGui::DragFloat("距離", &spotLightData_->range, 0.01f);
+		ImGui::DragFloat("減衰率", &spotLightData_->decay, 0.01f);
+		ImGui::DragFloat("角度", &spotLightData_->cosAngle, 0.01f);
+		ImGui::DragFloat("減衰開始角度", &spotLightData_->cosFalloffStart, 0.01f);
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNodeEx("環境マップ")) {
+
+		ImGui::DragFloat("輝度", &environmentMapData_->intensity, 0.01f);
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
+
+#endif // USE_IMGUI
+}
+
+void LightManager::CreateDirectionalLight() {
+
+	// 平行光源リソースを作成
+	directionalLightResource_ = dxUtility_->CreateBufferResource(sizeof(DirectionalLight));
+
+	// VRAMにマップして、データを書き込むためのアドレスを取得して、割り当てる
+	directionalLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData_));
+
+	// 平行光源データの初期値を書き込む
+	directionalLightData_->active = 1; // 有効
+	directionalLightData_->color = { 1.0f, 1.0f, 1.0f }; // 色は白
+	directionalLightData_->direction = { 0.0f, -1.0f, 0.0f }; // 下向き
+	directionalLightData_->intensity = 0.5f; // 輝度は最大
+}
+
+void LightManager::CreatePointLight() {
+
+	// 点光源リソースを作成
+	pointLightResource_ = dxUtility_->CreateBufferResource(sizeof(PointLight));
+
+	// VRAMにマップして、データを書き込むためのアドレスを取得して、割り当てる
+	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData_));
+
+	// 点光源データの初期値を書き込む
+	pointLightData_->active = 1; // 有効
+	pointLightData_->color = { 1.0f, 1.0f, 1.0f }; // 色は白
+	pointLightData_->position = { 0.0f, 0.0f, 0.0f }; // 位置は原点
+	pointLightData_->intensity = 1.0f; // 輝度は最大
+	pointLightData_->range = 5.0f; // 光の届く距離
+	pointLightData_->decay = 2.0f; // 減衰率
+}
+
+void LightManager::CreateSpotLight() {
+
+	// スポットライトリソースを作成
+	spotLightResource_ = dxUtility_->CreateBufferResource(sizeof(SpotLight));
+
+	// VRAMにマップして、データを書き込むためのアドレスを取得して、割り当てる
+	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData_));
+
+	// スポットライトデータの初期値を書き込む
+	spotLightData_->active = 1; // 有効
+	spotLightData_->color = { 1.0f, 1.0f, 1.0f }; // 色は白
+	spotLightData_->position = { 0.0f, 0.0f, 0.0f }; // 位置は原点
+	spotLightData_->direction = { 0.0f, -1.0f, 0.0f }; // 下向き
+	spotLightData_->intensity = 1.0f; // 輝度は最大
+	spotLightData_->range = 5.0f; // 光の届く距離
+	spotLightData_->decay = 2.0f; // 減衰率
+	spotLightData_->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f); // π/3
+	spotLightData_->cosFalloffStart = spotLightData_->cosAngle + 0.01f; // cosAngleよりちょっと大きい
+}
+
+void LightManager::CreateEnvironmentMap() {
+
+	// 環境マップリソースを作成
+	environmentMapResource_ = dxUtility_->CreateBufferResource(sizeof(EnvironmentMap));
+
+	// VRAMにマップして、データを書き込むためのアドレスを取得して、割り当てる
+	environmentMapResource_->Map(0, nullptr, reinterpret_cast<void**>(&environmentMapData_));
+
+	// 環境マップデータの初期値を書き込む
+	environmentMapData_->intensity = 1.0f; // 輝度は最大
+}
+
+
+============================================================
+File Path: Project/Engine/3D/Light/LightManager.h
+============================================================
+#pragma once
+
+#include "Vector3.h"
+#include "Vector4.h"
+
+#include <wrl.h>
+#include <d3d12.h>
+
+namespace Engine {
+
+	/// ========== 前方宣言 ========== ///
+
+	class DirectXUtility;
+
+	/// <summary>
+	/// 光源マネージャ
+	/// </summary>
+	class LightManager {
+
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// 平行光源
+		/// </summary>
+		struct DirectionalLight {
+			uint32_t active;   // 有効フラグ 0:無効 1:有効
+			Vector3 color;	   // 色
+			Vector3 direction; // 向き
+			float intensity;   // 輝度
+		};
+
+		/// <summary>
+		/// 点光源
+		/// </summary>
+		struct PointLight {
+			uint32_t active;  // 有効フラグ 0:無効 1:有効
+			Vector3 color;    // 色
+			Vector3 position; // 位置
+			float intensity;  // 輝度
+			float range;      // 距離 
+			float decay;      // 減衰率
+		};
+
+		/// <summary>
+		/// スポットライト
+		/// </summary>
+		struct SpotLight {
+			uint32_t active;	   // 有効フラグ 0:無効 1:有効
+			Vector3 color;		   // 色
+			Vector3 position;      // 位置
+			float padding;	       // パディング
+			Vector3 direction;     // 向き
+			float intensity;       // 輝度
+			float range;	       // 距離
+			float decay;	       // 減衰率
+			float cosAngle;	       // 角度
+			float cosFalloffStart; // 減衰開始角度
+		};
+
+		/// <summary>
+		/// 環境マップ
+		/// </summary>
+		struct EnvironmentMap {
+			float intensity; // 輝度
+		};
+
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
+
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update();
+
+		/// <summary>
+		/// 描画
+		/// </summary>
+		void Draw();
+
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
+
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
+	private:
+		
+		/// <summary>
+		/// 平行光源の作成
+		/// </summary>
+		void CreateDirectionalLight();
+
+		/// <summary>
+		/// 点光源の作成
+		/// </summary>
+		void CreatePointLight();
+
+		/// <summary>
+		/// スポットライトの作成
+		/// </summary>
+		void CreateSpotLight();
+
+		/// <summary>
+		/// 環境マップの作成
+		/// </summary>
+		void CreateEnvironmentMap();
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
+	private:
+
+		/// ========== 平行光源 ========== ///
+
+		// 平行光源リソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> directionalLightResource_ = nullptr;
+
+		// 平行光源のデータ
+		DirectionalLight* directionalLightData_ = nullptr;
+
+		/// ========== 点光源 ========== ///
+
+		// 点光源リソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> pointLightResource_ = nullptr;
+
+		// 点光源データ
+		PointLight* pointLightData_ = nullptr;
+
+		/// ========== スポットライト ========== ///
+
+		// スポットライトリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> spotLightResource_ = nullptr;
+
+		// スポットライトデータ
+		SpotLight* spotLightData_ = nullptr;
+
+		/// ========== 環境マップ ========== ///
+
+		// 環境マップリソース
+		Microsoft::WRL::ComPtr<ID3D12Resource> environmentMapResource_ = nullptr;
+
+		// 環境マップデータ
+		EnvironmentMap* environmentMapData_ = nullptr;
+
+		/// ========== 借りポインタ ========== ///
+
+		// DirectXUtilityのインスタンス
+		DirectXUtility* dxUtility_ = nullptr;
+	};
+}
+
+
 
 ============================================================
 File Path: Project/Engine/3D/Model/Model.cpp
@@ -2836,7 +3145,7 @@ void Model::Draw() {
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
 
 	// マテリアルCBufferの場所を設定
-	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableを設定
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
@@ -2852,11 +3161,17 @@ void Model::ShowImGui() {
 
 #ifdef USE_IMGUI
 
-	if (ImGui::TreeNode("Model")) {
-		ImGui::Text("FilePath: %s", modelData->material.textureFilePath.c_str());
-		ImGui::ColorEdit4("Color", &materialData->color.x);
-		ImGui::Combo("LightingMode", &materialData->lightingMode, "None\0Lambertian Reflection\0Harf Lambert\0Phong Reflection Model\0Blinn-Phong Reflection Model\0PointLight\0SpotLight\0EnvironmentMap\0");
-		ImGui::DragFloat("Shininess", &materialData->shininess, 0.01f);
+	if (ImGui::TreeNode("モデル")) {
+		ImGui::Text("ファイルパス: %s", modelData->material.textureFilePath.c_str());
+		ImGui::ColorEdit4("色", &materialData->color.x);
+		ImGui::ColorEdit3("鏡面反射色", &materialData->specularColor.x);
+		ImGui::Combo("拡散反射の設定", (int*)&materialData->diffuseSetting, "なし\0Lambert反射\0Half-Lambert反射\0");
+		ImGui::Combo("鏡面反射の設定", (int*)&materialData->specularSetting, "なし\0Phong反射\0Blinn-Phong反射\0");
+		bool useEnv = materialData->useEnvironmentMap;
+		if (ImGui::Checkbox("環境マップの設定", &useEnv)) {
+			materialData->useEnvironmentMap = useEnv ? 1 : 0;
+		}
+		ImGui::DragFloat("明るさ", &materialData->shininess, 0.1f);
 		ImGui::TreePop();
 	}
 
@@ -2893,10 +3208,13 @@ void Model::InitializeMaterialData() {
 	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
 
 	/// === MaterialDataの初期値を書き込む === ///
-	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 今は白を書き込んでいる
-	materialData->lightingMode = 0; // Lightingをしていない
+	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白
+	materialData->specularColor = Vector3(1.0f, 1.0f, 1.0f); // 白
+	materialData->diffuseSetting = 0; // 拡散反射は使わない
+	materialData->specularSetting = 0; // 鏡面反射は使わない
+	materialData->useEnvironmentMap = 0; // 環境マップは使わない
+	materialData->shininess = 50.0f;
 	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
-	materialData->shininess = 70.0f;
 }
 
 ============================================================
@@ -2911,7 +3229,6 @@ File Path: Project/Engine/3D/Model/Model.h
 
 #include <d3d12.h>
 #include <wrl.h>
-#include <memory>
 
 namespace Engine {
 
@@ -2929,11 +3246,14 @@ namespace Engine {
 
 		// マテリアルデータ
 		struct Material {
-			Vector4 color;
-			int lightingMode;
-			float padding[3];
-			Matrix4x4 uvTransform;
-			float shininess;
+			Vector4 color;			    // 色 (RGBA)
+			Vector3 specularColor;		// 鏡面反射色 (RGB)
+			float padding;
+			uint32_t diffuseSetting;    // 拡散反射の設定 0:使わない 1:Lambert反射 2:HalfLambert反射 
+			uint32_t specularSetting;   // 鏡面反射の設定 0:使わない 1:Phong反射 2:BlinnPhong反射
+			uint32_t useEnvironmentMap; // 環境マップの設定 0:使わない 1:使う
+			float shininess;		    // 明るさ
+			Matrix4x4 uvTransform;	    // UV座標
 		};
 
 		///-------------------------------------------/// 
@@ -2973,28 +3293,22 @@ namespace Engine {
 		/// </summary>
 		void InitializeMaterialData();
 
-		///-------------------------------------------/// 
-		/// ゲッター&セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
-		/// ライティングの種類のゲッター
+		/// 色のセッター
 		/// </summary>
-		/// <returns></returns>
-		const int& GetLightingMode() const { return materialData->lightingMode; }
+		/// <param name="color"></param>
+		void SetColor(const Vector4& color) { materialData->color = color; }
 
-		/// <summary>
-		/// ライティングの種類のセッター
-		/// </summary>
-		/// <param name="lightingMode"></param>
-		void SetLightingMode(int lightingMode) { materialData->lightingMode = lightingMode; }
+		void SetDiffuseSetting(const uint32_t& diffuseSetting) { materialData->diffuseSetting = diffuseSetting; }
 
-		/// <summary>
-		/// ライトの明るさのゲッター
-		/// </summary>
-		/// <returns></returns>
-		const float& GetShininess() const { return materialData->shininess; }
+		void SetSpecularSetting(const uint32_t& specularSetting) { materialData->specularSetting = specularSetting; }
+
+		void SetUseEnvironmentMap(const uint32_t& useEnvironmentMap) { materialData->useEnvironmentMap = useEnvironmentMap; }
 
 		/// <summary>
 		/// ライトの明るさのセッター
@@ -3002,21 +3316,27 @@ namespace Engine {
 		/// <param name="shininess"></param>
 		void SetShininess(const float& shininess) { this->materialData->shininess = shininess; }
 
-		const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
-
 		/// <summary>
 		/// 環境マップのファイルパスのゲッター
 		/// </summary>
 		/// <param name="filePath"></param>
 		void SetEnvironmentMapFilePath(const std::string& filePath) { environmentMapFilePath = filePath; }
 
-		const Vector4& GetPosition() const { return vertexData->position; }
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+	public:
 
 		/// <summary>
-		/// 色のセッター
+		/// ライトの明るさのゲッター
 		/// </summary>
-		/// <param name="color"></param>
-		void SetColor(const Vector4& color) { materialData->color = color; }
+		/// <returns></returns>
+		const float& GetShininess() const { return materialData->shininess; }
+
+		const Matrix4x4& GetRootMatrix() const { return modelData->rootNode.localMatrix; }
+
+		const Vector4& GetPosition() const { return vertexData->position; }
+
 
 		///-------------------------------------------/// 
 		/// メンバ変数
@@ -3386,14 +3706,6 @@ void Object3d::Initialize() {
 
 	InitializeTransformationMatrixData();
 
-	InitializeDirectionalLightData();
-
-	InitializePointLightData();
-
-	InitializeSpotLightData();
-
-	InitializeEnvironmentData();
-
 	InitializeCameraData();
 }
 
@@ -3415,7 +3727,7 @@ void Object3d::Update() {
 		worldViewProjectionMatrix = worldMatrix * viewProjectionMatrix;
 
 		// カメラのワールド座標を代入
-		*cameraData = camera->GetWorldPosition();
+		*cameraData = camera->GetWorldTransform().GetWorldPosition();
 
 		// カメラがなければworldMatrixを代入
 	}
@@ -3426,15 +3738,7 @@ void Object3d::Update() {
 
 	transformationMatrixData->WVP = model->GetRootMatrix() * worldViewProjectionMatrix;
 	transformationMatrixData->world = model->GetRootMatrix() * worldMatrix;
-	transformationMatrixData->worldInverseTranspose = Inverse(model->GetRootMatrix() * worldMatrix);
-
-	directionalLightData->direction = Normalize(directionalLightData->direction);
-	spotLightData->direction = Normalize(spotLightData->direction);
-
-	// cosFalloffStartがcosAngleより小さい場合、cosAngleを更新
-	if (spotLightData->cosFalloffStart < spotLightData->cosAngle) {
-		spotLightData->cosFalloffStart = spotLightData->cosAngle + 0.01f;
-	}
+	transformationMatrixData->worldInverseTranspose = Inverse(Transpose(model->GetRootMatrix() * worldMatrix));
 }
 
 void Object3d::Draw() {
@@ -3444,20 +3748,8 @@ void Object3d::Draw() {
 		/// === 座標変換行列CBufferの場所を設定 === ///
 		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(0, transformationMatrixResource->GetGPUVirtualAddress());
 
-		/// === 平行光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, directionalLightResource->GetGPUVirtualAddress());
-
-		/// === 点光源CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(3, pointLightResource->GetGPUVirtualAddress());
-
-		/// === スポットライトCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(4, spotLightResource->GetGPUVirtualAddress());
-		
-		/// === 環境CBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(5, environmentResource->GetGPUVirtualAddress());
-
 		/// === カメラCBufferの場所を設定 === ///
-		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(6, cameraResource->GetGPUVirtualAddress());
+		dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, cameraResource->GetGPUVirtualAddress());
 
 		// 3Dモデルが割り当てられていれば描画する
 		if (model) {
@@ -3475,39 +3767,6 @@ void Object3d::ShowImGui() {
 		ImGui::Checkbox("Draw", &isDraw);
 
 		worldTransform.ShowImGui();
-
-		if (ImGui::TreeNode("DirectionalLight")) {
-			ImGui::ColorEdit4("Color", &directionalLightData->color.x); // 色
-			ImGui::DragFloat3("Direction", &directionalLightData->direction.x, 0.01f); // 向き
-			ImGui::DragFloat("Intensity", &directionalLightData->intensity, 0.01f); // 輝度
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("PointLight")) {
-			ImGui::ColorEdit4("Color", &pointLightData->color.x); // 色
-			ImGui::DragFloat3("Position", &pointLightData->position.x, 0.01f); // 位置
-			ImGui::DragFloat("Intensity", &pointLightData->intensity, 0.01f); // 輝度
-			ImGui::DragFloat("Distance", &pointLightData->distance, 0.01f); // 最大距離
-			ImGui::DragFloat("Decay", &pointLightData->decay, 0.01f); // 減衰率
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("SpotLight")) {
-			ImGui::ColorEdit4("Color", &spotLightData->color.x); // 色
-			ImGui::DragFloat3("Position", &spotLightData->position.x, 0.01f); // 位置
-			ImGui::DragFloat3("Direction", &spotLightData->direction.x, 0.01f); // 向き
-			ImGui::DragFloat("Intensity", &spotLightData->intensity, 0.01f); // 輝度
-			ImGui::DragFloat("Distance", &spotLightData->distance, 0.01f); // 最大距離
-			ImGui::DragFloat("Decay", &spotLightData->decay, 0.01f); // 減衰率
-			ImGui::DragFloat("CosAngle", &spotLightData->cosAngle, 0.01f); // 余弦
-			ImGui::DragFloat("CosFalloffStart", &spotLightData->cosFalloffStart, 0.01f); // Falloff開始角度
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Environment")) {
-			ImGui::SliderFloat("Intensity", &environmentData->intensity, 0.0f, 1.0f); // 環境光の輝度
-			ImGui::TreePop();
-		}
 
 		ImGui::TreePop();
 	}
@@ -3529,67 +3788,6 @@ void Object3d::InitializeTransformationMatrixData() {
 	transformationMatrixData->worldInverseTranspose = MakeIdentity4x4(); // 単位行列を書き込む
 }
 
-void Object3d::InitializeDirectionalLightData() {
-
-	/// === DirectionalLightResourceを作る === ///
-	directionalLightResource = dxUtility->CreateBufferResource(sizeof(DirectionalLight));
-
-	/// === DirectionalLightResourceにデータを書き込むためのアドレスを取得してDirectionalLightDataに割り当てる === ///
-	directionalLightResource->Map(0, nullptr, reinterpret_cast<void**>(&directionalLightData));
-
-	/// === DirectionalLightDataの初期値を書き込む === ///
-	directionalLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を書き込む
-	directionalLightData->direction = Normalize({ 0.0f, -1.0f, 0.0f }); // 向きは下から
-	directionalLightData->intensity = 1.0f; // 輝度は最大
-}
-
-void Object3d::InitializePointLightData() {
-
-	/// === PointLightResourceを作る === ///
-	pointLightResource = dxUtility->CreateBufferResource(sizeof(PointLight));
-
-	/// === PointLightResourceにデータを書き込むためのアドレスを取得してPointLightDataに割り当てる === ///
-	pointLightResource->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData));
-
-	/// === PointLightDataの初期値を書き込む === ///
-	pointLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 白を書き込む
-	pointLightData->position = { 0.0f, 2.0f, 0.0f }; // 位置は上から
-	pointLightData->intensity = 1.0f; // 輝度は最大
-	pointLightData->distance = 5.0f; // 最大距離は広く
-	pointLightData->decay = 2.0f; // 減衰あり
-}
-
-void Object3d::InitializeSpotLightData() {
-
-	/// === SpotLightResourceを作る === ///
-	spotLightResource = dxUtility->CreateBufferResource(sizeof(SpotLight));
-
-	/// === SpotLightResourceにデータを書き込むためのアドレスを取得してSpotLightDataに割り当てる === ///
-	spotLightResource->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData));
-
-	/// === SpotLightDataの初期値を書き込む === ///
-	spotLightData->color = { 1.0f, 1.0f, 1.0f, 1.0f }; // 色は白
-	spotLightData->position = { -2.0f, 1.25f, 0.0f }; // 位置は左から
-	spotLightData->direction = Normalize({ -1.0f, 0.0f, 0.0f }); // 右向き
-	spotLightData->intensity = 4.0f; // 輝度は強め
-	spotLightData->distance = 7.0f; // 最大距離は広く
-	spotLightData->decay = 2.0f; // 減衰あり
-	spotLightData->cosAngle = std::cos(std::numbers::pi_v<float> / 3.0f); // π/3
-	spotLightData->cosFalloffStart = spotLightData->cosAngle + 0.01f; // cosAngleよりちょっと大きい
-}
-
-void Object3d::InitializeEnvironmentData() {
-
-	/// === EnvironmentResourceを作る === ///
-	environmentResource = dxUtility->CreateBufferResource(sizeof(Environment));
-
-	/// === EnvironmentResourceにデータを書き込むためのアドレスを取得してEnvironmentDataに割り当てる === ///
-	environmentResource->Map(0, nullptr, reinterpret_cast<void**>(&environmentData));
-
-	/// === EnvironmentDataの初期値を書き込む === ///
-	environmentData->intensity = 1.0f; // 環境光の輝度は最大
-}
-
 void Object3d::InitializeCameraData() {
 
 	/// === CameraResource === ///
@@ -3603,7 +3801,7 @@ void Object3d::InitializeCameraData() {
 	// カメラを持っていたら
 	if (camera) {
 		// カメラのワールド座標を代入
-		*cameraData = camera->GetWorldPosition();
+		*cameraData = camera->GetWorldTransform().GetWorldPosition();
 	}
 }
 
@@ -3632,10 +3830,10 @@ namespace Engine {
 	/// === 3Dオブジェクト === ///
 	class Object3d {
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
-	public:
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
+	private:
 
 		// 座標変換行列
 		struct TransformationMatrix {
@@ -3644,44 +3842,9 @@ namespace Engine {
 			Matrix4x4 worldInverseTranspose;
 		};
 
-		// 平行光源データ
-		struct DirectionalLight {
-			Vector4 color; // 色
-			Vector3 direction; // 向き
-			float intensity; // 輝度
-		};
-
-		// 点光源データ
-		struct PointLight {
-			Vector4 color; // 色
-			Vector3 position; // 位置
-			float intensity; // 輝度
-			float distance; // 光の届く最大距離
-			float decay; // 減衰率
-			float padding[2];
-		};
-
-		// スポットライトデータ
-		struct SpotLight {
-			Vector4 color; // 色
-			Vector3 position; // 位置
-			float padding;
-			Vector3 direction; // 向き
-			float intensity; // 輝度
-			float distance; // 光の届く最大距離
-			float decay; // 減衰率
-			float cosAngle; // 余弦
-			float cosFalloffStart; // Falloffの開始角度
-		};
-
-		// 環境データ
-		struct Environment {
-			float intensity; // 環境光の輝度
-		};
-
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -3704,9 +3867,9 @@ namespace Engine {
 		/// </summary>
 		void ShowImGui();
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
 	private:
 
 		/// <summary>
@@ -3715,52 +3878,14 @@ namespace Engine {
 		void InitializeTransformationMatrixData();
 
 		/// <summary>
-		/// 平行光源データ初期化
-		/// </summary>
-		void InitializeDirectionalLightData();
-
-		/// <summary>
-		/// 点光源データ初期化
-		/// </summary>
-		void InitializePointLightData();
-
-		/// <summary>
-		/// スポットライトデータ初期化
-		/// </summary>
-		void InitializeSpotLightData();
-
-		/// <summary>
-		/// 環境データ初期化
-		/// </summary>
-		void InitializeEnvironmentData();
-
-		/// <summary>
 		/// カメラデータ初期化
 		/// </summary>
 		void InitializeCameraData();
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
-
-		/// <summary>
-		/// 大きさのセッター
-		/// </summary>
-		/// <param name="scale">大きさ</param>
-		void SetScale(const Vector3& scale) { this->worldTransform.SetScale(scale); }
-
-		/// <summary>
-		/// 回転のセッター
-		/// </summary>
-		/// <param name="rotate">回転</param>
-		void SetRotate(const Vector3& rotate) { this->worldTransform.SetRotate(rotate); }
-
-		/// <summary>
-		/// 位置のセッター
-		/// </summary>
-		/// <param name="translate">位置</param>
-		void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
 
 		/// <summary>
 		/// モデルのセッター
@@ -3774,99 +3899,31 @@ namespace Engine {
 		/// <param name="camera">カメラ</param>
 		void SetCamera(Camera* camera) { this->camera = camera; }
 
-		/// <summary>
-		/// 色のセッター
-		/// </summary>
-		/// <param name="color"></param>
-		void SetColor(const Vector4& color) { this->directionalLightData->color = color; }
-
-		/// <summary>
-		///	向きのセッター
-		/// </summary>
-		/// <param name="direction"></param>
-		void SetDirection(const Vector3& direction) { this->directionalLightData->direction = direction; }
-
-		/// <summary>
-		/// 輝度のセッター
-		/// </summary>
-		/// <param name="intensity"></param>
-		void SetIntensity(float intensity) { this->directionalLightData->intensity = intensity; }
-
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
-		/// 大きさのゲッター
+		/// ワールド座標変換の取得
 		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetScale() const { return worldTransform.GetScale(); }
+		/// <returns>ワールド座標変換</returns>
+		WorldTransform& GetWorldTransform() { return worldTransform; }
 
-		/// <summary>
-		/// 回転のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetRotate() const { return worldTransform.GetRotate(); }
-
-		/// <summary>
-		/// 位置のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetTranslate() const { return worldTransform.GetTranslate(); }
-
-		/// <summary>
-		/// 色のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector4& GetColor() const { return directionalLightData->color; }
-
-		/// <summary>
-		/// 向きのゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetDirection() const { return directionalLightData->direction; }
-
-		/// <summary>
-		/// 輝度のゲッター
-		/// </summary>
-		/// <returns></returns>
-		float GetIntensity() const { return directionalLightData->intensity; }
-
-		/// <summary>
-		/// ワールド行列のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Matrix4x4& GetWorldMatrix() const { return worldTransform.GetWorldMatrix(); }
-
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// 座標変換行列リソース
-		Microsoft::WRL::ComPtr <ID3D12Resource> transformationMatrixResource;
-		// 平行光源リソース
-		Microsoft::WRL::ComPtr <ID3D12Resource> directionalLightResource;
-		// 点光源リソース
-		Microsoft::WRL::ComPtr <ID3D12Resource> pointLightResource;
-		// スポットライトリソース
-		Microsoft::WRL::ComPtr <ID3D12Resource> spotLightResource;
-		// 環境リソース
-		Microsoft::WRL::ComPtr <ID3D12Resource> environmentResource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> transformationMatrixResource;
+
 		// カメラリソース
-		Microsoft::WRL::ComPtr <ID3D12Resource> cameraResource;
+		Microsoft::WRL::ComPtr<ID3D12Resource> cameraResource;
 
 		// 座標変換行列データ
 		TransformationMatrix* transformationMatrixData = nullptr;
-		// 平行光源データ
-		DirectionalLight* directionalLightData = nullptr;
-		// 点光源データ
-		PointLight* pointLightData = nullptr;
-		// スポットライトデータ
-		SpotLight* spotLightData = nullptr;
-		// 環境データ
-		Environment* environmentData = nullptr;
+		
 		// カメラデータ
 		Vector3* cameraData;
 
@@ -3968,22 +4025,22 @@ void Object3dRenderer::CreateGraphicsPipelinOpaque() {
 	// gTransformationMatrix CBV、b0、頂点シェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 0, D3D12_SHADER_VISIBILITY_VERTEX);
 
-	// gMaterial CBV、b1、ピクセルシェーダーで使う
+	// gCamera CBV、b1、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gDirectionalLight CBV、b2、ピクセルシェーダーで使う
+	// gMaterial CBV、b2、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 2, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gPointLight CBV、b3、ピクセルシェーダーで使う
+	// gDirectionalLight CBV、b3、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 3, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gSpotLight CBV、b4、ピクセルシェーダーで使う
+	// gPointLight CBV、b4、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 4, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gEnvironment CBV、b5、ピクセルシェーダーで使う
+	// gSpotLight CBV、b5、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 5, D3D12_SHADER_VISIBILITY_PIXEL);
 
-	// gCamera CBV、b6、ピクセルシェーダーで使う
+	// gEnvironment CBV、b6、ピクセルシェーダーで使う
 	pipelineBuilderOpaque_.AddRootParameter(D3D12_ROOT_PARAMETER_TYPE_CBV, 6, D3D12_SHADER_VISIBILITY_PIXEL);
 
 	// gTexture SRV、t0、ピクセルシェーダーで使う
@@ -4703,7 +4760,7 @@ void ParticleManager::Update() {
 	Matrix4x4 backToFrontMatrix = MakeRotateYMatrix(std::numbers::pi_v<float>);
 
 	// ビルボード行列を計算
-	billboardMatrix = backToFrontMatrix * camera->GetWorldMatrix();
+	billboardMatrix = backToFrontMatrix * camera->GetWorldTransform().GetWorldMatrix();
 
 	// 行列の平行移動成分を排除する
 	billboardMatrix.m[3][0] = 0.0f;
@@ -4973,6 +5030,34 @@ void ParticleManager::AddInstance(const ParticleInstance& instance) {
 		shardGroups[key].particles.push_back(instance);
 
 		break;
+	}
+}
+
+void ParticleManager::Clear() {
+
+	// 板ポリのパーティクルをクリア
+	for (auto& [key, group] : planeGroups) {
+		group.particles.clear();
+	}
+
+	// リングのパーティクルをクリア
+	for (auto& [key, group] : ringGroups) {
+		group.particles.clear();
+	}
+
+	// シリンダーのパーティクルをクリア
+	for (auto& [key, group] : cylinderGroups) {
+		group.particles.clear();
+	}
+
+	// キューブのパーティクルをクリア
+	for (auto& [key, group] : cubeGroups) {
+		group.particles.clear();
+	}
+
+	// シャードのパーティクルをクリア
+	for (auto& [key, group] : shardGroups) {
+		group.particles.clear();
 	}
 }
 
@@ -5556,6 +5641,11 @@ namespace Engine {
 		/// </summary>
 		/// <param effectName="instance">インスタンス</param>
 		void AddInstance(const ParticleInstance& instance);
+
+		/// <summary>
+		/// パーティクルのクリア
+		/// </summary>
+		void Clear();
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -7483,7 +7573,6 @@ File Path: Project/Engine/3D/Skybox/Skybox.h
 #pragma once
 
 #include "Base/DirectXUtility.h"
-#include "Data/TransformationData.h"
 #include "Vector2.h"
 #include "Vector4.h"
 #include "WorldTransform.h"
@@ -7501,9 +7590,9 @@ namespace Engine {
 	/// === スカイボックス === ///
 	class Skybox {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -7528,9 +7617,9 @@ namespace Engine {
 		/// <param name="name"></param>
 		void ShowImGui(const char* name);
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
 	private:
 
 		/// <summary>
@@ -7553,9 +7642,9 @@ namespace Engine {
 		/// </summary>
 		void InitializeMaterialData();
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -7582,22 +7671,26 @@ namespace Engine {
 		/// <param name="translate"></param>
 		void SetTranslate(const Vector3& translate) { this->worldTransform.SetTranslate(translate); }
 
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
-	public:
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
+	private:
 
 		struct VertexData {
 			Vector4 position; // 頂点座標
+		};
+
+		struct TransformationData {
+			Matrix4x4 WVP;
 		};
 
 		struct Material {
 			Vector4 color; // 色
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// 頂点リソース
@@ -12264,7 +12357,7 @@ void VignetteFilter::ShowImGui() {
 		// 有効化フラグのチェックボックス
 		ImGui::Checkbox("IsActive", &isActive_);
 
-		ImGui::ColorEdit3("Color", &configData_->color.x);
+		ImGui::ColorEdit4("Color", &configData_->color.x);
 		ImGui::SliderFloat("Intensity", &configData_->intensity, 0.0f, 5.0f);
 		ImGui::SliderFloat("Scale", &configData_->scale, 0.0f, 32.0f);
 		ImGui::SliderFloat("Range", &configData_->range, 0.0f, 2.0f);
@@ -12322,7 +12415,7 @@ void VignetteFilter::CreateConfigData() {
 	configBuffer_->Map(0, nullptr, reinterpret_cast<void**>(&configData_));
 
 	// 初期値をセット
-	configData_->color = Vector3(0.0f, 0.0f, 0.0f);
+	configData_->color = { 1.0f,1.0f ,1.0f ,1.0f };
 	configData_->intensity = 0.8f;
 	configData_->scale = 16.0f;
 	configData_->range = 1.0f;
@@ -12382,7 +12475,7 @@ namespace Engine {
 	///-------------------------------------------///
 	public:
 
-		void SetColor(const Vector3& color) { configData_->color = color; }
+		void SetColor(const Vector4& color) { configData_->color = color; }
 
 		void SetIntensity(float intensity) { configData_->intensity = intensity; }
 
@@ -12400,7 +12493,7 @@ namespace Engine {
 		/// </summary>
 		struct ConfigData {
 
-			Vector3 color; // 色
+			Vector4 color; // 色
 			float intensity; // 強さ
 			float scale; // スケール
 			float range; // 範囲
@@ -13290,7 +13383,7 @@ namespace Engine {
 		D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
 
 		// クリアする色
-		const Vector4 kRenderTargetClearValue = { 0.0f, 0.0f, 0.0f, 1.0f }; // 黒に設定
+		const Vector4 kRenderTargetClearValue = { 0.1f, 0.25f, 0.5f, 1.0f }; // 青っぽい色
 
 		/// ===== DSV用の変数 ===== ///
 
@@ -14127,11 +14220,11 @@ void Camera::Initialize() {
 	// ファークリップ距離を設定
 	farClip = 100.0f;
 
-	// ワールド行列をアフィン変換行列で初期化
-	worldMatrix = MakeAffineMatrix(scale, rotate, translate);
+	// ワールド変換を初期化
+	worldTransform_.Initialize();
 
 	// ビュー行列をワールド行列の逆行列で初期化
-	viewMatrix = Inverse(worldMatrix);
+	viewMatrix = Inverse(worldTransform_.GetWorldMatrix());
 
 	// プロジェクション行列を透視投影行列で初期化
 	projectionMatrix = MakePerspectiveFovMatrix(fovY, aspectRatio, nearClip, farClip);
@@ -14145,11 +14238,11 @@ void Camera::Initialize() {
 
 void Camera::UpdateViewMatrix() {
 
-	// transformからアフィン変換行列を計算
-	worldMatrix = MakeAffineMatrix(scale, rotate, translate);
+	// ワールド変換を更新
+	worldTransform_.Update();
 
 	// worldMatrixの逆行列を代入
-	viewMatrix = Inverse(worldMatrix);
+	viewMatrix = Inverse(worldTransform_.GetWorldMatrix());
 }
 
 void Camera::UpdateProjectionMatrix() {
@@ -14185,26 +14278,14 @@ void Camera::ShowImGui(const char* name) {
 
 	ImGui::Begin(name);
 
-	ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
-	ImGui::DragFloat3("Translate", &translate.x, 0.01f);
-
 	ImGui::DragFloat("FovY", &fovY, 0.01f);
 	ImGui::DragFloat("NearClip", &nearClip, 0.01f);
 	ImGui::DragFloat("FarClip", &farClip, 0.01f);
 
-	// ワールド行列を表示
-	if (ImGui::TreeNode("WorldMatrix")) {
-
-		for (int i = 0; i < 4; ++i) {
-
-			ImGui::Text("%f, %f, %f, %f", worldMatrix.m[i][0], worldMatrix.m[i][1], worldMatrix.m[i][2], worldMatrix.m[i][3]);
-		}
-
-		ImGui::TreePop();
-	}
+	worldTransform_.ShowImGui();
 
 	// ビュー行列を表示
-	if (ImGui::TreeNode("ViewMatrix")) {
+	if (ImGui::TreeNodeEx("ビュー行列")) {
 
 		for (int i = 0; i < 4; ++i) {
 
@@ -14223,28 +14304,16 @@ void Camera::ShowImGuiTree() {
 
 #ifdef USE_IMGUI
 
-	if (ImGui::TreeNode("Camera")) {
-
-		ImGui::DragFloat3("Rotate", &rotate.x, 0.01f);
-		ImGui::DragFloat3("Translate", &translate.x, 0.01f);
+	if (ImGui::TreeNode("カメラ")) {
 
 		ImGui::DragFloat("FovY", &fovY, 0.01f);
 		ImGui::DragFloat("NearClip", &nearClip, 0.01f);
 		ImGui::DragFloat("FarClip", &farClip, 0.01f);
 
-		// ワールド行列を表示
-		if (ImGui::TreeNode("WorldMatrix")) {
-
-			for (int i = 0; i < 4; ++i) {
-
-				ImGui::Text("%f, %f, %f, %f", worldMatrix.m[i][0], worldMatrix.m[i][1], worldMatrix.m[i][2], worldMatrix.m[i][3]);
-			}
-
-			ImGui::TreePop();
-		}
+		worldTransform_.ShowImGui();
 
 		// ビュー行列を表示
-		if (ImGui::TreeNode("ViewMatrix")) {
+		if (ImGui::TreeNodeEx("ビュー行列")) {
 
 			for (int i = 0; i < 4; ++i) {
 
@@ -14260,18 +14329,6 @@ void Camera::ShowImGuiTree() {
 #endif // USE_IMGUI
 }
 
-const Vector3& Camera::GetWorldPosition() const {
-
-	// ワールド座標
-	static Vector3 worldPosition;
-
-	// ワールド行列から座標を取得
-	worldPosition.x = worldMatrix.m[3][0];
-	worldPosition.y = worldMatrix.m[3][1];
-	worldPosition.z = worldMatrix.m[3][2];
-
-	return worldPosition;
-}
 
 ============================================================
 File Path: Project/Engine/Camera/Camera.h
@@ -14280,15 +14337,16 @@ File Path: Project/Engine/Camera/Camera.h
 
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "WorldTransform.h"
 
 namespace Engine {
 
 	/// === カメラ === ///
 	class Camera {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -14327,22 +14385,10 @@ namespace Engine {
 		/// </summary>
 		void ShowImGuiTree();
 
-		///-------------------------------------------///
-		/// セッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
-
-		/// <summary>
-		/// 回転のセッター
-		/// </summary>
-		/// <param name="rotate">回転</param>
-		void SetRotate(const Vector3& rotate) { this->rotate = rotate; }
-
-		/// <summary>
-		/// 位置のセッター
-		/// </summary>
-		/// <param name="translate">位置</param>
-		void SetTranslate(const Vector3& translate) { this->translate = translate; }
 
 		/// <summary>
 		/// 水平方向視野のセッター
@@ -14374,28 +14420,16 @@ namespace Engine {
 		/// <param name="viewMatrix"></param>
 		void SetViewMatrix(const Matrix4x4& viewMatrix) { this->viewMatrix = viewMatrix; }
 
-		///-------------------------------------------///
-		/// ゲッター
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
-		/// 回転のゲッター
+		/// ワールド変換のゲッター
 		/// </summary>
-		/// <returns>Vector3</returns>
-		const Vector3& GetRotate() const { return rotate; }
-
-		/// <summary>
-		/// 位置のゲッター
-		/// </summary>
-		/// <returns>Vector3</returns>
-		const Vector3& GetTranslate() const { return translate; }
-
-		/// <summary>
-		/// ワールド行列のゲッター
-		/// </summary>
-		/// <returns>Matrix4x4</returns>
-		const Matrix4x4& GetWorldMatrix() const { return worldMatrix; }
+		/// <returns>WorldTransform</returns>
+		WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 		/// <summary>
 		/// ビュー行列のゲッター
@@ -14422,12 +14456,6 @@ namespace Engine {
 		const Matrix4x4& GetViewProjectionMatrix() const { return viewProjectionMatrix; }
 
 		/// <summary>
-		/// ワールド座標のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Vector3& GetWorldPosition() const;
-
-		/// <summary>
 		/// ニアクリップ距離のゲッター
 		/// </summary>
 		/// <returns>ニアクリップ距離	</returns>
@@ -14445,22 +14473,13 @@ namespace Engine {
 		/// <returns>水平方向視野</returns>
 		const float& GetFovY() const { return fovY; }
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
-		// 拡縮
-		Vector3 scale = { 1.0f, 1.0f, 1.0f };
-
-		// 回転
-		Vector3 rotate = { 0.0f, 0.0f, 0.0f };
-
-		// 平行移動
-		Vector3 translate = { 0.0f, 0.0f, 0.0f };
-
-		// ワールド行列
-		Matrix4x4 worldMatrix;
+		// ワールド変換
+		WorldTransform worldTransform_;
 
 		// ビュー行列
 		Matrix4x4 viewMatrix;
@@ -14716,11 +14735,13 @@ File Path: Project/Engine/Collision/Collider.cpp
 
 #include "Collider.h"
 #include "LineManager.h"
+#include "MathVector.h"
 
 #include <algorithm>
 #include <imgui.h>
 
 using namespace Engine;
+using namespace MathVector;
 
 Collider::Collider(const CollisionShape& shape, uint32_t typeID) {
 
@@ -14749,14 +14770,17 @@ void Collider::Update() {
 	worldTransform_.Update();
 
 	// ワールド座標変換から拡縮を取得
-	Vector3 scale = worldTransform_.GetScale();
+	Vector3 worldScale = worldTransform_.GetWorldScale();
 
 	// ワールド座標変換からワールド座標を取得
 	Vector3 worldPosition = worldTransform_.GetWorldPosition();
 
-	// 形状に応じて更新
+	// ワールド変換からワールド行列を取得
+	Matrix4x4 worldMatrix = worldTransform_.GetWorldMatrix();
 
-	// 形状が球なら
+	/// ========== 形状に応じた更新 ========== ///
+
+	// 球なら
 	if (std::holds_alternative<Sphere>(shape_)) {
 
 		Sphere& sphere = std::get<Sphere>(shape_);
@@ -14765,35 +14789,99 @@ void Collider::Update() {
 		sphere.center = worldPosition;
 
 		// 拡縮の最大値の半分を設定
-		sphere.radius = std::max({ scale.x, scale.y, scale.z }) / 2.0f;
+		sphere.radius = std::max({ worldScale.x, worldScale.y, worldScale.z }) / 2.0f;
 	}
-	// 形状がAABBなら
+	// AABBなら
 	else if (std::holds_alternative<AABB>(shape_)) {
 
 		AABB& aabb = std::get<AABB>(shape_);
 
 		// ワールド座標と拡縮で計算
-		aabb.min = worldPosition - scale;
-		aabb.max = worldPosition + scale;
+		aabb.min = worldPosition - worldScale;
+		aabb.max = worldPosition + worldScale;
+	}
+	// OBBなら
+	else if (std::holds_alternative<OBB>(shape_)) {
+
+		OBB& obb = std::get<OBB>(shape_);
+
+		// ワールド座標から中心座標を取得
+		obb.center = worldPosition;
+
+		obb.orientations[0] = Normalize({ worldMatrix.m[0][0], worldMatrix.m[0][1], worldMatrix.m[0][2] });
+		obb.orientations[1] = Normalize({ worldMatrix.m[1][0], worldMatrix.m[1][1], worldMatrix.m[1][2] });
+		obb.orientations[2] = Normalize({ worldMatrix.m[2][0], worldMatrix.m[2][1], worldMatrix.m[2][2] });
+
+		// ワールド変換の拡縮から半分にしたものを取得
+		Vector3 halfScale = worldScale / 2.0f;
+		obb.halfSize = halfScale;
+	}
+	// カプセルなら
+	else if (std::holds_alternative<Capsule>(shape_)) {
+
+		Capsule& capsule = std::get<Capsule>(shape_);
+
+		// --- 設定 ---
+		// ※ここではカプセルの「ローカルでの長さの基本値」を1.0(中心から±0.5)と仮定します
+		float localHalfLength = 0.5f;
+		float localRadius = 1.0f; // 基本の半径
+		// -----------
+
+		// 1. Z軸方向のベクトル（進行方向）をワールド行列の3行目(m[2])から取り出す
+		Vector3 zAxis = { worldMatrix.m[2][0], worldMatrix.m[2][1], worldMatrix.m[2][2] };
+
+		// 2. 進行方向の向き（正規化ベクトル）を求める
+		Vector3 forwardDir = Normalize(zAxis);
+
+		// 3. Z方向の「実際の長さ（スケール）」は、zAxisベクトルの長さそのもの
+		// （※GetWorldScale().z を使っても同じ意味になります）
+		float scaledHalfLength = localHalfLength * worldScale.z;
+
+		// 4. カプセルの始点と終点を計算
+		// 中心座標から、進行方向に対して前後に長さを足し引きする
+		capsule.start = worldPosition - (forwardDir * scaledHalfLength);
+		capsule.end = worldPosition + (forwardDir * scaledHalfLength);
+
+		// 5. 半径を計算（太さはX軸とY軸のスケールのうち大きい方に依存させる）
+		capsule.radius = localRadius * std::max(worldScale.x, worldScale.y);
 	}
 }
 
 void Collider::Draw() {
 
-	// 形状に応じて描画
+	/// ========== 形状に応じた描画 ========== ///
+
+	// 球なら
 	if (std::holds_alternative<Sphere>(shape_)) {
 
 		const Sphere& sphere = std::get<Sphere>(shape_);
 
-		// 線描画マネージャで球を描画
-		lineManager_->DrawSphere(sphere.center, sphere.radius, { 1.0f, 1.0f, 1.0f, 1.0f }, 4);
+		// 線で球を描画
+		lineManager_->DrawSphere(sphere, 8, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
+	// AABBなら
 	else if (std::holds_alternative<AABB>(shape_)) {
 
 		const AABB& aabb = std::get<AABB>(shape_);
 
-		// 線描画マネージャでAABBを描画
-		lineManager_->DrawAABB(aabb.min, aabb.max, { 1.0f, 1.0f, 1.0f, 1.0f });
+		// 線でAABBを描画
+		lineManager_->DrawAABB(aabb, { 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+	// OBBなら
+	else if (std::holds_alternative<OBB>(shape_)) {
+
+		const OBB& obb = std::get<OBB>(shape_);
+
+		// 線でOBBを描画
+		lineManager_->DrawOBB(obb, { 1.0f, 1.0f, 1.0f, 1.0f });
+	}
+	// カプセルなら
+	else if (std::holds_alternative<Capsule>(shape_)) {
+
+		const Capsule& capsule = std::get<Capsule>(shape_);
+
+		// 線で楕円形を描画
+		lineManager_->DrawCapsule(capsule, 8, { 1.0f, 1.0f, 1.0f, 1.0f });
 	}
 }
 
@@ -14809,7 +14897,7 @@ void Collider::ShowImGui() {
 
 		// IDを表示
 		ImGui::Text("タイプID: %u", typeID_);
-		
+
 		// ツリーを終了
 		ImGui::TreePop();
 	}
@@ -14837,87 +14925,6 @@ void Collider::SetShape(const CollisionShape& shape) {
 	}
 }
 
-void Collider::SetSphere(const Sphere& sphere) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状を球に設定
-		shape_ = sphere;
-	}
-	// 球が設定されていたら
-	else if (std::holds_alternative<Sphere>(shape_)) {
-
-		// 形状を更新
-		shape_ = sphere;
-	}
-	else {
-
-		return;
-	}
-}
-
-void Collider::SetPlane(const Plane& plane) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状を平面に設定
-		shape_ = plane;
-	}
-	// 平面が設定されていたら
-	else if (std::holds_alternative<Plane>(shape_)) {
-
-		// 形状を更新
-		shape_ = plane;
-	}
-	else {
-
-		return;
-	}
-}
-
-void Collider::SetAABB(const AABB& aabb) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状をAABBに設定
-		shape_ = aabb;
-	}
-	// AABBが設定されていたら
-	else if (std::holds_alternative<AABB>(shape_)) {
-
-		// 形状を更新
-		shape_ = aabb;
-	}
-	else {
-
-		return;
-	}
-}
-
-void Collider::SetOBB(const OBB& obb) {
-
-	// Noneが設定されていたら
-	if (std::holds_alternative<None>(shape_)) {
-
-		// 形状をOBBに設定
-		shape_ = obb;
-	}
-	// OBBが設定されていたら
-	else if (std::holds_alternative<OBB>(shape_)) {
-
-		// 形状を更新
-		shape_ = obb;
-	}
-	else {
-
-		return;
-	}
-}
-
-
 
 
 ============================================================
@@ -14930,6 +14937,7 @@ File Path: Project/Engine/Collision/Collider.h
 #include "Plane.h"
 #include "AABB.h"
 #include "OBB.h"
+#include "Capsule.h"
 
 #include <cstdint>
 #include <variant>
@@ -14955,7 +14963,7 @@ namespace Engine {
 		struct None {};
 
 		// 衝突形状の型 5種類のいずれか1つを保持
-		using CollisionShape = std::variant<None, Sphere, Plane, AABB, OBB>;
+		using CollisionShape = std::variant<None, Sphere, Plane, AABB, OBB, Capsule>;
 		
 	/// ================================================== ///
 	/// メンバ関数
@@ -15009,7 +15017,7 @@ namespace Engine {
 		/// ワールド座標変換の取得
 		/// </summary>
 		/// <returns>ワールド座標変換</returns>
-		const WorldTransform& GetWorldTransform() const { return worldTransform_; }
+		WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 		// 形状のゲッター
 		const CollisionShape& GetShape() const { return shape_; }
@@ -15022,29 +15030,11 @@ namespace Engine {
 	/// ================================================== ///
 	public:
 
-		/// <summary>
-		/// ワールド座標変換の設定
-		/// </summary>
-		/// <param name="worldTransform">ワールド変換</param>
-		void SetWorldTransform(const WorldTransform& worldTransform) { worldTransform_ = worldTransform; }
-
 		// 形状のセッター
 		void SetShape(const CollisionShape& shape);
 
 		// 種別IDのセッター
 		void SetTypeID(uint32_t typeID) { typeID_ = typeID; }
-
-		// 球のセッター
-		void SetSphere(const Sphere& sphere);
-
-		// 平面のセッター
-		void SetPlane(const Plane& plane);
-
-		// AABBのセッター
-		void SetAABB(const AABB& aabb);
-
-		// OBBのセッター
-		void SetOBB(const OBB& obb);
 
 		/// <summary>
 		/// 衝突時のコールバック関数の設定
@@ -15202,6 +15192,16 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			isColliding = CheckSphereToOBB(&shapeB, &shapeA);
 		}
 
+		// 球とカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Sphere> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckSphereToCapsule(&shapeA, &shapeB);
+		}
+
+		// カプセルと球の衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, Sphere>) {
+			isColliding = CheckSphereToCapsule(&shapeB, &shapeA);
+		}
+
 		// AABBとAABBの衝突判定
 		else if constexpr (std::is_same_v<TypeA, AABB> && std::is_same_v<TypeB, AABB>) {
 			isColliding = CheckAABBToAABB(&shapeA, &shapeB);
@@ -15217,10 +15217,36 @@ void CollisionManager::CheckCollisionPair(Collider* colliderA, Collider* collide
 			isColliding = CheckAABBToOBB(&shapeB, &shapeA);
 		}
 
+		// AABBとカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, AABB> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckAABBToCapsule(&shapeA, &shapeB);
+		}
+
+		// カプセルとAABBの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, AABB>) {
+			isColliding = CheckAABBToCapsule(&shapeB, &shapeA);
+		}
+
 		// OBBとOBBの衝突判定
 		else if constexpr (std::is_same_v<TypeA, OBB> && std::is_same_v<TypeB, OBB>) {
 			isColliding = CheckOBBToOBB(&shapeA, &shapeB);
 		}
+
+		// OBBとカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, OBB> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckOBBToCapsule(&shapeA, &shapeB);
+		}
+
+		// カプセルとOBBの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, OBB>) {
+			isColliding = CheckOBBToCapsule(&shapeB, &shapeA);
+		}
+
+		// カプセルとカプセルの衝突判定
+		else if constexpr (std::is_same_v<TypeA, Capsule> && std::is_same_v<TypeB, Capsule>) {
+			isColliding = CheckCapsuleToCapsule(&shapeA, &shapeB);
+		}
+
 		// その他・未実装の組み合わせ
 		else {
 			// 衝突していないとする
@@ -15294,10 +15320,50 @@ bool CollisionManager::CheckSphereToAABB(const Sphere* sphere, const AABB* aabb)
 
 bool CollisionManager::CheckSphereToOBB(const Sphere* sphere, const OBB* obb) {
 
-	// 実装困難なため、後回し
+	// OBBのローカル空間での球の中心座標を求める
+	Vector3 localPoint = sphere->center - obb->center;
 
-	//TODO: 球とOBBの衝突判定
-	return false;
+	float distX = Dot(localPoint, obb->orientations[0]);
+	float distY = Dot(localPoint, obb->orientations[1]);
+	float distZ = Dot(localPoint, obb->orientations[2]);
+
+	// OBBの範囲内にクランプして最近接点を求める
+	distX = std::clamp(distX, -obb->halfSize.x, obb->halfSize.x);
+	distY = std::clamp(distY, -obb->halfSize.y, obb->halfSize.y);
+	distZ = std::clamp(distZ, -obb->halfSize.z, obb->halfSize.z);
+
+	Vector3 closestPoint = obb->center +
+		obb->orientations[0] * distX +
+		obb->orientations[1] * distY +
+		obb->orientations[2] * distZ;
+
+	// 最近接点と球の中心点の距離を求める
+	float distance = Length(closestPoint - sphere->center);
+
+	// 距離が半径以下なら衝突している
+	return distance <= sphere->radius;
+}
+
+bool CollisionManager::CheckSphereToCapsule(const Sphere* sphere, const Capsule* capsule) {
+	
+	// 線分ベクトル
+	Vector3 d = capsule->end - capsule->start;
+	float lenSq = Dot(d, d);
+
+	float t = 0.0f;
+	if (lenSq > 0.0f) {
+		t = Dot(sphere->center - capsule->start, d) / lenSq;
+		t = std::clamp(t, 0.0f, 1.0f);
+	}
+
+	// カプセルの線分上の最近接点
+	Vector3 closestPoint = capsule->start + d * t;
+
+	// 距離を求める
+	float distance = Length(closestPoint - sphere->center);
+
+	// カプセルの半径と球の半径の和以下なら衝突
+	return distance <= (sphere->radius + capsule->radius);
 }
 
 bool CollisionManager::CheckAABBToAABB(const AABB* aabbA, const AABB* aabbB) {
@@ -15317,20 +15383,160 @@ bool CollisionManager::CheckAABBToAABB(const AABB* aabbA, const AABB* aabbB) {
 
 bool CollisionManager::CheckAABBToOBB(const AABB* aabb, const OBB* obb) {
 
-	// 実装困難なため、後回し
+	// AABBをOBBとして扱う
+	OBB aabb_obb;
+	aabb_obb.center = (aabb->min + aabb->max) * 0.5f;
+	aabb_obb.halfSize = (aabb->max - aabb->min) * 0.5f;
+	aabb_obb.orientations[0] = { 1.0f, 0.0f, 0.0f };
+	aabb_obb.orientations[1] = { 0.0f, 1.0f, 0.0f };
+	aabb_obb.orientations[2] = { 0.0f, 0.0f, 1.0f };
 
-	//TODO: AABBとOBBの衝突判定
-	return false;
+	return CheckOBBToOBB(&aabb_obb, obb);
+}
+
+bool CollisionManager::CheckAABBToCapsule(const AABB* aabb, const Capsule* capsule) {
+	
+	// AABBをOBBとして扱う
+	OBB aabb_obb;
+	aabb_obb.center = (aabb->min + aabb->max) * 0.5f;
+	aabb_obb.halfSize = (aabb->max - aabb->min) * 0.5f;
+	aabb_obb.orientations[0] = { 1.0f, 0.0f, 0.0f };
+	aabb_obb.orientations[1] = { 0.0f, 1.0f, 0.0f };
+	aabb_obb.orientations[2] = { 0.0f, 0.0f, 1.0f };
+
+	return CheckOBBToCapsule(&aabb_obb, capsule);
 }
 
 bool CollisionManager::CheckOBBToOBB(const OBB* obbA, const OBB* obbB) {
 
-	// 実装困難なため、後回し
+	Vector3 d = obbA->center - obbB->center;
 
-	//TODO: OBB同士の衝突判定
+	auto TestAxis = [&](const Vector3& axis) {
+		float lenSq = Dot(axis, axis);
+		if (lenSq < 1e-6f) return true;
+		Vector3 n = axis * (1.0f / std::sqrt(lenSq));
 
-	// 衝突していないとする
-	return false;
+		float rA = std::abs(Dot(n, obbA->orientations[0])) * obbA->halfSize.x +
+			std::abs(Dot(n, obbA->orientations[1])) * obbA->halfSize.y +
+			std::abs(Dot(n, obbA->orientations[2])) * obbA->halfSize.z;
+
+		float rB = std::abs(Dot(n, obbB->orientations[0])) * obbB->halfSize.x +
+			std::abs(Dot(n, obbB->orientations[1])) * obbB->halfSize.y +
+			std::abs(Dot(n, obbB->orientations[2])) * obbB->halfSize.z;
+
+		return std::abs(Dot(d, n)) <= rA + rB;
+		};
+
+	// 各OBBの3軸をテスト
+	for (int i = 0; i < 3; ++i) {
+		if (!TestAxis(obbA->orientations[i])) return false;
+		if (!TestAxis(obbB->orientations[i])) return false;
+	}
+	// それぞれの軸の外積をテスト
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 3; ++j) {
+			Vector3 cross = Cross(obbA->orientations[i], obbB->orientations[j]);
+			if (!TestAxis(cross)) return false;
+		}
+	}
+
+	return true;
+}
+
+bool CollisionManager::CheckOBBToCapsule(const OBB* obb, const Capsule* capsule) {
+	
+	Vector3 capDir = capsule->end - capsule->start;
+	float capLen = Length(capDir);
+	if (capLen > 1e-4f) {
+		capDir = capDir * (1.0f / capLen);
+	}
+
+	Vector3 capCenter = (capsule->start + capsule->end) * 0.5f;
+	float capHalfLen = capLen * 0.5f;
+	Vector3 d = obb->center - capCenter;
+
+	auto TestAxis = [&](const Vector3& axis) {
+		float lenSq = Dot(axis, axis);
+		if (lenSq < 1e-6f) return true;
+		Vector3 n = axis * (1.0f / std::sqrt(lenSq));
+
+		float rOBB = std::abs(Dot(n, obb->orientations[0])) * obb->halfSize.x +
+			std::abs(Dot(n, obb->orientations[1])) * obb->halfSize.y +
+			std::abs(Dot(n, obb->orientations[2])) * obb->halfSize.z;
+
+		float rCap = std::abs(Dot(n, capDir)) * capHalfLen + capsule->radius;
+
+		return std::abs(Dot(d, n)) <= rOBB + rCap;
+		};
+
+	// OBB の各軸
+	for (int i = 0; i < 3; ++i) {
+		if (!TestAxis(obb->orientations[i])) return false;
+	}
+	// Capsule の軸
+	if (!TestAxis(capDir)) return false;
+	// 外積
+	for (int i = 0; i < 3; ++i) {
+		Vector3 cross = Cross(obb->orientations[i], capDir);
+		if (!TestAxis(cross)) return false;
+	}
+
+	return true;
+}
+
+bool CollisionManager::CheckCapsuleToCapsule(const Capsule* capsuleA, const Capsule* capsuleB) {
+	
+	Vector3 d1 = capsuleA->end - capsuleA->start;
+	Vector3 d2 = capsuleB->end - capsuleB->start;
+	Vector3 r = capsuleA->start - capsuleB->start;
+	float a = Dot(d1, d1);
+	float e = Dot(d2, d2);
+	float f = Dot(d2, r);
+
+	float s = 0.0f, t = 0.0f;
+
+	if (a <= 1e-4f && e <= 1e-4f) {
+		s = t = 0.0f;
+	}
+	else if (a <= 1e-4f) {
+		s = 0.0f;
+		t = std::clamp(f / e, 0.0f, 1.0f);
+	}
+	else {
+		float c = Dot(d1, r);
+		if (e <= 1e-4f) {
+			t = 0.0f;
+			s = std::clamp(-c / a, 0.0f, 1.0f);
+		}
+		else {
+			float b = Dot(d1, d2);
+			float denom = a * e - b * b;
+
+			if (denom != 0.0f) {
+				s = std::clamp((b * f - c * e) / denom, 0.0f, 1.0f);
+			}
+			else {
+				s = 0.0f;
+			}
+			t = (b * s + f) / e;
+
+			if (t < 0.0f) {
+				t = 0.0f;
+				s = std::clamp(-c / a, 0.0f, 1.0f);
+			}
+			else if (t > 1.0f) {
+				t = 1.0f;
+				s = std::clamp((b - c) / a, 0.0f, 1.0f);
+			}
+		}
+	}
+
+	// 各線分上の最近接点
+	Vector3 c1 = capsuleA->start + d1 * s;
+	Vector3 c2 = capsuleB->start + d2 * t;
+
+	float dist = Length(c1 - c2);
+	return dist <= (capsuleA->radius + capsuleB->radius);
 }
 
 
@@ -15343,22 +15549,24 @@ File Path: Project/Engine/Collision/CollisionManager.h
 #include "Plane.h"
 #include "AABB.h"
 #include "OBB.h"
+#include "Capsule.h"
 
 #include <list>
 
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
+
 	class Collider;
 
-	///-------------------------------------------/// 
-	/// 衝突マネージャ
-	///-------------------------------------------///
+	/// <summary>
+	/// 衝突管理クラス
+	/// </summary>
 	class CollisionManager {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		// 初期化
@@ -15379,12 +15587,16 @@ namespace Engine {
 		// 全ての衝突判定の確認
 		void CheckAllCollisions();
 
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
 	private:
 
-		// コライダー2つの衝突判定と応答
+		/// <summary>
+		/// コライダー2つの衝突判定と応答
+		/// </summary>
+		/// <param name="colliderA">当たり判定A</param>
+		/// <param name="colliderB">当たり判定B</param>
 		void CheckCollisionPair(Collider* colliderA, Collider* colliderB);
 
 		/// <summary>
@@ -15420,6 +15632,14 @@ namespace Engine {
 		bool CheckSphereToOBB(const Sphere* sphere, const OBB* obb);
 
 		/// <summary>
+		/// 球とカプセルの衝突判定
+		/// </summary>
+		/// <param name="sphere"球</param>
+		/// <param name="capsule">カプセル</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckSphereToCapsule(const Sphere* sphere, const Capsule* capsule);
+
+		/// <summary>
 		/// AABBとAABBの衝突判定
 		/// </summary>
 		/// <param name="aabbA">AABB A</param>
@@ -15436,16 +15656,40 @@ namespace Engine {
 		bool CheckAABBToOBB(const AABB* aabb, const OBB* obb);
 
 		/// <summary>
-		/// の衝突判定
+		/// AABBとカプセルの衝突判定
+		/// </summary>
+		/// <param name="aabb">AABB</param>
+		/// <param name="capsule">カプセル</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckAABBToCapsule(const AABB* aabb, const Capsule* capsule);
+
+		/// <summary>
+		/// OBBとOBBの衝突判定
 		/// </summary>
 		/// <param name="obbA">OBB A</param>
 		/// <param name="obbB">OBB B</param>
 		/// <returns>衝突しているかどうか</returns>
 		bool CheckOBBToOBB(const OBB* obbA, const OBB* obbB);
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+		/// <summary>
+		/// OBBとカプセルの衝突判定
+		/// </summary>
+		/// <param name="obb">OBB</param>
+		/// <param name="capsule">カプセル</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckOBBToCapsule(const OBB* obb, const Capsule* capsule);
+		
+		/// <summary>
+		/// AABBとカプセルの衝突判定
+		/// </summary>
+		/// <param name="capsuleA">カプセルA</param>
+		/// <param name="capsuleB">カプセルB</param>
+		/// <returns>衝突しているかどうか</returns>
+		bool CheckCapsuleToCapsule(const Capsule* capsuleA, const Capsule* capsuleB);
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// コライダーのリスト
@@ -16888,504 +17132,19 @@ namespace Engine {
 }
 
 ============================================================
-File Path: Project/Engine/Level/LevelData.h
-============================================================
-#pragma once
-
-#include "Vector3.h"
-
-#include "json.hpp"
-
-#include <list>
-
-namespace Engine {
-
-	/// === レベルデータ格納 === ///
-	class LevelData {
-
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
-	public:
-
-		// オブジェクトデータ
-		struct ObjectData {
-			std::string fileName; // ファイル名
-			nlohmann::json objects; // オブジェクトのデータ
-			Vector3 translation; // 位置
-			Vector3 rotation; // 回転
-			Vector3 scale; // スケール
-		};
-
-		// 自キャラの生成データ
-		struct PlayerSpawnData {
-			Vector3 translation; // 位置
-			Vector3 rotation; // 回転
-			int index; // インデックス
-		};
-
-		// 敵キャラの生成データ
-		struct EnemySpawnData {
-			Vector3 translation; // 位置
-			Vector3 rotation; // 回転
-			int index; // インデックス
-		};
-
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// オブジェクトデータのリストの取得
-		/// </summary>
-		/// <returns></returns>
-		std::list<ObjectData>& GetObjects() { return objects; }
-
-		/// <summary>
-		/// 自キャラのリストの取得
-		/// </summary>
-		/// <returns></returns>
-		std::list<PlayerSpawnData>& GetPlayers() { return players; }
-
-		/// <summary>
-		/// 敵キャラのリストの取得
-		/// </summary>
-		/// <returns></returns>
-		std::list<EnemySpawnData>& GetEnemies() { return enemies; }
-
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
-	private:
-
-		// オブジェクトデータのリスト
-		std::list<ObjectData> objects;
-
-		// 自キャラのリスト
-		std::list<PlayerSpawnData> players;
-
-		// 敵キャラのリスト
-		std::list<EnemySpawnData> enemies;
-	};
-}
-
-
-============================================================
-File Path: Project/Engine/Level/Loader.cpp
-============================================================
-#include "Loader.h"
-#include "Model/Model.h"
-#include "Model/ModelManager.h"
-
-#include "json.hpp"
-
-#include <fstream>
-#include <cassert>
-#include <cmath>
-#include <numbers>
-#include <imgui.h>
-
-using namespace Engine;
-
-void Loader::LoadLevel(const std::string& fileName) {
-
-	/// === 読み込み === ///
-
-	// フルパスを作る
-	std::string fullPath = kDefaultDirectory + "/" + fileName;
-
-	// ファイルストリーム
-	std::ifstream file;
-
-	// ファイルを開く
-	file.open(fullPath);
-
-	// ファイルが開けなかった場合
-	if (file.fail()) {
-
-		// 実行を止める
-		assert(0);
-	}
-
-	/// === ファイルチェック === ///
-
-	// ファイル読み込み
-	file >> deserialized;
-
-	// 正しいレベルデータファイルの形式かチェック
-	assert(deserialized.is_object());
-	assert(deserialized.contains("name"));
-	assert(deserialized["name"].is_string());
-
-	// "name"を文字列として取得
-	std::string name = deserialized["name"].get<std::string>();
-	// 正しいレベルデータファイルの形式かチェック
-	assert(name.compare("scene") == 0);
-
-	/// === オブジェクトの走査 === ///
-
-	// レベルデータ格納用インスタンスを生成
-	levelData = std::make_unique<LevelData>();
-
-	// "objects"の全オブジェクトを走査
-	for (nlohmann::json& object : deserialized["objects"]) {
-
-		// オブジェクトの解析
-		ParseObject(object);
-	}
-}
-
-void Loader::PlaceObject() {
-
-	// レベルデータからオブジェクトを生成、配置
-	for (auto& objectData : levelData->GetObjects()) {
-
-		// ファイル名からモデルを生成
-		std::unique_ptr<Model> model = std::make_unique<Model>();
-		// モデルの読み込み
-		ModelManager::GetInstance()->LoadModelData(kDefaultDirectory, objectData.fileName + ".obj");
-		// モデルの初期化
-		model->Initialize(kDefaultDirectory, objectData.fileName + ".obj");
-
-		// 3Dオブジェクトの生成
-		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
-		object->Initialize();
-		// モデルの設定
-		object->SetModel(model.get());
-
-		// トランスフォームの設定
-		object->SetScale(objectData.scale);			  // スケール
-		object->SetRotate(objectData.rotation);		  // 回転
-		object->SetTranslate(objectData.translation); // 位置
-
-		// リストに登録
-		models.emplace(objectData.fileName, std::move(model));
-		objects.emplace(objectData.fileName, std::move(object));
-	}
-}
-
-void Loader::PlacePlayer() {
-
-	int index = 0;
-
-	for (auto& playerData : levelData->GetPlayers()) {
-
-		// モデルを生成
-		std::unique_ptr<Model> model = std::make_unique<Model>();
-		// モデルの読み込み
-		ModelManager::GetInstance()->LoadModelData("Resources/Player", "player.obj");
-		// モデルの初期化
-		model->Initialize("Resources/Player", "player.obj");
-
-		// 3Dオブジェクトの生成
-		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
-		object->Initialize();
-
-		// モデルの設定
-		object->SetModel(model.get());
-
-		// トランスフォームの設定
-		object->SetRotate(playerData.rotation); // 回転
-		object->SetTranslate(playerData.translation); // 位置
-
-		// インデックスを設定
-		playerData.index = ++index;
-
-		// リストに登録
-		objects.emplace("Player" + std::to_string(playerData.index), std::move(object));
-		models.emplace("Player" + std::to_string(playerData.index), std::move(model));
-	}
-}
-
-void Loader::PlaceEnemy() {
-
-	int index = 0;
-
-	for (auto& enemyData : levelData->GetEnemies()) {
-
-		// モデルを生成
-		std::unique_ptr<Model> model = std::make_unique<Model>();
-		// モデルの読み込み
-		ModelManager::GetInstance()->LoadModelData("Resources/Enemy", "enemy.obj");
-		// モデルの初期化
-		model->Initialize("Resources/Enemy", "enemy.obj");
-
-		// 3Dオブジェクトの生成
-		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
-		object->Initialize();
-
-		// モデルの設定
-		object->SetModel(model.get());
-
-		// トランスフォームの設定
-		object->SetRotate(enemyData.rotation); // 回転
-		object->SetTranslate(enemyData.translation); // 位置
-
-		// インデックスを設定
-		enemyData.index = ++index;
-
-		// リストに登録
-		models.emplace("Enemy" + std::to_string(enemyData.index), std::move(model));
-		objects.emplace("Enemy" + std::to_string(enemyData.index), std::move(object));
-	}
-}
-
-void Loader::Update() {
-
-	// オブジェクトの更新
-	for (const auto& object : objects) {
-		object.second->Update();
-	}
-}
-
-void Loader::Draw() {
-
-	// オブジェクトの描画
-	for (const auto& object : objects) {
-		object.second->Draw();
-	}
-}
-
-void Loader::ShowImGui() {
-
-#ifdef USE_IMGUI
-
-	ImGui::Begin("Level");
-
-	// オブジェクトのImGui表示
-	for (const auto& object : objects) {
-
-		if(ImGui::TreeNode(object.first.c_str())) {
-			// オブジェクトのImGui表示
-			object.second->ShowImGui();
-			models[object.first]->ShowImGui();
-			ImGui::TreePop();
-		}
-	}
-
-	ImGui::End();
-
-#endif // USE_IMGUI
-}
-
-void Loader::ParseObject(nlohmann::json& object) {
-
-	// オブジェクトが正しい形式かチェック
-	assert(object.contains("type"));
-
-	if(object.contains("disabled")){
-
-		// 有効無効フラグ
-		bool disabled = object["disabled"].get<bool>();
-
-		// 無効な場合は何もしない
-		if (disabled) {
-			
-			// 配置しない(スキップする)
-			return;
-		}
-	}
-
-	// 種別を取得
-	std::string type = object["type"].get<std::string>();
-
-	/// === メッシュの読み込み === ///
-
-	// MESH
-	if (type.compare("MESH") == 0) {
-
-		// 要素追加
-		levelData->GetObjects().emplace_back(LevelData::ObjectData{});
-		// 今追加した要素の参照を得る
-		LevelData::ObjectData& objectData = levelData->GetObjects().back();
-
-		if (object.contains("name")) {
-			// ファイル名を取得
-			objectData.fileName = object["name"];
-		}
-
-		// トランスフォームのパラメータ読み込み
-		nlohmann::json& transform = object["transform"];
-
-		// 平行移動
-		objectData.translation.x = transform["translation"][0];
-		objectData.translation.y = transform["translation"][2];
-		objectData.translation.z = transform["translation"][1];
-
-		// 回転角
-		objectData.rotation.x = transform["rotation"][0] * (std::numbers::pi_v<float> / 180.0f);
-		objectData.rotation.y = transform["rotation"][2] * (std::numbers::pi_v<float> / 180.0f);
-		objectData.rotation.z = transform["rotation"][1] * (std::numbers::pi_v<float> / 180.0f);
-
-		// スケーリング
-		objectData.scale.x = transform["scaling"][0];
-		objectData.scale.y = transform["scaling"][2];
-		objectData.scale.z = transform["scaling"][1];
-
-		// モデルの読み込み
-		ModelManager::GetInstance()->LoadModelData(kDefaultDirectory, objectData.fileName + ".obj");
-
-		//TODO:コライダーの読み込み
-	}
-	else if (type.compare("PlayerSpawn") == 0) {
-
-		// 要素追加
-		levelData->GetPlayers().emplace_back(LevelData::PlayerSpawnData{});
-		// 今追加した要素の参照を得る
-		LevelData::PlayerSpawnData& playerData = levelData->GetPlayers().back();
-
-		// トランスフォームのパラメータ読み込み
-		nlohmann::json& transform = object["transform"];
-
-		// 平行移動
-		playerData.translation.x = transform["translation"][0];
-		playerData.translation.y = transform["translation"][2];
-		playerData.translation.z = transform["translation"][1];
-
-		// 回転角
-		playerData.rotation.x = transform["rotation"][0] * (std::numbers::pi_v<float> / 180.0f);
-		playerData.rotation.y = transform["rotation"][2] * (std::numbers::pi_v<float> / 180.0f);
-		playerData.rotation.z = transform["rotation"][1] * (std::numbers::pi_v<float> / 180.0f);
-	}
-	else if (type.compare("EnemySpawn") == 0) {
-
-		// 要素追加
-		levelData->GetEnemies().emplace_back(LevelData::EnemySpawnData{});
-		// 今追加した要素の参照を得る
-		LevelData::EnemySpawnData& enemyData = levelData->GetEnemies().back();
-
-		// トランスフォームのパラメータ読み込み
-		nlohmann::json& transform = object["transform"];
-
-		// 平行移動
-		enemyData.translation.x = transform["translation"][0];
-		enemyData.translation.y = transform["translation"][2];
-		enemyData.translation.z = transform["translation"][1];
-
-		// 回転角
-		enemyData.rotation.x = transform["rotation"][0] * (std::numbers::pi_v<float> / 180.0f);
-		enemyData.rotation.y = transform["rotation"][2] * (std::numbers::pi_v<float> / 180.0f);
-		enemyData.rotation.z = transform["rotation"][1] * (std::numbers::pi_v<float> / 180.0f);
-	}
-
-	/// === ツリー構造の走査 === ///
-
-	// 子ノードがある場合
-	if (object.contains("children")) {
-
-		// 再帰的に呼び出して解析する
-		for (nlohmann::json& child : object["children"]) {
-			// 子ノードの解析
-			ParseObject(child);
-		}
-	}
-}
-
-
-============================================================
-File Path: Project/Engine/Level/Loader.h
-============================================================
-#pragma once
-
-#include "LevelData.h"
-#include "Object/Object3d.h"
-
-#include <string>
-#include <map>
-#include <memory>
-
-namespace Engine {
-
-	/// === ローダー === ///
-	class Loader {
-
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// レベルデータファイルの読み込み
-		/// </summary>
-		/// <param name="filePath"></param>
-		void LoadLevel(const std::string& fileName);
-
-		/// <summary>
-		/// オブジェクトの配置
-		/// </summary>
-		void PlaceObject();
-
-		/// <summary>
-		/// 自機の配置
-		/// </summary>
-		void PlacePlayer();
-
-		/// <summary>
-		/// 敵の配置
-		/// </summary>
-		void PlaceEnemy();
-
-		/// <summary>
-		/// 更新
-		/// </summary>
-		void Update();
-
-		/// <summary>
-		/// 描画
-		/// </summary>
-		void Draw();
-
-		/// <summary>
-		/// ImGui表示
-		/// </summary>
-		void ShowImGui();
-
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
-	private:
-
-		/// <summary>
-		/// オブジェクトの解析
-		/// </summary>
-		void ParseObject(nlohmann::json& object);
-
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
-	private:
-
-		// デフォルトのディレクトリ
-		const std::string kDefaultDirectory = "Resources/Levels";
-
-		// レベルデータ格納用インスタンス
-		std::unique_ptr<LevelData> levelData = nullptr;
-
-		// JSON文字列から読み込んだデータ
-		nlohmann::json deserialized;
-
-		// モデルのリスト
-		std::map<std::string, std::unique_ptr<Model>> models;
-
-		// オブジェクトのリスト
-		std::map<std::string, std::unique_ptr<Object3d>> objects;
-	};
-}
-
-
-============================================================
 File Path: Project/Engine/Line/LineManager.cpp
 ============================================================
 #include "LineManager.h"
 #include "DirectXUtility.h"
 #include "Camera.h"
+#include "MathVector.h"
 #include "MathMatrix.h"
 
 #include <cassert>
 #include <numbers>
 
 using namespace Engine;
+using namespace MathVector;
 using namespace MathMatrix;
 
 void LineManager::Initialize() {
@@ -17439,63 +17198,78 @@ void LineManager::DrawLine(const Vector3& start, const Vector3& end, const Vecto
 	vertexDatas_.push_back(endVertex);
 }
 
-void LineManager::DrawSphere(const Vector3& center, float radius, const Vector4& color, int subdivision) {
+void LineManager::DrawSphere(const Vector3& center, float radius, const uint32_t subdivision, const Vector4& color) {
 
 	// π
 	const float pi = std::numbers::pi_v<float>;
 
-	// 分割した緯度1つ分の角度
-	const float latitudeStep = pi / subdivision;
-
-	// 分割した経度1つ分の角度
-	const float longitudeStep = 2.0f * pi / subdivision;
-
-	// 頂点の２次元配列 (分割数+1 × 分割数)
-	std::vector<std::vector<Vector3>> vertices(subdivision + 1, std::vector<Vector3>(subdivision));
+	// 1分割あたりの角度
+	const float kLonEvery = pi * 2.0f / static_cast<float>(subdivision);
+	const float kLatEvery = pi / static_cast<float>(subdivision);
 
 	// 全頂点を生成
-	for (int lat = 0; lat <= subdivision; ++lat) {
+	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
 
-		float latitude = lat * latitudeStep;
+		float lat = -pi / 2.0f + kLatEvery * latIndex;
+		float nextLat = lat + kLatEvery;
 
-		float sinLat = std::sin(latitude);
-		float cosLat = std::cos(latitude);
+		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
 
-		for (int lon = 0; lon < subdivision; ++lon) {
+			float lon = lonIndex * kLonEvery;
+			float nextLon = (lonIndex + 1) * kLonEvery;
 
-			float longitude = lon * longitudeStep;
+			/// ========== 現在の点 ========== ///
 
-			float sinLon = std::sin(longitude);
-			float cosLon = std::cos(longitude);
-
-			vertices[lat][lon] = {
-				center.x + radius * sinLat * cosLon, // x座標
-				center.y + radius * cosLat,          // y座標
-				center.z + radius * sinLat * sinLon  // z座標
+			Vector3 a = {
+				std::cos(lat) * std::cos(lon) * radius,
+				std::sin(lat) * radius,
+				std::cos(lat) * std::sin(lon) * radius,
 			};
-		}
-	}
 
-	// 線を描画
-	for (int lat = 0; lat < subdivision; ++lat) {
+			// 中心座標を加算
+			a += center;
 
-		for (int lon = 0; lon < subdivision; ++lon) {
+			/// ========== 隣の横の点 ========== ///
 
-			// 経度の次のインデックス (最後は0に戻る)
-			int nextLon = (lon + 1) % subdivision;
+			Vector3 b = {
+				std::cos(lat) * std::cos(nextLon) * radius,
+				std::sin(lat) * radius,
+				std::cos(lat) * std::sin(nextLon) * radius,
+			};
 
-			// 緯度線
-			DrawLine(vertices[lat][lon], vertices[lat][nextLon], color);
+			// 中心座標を加算
+			b += center;
 
-			// 経度線
-			DrawLine(vertices[lat][lon], vertices[lat + 1][lon], color);
+			/// ========== 隣の縦の点 ========== ///
+
+			Vector3 c = {
+				std::cos(nextLat) * std::cos(lon) * radius,
+				std::sin(nextLat) * radius,
+				std::cos(nextLat) * std::sin(lon) * radius,
+			};
+
+			// 中心座標を加算
+			c += center;
+
+			/// ========== 線を引く ========== ///
+
+			// 横線
+			DrawLine(a, b, color);
+
+			// 縦線
+			DrawLine(a, c, color);
 		}
 	}
 }
 
+void LineManager::DrawSphere(const Sphere& sphere, const uint32_t subdivision, const Vector4& color) {
+
+	DrawSphere(sphere.center, sphere.radius, subdivision, color);
+}
+
 void LineManager::DrawAABB(const Vector3& min, const Vector3& max, const Vector4& color) {
 
-	// AABBの8頂点を定義
+	// 8頂点を定義
 	Vector3 vertices[8] = {
 		{ min.x, min.y, min.z }, // 0: 最小点
 		{ max.x, min.y, min.z }, // 1: x最大
@@ -17507,7 +17281,7 @@ void LineManager::DrawAABB(const Vector3& min, const Vector3& max, const Vector4
 		{ min.x, max.y, max.z }  // 7: y最大、z最大
 	};
 
-	// AABBの12辺を描画
+	// 12辺を描画
 
 	DrawLine(vertices[0], vertices[1], color); // 下辺1
 	DrawLine(vertices[1], vertices[2], color); // 下辺2
@@ -17523,6 +17297,242 @@ void LineManager::DrawAABB(const Vector3& min, const Vector3& max, const Vector4
 	DrawLine(vertices[1], vertices[5], color); // 垂直辺2
 	DrawLine(vertices[2], vertices[6], color); // 垂直辺3
 	DrawLine(vertices[3], vertices[7], color); // 垂直辺4
+}
+
+void LineManager::DrawAABB(const AABB& aabb, const Vector4& color) {
+
+	DrawAABB(aabb.min, aabb.max, color);
+}
+
+void LineManager::DrawOBB(const Vector3& center, const Vector3 orientations[3], const Vector3& halfSize, const Vector4& color) {
+
+	// 中心から面までの距離ベクトルを計算
+	Vector3 axes[3] = {
+		orientations[0] * halfSize.x,
+		orientations[1] * halfSize.y,
+		orientations[2] * halfSize.z
+	};
+
+	// 8頂点を定義
+	Vector3 vertices[8] = {
+		center - axes[0] + axes[1] - axes[2], // 左上前
+		center + axes[0] + axes[1] - axes[2], // 右上前
+		center + axes[0] - axes[1] - axes[2], // 右下前
+		center - axes[0] - axes[1] - axes[2], // 左下前
+		center - axes[0] + axes[1] + axes[2], // 左上奥
+		center + axes[0] + axes[1] + axes[2], // 右上奥
+		center + axes[0] - axes[1] + axes[2], // 右下奥
+		center - axes[0] - axes[1] + axes[2], // 左下奥
+	};
+
+	// 12辺を描画
+
+	// 手前の面
+	DrawLine(vertices[0], vertices[1], color);
+	DrawLine(vertices[1], vertices[2], color);
+	DrawLine(vertices[2], vertices[3], color);
+	DrawLine(vertices[3], vertices[0], color);
+
+	// 奥の面
+	DrawLine(vertices[4], vertices[5], color);
+	DrawLine(vertices[5], vertices[6], color);
+	DrawLine(vertices[6], vertices[7], color);
+	DrawLine(vertices[7], vertices[4], color);
+
+	// 手前と奥を繋ぐ辺
+	DrawLine(vertices[0], vertices[4], color);
+	DrawLine(vertices[1], vertices[5], color);
+	DrawLine(vertices[2], vertices[6], color);
+	DrawLine(vertices[3], vertices[7], color);
+}
+
+void LineManager::DrawOBB(const OBB& obb, const Vector4& color) {
+
+	DrawOBB(obb.center, obb.orientations, obb.halfSize, color);
+}
+
+void LineManager::DrawCapsule(const Vector3& start, const Vector3& end, float radius, const uint32_t subdivision, const Vector4& color) {
+
+	// 円柱の軸ベクトルと長さを計算
+	Vector3 d = { end.x - start.x, end.y - start.y, end.z - start.z };
+	float length = std::sqrt(d.x * d.x + d.y * d.y + d.z * d.z);
+
+	// 描画用のローカル座標系（Y軸をカプセルの向きとする）を設定
+	Vector3 localY = (length > 0.0001f) ? Vector3{ d.x / length, d.y / length, d.z / length } : Vector3{ 0, 1, 0 };
+	Vector3 up = (std::abs(localY.y) < 0.999f) ? Vector3{ 0, 1, 0 } : Vector3{ 1, 0, 0 };
+
+	// 外積 (Cross) と正規化 (Normalize) を用いて直交基底を作成
+	Vector3 localX = Normalize(Cross(up, localY));
+	Vector3 localZ = Normalize(Cross(localX, localY));
+
+	const float PI = 3.14159265359f;
+
+	// 赤道（phi=PI/2）を必ず計算できるように、極方向の分割数(rings)を偶数で保証する
+	uint32_t rings = (subdivision % 2 == 0) ? subdivision : subdivision + 1;
+	uint32_t slices = subdivision;
+	uint32_t halfRings = rings / 2;
+
+	// 球面の座標を計算し、指定した中心点(center)に対するワールド座標を返すラムダ
+	auto GetSpherePoint = [&](float theta, float phi, const Vector3& center) -> Vector3 {
+		// 標準的な球の座標計算
+		float x = std::sin(phi) * std::cos(theta);
+		float y = std::cos(phi);
+		float z = std::sin(phi) * std::sin(theta);
+
+		// カプセルの向きに合わせて回転
+		Vector3 rotated = {
+			localX.x * x + localY.x * y + localZ.x * z,
+			localX.y * x + localY.y * y + localZ.y * z,
+			localX.z * x + localY.z * y + localZ.z * z
+		};
+
+		// 中心点をオフセットしてスケール適用
+		return {
+			center.x + rotated.x * radius,
+			center.y + rotated.y * radius,
+			center.z + rotated.z * radius
+		};
+		};
+
+	// 球と全く同じ2重ループ（緯度・経度）を利用する
+	for (uint32_t i = 0; i < rings; ++i) {
+		float phi1 = PI * (float)i / rings;
+		float phi2 = PI * (float)(i + 1) / rings;
+
+		// Phiの角度に応じて、上半球は end、下半球は start を中心にする
+		Vector3 center1 = (i < halfRings) ? end : start;
+		Vector3 center2 = (i + 1 <= halfRings) ? end : start;
+
+		for (uint32_t j = 0; j < slices; ++j) {
+			float theta1 = 2.0f * PI * (float)j / slices;
+			float theta2 = 2.0f * PI * (float)(j + 1) / slices;
+
+			Vector3 p0 = GetSpherePoint(theta1, phi1, center1);
+			Vector3 p1 = GetSpherePoint(theta2, phi1, center1); // 水平リングの次点
+			Vector3 p2 = GetSpherePoint(theta1, phi2, center2); // 垂直ラインの次点
+
+			// 1. 水平方向のリング（緯線）線描画。一番上の極での縮退を防ぐため 0 より大きい場合のみ
+			if (i > 0) {
+				DrawLine(p0, p1, color);
+			}
+
+			// 2. 赤道（上半球と下半球の接続部分）における円柱側面の描画
+			if (i == halfRings - 1) {
+				// 上半球側の赤道リングを明示的に描画（通常の水平リングは phi1 に対して描かれるため）
+				Vector3 equatorEnd0 = p2; // phi2 = PI/2 における end 側の点
+				Vector3 equatorEnd1 = GetSpherePoint(theta2, phi2, center2);
+				DrawLine(equatorEnd0, equatorEnd1, color);
+
+				// 円柱の縦の側面ライン（上半球の赤道 〜 下半球の赤道）を描画
+				Vector3 equatorStart0 = GetSpherePoint(theta1, phi2, start);
+				DrawLine(equatorEnd0, equatorStart0, color);
+
+				// ※ 下半球側の赤道リングは、次のループ(i == halfRings)の水平リング(phi1)として描画される
+			}
+
+			// 3. 垂直方向（経線）の線描画（上半球から下半球へ飛ぶ瞬間以外は通常通り描画）
+			DrawLine(p0, p2, color);
+		}
+	}
+}
+
+void LineManager::DrawCapsule(const Capsule& capsule, const uint32_t subdivision, const Vector4& color) {
+
+	DrawCapsule(capsule.start, capsule.end, capsule.radius, subdivision, color);
+}
+
+void LineManager::DrawEllipsoid(const Vector3& center, const Vector3& radius, const uint32_t subdivision, const Vector4& color) {
+
+	// π
+	const float pi = std::numbers::pi_v<float>;
+
+	// 1分割あたりの角度
+	const float kLonEvery = pi * 2.0f / static_cast<float>(subdivision);
+	const float kLatEvery = pi / static_cast<float>(subdivision);
+
+	// 全頂点を生成
+	for (uint32_t latIndex = 0; latIndex < subdivision; ++latIndex) {
+
+		float lat = -pi / 2.0f + kLatEvery * latIndex;
+		float nextLat = lat + kLatEvery;
+
+		for (uint32_t lonIndex = 0; lonIndex < subdivision; ++lonIndex) {
+
+			float lon = lonIndex * kLonEvery;
+			float nextLon = (lonIndex + 1) * kLonEvery;
+
+			/// ========== 現在の点 ========== ///
+
+			Vector3 a = {
+				std::cos(lat) * std::cos(lon) * radius.x,
+				std::sin(lat) * radius.y,
+				std::cos(lat) * std::sin(lon) * radius.z,
+			};
+
+			// 中心座標を加算
+			a += center;
+
+			/// ========== 隣の横の点 ========== ///
+
+			Vector3 b = {
+				std::cos(lat) * std::cos(nextLon) * radius.x,
+				std::sin(lat) * radius.y,
+				std::cos(lat) * std::sin(nextLon) * radius.z,
+			};
+
+			// 中心座標を加算
+			b += center;
+
+			/// ========== 隣の縦の点 ========== ///
+
+			Vector3 c = {
+				std::cos(nextLat) * std::cos(lon) * radius.x,
+				std::sin(nextLat) * radius.y,
+				std::cos(nextLat) * std::sin(lon) * radius.z,
+			};
+
+			// 中心座標を加算
+			c += center;
+
+			/// ========== 線を引く ========== ///
+
+			// 横線
+			DrawLine(a, b, color);
+
+			// 縦線
+			DrawLine(a, c, color);
+		}
+	}
+}
+
+void LineManager::DrawEllipsoid(const Ellipsoid& ellipsoid, const uint32_t subdivision, const Vector4& color) {
+
+	DrawEllipsoid(ellipsoid.center, ellipsoid.radius, subdivision, color);
+}
+
+void LineManager::DrawGrid(const Vector3& center, const float size, const uint32_t subdivision, const Vector4& color) {
+
+	float halfSize = size / 2.0f;
+
+	float step = size / static_cast<float>(subdivision);
+
+	for (uint32_t i = 0; i <= subdivision; ++i) {
+
+		// 中心からのオフセット
+		float offset = -halfSize + (i * step);
+
+		/// ========== 縦線 ========== ///
+
+		Vector3 startX = { center.x - halfSize, center.y, center.z + offset };
+		Vector3 endX = { center.x + halfSize, center.y, center.z + offset };
+		DrawLine(startX, endX, color);
+
+		/// ========== 横線 ========== ///
+
+		Vector3 startZ = { center.x + offset, center.y, center.z - halfSize };
+		Vector3 endZ = { center.x + offset, center.y, center.z + halfSize };
+		DrawLine(startZ, endZ, color);
+	}
 }
 
 void LineManager::Render() {
@@ -17610,6 +17620,11 @@ File Path: Project/Engine/Line/LineManager.h
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "Sphere.h"
+#include "AABB.h"
+#include "OBB.h"
+#include "Capsule.h"
+#include "Ellipsoid.h"
 
 #include <d3d12.h>
 #include <wrl.h>
@@ -17627,9 +17642,9 @@ namespace Engine {
 	/// </summary>
 	class LineManager {
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// シングルトン
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		// インスタンス
@@ -17644,11 +17659,11 @@ namespace Engine {
 		// コピーオペレータ禁止
 		LineManager& operator=(LineManager&) = delete;
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// メンバ関数
-	///-------------------------------------------///
+	/// ================================================== ///
 	public:
-		
+
 		/// <summary>
 		/// 初期化
 		/// </summary>
@@ -17668,17 +17683,96 @@ namespace Engine {
 		void DrawLine(const Vector3& start, const Vector3& end, const Vector4& color);
 
 		/// <summary>
-		/// 球の描画
+		/// 球の線描画
 		/// </summary>
 		/// <param name="center">中心点</param>
 		/// <param name="radius">半径</param>
+		/// <param name="subdivision">分割数</param>
 		/// <param name="color">色</param>
-		/// <param name="subdivision">分割数 デフォルト：16</param>
-		void DrawSphere(const Vector3& center, float radius, const Vector4& color, int subdivision = 16);
+		void DrawSphere(const Vector3& center, float radius, const uint32_t subdivision, const Vector4& color);
 
-		//void DrawBox(const Vector3& center, const Vector3& halfSize, const Vector4& color);
-		
+		/// <summary>
+		/// 球の線描画
+		/// </summary>
+		/// <param name="sphere">球</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawSphere(const Sphere& sphere, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// AABBの線描画
+		/// </summary>
+		/// <param name="min">最小</param>
+		/// <param name="max">最大</param>
+		/// <param name="color">色</param>
 		void DrawAABB(const Vector3& min, const Vector3& max, const Vector4& color);
+
+		/// <summary>
+		/// AABBの線描画
+		/// </summary>
+		/// <param name="aabb">AABB</param>
+		/// <param name="color">色</param>
+		void DrawAABB(const AABB& aabb, const Vector4& color);
+
+		/// <summary>
+		/// OBBの線描画
+		/// </summary>
+		/// <param name="center">中心点</param>
+		/// <param name="orientations">方向ベクトル</param>
+		/// <param name="halfSize">中心から面までの距離</param>
+		/// <param name="color">色</param>
+		void DrawOBB(const Vector3& center, const Vector3 orientations[3], const Vector3& halfSize, const Vector4& color);
+
+		/// <summary>
+		/// OBBの線描画
+		/// </summary>
+		/// <param name="obb">OBB</param>
+		/// <param name="color">色</param>
+		void DrawOBB(const OBB& obb, const Vector4& color);
+
+		/// <summary>
+		/// カプセルの線描画
+		/// </summary>
+		/// <param name="start">始点</param>
+		/// <param name="end">終点</param>
+		/// <param name="radius">半径</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawCapsule(const Vector3& start, const Vector3& end, float radius, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// カプセルの線描画
+		/// </summary>
+		/// <param name="capsule">カプセル</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawCapsule(const Capsule& capsule, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// 楕円形の線描画
+		/// </summary>
+		/// <param name="center">中心点</param>
+		/// <param name="radius">半径</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawEllipsoid(const Vector3& center, const Vector3& radius, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// 楕円形の線描画
+		/// </summary>
+		/// <param name="ellipsoid">楕円形</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawEllipsoid(const Ellipsoid& ellipsoid, const uint32_t subdivision, const Vector4& color);
+
+		/// <summary>
+		/// グリッドの線描画
+		/// </summary>
+		/// <param name="center">中心点</param>
+		/// <param name="size">グリッド全体の大きさ</param>
+		/// <param name="subdivision">分割数</param>
+		/// <param name="color">色</param>
+		void DrawGrid(const Vector3& center, const float size, const uint32_t subdivision, const Vector4& color);
 
 		/// <summary>
 		/// 一括描画
@@ -17690,9 +17784,9 @@ namespace Engine {
 		/// </summary>
 		void Finalize();
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// クラス内関数
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		/// <summary>
@@ -17705,9 +17799,9 @@ namespace Engine {
 		/// </summary>
 		void GenerateTranformationBuffer();
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// ゲッター
-	///-------------------------------------------///
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -17716,20 +17810,20 @@ namespace Engine {
 		/// <returns>インスタンス</returns>
 		static LineManager* GetInstance();
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// セッター
-	///-------------------------------------------///
+	/// ================================================== ///
 	public:
-		
+
 		/// <summary>
 		/// デフォルトカメラの設定
 		/// </summary>
 		/// <param name="camera">カメラ</param>
 		void SetDefaultCamera(Camera* camera) { defaultCamera_ = camera; }
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// 構造体
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		// 頂点データ
@@ -17743,9 +17837,9 @@ namespace Engine {
 			Matrix4x4 viewProjection; // ビュー射影行列
 		};
 
-	///-------------------------------------------/// 
+	/// ================================================== ///
 	/// メンバ変数
-	///-------------------------------------------///
+	/// ================================================== ///
 	private:
 
 		/// ===== GPU用の変数 ===== ///
@@ -17949,37 +18043,105 @@ File Path: Project/Engine/Math/AABB.h
 #pragma once
 
 #include "Vector3.h"
-#include "MathVector.h"
+
+#include <imgui.h>
 
 namespace Engine {
 
-	using namespace MathVector;
-
-	// 軸平行境界ボックスの構造体
+	/// <summary>
+	/// 軸平行境界ボックス (Axis-Aligned Bounding Box)
+	/// </summary>
 	struct AABB {
 		Vector3 min; // 最小座標
 		Vector3 max; // 最大座標
 	};
 
-	/// <summary>
-	/// AABBの作成関数
-	/// </summary>
-	/// <param name="min">最小</param>
-	/// <param name="max">最大</param>
-	/// <returns>AABB</returns>
-	inline AABB CreateAABB(const Vector3& min, const Vector3& max) {
-		return AABB{ min, max };
-	};
+	inline void ShowImGuiAABB(const char* label, AABB& aabb) {
+
+#ifdef USE_IMGUI
+
+		ImGui::Begin(label);
+
+		ImGui::DragFloat3("最小点", &aabb.min.x, 0.01f);
+
+		ImGui::DragFloat3("最大点", &aabb.max.x, 0.01f);
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+	}
+
+	inline void ShowImGuiAABBTree(const char* label, AABB& aabb) {
+
+#ifdef USE_IMGUI
+
+		if (ImGui::TreeNodeEx(label)) {
+
+			ImGui::DragFloat3("最小点", &aabb.min.x, 0.01f);
+
+			ImGui::DragFloat3("最大点", &aabb.max.x, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+#endif // USE_IMGUI
+	}
+}
+
+============================================================
+File Path: Project/Engine/Math/Capsule.h
+============================================================
+#pragma once
+
+#include "Vector3.h"
+
+#include <imgui.h>
+
+namespace Engine {
 
 	/// <summary>
-	/// AABBの作成関数
+	/// カプセル
 	/// </summary>
-	/// <param name="center">中心座標</param>
-	/// <param name="halfSize">半分の大きさ</param>
-	/// <returns>AABB</returns>
-	inline AABB CreateAABBFromCenter(const Vector3& center, const Vector3& halfSize) {
-		return AABB{ center - halfSize, center + halfSize };
+	struct Capsule {
+		Vector3 start; // 始点
+		Vector3 end;   // 終点
+		float radius; // 半径
 	};
+
+	inline void ShowImGuiCapsule(const char* label, Capsule& capsule) {
+
+#ifdef USE_IMGUI
+
+		ImGui::Begin(label);
+
+		ImGui::DragFloat3("始点", &capsule.start.x, 0.01f);
+
+		ImGui::DragFloat3("終点", &capsule.end.x, 0.01f);
+
+		ImGui::DragFloat("半径", &capsule.radius, 0.01f);
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+	}
+
+	inline void ShowImGuiCapsuleTree(const char* label, Capsule& capsule) {
+
+#ifdef USE_IMGUI
+
+		if (ImGui::TreeNodeEx(label)) {
+
+			ImGui::DragFloat3("始点", &capsule.start.x, 0.01f);
+
+			ImGui::DragFloat3("終点", &capsule.end.x, 0.01f);
+
+			ImGui::DragFloat("半径", &capsule.radius, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+#endif // USE_IMGUI
+	}
 }
 
 ============================================================
@@ -18149,6 +18311,57 @@ namespace Engine {
 		float EaseInOutQuad(float t);
 
 		float EaseInOutCubic(float t);
+	}
+}
+
+============================================================
+File Path: Project/Engine/Math/Ellipsoid.h
+============================================================
+#pragma once
+
+#include "Vector3.h"
+
+#include <imgui.h>
+
+namespace Engine {
+
+	/// <summary>
+	/// 楕円形
+	/// </summary>
+	struct Ellipsoid {
+		Vector3 center; // 中心座標
+		Vector3 radius; // 半径
+	};
+
+	inline void ShowImGuiEllipsoid(const char* label, Ellipsoid& ellipsoid) {
+
+#ifdef USE_IMGUI
+
+		ImGui::Begin(label);
+
+		ImGui::DragFloat3("中心座標", &ellipsoid.center.x, 0.01f);
+
+		ImGui::DragFloat3("半径", &ellipsoid.radius.x, 0.01f);
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+	}
+
+	inline void ShowImGuiEllipsoidTree(const char* label, Ellipsoid& ellipsoid) {
+
+#ifdef USE_IMGUI
+
+		if (ImGui::TreeNodeEx(label)) {
+
+			ImGui::DragFloat3("中心座標", &ellipsoid.center.x, 0.01f);
+
+			ImGui::DragFloat3("半径", &ellipsoid.radius.x, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+#endif // USE_IMGUI
 	}
 }
 
@@ -18575,7 +18788,7 @@ namespace Engine {
 		/// 静的メンバ関数
 		///=====================================================///
 
-			// 行列の加法
+		// 行列の加法
 		Matrix4x4 Add(const Matrix4x4& m1, const Matrix4x4& m2);
 
 		// 行列の減法
@@ -18888,6 +19101,17 @@ float MathVector::Dot(const Vector3& v1, const Vector3& v2) {
 float MathVector::Dot(const Vector4& v1, const Vector4& v2) {
 
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
+}
+
+Vector3 MathVector::Cross(const Vector3& v1, const Vector3& v2) {
+	
+	Vector3 result;
+
+	result.x = v1.y * v2.z - v1.z * v2.y;
+	result.y = v1.z * v2.x - v1.x * v2.z;
+	result.z = v1.x * v2.y - v1.y * v2.x;
+
+	return result;
 }
 
 float MathVector::Length(float f1, float f2) {
@@ -19269,6 +19493,10 @@ namespace Engine {
 		float Dot(const Vector3& v1, const Vector3& v2);
 		float Dot(const Vector4& v1, const Vector4& v2);
 
+		// クロス
+		Vector2 Cross(const Vector2& v1, const Vector2& v2);
+		Vector3 Cross(const Vector3& v1, const Vector3& v2);
+
 		// 長さ
 		float Length(float f1, float f2);
 		float Length(const Vector2& v);
@@ -19379,13 +19607,67 @@ File Path: Project/Engine/Math/OBB.h
 
 #include "Vector3.h"
 
+#include <imgui.h>
+
 namespace Engine {
 
+	/// <summary>
+	/// 有効境界箱 (Oriented Bounding Box)
+	/// </summary>
 	struct OBB {
 		Vector3 center; // 中心座標
 		Vector3 orientations[3]; // 各軸の方向ベクトル
 		Vector3 halfSize; // 中心から面までの距離 (座標軸方向の半分の長さ)
 	};
+
+	inline void ShowImGuiOBB(const char* label, OBB& obb) {
+
+#ifdef USE_IMGUI
+
+		ImGui::Begin(label);
+
+		ImGui::DragFloat3("中心座標", &obb.center.x, 0.01f);
+
+		if (ImGui::TreeNodeEx("方向ベクトル")) {
+
+			ImGui::DragFloat3("右 : X", &obb.orientations[0].x, 0.01f);
+			ImGui::DragFloat3("上 : Y", &obb.orientations[1].x, 0.01f);
+			ImGui::DragFloat3("前 : Z", &obb.orientations[2].x, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+		ImGui::DragFloat3("半分の長さ", &obb.halfSize.x, 0.01f);
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+	}
+
+	inline void ShowImGuiOBBTree(const char* label, OBB& obb) {
+
+#ifdef USE_IMGUI
+
+		if (ImGui::TreeNodeEx(label)) {
+
+			ImGui::DragFloat3("中心座標", &obb.center.x, 0.01f);
+
+			if (ImGui::TreeNodeEx("方向ベクトル")) {
+
+				ImGui::DragFloat3("右 : X", &obb.orientations[0].x, 0.01f);
+				ImGui::DragFloat3("上 : Y", &obb.orientations[1].x, 0.01f);
+				ImGui::DragFloat3("前 : Z", &obb.orientations[2].x, 0.01f);
+
+				ImGui::TreePop();
+			}
+
+			ImGui::DragFloat3("半分の長さ", &obb.halfSize.x, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+#endif // USE_IMGUI
+	}
 }
 
 ============================================================
@@ -19394,40 +19676,49 @@ File Path: Project/Engine/Math/Plane.h
 #pragma once
 
 #include "Vector3.h"
-#include "MathVector.h"
+
+#include <imgui.h>
 
 namespace Engine {
 
-	// 平面の構造体
+	/// <summary>
+	/// 平面
+	/// </summary>
 	struct Plane {
 		Vector3 normal; // 法線
 		float distance; // 距離
 	};
 
-	/// <summary>
-	/// 平面の作成関数
-	/// </summary>
-	/// <param name="normal">法線</param>
-	/// <param name="distance">距離</param>
-	/// <returns></returns>
-	inline Plane CreatePlane(const Vector3& normal, float distance) {
-		return Plane{ normal, distance };
-	};
+	inline void ShowImGuiPlane(const char* label, Plane& plane) {
 
-	/// <summary>
-	/// 平面の作成関数
-	/// </summary>
-	/// <param name="point">点</param>
-	/// <param name="normal">法線</param>
-	/// <returns></returns>
-	inline Plane CreatePlane(const Vector3& point, const Vector3& normal) {
-		
-		Plane plane;
-		plane.normal = MathVector::Normalize(normal);
-		plane.distance = MathVector::Dot(plane.normal, point);
+#ifdef USE_IMGUI
 
-		return plane;
-	};
+		ImGui::Begin(label);
+
+		ImGui::DragFloat3("法線", &plane.normal.x, 0.01f);
+
+		ImGui::DragFloat("距離", &plane.distance, 0.01f);
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+	}
+
+	inline void ShowImGuiPlaneTree(const char* label, Plane& plane) {
+
+#ifdef USE_IMGUI
+
+		if (ImGui::TreeNodeEx(label)) {
+
+			ImGui::DragFloat3("法線", &plane.normal.x, 0.01f);
+
+			ImGui::DragFloat("距離", &plane.distance, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+#endif // USE_IMGUI
+	}
 }
 
 ============================================================
@@ -19437,18 +19728,48 @@ File Path: Project/Engine/Math/Sphere.h
 
 #include "Vector3.h"
 
+#include <imgui.h>
+
 namespace Engine {
 
-	// 球の構造体
+	/// <summary>
+	/// 球
+	/// </summary>
 	struct Sphere {
 		Vector3 center; // 中心座標
 		float radius; // 半径
 	};
 
-	// 球の作成関数
-	inline Sphere CreateSphere(const Vector3& center, float radius) {
-		return Sphere{ center, radius };
-	};
+	inline void ShowImGuiSphere(const char* label, Sphere& sphere) {
+
+#ifdef USE_IMGUI
+
+		ImGui::Begin(label);
+
+		ImGui::DragFloat3("中心座標", &sphere.center.x, 0.01f);
+
+		ImGui::DragFloat("半径", &sphere.radius, 0.01f);
+
+		ImGui::End();
+
+#endif // USE_IMGUI
+	}
+
+	inline void ShowImGuiSphereTree(const char* label, Sphere& sphere) {
+
+#ifdef USE_IMGUI
+
+		if (ImGui::TreeNodeEx(label)) {
+
+			ImGui::DragFloat3("中心座標", &sphere.center.x, 0.01f);
+
+			ImGui::DragFloat("半径", &sphere.radius, 0.01f);
+
+			ImGui::TreePop();
+		}
+
+#endif // USE_IMGUI
+	}
 }
 
 ============================================================
@@ -20370,7 +20691,7 @@ void WorldTransform::ShowImGui() {
 
 				ImGui::EndTable();
 			}
-			
+
 			ImGui::TreePop();
 		}
 
@@ -20388,6 +20709,40 @@ void WorldTransform::AddRotate(const Vector3& value) {
 void WorldTransform::AddTranslate(const Vector3& value) {
 
 	translate_ += value;
+}
+
+Vector3 WorldTransform::GetWorldScale() const {
+
+	Vector3 worldScale = {
+		Length(Vector3{ worldMatrix_.m[0][0], worldMatrix_.m[0][1], worldMatrix_.m[0][2] }),
+		Length(Vector3{ worldMatrix_.m[1][0], worldMatrix_.m[1][1], worldMatrix_.m[1][2] }),
+		Length(Vector3{ worldMatrix_.m[2][0], worldMatrix_.m[2][1], worldMatrix_.m[2][2] })
+	};
+
+	return worldScale;
+}
+
+Vector3 WorldTransform::GetWorldRotate() const {
+
+	// 拡縮を取得
+	Vector3 worldScale = GetWorldScale();
+
+	// ワールド行列から回転成分を取得
+	Matrix4x4 rotationMatrix = {
+		worldMatrix_.m[0][0] / worldScale.x, worldMatrix_.m[0][1] / worldScale.x, worldMatrix_.m[0][2] / worldScale.x, 0.0f,
+		worldMatrix_.m[1][0] / worldScale.y, worldMatrix_.m[1][1] / worldScale.y, worldMatrix_.m[1][2] / worldScale.y, 0.0f,
+		worldMatrix_.m[2][0] / worldScale.z, worldMatrix_.m[2][1] / worldScale.z, worldMatrix_.m[2][2] / worldScale.z, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	};
+
+	// 回転行列からオイラー角を取得
+	Vector3 worldRotate = {
+		atan2f(rotationMatrix.m[2][1], rotationMatrix.m[2][2]),
+		atan2f(-rotationMatrix.m[2][0], sqrtf(rotationMatrix.m[0][0] * rotationMatrix.m[0][0] + rotationMatrix.m[1][0] * rotationMatrix.m[1][0])),
+		atan2f(rotationMatrix.m[1][0], rotationMatrix.m[0][0])
+	};
+
+	return worldRotate;
 }
 
 Vector3 WorldTransform::GetWorldPosition() const {
@@ -20413,7 +20768,7 @@ File Path: Project/Engine/WorldTransform/WorldTransform.h
 namespace Engine {
 
 	/// <summary>
-	/// ワールド座標変換クラス
+	/// ワールド変換クラス
 	/// </summary>
 	class WorldTransform {
 
@@ -20476,6 +20831,18 @@ namespace Engine {
 		/// </summary>
 		/// <returns></returns>
 		const Matrix4x4& GetWorldMatrix() const { return worldMatrix_; }
+
+		/// <summary>
+		/// ワールド行列の拡縮の取得
+		/// </summary>
+		/// <returns>Vector3</returns>
+		Vector3 GetWorldScale() const;
+
+		/// <summary>
+		/// ワールド行列の回転の取得
+		/// </summary>
+		/// <returns></returns>
+		Vector3 GetWorldRotate() const;
 
 		/// <summary>
 		/// ワールド座標の取得
@@ -191292,7 +191659,7 @@ void MyGame::Draw() {
 #ifdef _DEBUG
 
 	// 線描画
-	lineManager_->Render();
+	//lineManager_->Render();
 
 #endif // _DEBUG
 
@@ -191324,6 +191691,9 @@ void MyGame::Draw() {
 }
 
 void MyGame::Finalize() {
+
+	// 遷移マネージャの終了
+	transitionManager_->Finalize();
 
 	// パーティクルマネージャの終了
 	particleManager_->Finalize();
@@ -191374,6 +191744,7 @@ void MyGame::LoadAllResource() {
 	textureManager_->LoadTextureRelative("PauseUI/RestartButton.png");
 	textureManager_->LoadTextureRelative("PauseUI/QuitButton.png");
 	textureManager_->LoadTextureRelative("PauseUI/Frame.png");
+	textureManager_->LoadTextureRelative("SpaceToTitle.png");
 
 	textureManager_->LoadTextureRelative("rostock_laage_airport_4k.dds");
 
@@ -191389,6 +191760,9 @@ void MyGame::LoadAllResource() {
 	modelManager_->LoadModelData("Goal", "Goal.obj");
 	modelManager_->LoadModelData("Gate", "Gate.obj");
 	modelManager_->LoadModelData("Reticle", "Reticle.obj");
+	modelManager_->LoadModelData("Obstacle", "Obstacle.obj");
+	modelManager_->LoadModelData("Sphere", "sphere.obj");
+	modelManager_->LoadModelData("Terrain", "terrain.obj");
 }
 
 
@@ -191470,16 +191844,173 @@ private:
 };
 
 ============================================================
+File Path: Project/Game/Level/GameLevelData.h
+============================================================
+#pragma once
+
+#include "Vector3.h"
+
+#include <string>
+#include <vector>
+
+// 敵の種類
+enum class EnemyType {
+	Normal,     // 通常（弾を撃つ）
+	Kamikaze,   // 特攻（プレイヤーに突っ込む）
+};
+
+// 敵の出現データ
+struct EnemySpawnData {
+	Engine::Vector3 position; // 出現位置
+	EnemyType type; // 敵の種類
+};
+
+// 障害物の出現データ
+struct ObstacleSpawnData {
+	Engine::Vector3 scale; // 大きさ
+	Engine::Vector3 position; // 出現位置
+};
+
+// ゲームのデータ
+struct GameLevelData {
+	Engine::Vector3 playerPosition; // プレイヤーの開始位置
+	std::vector<EnemySpawnData> enemySpawnDatas; // 敵の出現データのリスト
+	std::vector<ObstacleSpawnData> obstacleSpawnDatas; // 障害物の出現データのリスト
+};
+
+inline EnemyType EnemyTypeFromString(const std::string& typeStr) {
+
+	if (typeStr == "Normal") { return EnemyType::Normal; }
+	if (typeStr == "Kamikaze") { return EnemyType::Kamikaze; }
+	// 必要に応じて追加
+
+	// 不明値はとりあえずNormal or 例外/アサートなど方針を決める
+	return EnemyType::Normal;
+}
+
+inline void from_json(const nlohmann::json& j, EnemySpawnData& data) {
+	j.at("position").get_to(data.position);
+	
+	std::string typeStr;
+	j.at("type").get_to(typeStr);
+	data.type = EnemyTypeFromString(typeStr);
+}
+
+inline void from_json(const nlohmann::json& j, ObstacleSpawnData& data) {
+	j.at("scale").get_to(data.scale);
+	j.at("position").get_to(data.position);
+}
+
+
+============================================================
+File Path: Project/Game/Level/LevelLoader.cpp
+============================================================
+#include "LevelLoader.h"
+
+#include <fstream>
+#include <cassert>
+
+using namespace Engine;
+
+void LevelLoader::LoadLevel(const std::string& filePath) {
+
+	// フルパスを作成
+	std::string fullPath = kDataDirectoryPath_ + "/" + filePath;
+	
+	// ファイルを開く
+	std::ifstream file(fullPath);
+	
+	assert(file.is_open());
+
+	nlohmann::json jsonData;
+
+	file >> jsonData;
+
+	// レベルデータの初期化
+	levelData_ = {};
+
+	// プレイヤーの開始位置の読み込み
+	if (jsonData.contains("player") && jsonData["player"].is_object()) {
+
+		const auto& playerData = jsonData["player"];
+
+		if (playerData.contains("position")) {
+			levelData_.playerPosition = playerData["position"].get<Vector3>();
+		}
+	}
+
+	// 敵の出現データの読み込み
+	if (jsonData.contains("enemies") && jsonData["enemies"].is_array()) {
+		for (const auto& enemyData : jsonData["enemies"]) {
+			levelData_.enemySpawnDatas.push_back(enemyData.get<EnemySpawnData>());
+		}
+	}
+
+	// 障害物の出現データの読み込み
+	if (jsonData.contains("obstacles") && jsonData["obstacles"].is_array()) {
+		for (const auto& obstacleData : jsonData["obstacles"]) {
+			levelData_.obstacleSpawnDatas.push_back(obstacleData.get<ObstacleSpawnData>());
+		}
+	}
+}
+
+
+============================================================
+File Path: Project/Game/Level/LevelLoader.h
+============================================================
+#pragma once
+
+#include "GameLevelData.h"
+
+#include <string>
+
+/// <summary>
+/// レベルローダー
+/// </summary>
+class LevelLoader {
+
+/// ================================================== ///
+/// メンバ関数
+/// ================================================== ///
+public:
+
+	/// <summary>
+	/// レベルデータ読み込み
+	/// </summary>
+	/// <param name="fileName">ファイル名</param>
+	void LoadLevel(const std::string& fileName);
+
+/// ================================================== ///
+/// ゲッター
+/// ================================================== ///
+public:
+
+	/// <summary>
+	/// レベルデータの取得
+	/// </summary>
+	/// <returns>GameLevelData</returns>
+	const GameLevelData& GetLevelData() const { return levelData_; }
+
+/// ================================================== ///
+/// メンバ変数 
+/// ================================================== ///
+private:
+
+	// ゲームのレベルデータ
+	GameLevelData levelData_ = {};
+
+	// データのあるディレクトリのパス
+	const std::string kDataDirectoryPath_ = "Resources/Datas/GameLevel";
+};
+
+
+
+============================================================
 File Path: Project/Game/Scene/DebugScene/DebugScene.cpp
 ============================================================
 #include "DebugScene.h"
-#include "LineManager.h"
-#include "OffscreenRendering/FilterManager.h"
-#include "TransitionManager.h"
 #include "SceneManager.h"
-#include "Input.h"
-#include "Transition/FadeTransition.h"
-#include "Transition/SlideTransition.h"
+#include "Object/Object3dRenderer.h"
 
 #include <imgui.h>
 
@@ -191490,59 +192021,64 @@ void DebugScene::Initialize() {
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->SetTranslate({ 0.0f,0.0f,-20.0f });
-
-	// 線描画マネージャのインスタンス取得
-	lineManager = LineManager::GetInstance();
-	// 線描画マネージャにデフォルトカメラをセット
-	lineManager->SetDefaultCamera(camera.get());
-
-	// フィルターマネージャの初期化
-	filterManager = FilterManager::GetInstance();
-	filterManager->SetCamera(camera.get());
-
-	// 遷移マネージャの初期化
-	transitionManager = TransitionManager::GetInstance();
+	camera->GetWorldTransform().SetRotate({ 0.39f,0.0f,0.0f });
+	camera->GetWorldTransform().SetTranslate({ 0.0f,5.0f,-10.0f });
 
 	// シーンマネージャのインスタンス取得
 	sceneManager = SceneManager::GetInstance();
 
-	// 入力の初期化
-	input = Input::GetInstance();
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
 
-	// フェードアウト開始
-	transitionManager->StartInTransition(
-		std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 1.0f, 0.0f),
-		[]() {},
-		2.0f // 遷移にかける時間 (秒)
-	);
+	// インスタンス取得
+	object3dRenderer_ = Object3dRenderer::GetInstance();
+	object3dRenderer_->SetDefaultCamera(camera.get());
+
+	// モデルの生成
+	model_ = std::make_unique<Model>();
+	model_->Initialize("Sphere", "sphere.obj");
+
+	// オブジェクトの生成
+	object_ = std::make_unique<Object3d>();
+	object_->Initialize();
+	object_->SetModel(model_.get());
+
+	// モデルの生成
+	modelT_ = std::make_unique<Model>();
+	modelT_->Initialize("Terrain", "terrain.obj");
+
+	// オブジェクトの生成
+	objectT_ = std::make_unique<Object3d>();
+	objectT_->Initialize();
+	objectT_->SetModel(modelT_.get());
 }
 
 void DebugScene::Update() {
 
-	// 2番キーを押したら
-	if (input->TriggerKey('2')) {
-
-		// フェードアウト開始
-		transitionManager->StartOutTransition(
-			std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 0.0f, 1.0f),
-			[]() {},
-			2.0f // 遷移にかける時間 (秒)
-		);
-	}
-
 	// カメラの更新
 	camera->Update();
+
+	// オブジェクトの更新
+	object_->Update();
+
+	objectT_->Update();
 }
 
 void DebugScene::DrawFiltered() {
+
+	/// === 3Dオブジェクトの描画準備 === ///
+	object3dRenderer_->SettingDrawingOpaque();
+
+	lightManager_->Draw();
+
+	// オブジェクトの描画
+	object_->Draw();
+
+	objectT_->Draw();
 }
 
 void DebugScene::DrawUnfiltered() {
-
-	lineManager->DrawSphere({ 0.0f, 0.0f, 0.0f }, 2.0f, { 1.0f, 1.0f, 1.0f, 1.0f }, 8);
-
-	lineManager->DrawAABB({ -2.0f, -2.0f, -2.0f }, { 2.0f, 2.0f, 2.0f }, { 1.0f, 1.0f, 1.0f, 1.0f });
 }
 
 void DebugScene::Finalize() {
@@ -191550,8 +192086,35 @@ void DebugScene::Finalize() {
 
 void DebugScene::ShowImGui() {
 
-	// カメラのImGui表示
-	camera->ShowImGui("Camera");
+#ifdef USE_IMGUI
+
+	ImGui::Begin("デバッグシーン");
+
+	camera->ShowImGuiTree();
+
+	if (ImGui::TreeNode("モンボ")) {
+
+		object_->ShowImGui();
+
+		model_->ShowImGui();
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("地面")) {
+
+		objectT_->ShowImGui();
+
+		modelT_->ShowImGui();
+
+		ImGui::TreePop();
+	}
+
+	ImGui::End();
+
+	lightManager_->ShowImGui();
+
+#endif // USE_IMGUI
 }
 
 
@@ -191563,15 +192126,18 @@ File Path: Project/Game/Scene/DebugScene/DebugScene.h
 #include "BaseScene.h"
 #include "Camera.h"
 
+#include "Light/LightManager.h"
+#include "Object/Object3d.h"
+#include "Model/Model.h"
+
+#include <memory>
+
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
 
-	class LineManager;
-	class FilterManager;
-	class TransitionManager;
 	class SceneManager;
-	class Input;
+	class Object3dRenderer;
 }
 
 /// ===== デバッグシーン ===== ///
@@ -191620,26 +192186,40 @@ private:
 	// カメラのポインタ
 	std::unique_ptr<Engine::Camera> camera = nullptr;
 
-	// 線描画マネージャのポインタ
-	Engine::LineManager* lineManager = nullptr;
-
-	// フィルターマネージャのポインタ
-	Engine::FilterManager* filterManager = nullptr;
-
-	// 遷移マネージャのポインタ
-	Engine::TransitionManager* transitionManager = nullptr;
-
 	// シーンマネージャのポインタ
 	Engine::SceneManager* sceneManager = nullptr;
 
-	// 入力のポインタ
-	Engine::Input* input = nullptr;
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+
+	// 3Dオブジェクトレンダラーのインスタンス
+	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+
+	// オブジェクト
+	std::unique_ptr <Engine::Object3d > object_ = nullptr;
+
+	// モデル
+	std::unique_ptr<Engine::Model> model_ = nullptr;
+
+	// オブジェクト
+	std::unique_ptr <Engine::Object3d > objectT_ = nullptr;
+
+	// モデル
+	std::unique_ptr<Engine::Model> modelT_ = nullptr;
 };
 
 ============================================================
 File Path: Project/Game/Scene/GameClearScene/GameClearScene.cpp
 ============================================================
 #include "GameClearScene.h"
+#include "Object/Object3dRenderer.h"
+#include "CameraControll/FollowCamera/FollowCameraController.h"
+#include "OffscreenRendering/FilterManager.h"
+#include "OffscreenRendering/Filters/FogFilter.h"
+#include "TransitionManager.h"
+#include "Transition/FadeTransition.h"
+#include "SceneManager.h"
+#include "input.h"
 #include "Sprite/SpriteRenderer.h"
 
 using namespace Engine;
@@ -191647,40 +192227,230 @@ using namespace Engine;
 void GameClearScene::Initialize() {
 
 	// インスタンスの取得
+	object3dRenderer_ = Object3dRenderer::GetInstance();
+	filterManager_ = FilterManager::GetInstance();
+	transitionManager = TransitionManager::GetInstance();
+	sceneManager_ = SceneManager::GetInstance();
+	input_ = Input::GetInstance();
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 
-	// スプライトの生成&初期化
-	sprite_ = std::make_unique<Sprite>();
-	sprite_->Initialize("GameClear.png");
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
+
+	// フォグをフィルターマネージャから受け取っとく
+	fogFilter_ = filterManager_->GetFogFilter();
+	fogFilter_->SetStartDistance(500.0f); // フォグ開始距離を500に設定
+	fogFilter_->SetIsActive(true);    // フォグを有効化
+
+	// カメラの生成&初期化
+	camera_ = std::make_unique<Engine::Camera>();
+	camera_->Initialize();
+	camera_->SetFarClip(950.0f); // ファークリップを950に設定
+
+	// カメラの設定
+	object3dRenderer_->SetDefaultCamera(camera_.get());
+	filterManager_->SetCamera(camera_.get());
+
+	// カメラコントローラーの生成&初期化
+	cameraController_ = std::make_unique<FollowCameraController>();
+	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
+
+	// フロアを生成
+	floor_ = std::make_unique<Floor>();
+	floor_->Initialize();
+
+	// シリンダーの生成
+	cylinder_ = std::make_unique<Cylinder>();
+	cylinder_->Initialize();
+
+	// プレイヤーの生成&初期化
+	player_ = std::make_unique<Player>();
+	player_->Initialize();
+	player_->SetPlayerState(PlayerState::AutoPilot); // オートモードに設定
+	player_->SetCamera(camera_.get());
+
+	playerMoveSpeed_ = 1.0f;
+	player_->SetMoveSpeedAuto(playerMoveSpeed_);
+
+	// キャストし追従カメラの方を呼び出す
+	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
+
+	// テキストスプライトの生成&初期化
+	text_ = std::make_unique<Engine::Sprite>();
+	text_->Initialize("GameClear.png");
+
+	// ガイドスプライトの生成&初期化
+	guide_ = std::make_unique<Engine::Sprite>();
+	guide_->Initialize("SpaceToTitle.png");
+	guide_->SetPosition({ 640.0f, 600.0f });
+	guide_->SetAnchorPoint({ 0.5f, 0.5f });
+
+	// 最初の状態をリクエスト
+	stateRequest_ = GameClearFlowState::FadeOut;
 }
 
 void GameClearScene::Update() {
 
-	// スプライトの更新
-	sprite_->Update();
+	// カメラコントローラの更新
+	cameraController_->Update();
 
-	// スペースキーでシーン切り替え
-	if(input_->TriggerKey(VK_SPACE)) {
-		sceneManager_->ChangeScene("TITLE");
+	// カメラの座標をフロアに設定
+	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+
+	// フロアの更新
+	floor_->Update();
+
+	// カメラの座標をシリンダーに設定
+	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+
+	// シリンダーの更新
+	cylinder_->Update();
+
+	// プレイヤー更新
+	player_->Update();
+
+	// テキストスプライトの更新
+	text_->Update();
+
+	// ガイドスプライトの更新
+	guide_->Update();
+
+	// 状態遷移
+	if (stateRequest_) {
+
+		// 状態変更
+		gameClearFlowState_ = stateRequest_.value();
+
+		// 状態の初期化
+		switch (gameClearFlowState_) {
+
+		case GameClearFlowState::FadeOut:
+
+			FadeOutInitialize();
+
+			break;
+
+		case GameClearFlowState::WaitInput:
+
+			WaitInputInitialize();
+
+			break;
+
+		case GameClearFlowState::FadeIn:
+
+			FadeInInitialize();
+
+			break;
+		}
+
+		// リクエストをクリア
+		stateRequest_ = std::nullopt;
+	}
+
+	// 各状態の更新
+	switch (gameClearFlowState_) {
+
+	case GameClearFlowState::FadeIn:
+
+		FadeInUpdate();
+
+		break;
+
+	case GameClearFlowState::WaitInput:
+
+		WaitInputUpdate();
+
+		break;
+
+	case GameClearFlowState::FadeOut:
+
+		FadeOutUpdate();
+
+		break;
 	}
 }
 
 void GameClearScene::DrawFiltered() {
+
+	// オブジェクトレンダラーの描画設定
+	object3dRenderer_->SettingDrawingOpaque();
+
+	// ライトの描画
+	lightManager_->Draw();
+
+	// シリンダーの描画
+	cylinder_->Draw();
+
+	// フロアの描画
+	floor_->Draw();
+
+	// プレイヤーの描画
+	player_->Draw();
 }
 
 void GameClearScene::DrawUnfiltered() {
 
-	// スプライトレンダラーの描画設定
+	// スプライトの描画設定
 	spriteRenderer_->SettingDrawing();
 
 	// スプライトの描画
-	sprite_->Draw();
+	text_->Draw();
+
+	// ガイドスプライトの描画
+	guide_->Draw();
 }
 
 void GameClearScene::Finalize() {
 }
 
 void GameClearScene::ShowImGui() {
+}
+
+void GameClearScene::FadeOutInitialize() {
+
+	// フェードアウト開始
+	transitionManager->StartOutTransition(
+		std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 1.0f, 0.0f),
+		[this]() { stateRequest_ = GameClearFlowState::WaitInput; },
+		2.0f // 遷移にかける時間 (秒)
+	);
+}
+
+void GameClearScene::FadeOutUpdate() {
+}
+
+void GameClearScene::WaitInputInitialize() {
+}
+
+void GameClearScene::WaitInputUpdate() {
+
+	// スペースを押したとき
+	if (input_->TriggerKey(VK_SPACE)) {
+
+		// 次のシーンをタイトルに設定
+		nextScene_ = "TITLE";
+
+		// 状態を加速に変更
+		stateRequest_ = GameClearFlowState::FadeIn;
+	}
+}
+
+void GameClearScene::FadeInInitialize() {
+
+	// シーン名を固定
+	const std::string nextScene = nextScene_;
+
+	// フェードイン開始
+	transitionManager->StartInTransition(
+		std::make_unique<FadeTransition>(Vector3{ 0.0f, 0.0f, 0.0f }, 0.0f, 1.0f),
+		[nextScene]() { SceneManager::GetInstance()->ChangeScene(nextScene); },
+		2.0f // 遷移にかける時間 (秒)
+	);
+}
+
+void GameClearScene::FadeInUpdate() {
 }
 
 
@@ -191690,22 +192460,41 @@ File Path: Project/Game/Scene/GameClearScene/GameClearScene.h
 #pragma once
 
 #include "BaseScene.h"
-#include "SceneManager.h"
-#include "Input.h"
-#include "Texture/TextureManager.h"
+#include "Camera.h"
+#include "CameraControll/ICameraController.h"
+#include "Floor/Floor.h"
+#include "Cylinder/Cylinder.h"
+#include "Player/Player.h"
+#include "Light/LightManager.h"
 #include "Sprite/Sprite.h"
 
 #include <memory>
+#include <optional>
+#include <string>
 
 /// ===== 前方宣言 ===== ///
 
 namespace Engine {
 
+	class Object3dRenderer;
+	class FilterManager;
+	class FogFilter;
+	class TransitionManager;
+	class SceneManager;
+	class Input;
 	class SpriteRenderer;
 }
 
 /// ===== ゲームクリアシーン ===== ///
 class GameClearScene : public BaseScene {
+
+private:
+
+	enum class GameClearFlowState {
+		FadeOut,   // フェードアウト
+		WaitInput, // 入力待ち
+		FadeIn,    // フェードイン
+	};
 
 ///-------------------------------------------/// 
 /// メンバ関数
@@ -191742,25 +192531,81 @@ public:
 	/// </summary>
 	void ShowImGui() override;
 
+private:
+
+	void FadeOutInitialize();
+
+	void FadeOutUpdate();
+
+	void WaitInputInitialize();
+
+	void WaitInputUpdate();
+
+	void FadeInInitialize();
+
+	void FadeInUpdate();
+
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
+	// カメラ
+	std::unique_ptr<Engine::Camera> camera_ = nullptr;
+
+	// カメラコントローラ
+	std::unique_ptr<ICameraController> cameraController_ = nullptr;
+
+	// 床
+	std::unique_ptr<Floor> floor_ = nullptr;
+
+	// シリンダー
+	std::unique_ptr<Cylinder> cylinder_ = nullptr;
+
+	// プレイヤー
+	std::unique_ptr<Player> player_ = nullptr;
+
+	// プレイヤーの移動速度
+	float playerMoveSpeed_ = 0.0f;
+
+	// 状態
+	GameClearFlowState gameClearFlowState_ = GameClearFlowState::WaitInput;
+
+	// 状態リクエスト
+	std::optional<GameClearFlowState> stateRequest_ = std::nullopt;
+
+	// 次のシーン
+	std::string nextScene_;
+
+	std::unique_ptr<Engine::Sprite> text_ = nullptr;
+
+	std::unique_ptr<Engine::Sprite> guide_ = nullptr;
+
+	/// ========== シングルトン・借りポインタ ========== ///
+
+	// オブジェクトレンダラーのインスタンス
+	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+
+	// フィルターマネージャのインスタンス
+	Engine::FilterManager* filterManager_ = nullptr;
+
+	// フォグの借りポインタ
+	Engine::FogFilter* fogFilter_ = nullptr;
+
+	// 遷移マネージャのポインタ
+	Engine::TransitionManager* transitionManager = nullptr;
+
 	// シーンマネージャのインスタンス
-	Engine::SceneManager* sceneManager_ = Engine::SceneManager::GetInstance();
+	Engine::SceneManager* sceneManager_ = nullptr;
 
 	// インプットのインスタンス
-	Engine::Input* input_ = Engine::Input::GetInstance();
-
-	// テクスチャマネージャのインスタンス
-	Engine::TextureManager* textureManager_ = Engine::TextureManager::GetInstance();
+	Engine::Input* input_ = nullptr;
 
 	// スプライトレンダラーのインスタンス
 	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
-
-	// スプライト
-	std::unique_ptr<Engine::Sprite> sprite_ = nullptr;
 };
 
 ============================================================
@@ -191791,6 +192636,10 @@ void GameOverScene::Initialize() {
 	transitionManager = TransitionManager::GetInstance();
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
+
 	// フォグをフィルターマネージャから受け取っとく
 	fogFilter_ = filterManager_->GetFogFilter();
 	fogFilter_->SetStartDistance(500.0f); // フォグ開始距離を500に設定
@@ -191811,8 +192660,8 @@ void GameOverScene::Initialize() {
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->Initialize();
 	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
@@ -191838,6 +192687,12 @@ void GameOverScene::Initialize() {
 	text_ = std::make_unique<Engine::Sprite>();
 	text_->Initialize("GameOver.png");
 
+	// ガイドスプライトの生成&初期化
+	guide_ = std::make_unique<Engine::Sprite>();
+	guide_->Initialize("SpaceToTitle.png");
+	guide_->SetPosition({ 640.0f, 600.0f });
+	guide_->SetAnchorPoint({ 0.5f, 0.5f });
+
 	// 最初の状態をリクエスト
 	stateRequest_ = GameOverFlowState::FadeOut;
 }
@@ -191848,13 +192703,13 @@ void GameOverScene::Update() {
 	cameraController_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldPosition());
+	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldPosition());
+	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();
@@ -191930,12 +192785,18 @@ void GameOverScene::Update() {
 
 	// テキストスプライトの更新
 	text_->Update();
+
+	// ガイドスプライトの更新
+	guide_->Update();
 }
 
 void GameOverScene::DrawFiltered() {
 
 	// オブジェクトレンダラーの描画設定
 	object3dRenderer_->SettingDrawingOpaque();
+
+	// ライトの描画
+	lightManager_->Draw();
 
 	// シリンダーの描画
 	cylinder_->Draw();
@@ -191954,6 +192815,9 @@ void GameOverScene::DrawUnfiltered() {
 
 	// スプライトの描画
 	text_->Draw();
+
+	// ガイドスプライトの描画
+	guide_->Draw();
 }
 
 void GameOverScene::Finalize() {
@@ -191983,20 +192847,20 @@ void GameOverScene::WaitInputInitialize() {
 void GameOverScene::WaitInputUpdate() {
 
 	// スペースを押したとき
-	if (input_->TriggerKey(VK_SPACE)) {
-
-		// 白色で設定
-		fadeColor_ = { 1.0f,1.0f,1.0f };
-
-		// 次のシーンをプレイに設定
-		nextScene_ = "PLAY";
-
-		// 状態を加速に変更
-		stateRequest_ = GameOverFlowState::SpeedUp;
-	}
+	//if (input_->TriggerKey(VK_SPACE)) {
+	//
+	//	// 白色で設定
+	//	fadeColor_ = { 1.0f,1.0f,1.0f };
+	//
+	//	// 次のシーンをプレイに設定
+	//	nextScene_ = "PLAY";
+	//
+	//	// 状態を加速に変更
+	//	stateRequest_ = GameOverFlowState::SpeedUp;
+	//}
 
 	// バックスペースを押したとき
-	if (input_->TriggerKey(VK_BACK)) {
+	if (input_->TriggerKey(VK_SPACE)) {
 
 		// 黒色で設定
 		fadeColor_ = { 0.0f,0.0f,0.0f };
@@ -192078,6 +192942,7 @@ File Path: Project/Game/Scene/GameOverScene/GameOverScene.h
 #include "Cylinder/Cylinder.h"
 #include "Player/Player.h"
 #include "Sprite/Sprite.h"
+#include "Light/LightManager.h"
 
 #include <memory>
 #include <optional>
@@ -192210,6 +193075,8 @@ private:
 
 	std::unique_ptr<Engine::Sprite> text_ = nullptr;
 
+	std::unique_ptr<Engine::Sprite> guide_ = nullptr;
+
 	/// ===== インスタンス・借りポインタ ===== ///
 
 	// オブジェクトレンダラーのインスタンス
@@ -192235,6 +193102,9 @@ private:
 
 	// スプライトレンダラーのインスタンス
 	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
+
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 };
 
 ============================================================
@@ -192258,7 +193128,14 @@ using namespace Easing;
 void FollowCameraController::Initialize() {
 
 	// ワールド変換の初期化
-	worldTransform.Initialize();
+	worldTransform_.Initialize();
+
+	// カメラのワールド変換の親をセット
+	camera_->GetWorldTransform().SetParent(&worldTransform_);
+
+	// カメラのワールド変換の初期化
+	camera_->GetWorldTransform().SetRotate({ 0.0f, 0.0f, 0.0f });
+	camera_->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, 0.0f });
 }
 
 void FollowCameraController::Update() {
@@ -192279,13 +193156,10 @@ void FollowCameraController::Update() {
 	DynamicFov();
 
 	// ワールド変換の更新
-	worldTransform.Update();
-
-	// 位置を取得
-	camera->SetTranslate(worldTransform.GetTranslate());
+	worldTransform_.Update();
 
 	// カメラの更新
-	camera->Update();
+	camera_->Update();
 }
 
 void FollowCameraController::ShowImGui() {
@@ -192294,13 +193168,13 @@ void FollowCameraController::ShowImGui() {
 
 	ImGui::Begin("FollowCameraController");
 
-	ImGui::DragFloat3("BaseOffset", &baseOffset_.x, 0.1f);
+	ImGui::DragFloat3("BaseOffset", &followOffsetTranslate_.x, 0.1f);
 
 	// ワールド変換のImGui表示
-	worldTransform.ShowImGui();
+	worldTransform_.ShowImGui();
 
 	// ImGuiのツリー表示
-	camera->ShowImGuiTree();
+	camera_->ShowImGuiTree();
 
 	ImGui::End();
 
@@ -192347,16 +193221,16 @@ void FollowCameraController::Follow() {
 	if (player) {
 
 		// 回転行列を作成
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform.GetRotate());
+		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform_.GetRotate());
 
 		// オフセットを回転に合わせる
-		Vector3 offset = TransformNormal(baseOffset_, rotateMatrix);
+		Vector3 offset = TransformNormal(followOffsetTranslate_, rotateMatrix);
 
 		// 座標をコピーしてオフセット分ずらす
 		Vector3 targetPosition = player->GetWorldTransform().GetWorldPosition() + offset + shakeOffset_ + lookAheadOffset_;
 
 		// 現在地を取得
-		Vector3 currentPosition = worldTransform.GetTranslate();
+		Vector3 currentPosition = worldTransform_.GetTranslate();
 
 		// 新しい位置を計算
 		Vector3 newPosition;
@@ -192366,7 +193240,10 @@ void FollowCameraController::Follow() {
 		newPosition.z = targetPosition.z; // Z座標は直接設定
 
 		// ワールド変換の平行移動を設定
-		worldTransform.SetTranslate(newPosition);
+		worldTransform_.SetTranslate(newPosition);
+
+		// ワールド変換の回転を設定
+		worldTransform_.SetRotate(followOffsetRotation_);
 	}
 }
 
@@ -192390,13 +193267,13 @@ void FollowCameraController::DutchRoll() {
 		currentTilt_ = Lerp(currentTilt_, targetTilt, kTiltDelay_);
 
 		// 現在の回転を取得
-		Vector3 currentRotation = worldTransform.GetRotate();
+		Vector3 currentRotation = worldTransform_.GetRotate();
 
 		// Z軸に傾きを適用
 		currentRotation.z = currentTilt_;
 
 		// ワールド変換の回転を設定
-		worldTransform.SetRotate(currentRotation);
+		worldTransform_.SetRotate(currentRotation);
 	}
 }
 
@@ -192412,13 +193289,13 @@ void FollowCameraController::DynamicFov() {
 	float newFovY = Lerp(fovNormalRad, fovDashRad, playerSpeedRate);
 
 	// 現在のFovを取得
-	float currentFovY = camera->GetFovY();
+	float currentFovY = camera_->GetFovY();
 
 	// Fovを補間で滑らかに変更
 	float updatedFovY = Lerp(currentFovY, newFovY, 0.1f);
 
 	// カメラに設定
-	camera->SetFovY(updatedFovY);
+	camera_->SetFovY(updatedFovY);
 }
 
 void FollowCameraController::LookAhead() {
@@ -192531,7 +193408,8 @@ private:
 	/// ===== 追従用 ===== ///
 
 	// 追従対象のオフセット
-	Engine::Vector3 baseOffset_ = { 0.0f, 4.0f, -12.0f };
+	Engine::Vector3 followOffsetRotation_ = { 0.2f, 0.0f, 0.0f };
+	Engine::Vector3 followOffsetTranslate_ = { 0.0f, 2.5f, -8.0f };
 
 	// 追従の補間
 	float followLerp_ = 0.1f;
@@ -192610,7 +193488,7 @@ public:
 	/// ワールド変換のゲッター
 	/// </summary>
 	/// <returns></returns>
-	Engine::WorldTransform& GetWorldTransform() { return worldTransform; }
+	Engine::WorldTransform& GetWorldTransform() { return worldTransform_; }
 
 	///-------------------------------------------/// 
 	/// セッター
@@ -192621,7 +193499,7 @@ public:
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Engine::Camera* camera) { this->camera = camera; }
+	void SetCamera(Engine::Camera* camera) { this->camera_ = camera; }
 
 	///-------------------------------------------/// 
 	/// メンバ変数
@@ -192629,10 +193507,10 @@ public:
 protected:
 
 	// カメラのワールド変換
-	Engine::WorldTransform worldTransform;
+	Engine::WorldTransform worldTransform_;
 
 	// カメラ(ゲームシーンからの借りポインタ)
-	Engine::Camera* camera = nullptr;
+	Engine::Camera* camera_ = nullptr;
 };
 
 ============================================================
@@ -192649,30 +193527,30 @@ using namespace MathMatrix;
 void RailCameraController::Initialize() {
 	
 	// ワールド変換の初期化
-	worldTransform.Initialize();
-	worldTransform.SetTranslate({ 0.0f, 10.0f, 0.0f });
+	worldTransform_.Initialize();
+	worldTransform_.SetTranslate({ 0.0f, 10.0f, 0.0f });
 }
 
 void RailCameraController::Update() {
 
 	// Z方向にカメラを移動
-	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.2f });
+	worldTransform_.AddTranslate({ 0.0f, 0.0f, 0.2f });
 	
 	// ワールド変換の更新
-	worldTransform.Update();
+	worldTransform_.Update();
 
 	// ワールド行列をワールド変換から取得
-	Matrix4x4 worldMatrix = worldTransform.GetWorldMatrix();
+	Matrix4x4 worldMatrix = worldTransform_.GetWorldMatrix();
 
 	// ワールド行列を逆行列に変換
 	worldMatrix = Inverse(worldMatrix);
 
 	// カメラのビュー行列を設定
-	camera->SetViewMatrix(worldMatrix);
+	camera_->SetViewMatrix(worldMatrix);
 
 	// カメラの更新
-	camera->UpdateProjectionMatrix();
-	camera->UpdateViewProjectionMatrix();
+	camera_->UpdateProjectionMatrix();
+	camera_->UpdateViewProjectionMatrix();
 }
 
 void RailCameraController::ShowImGui() {
@@ -192682,10 +193560,10 @@ void RailCameraController::ShowImGui() {
 	ImGui::Begin("RailCameraController");
 
 	// ワールド変換のImGui表示
-	worldTransform.ShowImGui();
+	worldTransform_.ShowImGui();
 
 	// ImGuiのツリー表示
-	camera->ShowImGuiTree();
+	camera_->ShowImGuiTree();
 
 	ImGui::End();
 
@@ -192823,6 +193701,7 @@ enum class CollisionTypeIDDef : uint32_t {
 	kEnemy, // 敵
 	kPlayerBullet, // 弾
 	kEnemyBullet, // 敵の弾
+	kObstacle, // 障害物
 };
 
 ============================================================
@@ -192846,8 +193725,8 @@ void Cylinder::Initialize() {
 		auto object = std::make_unique<Object3d>();
 		object->Initialize();
 		object->SetModel(model_.get());
-		object->SetScale({ 50.0f, 50.0f, 50.0f });
-		object->SetTranslate({ 0.0f, 0.0f, static_cast<float>(i) * object->GetScale().z });
+		object->GetWorldTransform().SetScale({50.0f, 50.0f, 50.0f});
+		object->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, static_cast<float>(i) * object->GetWorldTransform().GetScale().z });
 		objects_.push_back(std::move(object));
 	}
 }
@@ -192855,10 +193734,10 @@ void Cylinder::Initialize() {
 void Cylinder::Update() {
 
 	// リストの最後のオブジェクトのZスケールを取得
-	float objectScaleZ = objects_.back()->GetScale().z;
+	float objectScaleZ = objects_.back()->GetWorldTransform().GetScale().z;
 
 	// リストの最後のオブジェクトのZ座標を取得
-	float lastObjectZ = objects_.back()->GetTranslate().z;
+	float lastObjectZ = objects_.back()->GetWorldTransform().GetTranslate().z;
 
 	// 足し合わせて床の末端Z座標を計算
 	float endFloorZ = lastObjectZ + objectScaleZ;
@@ -192873,8 +193752,8 @@ void Cylinder::Update() {
 		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
 		object->Initialize();							 // 初期化
 		object->SetModel(model_.get());					 // モデルセット
-		object->SetScale({ 50.0f, 50.0f, 50.0f });		 // スケールセット
-		object->SetTranslate({ 0.0f, 0.0f, endFloorZ }); // 位置セット
+		object->GetWorldTransform().SetScale({ 50.0f, 50.0f, 50.0f });		 // スケールセット
+		object->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, endFloorZ }); // 位置セット
 		objects_.push_back(std::move(object));			 // リストに追加
 	}
 
@@ -192906,7 +193785,7 @@ void Cylinder::ShowImGui() {
 	for (size_t i = 0; i < objects_.size(); ++i) {
 
 		// オブジェクトの位置を表示
-		ImGui::Text("Position: (%.2f, %.2f, %.2f)", objects_[i]->GetTranslate().x, objects_[i]->GetTranslate().y, objects_[i]->GetTranslate().z);
+		ImGui::Text("Position: (%.2f, %.2f, %.2f)", objects_[i]->GetWorldTransform().GetTranslate().x, objects_[i]->GetWorldTransform().GetTranslate().y, objects_[i]->GetWorldTransform().GetTranslate().z);
 
 		// "Object #" + 番号のラベルを生成
 		std::string label = "Object " + std::to_string(i);
@@ -193028,6 +193907,7 @@ void Enemy::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 2.0f,2.0f,2.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -193051,20 +193931,21 @@ void Enemy::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 1.0f, 1.0f, 1.0f });
-	object->SetTranslate({ 10.0f, 10.0f, 50.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead = false;
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		AABB{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)
 	);
 	// コライダーの初期化
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// エミッタ生成
 	particleEmitterBlack = std::make_unique<ParticleEmitter>("EnemyDeathBlack", EmitterType::OneShot, 40);
@@ -193141,13 +194022,8 @@ void Enemy::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
-
-	object->SetTranslate(worldTransform_.GetTranslate());
-	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -193253,7 +194129,7 @@ void Enemy::Fire() {
 	// プレイヤーとの方向を計算
 	Vector3 direction = playerPos - worldTransform_.GetTranslate();
 	direction = Normalize(direction);
-	bullet->SetVelocity(direction);
+	bullet->SetDirection(direction);
 
 	// ゲームプレイシーンの弾をリストに登録
 	gamePlayScene_->AddEnemyBullet(std::move(bullet));
@@ -193264,8 +194140,8 @@ void Enemy::Fire() {
 	// 射撃アニメーション開始
 	isFiring_ = true;
 	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
-	object->SetScale(fireScale_);
-	object->SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
 }
 
 void Enemy::FireAnimationUpdate() {
@@ -193278,7 +194154,7 @@ void Enemy::FireAnimationUpdate() {
 	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
 
 	// スケールを設定
-	object->SetScale(newScale);
+	object->GetWorldTransform().SetScale(newScale);
 
 	// タイマーが0以下になったら
 	if (fireAnimationTimer_ <= 0.0f) {
@@ -193344,18 +194220,13 @@ File Path: Project/Game/Scene/GamePlayScene/Enemy/Enemy.h
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Particle/ParticleEmitter.h"
+#include "GameLevelData.h"
 
 #include <memory>
 
 /// === 前方宣言 === ///
 class Player;
 class GamePlayScene;
-
-// 敵の種類
-enum class EnemyType {
-	Normal,     // 通常（弾を撃つ）
-	Kamikaze,   // 特攻（プレイヤーに突っ込む）
-};
 
 /// ===== 敵 ===== ///
 class Enemy : public BaseCharacter {
@@ -193513,6 +194384,7 @@ void EnemyBullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 1.0f, 1.0f, 5.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -193522,19 +194394,21 @@ void EnemyBullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.5f, 0.5f, 0.5f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead = false;
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		Sphere{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)
 	);
 	// コライダーの初期化
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// エミッターの生成
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletRed", EmitterType::OneShot, 20);
@@ -193543,31 +194417,27 @@ void EnemyBullet::Initialize() {
 
 void EnemyBullet::Update() {
 
-	// 速度は向きだけもらってきたから正規化して速さをかける
-	velocity_ = Normalize(velocity_) * moveSpeed;
+	// デスタイマーの更新
+	deathTimer_ += 1.0f / 60.0f;
 
-	// ワールド変換の平行移動に速度を加算
-	worldTransform_.AddTranslate(velocity_);
-
-	object->SetTranslate(worldTransform_.GetTranslate());
-
-	if (deathTimer_ <= 0) {
+	// デスタイマーが寿命を超えたら
+	if (deathTimer_ >= kLifeTime) {
 
 		isDead = true;
 	}
-	else {
 
-		deathTimer_--;
-	}
+	// 移動処理
+	Move();
 
 	worldTransform_.Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 
 	object->Update();
+
+	// エミッターの更新
+	particleEmitter->Update();
 };
 
 void EnemyBullet::Draw() {
@@ -193623,6 +194493,17 @@ void EnemyBullet::OnCollision(Collider* other) {
 
 		isDead = true;
 	}
+	// 衝突相手が障害物の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
+
+		// エミッターの位置を設定
+		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
+
+		// パーティクル発生
+		particleEmitter->Emit();
+
+		isDead = true;
+	}
 	// その他と衝突した場合
 	else {
 
@@ -193630,6 +194511,32 @@ void EnemyBullet::OnCollision(Collider* other) {
 		return;
 	}
 }
+
+void EnemyBullet::Move() {
+
+	/// ===== 向きの処理 ===== ///
+
+	// ヨー(Y軸回りの回転)の計算
+	float yaw = atan2f(direction_.x, direction_.z);
+
+	// 水壁距離の計算
+	float horizontalLength = Length(direction_.x, direction_.z);
+
+	// ピッチ(X軸回りの回転)の計算
+	float pitch = atan2f(-direction_.y, horizontalLength);
+
+	// 回転の設定
+	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+
+	/// ===== 速度の処理 ===== ///
+
+	// 速度に向きをかける
+	velocity_ = direction_ * moveSpeed;
+
+	// ワールド変換の平行移動に速度を加算
+	worldTransform_.AddTranslate(velocity_);
+}
+
 
 ============================================================
 File Path: Project/Game/Scene/GamePlayScene/Enemy/EnemyBullet.h
@@ -193641,7 +194548,6 @@ File Path: Project/Game/Scene/GamePlayScene/Enemy/EnemyBullet.h
 #include "Collision/Basecharacter.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleEmitter.h"
-#include "Data/Transform.h"
 
 #include <memory>
 
@@ -193688,6 +194594,16 @@ public:
 	/// 衝突時の処理
 	/// </summary>
 	void OnCollision(Engine::Collider* other) override;
+		
+/// ================================================== ///
+/// クラス内関数
+/// ================================================== ///
+private:
+
+	/// <summary>
+	/// 移動
+	/// </summary>
+	void Move();
 
 ///-------------------------------------------/// 
 /// セッター
@@ -193695,10 +194611,10 @@ public:
 public:
 
 	/// <summary>
-	/// 速度のセッター
+	/// 方向のセッター
 	/// </summary>
 	/// <param name="velocity"></param>
-	void SetVelocity(Engine::Vector3 velocity) { this->velocity_ = velocity; }
+	void SetDirection(const Engine::Vector3& direction) { direction_ = direction; }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -193711,17 +194627,20 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Engine::Object3d> object = nullptr;
 
+	// 方向
+	Engine::Vector3 direction_ = { 0.0f, 0.0f, 1.0f };
+
 	// 速度
 	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	// 移動の速さ
-	float moveSpeed = 0.5f;
+	float moveSpeed = 1.0f;
 
-	// 寿命<frm>
-	static const int32_t kLifeTime = 60 * 4;
+	// 寿命 (秒)
+	const float kLifeTime = 1.0f;
 
 	// デスタイマー
-	int32_t deathTimer_ = kLifeTime;
+	float deathTimer_ = 0.0f;
 
 	bool isDead = false;
 
@@ -194290,8 +195209,8 @@ void Floor::Initialize() {
 		auto object = std::make_unique<Object3d>();
 		object->Initialize();
 		object->SetModel(model_.get());
-		object->SetScale({ 50.0f, 1.0f, 50.0f });
-		object->SetTranslate({ 0.0f, 0.0f, static_cast<float>(i) * object->GetScale().z });
+		object->GetWorldTransform().SetScale({ 50.0f, 1.0f, 50.0f });
+		object->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, static_cast<float>(i) * object->GetWorldTransform().GetScale().z });
 		objects_.push_back(std::move(object));
 	}
 }
@@ -194299,10 +195218,10 @@ void Floor::Initialize() {
 void Floor::Update() {
 
 	// リストの最後のオブジェクトのZスケールを取得
-	float objectScaleZ = objects_.back()->GetScale().z;
+	float objectScaleZ = objects_.back()->GetWorldTransform().GetScale().z;
 
 	// リストの最後のオブジェクトのZ座標を取得
-	float lastObjectZ = objects_.back()->GetTranslate().z;
+	float lastObjectZ = objects_.back()->GetWorldTransform().GetTranslate().z;
 
 	// 足し合わせて床の末端Z座標を計算
 	float endFloorZ = lastObjectZ + objectScaleZ;
@@ -194317,8 +195236,8 @@ void Floor::Update() {
 		std::unique_ptr<Object3d> object = std::make_unique<Object3d>();
 		object->Initialize();							 // 初期化
 		object->SetModel(model_.get());					 // モデルセット
-		object->SetScale({ 50.0f, 1.0f, 50.0f });		 // スケールセット
-		object->SetTranslate({ 0.0f, 0.0f, endFloorZ }); // 位置セット
+		object->GetWorldTransform().SetScale({ 50.0f, 1.0f, 50.0f });		 // スケールセット
+		object->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, endFloorZ }); // 位置セット
 		objects_.push_back(std::move(object));			 // リストに追加
 	}
 
@@ -194350,7 +195269,7 @@ void Floor::ShowImGui() {
 	for (size_t i = 0; i < objects_.size(); ++i) {
 
 		// オブジェクトの位置を表示
-		ImGui::Text("Position: (%.2f, %.2f, %.2f)", objects_[i]->GetTranslate().x, objects_[i]->GetTranslate().y, objects_[i]->GetTranslate().z);
+		ImGui::Text("Position: (%.2f, %.2f, %.2f)", objects_[i]->GetWorldTransform().GetTranslate().x, objects_[i]->GetWorldTransform().GetTranslate().y, objects_[i]->GetWorldTransform().GetTranslate().z);
 
 		// "Object #" + 番号のラベルを生成
 		std::string label = "Object " + std::to_string(i);
@@ -194450,24 +195369,16 @@ File Path: Project/Game/Scene/GamePlayScene/GamePlayScene.cpp
 ============================================================
 #include "GamePlayScene.h"
 #include "Input.h"
-#include "Texture/TextureManager.h"
 #include "Vector3.h"
-#include "SceneManager.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
-#include "CameraControll/RailCamera/RailCameraController.h"
-#include "Easing.h"
-#include "WinApp.h"
 
 #include "Sprite/SpriteRenderer.h"
 #include "Object/Object3dRenderer.h"
 #include "Particle/ParticleRenderer.h"
 #include "LineManager.h"
 
-#include <imgui.h>
-
 using namespace Engine;
-using namespace Easing;
 
 void GamePlayScene::Initialize() {
 
@@ -194484,8 +195395,8 @@ void GamePlayScene::Initialize() {
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->Initialize();
 	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
 
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
@@ -194495,6 +195406,10 @@ void GamePlayScene::Initialize() {
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<Engine::CollisionManager>();
+
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
 
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
@@ -194550,8 +195465,9 @@ void GamePlayScene::Initialize() {
 	blackFade_ = std::make_unique<BlackFade>();
 	blackFade_->Initialize();
 
-	// 敵発生データの読み込み
-	LoadEnemyPopData();
+	/// ========== レベルロード ========== ///
+
+	LoadLevelAndApply();
 
 	// 初期状態をイントロに設定
 	ChangeState(std::make_unique<IntroState>());
@@ -194563,13 +195479,13 @@ void GamePlayScene::Update() {
 	cameraController_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldPosition());
+	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldPosition());
+	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();
@@ -194602,6 +195518,8 @@ void GamePlayScene::DrawFiltered() {
 	/// === 3Dオブジェクトの描画準備 === ///
 	object3dRenderer_->SettingDrawingOpaque();
 
+	lightManager_->Draw();
+
 	//TODO: 全ての3Dオブジェクト個々の描画
 
 	// シリンダーの描画
@@ -194626,6 +195544,12 @@ void GamePlayScene::DrawFiltered() {
 	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
 
 		bullet->Draw();
+	}
+
+	// 障害物の描画
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+
+		obstacle->Draw();
 	}
 
 	// プレイヤー描画
@@ -194704,6 +195628,8 @@ void GamePlayScene::ShowImGui() {
 
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) { bullet->ShowImGui(); }
 
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) { obstacle->ShowImGui(); }
+
 	floor_->ShowImGui();
 
 	cylinder_->ShowImGui();
@@ -194719,6 +195645,8 @@ void GamePlayScene::ShowImGui() {
 	whiteFade_->ShowImGui();
 
 	goal_->ShowImGui();
+
+	lightManager_->ShowImGui();
 }
 
 void GamePlayScene::CheckAllCollisions() {
@@ -194739,6 +195667,10 @@ void GamePlayScene::CheckAllCollisions() {
 
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 		collisionManager_->AddCollider(bullet->GetCollider());
+	}
+
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		collisionManager_->AddCollider(obstacle->GetCollider());
 	}
 
 	// 衝突判定と応答
@@ -194764,102 +195696,6 @@ void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
 
 	// 弾をリストに登録
 	enemyBullets_.push_back(std::move(bullet));
-}
-
-void GamePlayScene::LoadEnemyPopData() {
-
-	// ファイルを開く
-	std::ifstream file;
-	file.open("./Resources/Datas/gameData/enemyPop.csv");
-	assert(file.is_open());
-
-	// ファイルの内容を文字列ストリームにコピー
-	enemyPopCommands << file.rdbuf();
-
-	// ファイルを閉じる
-	file.close();
-}
-
-void GamePlayScene::UpdateEnemyPopCommands() {
-
-	// 待機処理
-	if (isWait_ == true) {
-
-		standbyTimer_--;
-
-		if (standbyTimer_ <= 0) {
-			// 待機完了
-			isWait_ = false;
-		}
-
-		return;
-	}
-
-	// 1行分の文字列を入れる変数
-	std::string line;
-
-	// コマンド実行ループ
-	while (getline(enemyPopCommands, line)) {
-
-		// 1行分の文字列をストリームに変換して解析しやすくする
-		std::istringstream line_stream(line);
-
-		std::string word;
-		// ,区切りで行の先頭文字列を取得
-		getline(line_stream, word, ',');
-
-		// "//"から始まる行はコメント
-		if (word.find("//") == 0) {
-			// コメント行を飛ばす
-			continue;
-		}
-
-		// POPコマンド
-		if (word.find("POP") == 0) {
-
-			// x座標
-			getline(line_stream, word, ',');
-			float x = (float)std::atof(word.c_str());
-
-			// y座標
-			getline(line_stream, word, ',');
-			float y = (float)std::atof(word.c_str());
-
-			// z座標
-			getline(line_stream, word, ',');
-			float z = (float)std::atof(word.c_str());
-
-			// 生成する敵の種類
-			int type = 0; // デフォルトは0(Normal)
-			getline(line_stream, word, ',');
-			type = std::atoi(word.c_str()); // 数字に変換
-
-			// 敵の生成&初期化
-			std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-			enemy->SetEnemyType(static_cast<EnemyType>(type));
-			enemy->Initialize();
-			enemy->GetWorldTransform().SetTranslate({ x, y, z });
-			enemy->SetGamePlayScene(this);
-
-			// 敵をリストに追加
-			enemies_.push_back(std::move(enemy));
-
-		} // WAITコマンド
-		else if (word.find("WAIT") == 0) {
-
-			getline(line_stream, word, ',');
-
-			// 待ち時間
-			int32_t waitTime = atoi(word.c_str());
-
-			// 待機開始
-			isWait_ = true;
-			standbyTimer_ = waitTime;
-
-			// コマンドループを抜ける
-			break;
-		}
-	}
 }
 
 void GamePlayScene::UpdateListObjects() {
@@ -194900,6 +195736,12 @@ void GamePlayScene::UpdateListObjects() {
 	// 敵の弾の更新
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 		bullet->Update();
+	}
+
+	// 障害物の更新
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+
+		obstacle->Update();
 	}
 }
 
@@ -194946,14 +195788,14 @@ void GamePlayScene::Restart() {
 	enemies_.clear();
 	playerBullets_.clear();
 	enemyBullets_.clear();
+	obstacles_.clear();
+
+	particleManager_->Clear();
 
 	/// ===== 進行度のリセット ===== ///
 
 	killCount_ = 0;
 	normaUI_->SetCurrentValue(0);
-
-	// 敵発生データの読み込み
-	LoadEnemyPopData();
 
 	/// ===== 初期化 ===== ///
 
@@ -194966,6 +195808,9 @@ void GamePlayScene::Restart() {
 	goal_->Initialize();
 
 	ruleUI_->Initialize();
+
+	/// ========== レベルのリセット ========== ///
+	LoadLevelAndApply();
 
 	/// ===== フェードのリセット ===== ///
 
@@ -194981,6 +195826,48 @@ void GamePlayScene::Restart() {
 	ChangeState(std::make_unique<IntroState>());
 }
 
+void GamePlayScene::LoadLevelAndApply() {
+
+	levelLoader_.LoadLevel(kLevelDataFileName_);
+	const GameLevelData& levelData = levelLoader_.GetLevelData();
+
+	// プレイヤー開始位置（※メンバ名は必ず統一）
+	player_->GetWorldTransform().SetTranslate(levelData.playerPosition);
+
+	// 敵生成
+	SpawnEnemiesFromLevelData(levelData);
+
+	// 障害物生成
+	SpawnObstaclesFromLevelData(levelData);
+}
+
+void GamePlayScene::SpawnEnemiesFromLevelData(const GameLevelData& levelData) {
+
+	enemies_.clear();
+
+	for (const EnemySpawnData& spawn : levelData.enemySpawnDatas) {
+		std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
+		enemy->SetEnemyType(spawn.type);
+		enemy->Initialize();
+		enemy->GetWorldTransform().SetTranslate(spawn.position);
+		enemy->SetGamePlayScene(this);
+		enemies_.push_back(std::move(enemy));
+	}
+}
+
+void GamePlayScene::SpawnObstaclesFromLevelData(const GameLevelData& levelData) {
+
+	obstacles_.clear();
+
+	for (const ObstacleSpawnData& spawn : levelData.obstacleSpawnDatas) {
+		std::unique_ptr<Obstacle> obstacle = std::make_unique<Obstacle>();
+		obstacle->Initialize();
+		obstacle->GetWorldTransform().SetScale(spawn.scale);
+		obstacle->GetWorldTransform().SetTranslate(spawn.position);
+		obstacles_.push_back(std::move(obstacle));
+	}
+}
+
 void GamePlayScene::CheckOriginShift() {
 
 	float playerZ = player_->GetWorldTransform().GetWorldPosition().z;
@@ -194988,12 +195875,16 @@ void GamePlayScene::CheckOriginShift() {
 	// プレイヤーのZ座標がループ距離を超えたら
 	if (playerZ >= kLoopDistance) {
 
+		float shiftZ = kLoopDistance - 100;
+
 		// ワールドを手前にずらす
-		ShiftWorld(kLoopDistance);
+		ShiftWorld(shiftZ);
 	}
 }
 
 void GamePlayScene::ShiftWorld(float shiftZ) {
+
+	worldShiftZ_ += shiftZ;
 
 	// カメラを手前にずらす
 	cameraController_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
@@ -195010,8 +195901,15 @@ void GamePlayScene::ShiftWorld(float shiftZ) {
 	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
 		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 	}
+
+	// 敵の弾を手前にずらす
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
 		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+	}
+
+	// 障害物を手前にずらす
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		obstacle->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 	}
 
 	// ゴールを手前にずらす
@@ -195043,11 +195941,12 @@ File Path: Project/Game/Scene/GamePlayScene/GamePlayScene.h
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
 #include "Goal/Goal.h"
+#include "LevelLoader.h"
+#include "Obstacle/Obstacle.h"
+#include "Light/LightManager.h"
 
 #include <list>
-#include <sstream>
 #include <memory>
-#include <optional>
 
 /// ===== 前方宣言 ===== ///
 
@@ -195119,16 +196018,6 @@ public:
 	/// </summary>
 	/// <param name="bullet"></param>
 	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
-
-	/// <summary>
-	/// 敵発生データの読み込み
-	/// </summary>
-	void LoadEnemyPopData();
-
-	/// <summary>
-	/// 敵発生コマンドの更新
-	/// </summary>
-	void UpdateEnemyPopCommands();
 	
 	/// <summary>
 	/// リストで管理しているオブジェクトの更新
@@ -195165,6 +196054,23 @@ public:
 /// クラス内関数
 ///-------------------------------------------///
 private:
+
+	/// <summary>
+	/// レベルデータの読み込みと適用
+	/// </summary>
+	void LoadLevelAndApply();
+
+	/// <summary>
+	/// レベルデータから敵をスポーン
+	/// </summary>
+	/// <param name="levelData">レベルデータ</param>
+	void SpawnEnemiesFromLevelData(const GameLevelData& levelData);
+
+	/// <summary>
+	/// レベルデータから障害物をスポーン
+	/// </summary>
+	/// <param name="levelData">レベルデータ</param>
+	void SpawnObstaclesFromLevelData(const GameLevelData& levelData);
 
 	/// <summary>
 	/// オリジンシフトの確認と実行
@@ -195215,16 +196121,16 @@ private:
 	// 敵を倒した数
 	int killCount_ = 0;
 
-	// 敵発生コマンド
-	std::stringstream enemyPopCommands;
-
-	// 待機中フラグ
-	bool isWait_ = true;
-	// 待機タイマー
-	int32_t standbyTimer_ = 0;
-
 	// ループする距離
 	const float kLoopDistance = 1000.0f;
+
+	float worldShiftZ_ = 0.0f;
+
+	/// ========== レベルデータ ========== ///
+
+	LevelLoader levelLoader_;
+
+	const std::string kLevelDataFileName_ = "LevelData.json";
 
 	/// ===== オブジェクト ===== ///
 
@@ -195242,6 +196148,9 @@ private:
 
 	// 敵の弾のリスト
 	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+
+	// 障害物のリスト
+	std::list<std::unique_ptr<Obstacle>> obstacles_;
 
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;
@@ -195279,6 +196188,9 @@ private:
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<Engine::CollisionManager> collisionManager_ = nullptr;
+
+	// ライトマネージャのポインタ
+	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 
 	// パーティクルマネージャのインスタンス
 	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
@@ -195325,7 +196237,7 @@ void Goal::Initialize() {
 	object_ = std::make_unique<Object3d>();
 	object_->Initialize();
 	object_->SetModel(model_.get());
-	object_->SetScale({ 50.0f, 50.0f, 1.0f });
+	object_->GetWorldTransform().SetScale({ 50.0f, 50.0f, 1.0f });
 
 	/// ===== ゲートの初期化 ===== ///
 
@@ -195341,7 +196253,7 @@ void Goal::Initialize() {
 	gateObject_ = std::make_unique<Object3d>();
 	gateObject_->Initialize();
 	gateObject_->SetModel(gateModel_.get());
-	gateObject_->SetScale({ 50.0f, 50.0f, 1.0f });
+	gateObject_->GetWorldTransform().SetScale({ 50.0f, 50.0f, 1.0f });
 
 	alpha_ = 1.0f;
 }
@@ -195353,8 +196265,8 @@ void Goal::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	object_->SetTranslate(worldTransform_.GetWorldPosition());
-	object_->SetRotate(worldTransform_.GetRotate());
+	object_->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
+	object_->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object_->Update();
@@ -195380,7 +196292,7 @@ void Goal::Update() {
 	// ゲート用のワールド変換の更新
 	gateWorldTransform_.Update();
 
-	gateObject_->SetTranslate(gateWorldTransform_.GetWorldPosition());
+	gateObject_->GetWorldTransform().SetTranslate(gateWorldTransform_.GetWorldPosition());
 
 	/// === 色の更新 === ///
 
@@ -195834,6 +196746,134 @@ private:
 
 
 ============================================================
+File Path: Project/Game/Scene/GamePlayScene/Obstacle/Obstacle.cpp
+============================================================
+#include "Obstacle.h"
+#include "Collision/CollisionTypeIDDef.h"
+
+#include <imgui.h>
+
+using namespace Engine;
+
+void Obstacle::Initialize() {
+
+	// ワールド変換初期化
+	worldTransform_.Initialize();
+
+	// コライダー生成
+	collider_ = std::make_unique<Collider>(
+		AABB{},
+		static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)
+	);
+
+	// コライダー初期化
+	collider_->Initialize();
+	// コライダーに衝突時のコールバック関数を設定
+	collider_->SetOnCollision([this](Collider* other) {OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
+
+	// モデルの生成
+	model_ = std::make_unique<Model>();
+	// モデルの初期化
+	model_->Initialize("Obstacle", "Obstacle.obj");
+
+	// 3Dオブジェクトの生成
+	object_ = std::make_unique<Object3d>();
+	// 3Dオブジェクトの初期化
+	object_->Initialize();
+	// モデルを設定
+	object_->SetModel(model_.get());
+	// ワールド変換のスケールを3Dオブジェクトに設定
+	object_->GetWorldTransform().SetParent(&worldTransform_);
+}
+
+void Obstacle::Update() {
+
+	worldTransform_.Update();
+
+	collider_->Update();
+
+	object_->Update();
+}
+
+void Obstacle::Draw() {
+
+	object_->Draw();
+
+	collider_->Draw();
+}
+
+void Obstacle::OnCollision(Engine::Collider* other) {
+}
+
+void Obstacle::ShowImGui() {
+
+#ifdef USE_IMGUI
+
+	ImGui::Begin("障害物");
+
+	worldTransform_.ShowImGui();
+
+	object_->ShowImGui();
+
+	model_->ShowImGui();
+
+	collider_->ShowImGui();
+
+	ImGui::End();
+
+#endif // USE_IMGUI
+}
+
+
+============================================================
+File Path: Project/Game/Scene/GamePlayScene/Obstacle/Obstacle.h
+============================================================
+#pragma once
+
+#include "Model/Model.h"
+#include "Object/Object3d.h"
+
+#include "Collision/Basecharacter.h"
+
+#include <memory>
+
+/// <summary>
+/// 障害物クラス
+/// </summary>
+class Obstacle : public BaseCharacter {
+
+/// ================================================== ///
+/// メンバ関数
+/// ================================================== ///
+public:
+
+	void Initialize() override;
+
+	void Update() override;
+
+	void Draw() override;
+
+	void OnCollision(Engine::Collider* other) override;
+
+	void ShowImGui();
+
+/// ================================================== ///
+/// メンバ変数
+/// ================================================== ///
+private:
+
+	// モデル
+	std::unique_ptr<Engine::Model> model_ = nullptr;
+
+	// オブジェクト3D
+	std::unique_ptr<Engine::Object3d> object_ = nullptr;
+};
+
+
+
+============================================================
 File Path: Project/Game/Scene/GamePlayScene/PlayState.cpp
 ============================================================
 #include "PlayState.h"
@@ -196014,9 +197054,6 @@ void PlayState::Update() {
 
 	/// ===== 各種オブジェクトの更新 ===== ///
 
-	// 敵発生コマンドの更新
-	scene_->UpdateEnemyPopCommands();
-
 	// プレイヤー更新
 	player_->Update();
 
@@ -196116,7 +197153,7 @@ void PlayState::UpdateVignetteEffect() {
 
 		// ビネットフィルターの設定
 		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
+		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
 		vignetteFilter_->SetIntensity(0.7f);
 		vignetteFilter_->SetScale(18.0f);
 		vignetteFilter_->SetRange(1.0f);
@@ -196131,7 +197168,7 @@ void PlayState::UpdateVignetteEffect() {
 
 		// ビネットフィルターの設定
 		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f });
+		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
 		vignetteFilter_->SetIntensity(0.7f);
 		vignetteFilter_->SetScale(18.0f);
 		vignetteFilter_->SetRange(1.0f);
@@ -196153,7 +197190,7 @@ void PlayState::UpdateVignetteEffect() {
 		float fadeOut = Lerp(1.0f, 0.0f, easeT); // 1から0へ線形補間
 
 		// ビネットフィルターの設定
-		vignetteFilter_->SetColor({ 1.0f * fadeOut, 0.0f, 0.0f });
+		vignetteFilter_->SetColor({ 1.0f, 0.0f, 0.0f, fadeOut });
 		vignetteFilter_->SetIntensity(0.6f);
 		vignetteFilter_->SetScale(20.0f);
 		vignetteFilter_->SetRange(1.0f);
@@ -196164,7 +197201,7 @@ void PlayState::UpdateVignetteEffect() {
 			vignetteFilter_->SetIsActive(false);
 
 			// デフォルト値に戻す
-			vignetteFilter_->SetColor({ 0.0f, 0.0f, 0.0f });
+			vignetteFilter_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
 			vignetteFilter_->SetIntensity(0.8f);
 			vignetteFilter_->SetScale(16.0f);
 			vignetteFilter_->SetRange(1.0f);
@@ -196412,6 +197449,10 @@ void PauseState::Update() {
 			// 白フェードの開始
 			whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
 			isSelectedRestart_ = true;
+
+			vignetteFilter_->SetIsActive(false);
+
+			scene_->Restart();
 		}
 
 		break;
@@ -196630,7 +197671,7 @@ private:
 	// ビネットエフェクト用変数
 	bool isDamageVignetteActive_ = false; // ダメージ時の一時ビネット有効フラグ
 	float damageVignetteTimer_ = 0.0f; // ダメージビネットのタイマー
-	const float kDamageVignetteDuration_ = 0.5f; // ダメージビネットの持続時間 (秒)
+	const float kDamageVignetteDuration_ = 1.0f; // ダメージビネットの持続時間 (秒)
 
 	/// ===== 借りポインタ・インスタンス ===== ///
 
@@ -196771,6 +197812,7 @@ void Bullet::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 1.0f, 1.0f, 5.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
@@ -196780,7 +197822,7 @@ void Bullet::Initialize() {
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 0.5f, 0.5f, 5.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	// デスタイマーの初期化
 	deathTimer_ = 0.0f;
@@ -196790,13 +197832,15 @@ void Bullet::Initialize() {
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		Sphere{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)
 	);
 	// コライダーの初期化
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// エミッターの生成・初期化
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", EmitterType::OneShot, 20);
@@ -196821,12 +197865,8 @@ void Bullet::Update() {
 	worldTransform_.Update();
 
 	// 3Dオブジェクトの更新
-	object->SetRotate(worldTransform_.GetRotate());
-	object->SetTranslate(worldTransform_.GetTranslate());
 	object->Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 
@@ -196882,6 +197922,17 @@ void Bullet::OnCollision(Collider* other) {
 
 			return;
 		}
+
+		// エミッターの位置を設定
+		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
+
+		// パーティクル発生
+		particleEmitter->Emit();
+
+		isDead = true;
+	}
+	// 衝突相手が障害物の場合
+	else if(typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
 
 		// エミッターの位置を設定
 		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
@@ -197058,27 +198109,31 @@ void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
+	worldTransform_.SetScale({ 2.0f,2.0f,2.0f });
 	worldTransform_.SetTranslate({ 0.0f, 5.0f, 0.0f });
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
 	model->Initialize("Player", "player.obj");
+	model->SetDiffuseSetting(2); // HalfLambert反射
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();
 	object->Initialize();
 	object->SetModel(model.get());
-	object->SetScale({ 1.0f, 1.0f, 1.0f });
+	object->GetWorldTransform().SetParent(&worldTransform_);
 
 	// コライダーの生成
 	collider_ = std::make_unique<Collider>(
-		AABB{},
+		OBB{},
 		static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)
 	);
 	// コライダーの初期化
 	collider_->Initialize();
 	// コライダーに衝突時のコールバック関数を設定
 	collider_->SetOnCollision([this](Collider* other) { OnCollision(other); });
+	// コライダーにワールド変換を設定
+	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
 	isDead_ = false;
 
@@ -197102,6 +198157,8 @@ void Player::Initialize() {
 	normalShotCommand_ = std::make_unique<NormalShotCommand>();
 	lockOnAimCommand_ = std::make_unique<LockOnAimCommand>();
 	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
+
+	hp_ = 5;
 }
 
 void Player::Update() {
@@ -197173,15 +198230,10 @@ void Player::Update() {
 	// ワールド変換の更新
 	worldTransform_.Update();
 
-	// コライダーにワールド座標変換を設定
-	collider_->SetWorldTransform(worldTransform_);
 	// コライダーの更新
 	collider_->Update();
 
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
-
-	object->SetTranslate(worldTransform_.GetWorldPosition());
-	object->SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object->Update();
@@ -197193,6 +198245,12 @@ void Player::Draw() {
 	collider_->Draw();
 
 	if (!isGroundHit_) {
+
+		if (invincibleTimer_ > 0.0f) {
+			if (static_cast<int>(invincibleTimer_) % 12 < 6) {
+				return; // 描画処理をスキップ
+			}
+		}
 
 		// 3Dオブジェクトの描画
 		object->Draw();
@@ -197237,6 +198295,8 @@ void Player::ShowImGui() {
 
 	ImGui::Text("speedPlay: %.2f", moveSpeedManual);
 
+	ImGui::Text("HP: %d", hp_);
+
 	object->ShowImGui();
 
 	model->ShowImGui();
@@ -197277,14 +198337,41 @@ void Player::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// 1ダメージを受ける
-		DamageProcess(1);
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
 	}
 	// 衝突相手が敵の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
 
-		// 1ダメージを受ける
-		DamageProcess(1);
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
+	}
+	// 衝突相手が障害物の場合
+	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
+
+		// 無敵時間中でなければダメージを受ける
+		if (invincibleTimer_ <= 0.0f) {
+
+			// 1ダメージを受ける
+			DamageProcess(1);
+
+			// 無敵タイマーをセット
+			invincibleTimer_ = kInvincibleTime;
+		}
 	}
 	// その他と衝突した場合
 	else {
@@ -197325,8 +198412,7 @@ void Player::Fire(PlayerContext context) {
 	// 射撃アニメーション開始
 	isFiring_ = true;
 	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
-	object->SetScale(fireScale_);
-	object->SetScale(fireScale_);
+	object->GetWorldTransform().SetScale(fireScale_);
 }
 
 void Player::FireAnimationUpdate() {
@@ -197339,7 +198425,7 @@ void Player::FireAnimationUpdate() {
 	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
 
 	// スケールを設定
-	object->SetScale(newScale);
+	object->GetWorldTransform().SetScale(newScale);
 
 	// タイマーが0以下になったら
 	if (fireAnimationTimer_ <= 0.0f) {
@@ -197569,42 +198655,51 @@ void Player::ManualUpdate() {
 
 	/// ===== 射撃処理 ===== ///
 
+	//// 左クリックしている間
+	//if (isMouseLeftPush) {
+	//
+	//	// 押されている時間を加算
+	//	pressTimer_ += 1.0f / 60.0f;
+	//
+	//	// 一定時間以上押し続けたら
+	//	if (pressTimer_ > kLockOnDuration_) {
+	//
+	//		// ロックオンモードへ移行
+	//		isLockOnMode_ = true;
+	//
+	//		// ロックオンエイムコマンド実行
+	//		lockOnAimCommand_->Execute(context);
+	//	}
+	//}
+	//
+	//// 左クリックを離したとき
+	//if (isMouseLeftRelease) {
+	//
+	//	// タイマーが0以下なら
+	//	if (fireTimer_ <= 0) {
+	//
+	//		// 射撃
+	//		Fire(context);
+	//	}
+	//
+	//	// 押下時間をリセット
+	//	pressTimer_ = 0.0f;
+	//
+	//	// ロックオンモード解除
+	//	isLockOnMode_ = false;
+	//
+	//	// ロックオンターゲットをクリア
+	//	lockOn_->ClearTarget();
+	//
+	//}
+
 	// 左クリックしている間
 	if (isMouseLeftPush) {
-
-		// 押されている時間を加算
-		pressTimer_ += 1.0f / 60.0f;
-
-		// 一定時間以上押し続けたら
-		if (pressTimer_ > kLockOnDuration_) {
-
-			// ロックオンモードへ移行
-			isLockOnMode_ = true;
-
-			// ロックオンエイムコマンド実行
-			lockOnAimCommand_->Execute(context);
-		}
-	}
-
-	// 左クリックを離したとき
-	if (isMouseLeftRelease) {
-
 		// タイマーが0以下なら
 		if (fireTimer_ <= 0) {
-
 			// 射撃
 			Fire(context);
 		}
-
-		// 押下時間をリセット
-		pressTimer_ = 0.0f;
-
-		// ロックオンモード解除
-		isLockOnMode_ = false;
-
-		// ロックオンターゲットをクリア
-		lockOn_->ClearTarget();
-
 	}
 
 	if (isFiring_) {
@@ -197666,6 +198761,11 @@ void Player::ManualUpdate() {
 
 	// ロックオンの更新
 	lockOn_->Update();
+
+	// 無敵タイマーの更新
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= 1.0f;
+	}
 }
 
 void Player::DeadInitialize() {
@@ -197690,6 +198790,11 @@ void Player::DeadInitialize() {
 }
 
 void Player::DeadUpdate() {
+
+	// 無敵タイマーの更新
+	if (invincibleTimer_ > 0.0f) {
+		invincibleTimer_ -= 1.0f;
+	}
 
 	// タイマーを進める
 	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
@@ -198081,6 +199186,14 @@ private:
 	// パーティクルを出したかどうか
 	bool isParticleEmitted_ = false;
 
+	/// ========== 被弾時用 ========== ///
+
+	// 無敵時間のタイマー（0より大きければ無敵）
+	float invincibleTimer_ = 0.0f;
+
+	// ダメージを受けた時の無敵時間の設定 (フレーム数)
+	const float kInvincibleTime = 60.0f;
+
 ///-------------------------------------------/// 
 /// 全体用
 ///-------------------------------------------///
@@ -198371,7 +199484,7 @@ void Reticle::Update() {
 	worldTransform_.Update();
 
 	// オブジェクトの座標を設定
-	object_->SetTranslate(worldTransform_.GetTranslate());
+	object_->GetWorldTransform().SetTranslate(worldTransform_.GetTranslate());
 	// オブジェクトの更新
 	object_->Update();
 }
@@ -200567,6 +201680,8 @@ File Path: Project/Game/Scene/TitleScene/TitleScene.cpp
 
 #include "Sprite/SpriteRenderer.h"
 #include "Object/Object3dRenderer.h"
+#include "TransitionManager.h"
+#include "Transition/FadeTransition.h"
 
 #include <imgui.h>
 
@@ -200577,6 +201692,11 @@ void TitleScene::Initialize() {
 	// インスタンス取得
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 	object3dRenderer_ = Object3dRenderer::GetInstance();
+	transitionManager_ = TransitionManager::GetInstance();
+
+	// ライトマネージャの初期化
+	lightManager_ = std::make_unique<Engine::LightManager>();
+	lightManager_->Initialize();
 
 	// カメラの生成&初期化
 	camera_ = std::make_unique<Engine::Camera>();
@@ -200585,8 +201705,8 @@ void TitleScene::Initialize() {
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->Initialize();
 	cameraController_->SetCamera(camera_.get());
+	cameraController_->Initialize();
 
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
@@ -200620,11 +201740,6 @@ void TitleScene::Initialize() {
 	blackScreen_ = std::make_unique<BlackScreen>();
 	blackScreen_->Initialize();
 
-	// 白フェードの生成&初期化
-	whiteFade_ = std::make_unique<WhiteFade>();
-	whiteFade_->Initialize();
-	whiteFade_->SetAlpha(0.0f);
-
 	// タイトルUIの生成&初期化
 	titleUI_ = std::make_unique<TitleUI>();
 	titleUI_->Initialize();
@@ -200632,7 +201747,7 @@ void TitleScene::Initialize() {
 	// スタートUIの生成&初期化
 	startUI_ = std::make_unique<StartUI>();
 	startUI_->Initialize();
-	
+
 	// フィルターマネージャにカメラを設定
 	filterManager_->SetCamera(camera_.get());
 
@@ -200740,13 +201855,13 @@ void TitleScene::Update() {
 	player_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldPosition());
+	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldPosition());
+	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();
@@ -200768,6 +201883,9 @@ void TitleScene::DrawFiltered() {
 
 	/// === 3Dオブジェクトの描画準備 === ///
 	object3dRenderer_->SettingDrawingOpaque();
+
+	// ライトの描画
+	lightManager_->Draw();
 
 	// シリンダーの描画
 	cylinder_->Draw();
@@ -200792,9 +201910,6 @@ void TitleScene::DrawUnfiltered() {
 
 	// タイトルUIの描画
 	titleUI_->Draw();
-
-	// 白フェードの描画
-	whiteFade_->Draw();
 }
 
 void TitleScene::Finalize() {
@@ -200822,9 +201937,6 @@ void TitleScene::ShowImGui() {
 
 	// スタートUIのImGui表示
 	startUI_->ShowImGui();
-
-	// WhiteFadeのImGui表示
-	whiteFade_->ShowImGui();
 
 #ifdef USE_IMGUI
 
@@ -200998,8 +202110,13 @@ void TitleScene::SpeedUpUpdate() {
 }
 
 void TitleScene::WhiteFadeInitialize() {
-	
-	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
+
+	// フェードイン開始
+	transitionManager_->StartInTransition(
+		std::make_unique<FadeTransition>(Vector3{ 1.0f,1.0f,1.0f }, 0.0f, 1.0f),
+		[]() { SceneManager::GetInstance()->ChangeScene("PLAY"); },
+		2.0f // 遷移にかける時間 (秒)
+	);
 }
 
 void TitleScene::WhiteFadeUpdate() {
@@ -201010,15 +202127,6 @@ void TitleScene::WhiteFadeUpdate() {
 
 	// ブラーも最大値を維持
 	radialBlurFilter_->SetBlurStrength(kMaxBlurStrength);
-
-	// 白フェード更新
-	whiteFade_->Update();
-
-	if (whiteFade_->IsFadeFinished()) {
-
-		// ゲームプレイシーンへ
-		SceneManager::GetInstance()->ChangeScene("PLAY");
-	}
 }
 
 
@@ -201040,7 +202148,7 @@ File Path: Project/Game/Scene/TitleScene/TitleScene.h
 #include "UI/TitleUI.h"
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
-#include "Fade/WhiteFade.h"
+#include "Light/LightManager.h"
 
 #include <memory>
 #include <optional>
@@ -201050,6 +202158,7 @@ namespace Engine {
     class SpriteRenderer;
 	class Object3dRenderer;
     class RadialBlurFilter;
+    class TransitionManager;
 }
 
 // タイトルの流れの状態
@@ -201176,9 +202285,6 @@ private:
     // 黒画面UI
     std::unique_ptr<BlackScreen> blackScreen_ = nullptr;
 
-    // 白フェード
-    std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
-
     // タイトルUI
     std::unique_ptr<TitleUI> titleUI_ = nullptr;
 
@@ -201220,6 +202326,12 @@ private:
 
 	// 3Dオブジェクトレンダラーのインスタンス
 	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+
+    // 遷移マネージャのインスタンス
+    Engine::TransitionManager* transitionManager_ = nullptr;
+
+    // ライトマネージャのポインタ
+    std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
 };
 
 ============================================================
