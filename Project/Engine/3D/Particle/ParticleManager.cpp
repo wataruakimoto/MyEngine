@@ -53,6 +53,11 @@ void ParticleManager::Initialize() {
 	// シャードのレンダラーを初期化
 	shardRenderer->Initialize();
 
+	// メッシュのレンダラーを作成
+	meshRenderer = std::make_unique<MeshRenderer>();
+	// メッシュのレンダラーを初期化
+	meshRenderer->Initialize();
+
 	// JSONからパーティクル設定を全て読み込み
 	LoadParticleSettingsFromJSON();
 }
@@ -87,6 +92,9 @@ void ParticleManager::Update() {
 
 	// シャードのパーティクルコンテナの更新
 	UpdateGroups(shardGroups);
+
+	// メッシュのパーティクルコンテナの更新
+	UpdateGroups(meshGroups);
 }
 
 void ParticleManager::Draw() {
@@ -142,6 +150,16 @@ void ParticleManager::Draw() {
 
 		// シャードレンダラーで描画
 		shardRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+	}
+
+	// メッシュのパーティクルコンテナの描画
+	for (auto& [textureFileName, group] : meshGroups) {
+
+		// リストが空なら描画しない
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
+		// メッシュレンダラーで描画
+		meshRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
 	}
 }
 
@@ -215,6 +233,7 @@ void ParticleManager::ShowImGui() {
 		{ "Cylinder", &cylinderGroups },
 		{ "Cube", &cubeGroups },
 		{ "Shard", &shardGroups },
+		{ "Mesh", &meshGroups },
 	};
 
 	for (const auto& containerInfo : containers) {
@@ -336,6 +355,20 @@ void ParticleManager::AddInstance(const ParticleInstance& instance) {
 		shardGroups[key].particles.push_back(instance);
 
 		break;
+
+	case ParticleShape::MESH:
+
+		// リソース未作成なら
+		if (!meshGroups[key].isResourceCreated) {
+
+			// リソース作成
+			CreateGroupResource(meshGroups[key]);
+		}
+
+		// グループのリストに追加
+		meshGroups[key].particles.push_back(instance);
+
+		break;
 	}
 }
 
@@ -363,6 +396,11 @@ void ParticleManager::Clear() {
 
 	// シャードのパーティクルをクリア
 	for (auto& [key, group] : shardGroups) {
+		group.particles.clear();
+	}
+
+	// メッシュのパーティクルをクリア
+	for (auto& [key, group] : meshGroups) {
 		group.particles.clear();
 	}
 }
@@ -677,7 +715,7 @@ void ParticleManager::ShowParameters() {
 			//ImGui::Checkbox("Use Gravity", &p.useGravity);
 
 			// 形状 (Combo Box)
-			const char* items[] = { "PLANE", "RING", "CYLINDER", "CUBE", "SPHERE", "SHARD" };
+			const char* items[] = { "PLANE", "RING", "CYLINDER", "CUBE", "SPHERE", "SHARD", "MESH" };
 			int currentShape = static_cast<int>(p.shape);
 			if (ImGui::Combo("Shape", &currentShape, items, IM_ARRAYSIZE(items))) {
 				p.shape = static_cast<ParticleShape>(currentShape);

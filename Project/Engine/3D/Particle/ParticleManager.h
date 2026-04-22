@@ -6,6 +6,7 @@
 #include "ShapeRenderers/CylinderRenderer.h"
 #include "ShapeRenderers/CubeRenderer.h"
 #include "ShapeRenderers/ShardRenderer.h"
+#include "ShapeRenderers/MeshRenderer.h"
 
 #include <unordered_map>
 #include <string>
@@ -192,6 +193,7 @@ namespace Engine {
 		std::unordered_map<std::string, ParticleGroup> cylinderGroups;
 		std::unordered_map<std::string, ParticleGroup> cubeGroups;
 		std::unordered_map<std::string, ParticleGroup> shardGroups;
+		std::unordered_map<std::string, ParticleGroup> meshGroups;
 
 		// Δt
 		const float kDeltaTime = 1.0f / 60.0f;
@@ -210,6 +212,9 @@ namespace Engine {
 
 		// シャードのレンダラー
 		std::unique_ptr<ShardRenderer> shardRenderer = nullptr;
+
+		// メッシュのレンダラー
+		std::unique_ptr<MeshRenderer> meshRenderer = nullptr;
 
 		// Jsonデータを入れておくフォルダパス
 		const std::string DataFolderPath = "Resources/Datas/Particles/";

@@ -68,6 +68,15 @@ void Player::Initialize() {
 	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
 
 	hp_ = 5;
+
+	// 移動パーティクルの生成
+	moveEmitter_ = std::make_unique<Engine::ParticleEmitter>("PlayerMove", Engine::EmitterType::Interval, 1);
+	// 移動パーティクルの初期化
+	moveEmitter_->Initialize();
+	// 移動パーティクルの位置をプレイヤーに設定
+	moveEmitter_->GetWorldTransform().SetParent(&worldTransform_);
+	// パーティクルを出さないようにする
+	moveEmitter_->SetEmitting(false);
 }
 
 void Player::Update() {
@@ -146,6 +155,9 @@ void Player::Update() {
 
 	// 3Dオブジェクトの更新
 	object->Update();
+
+	// エミッターの更新
+	moveEmitter_->Update();
 }
 
 void Player::Draw() {
@@ -442,6 +454,29 @@ void Player::MoveToReticle() {
 
 	// 速度を加算
 	velocity_ += moveVelocity;
+
+	float speed = Length(velocity_);
+
+	// 速度が0より大きいなら
+	if (speed > 0.0f) {
+		
+		float targetFrequency = baseFrequency_ / (speed * 5.0f);
+
+		// 0~0.5の範囲にクランプ
+		targetFrequency = std::clamp(targetFrequency, 0.0f, 0.5f);
+
+		// パーティクルの頻度を設定
+		moveEmitter_->SetFrequency(baseFrequency_);
+
+		// パーティクルを出す
+		moveEmitter_->SetEmitting(true);
+	}
+	// 速度が0未満なら
+	else {
+
+		// パーティクルを出さない
+		moveEmitter_->SetEmitting(false);
+	}
 }
 
 void Player::ClampPosition() {
@@ -675,6 +710,9 @@ void Player::ManualUpdate() {
 	if (invincibleTimer_ > 0.0f) {
 		invincibleTimer_ -= 1.0f;
 	}
+
+	// 移動パーティクルの発生フラグを立てる
+	moveEmitter_->SetEmitting(true);
 }
 
 void Player::DeadInitialize() {
@@ -692,6 +730,9 @@ void Player::DeadInitialize() {
 	isGroundHit_ = false;
 
 	isParticleEmitted_ = false;
+
+	// 移動パーティクルを停止
+	moveEmitter_->SetEmitting(false);
 
 	// エミッターの生成
 	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);

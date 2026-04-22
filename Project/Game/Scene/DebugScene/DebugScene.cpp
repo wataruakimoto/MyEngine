@@ -1,6 +1,7 @@
 #include "DebugScene.h"
 #include "SceneManager.h"
-#include "Object/Object3dRenderer.h"
+#include "Particle/ParticleRenderer.h"
+#include "Particle/ParticleManager.h"
 
 #include <imgui.h>
 
@@ -8,64 +9,61 @@ using namespace Engine;
 
 void DebugScene::Initialize() {
 
+	worldTransform.Initialize();
+
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->GetWorldTransform().SetRotate({ 0.39f,0.0f,0.0f });
-	camera->GetWorldTransform().SetTranslate({ 0.0f,5.0f,-10.0f });
+	camera->GetWorldTransform().SetParent(&worldTransform);
+	camera->GetWorldTransform().SetRotate({ 0.2f,0.0f,0.0f });
+	camera->GetWorldTransform().SetTranslate({ 0.0f,2.5f,-8.0f });
 
 	// シーンマネージャのインスタンス取得
 	sceneManager = SceneManager::GetInstance();
 
-	// ライトマネージャの初期化
-	lightManager_ = std::make_unique<Engine::LightManager>();
-	lightManager_->Initialize();
+	// パーティクルレンダラーのインスタンス取得
+	particleRenderer = ParticleRenderer::GetInstance();
 
-	// インスタンス取得
-	object3dRenderer_ = Object3dRenderer::GetInstance();
-	object3dRenderer_->SetDefaultCamera(camera.get());
+	// パーティクルマネージャのインスタンス取得
+	particleManager = ParticleManager::GetInstance();
+	// パーティクルマネージャにカメラをセット
+	particleManager->SetCamera(camera.get());
 
-	// モデルの生成
-	model_ = std::make_unique<Model>();
-	model_->Initialize("Sphere", "sphere.obj");
-
-	// オブジェクトの生成
-	object_ = std::make_unique<Object3d>();
-	object_->Initialize();
-	object_->SetModel(model_.get());
-
-	// モデルの生成
-	modelT_ = std::make_unique<Model>();
-	modelT_->Initialize("Terrain", "terrain.obj");
-
-	// オブジェクトの生成
-	objectT_ = std::make_unique<Object3d>();
-	objectT_->Initialize();
-	objectT_->SetModel(modelT_.get());
+	// パーティクルエミッターの生成
+	emitter_ = std::make_unique<ParticleEmitter>("PlayerMove", EmitterType::Interval, 1);
+	// パーティクルエミッターの初期化
+	emitter_->Initialize();
+	// パーティクルエミッターに位置をセット
+	emitter_->GetWorldTransform().SetParent(&worldTransform);
+	// 発生頻度をセット
+	emitter_->SetFrequency(0.1f);
 }
 
 void DebugScene::Update() {
 
+	// ワールド変換に位置を加算
+	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.1f });
+
+	// ワールド変換の更新
+	worldTransform.Update();
+
 	// カメラの更新
 	camera->Update();
 
-	// オブジェクトの更新
-	object_->Update();
+	// パーティクルマネージャの更新
+	particleManager->Update();
 
-	objectT_->Update();
+	// パーティクルエミッターの更新
+	emitter_->Update();
 }
 
 void DebugScene::DrawFiltered() {
 
-	/// === 3Dオブジェクトの描画準備 === ///
-	object3dRenderer_->SettingDrawingOpaque();
+	/// === パーティクル描画 === ///
+	particleRenderer->SettingDrawing();
 
-	lightManager_->Draw();
-
-	// オブジェクトの描画
-	object_->Draw();
-
-	objectT_->Draw();
+	// パーティクルマネージャの描画
+	particleManager->Draw();
 }
 
 void DebugScene::DrawUnfiltered() {
@@ -82,27 +80,11 @@ void DebugScene::ShowImGui() {
 
 	camera->ShowImGuiTree();
 
-	if (ImGui::TreeNode("モンボ")) {
-
-		object_->ShowImGui();
-
-		model_->ShowImGui();
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("地面")) {
-
-		objectT_->ShowImGui();
-
-		modelT_->ShowImGui();
-
-		ImGui::TreePop();
-	}
+	worldTransform.ShowImGui();
 
 	ImGui::End();
 
-	lightManager_->ShowImGui();
+	emitter_->ShowImGui();
 
 #endif // USE_IMGUI
 }
