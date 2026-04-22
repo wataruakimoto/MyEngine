@@ -40,6 +40,7 @@ void EnemyBullet::Initialize() {
 	// エミッターの生成
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletRed", EmitterType::OneShot, 20);
 	particleEmitter->Initialize();
+	particleEmitter->GetWorldTransform().SetParent(&worldTransform_);
 };
 
 void EnemyBullet::Update() {
@@ -101,9 +102,6 @@ void EnemyBullet::OnCollision(Collider* other) {
 	// 衝突相手が自機の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)) {
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -112,9 +110,6 @@ void EnemyBullet::OnCollision(Collider* other) {
 	// 衝突相手が自機の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -122,9 +117,6 @@ void EnemyBullet::OnCollision(Collider* other) {
 	}
 	// 衝突相手が障害物の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
-
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
 
 		// パーティクル発生
 		particleEmitter->Emit();

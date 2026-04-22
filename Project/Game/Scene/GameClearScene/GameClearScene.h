@@ -8,6 +8,7 @@
 #include "Player/Player.h"
 #include "Light/LightManager.h"
 #include "Sprite/Sprite.h"
+#include "Particle/ParticleManager.h"
 
 #include <memory>
 #include <optional>
@@ -24,6 +25,7 @@ namespace Engine {
 	class SceneManager;
 	class Input;
 	class SpriteRenderer;
+	class ParticleRenderer;
 }
 
 /// ===== ゲームクリアシーン ===== ///
@@ -147,4 +149,11 @@ private:
 
 	// スプライトレンダラーのインスタンス
 	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
+
+	// パーティクルマネージャのインスタンス
+	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
+
+	// パーティクルレンダラーのインスタンス
+	Engine::ParticleRenderer* particleRenderer_ = nullptr;
+
 };

@@ -60,6 +60,11 @@ void Enemy::Initialize() {
 	// エミッタ生成
 	particleEmitterBlack = std::make_unique<ParticleEmitter>("EnemyDeathBlack", EmitterType::OneShot, 40);
 	particleEmitterWhite = std::make_unique<ParticleEmitter>("EnemyDeathWhite", EmitterType::OneShot, 10);
+	// エミッタの初期化
+	particleEmitterBlack->Initialize();
+	particleEmitterWhite->Initialize();
+	particleEmitterBlack->GetWorldTransform().SetParent(&worldTransform_);
+	particleEmitterWhite->GetWorldTransform().SetParent(&worldTransform_);
 }
 
 void Enemy::Update() {
@@ -137,6 +142,10 @@ void Enemy::Update() {
 
 	// 3Dオブジェクトの更新
 	object->Update();
+
+	// エミッターの更新
+	particleEmitterBlack->Update();
+	particleEmitterWhite->Update();
 }
 
 void Enemy::Draw() {
@@ -173,10 +182,6 @@ void Enemy::OnCollision(Collider* other) {
 
 	// 衝突相手が弾の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
-
-		// エミッターの位置を設定
-		particleEmitterBlack->SetTranslate(worldTransform_.GetWorldPosition());
-		particleEmitterWhite->SetTranslate(worldTransform_.GetWorldPosition());
 
 		// パーティクル発生
 		particleEmitterWhite->Emit();

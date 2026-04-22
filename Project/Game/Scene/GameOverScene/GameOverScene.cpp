@@ -10,6 +10,7 @@
 #include "Transition/FadeTransition.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "Sprite/SpriteRenderer.h"
+#include "Particle/ParticleRenderer.h"
 
 using namespace Engine;
 
@@ -22,6 +23,7 @@ void GameOverScene::Initialize() {
 	sceneManager_ = SceneManager::GetInstance();
 	transitionManager = TransitionManager::GetInstance();
 	spriteRenderer_ = SpriteRenderer::GetInstance();
+	particleRenderer_ = ParticleRenderer::GetInstance();
 
 	// ライトマネージャの初期化
 	lightManager_ = std::make_unique<Engine::LightManager>();
@@ -44,6 +46,7 @@ void GameOverScene::Initialize() {
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
 	filterManager_->SetCamera(camera_.get());
+	particleManager_->SetCamera(camera_.get());
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
@@ -175,6 +178,9 @@ void GameOverScene::Update() {
 
 	// ガイドスプライトの更新
 	guide_->Update();
+
+	// パーティクルマネージャの更新
+	particleManager_->Update();
 }
 
 void GameOverScene::DrawFiltered() {
@@ -193,6 +199,12 @@ void GameOverScene::DrawFiltered() {
 
 	// プレイヤーの描画
 	player_->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	particleRenderer_->SettingDrawing();
+
+	// パーティクルシステムの描画
+	particleManager_->Draw();
 }
 
 void GameOverScene::DrawUnfiltered() {

@@ -14,6 +14,7 @@
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
 #include "Light/LightManager.h"
+#include "Particle/ParticleManager.h"
 
 #include <memory>
 #include <optional>
@@ -24,6 +25,7 @@ namespace Engine {
 	class Object3dRenderer;
     class RadialBlurFilter;
     class TransitionManager;
+    class ParticleRenderer;
 }
 
 // タイトルの流れの状態
@@ -197,4 +199,10 @@ private:
 
     // ライトマネージャのポインタ
     std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+
+    // パーティクルマネージャのインスタンス
+    Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
+
+    // パーティクルレンダラーのインスタンス
+    Engine::ParticleRenderer* particleRenderer_ = nullptr;
 };
