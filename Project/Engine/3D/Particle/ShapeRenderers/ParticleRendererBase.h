@@ -70,6 +70,8 @@ namespace Engine {
 		///-------------------------------------------///
 	protected:
 
+		/// ========== シングルトン ========== ///
+
 		// DirectXUtilityのインスタンス
 		DirectXUtility* dxUtility = nullptr;
 
@@ -78,6 +80,8 @@ namespace Engine {
 
 		// TextureManagerのインスタンス
 		TextureManager* textureManager = nullptr;
+
+		/// ==========  ========== ///
 
 		// 頂点リソース
 		Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;

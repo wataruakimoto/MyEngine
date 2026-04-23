@@ -42,8 +42,9 @@ namespace Engine {
 	struct ParticleSetting {
 
 		std::string effectName = ""; // エフェクト名
-		std::string textureFileName = ""; // テクスチャファイル名
-		std::string textureFullPath = ""; // テクスチャのフルパス
+		std::string textureName = ""; // テクスチャ名
+		std::string modelName = ""; // モデル名
+
 		ParticleShape shape = ParticleShape::PLANE; // パーティクルの形状
 
 		bool useBillboard = true; // ビルボードを使うかどうか
@@ -109,9 +110,10 @@ namespace Engine {
 	};
 
 	// JSON用のシリアライズ・デシリアライズ定義
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParticleSetting,
-		effectName, textureFileName,
-		textureFullPath, shape,
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(
+		ParticleSetting,
+		effectName, textureName, modelName,
+		shape,
 		useBillboard, useGravity,
 		scaleRandom, scaleRange, scale,
 		rotateRandom, rotateRange, rotate,

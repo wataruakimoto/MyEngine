@@ -20,6 +20,7 @@ namespace Engine {
 	class DirectXUtility;
 	class SrvManager;
 	class Camera;
+	class ModelManager;
 
 	/// ===== パ＝ティクルマネージャー ===== ///
 	class ParticleManager {
@@ -184,6 +185,9 @@ namespace Engine {
 		// カメラの借りポインタ
 		Camera* camera = nullptr;
 
+		// モデルマネージャのインスタンス
+		ModelManager* modelManager_ = nullptr;
+
 		// 設定のコンテナ エフェクト名、設定
 		std::unordered_map<std::string, ParticleSetting> settings;
 
@@ -217,10 +221,13 @@ namespace Engine {
 		std::unique_ptr<MeshRenderer> meshRenderer = nullptr;
 
 		// Jsonデータを入れておくフォルダパス
-		const std::string DataFolderPath = "Resources/Datas/Particles/";
+		const std::string kDataFolderPath = "Resources/Datas/Particles/";
 
 		// 画像データを入れておくフォルダパス
-		const std::string TextureFolderPath = "Resources/Textures/Particles/";
+		const std::string kTextureFolderPath = "Resources/Textures/";
+
+		// モデルデータを入れておくパス
+		const std::string kModelFolderPath = "Resources/Models/";
 
 		// エディタで選択中のエフェクト名
 		std::string currentEditName = "";

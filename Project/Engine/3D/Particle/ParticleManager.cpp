@@ -3,6 +3,7 @@
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Camera.h"
+#include "Model/ModelManager.h"
 #include "MathVector.h"
 #include "MathMatrix.h"
 
@@ -27,6 +28,9 @@ void ParticleManager::Initialize() {
 
 	// SRVマネージャーのインスタンスを取得
 	srvManager = SrvManager::GetInstance();
+
+	// モデルマネージャのインスタンスを取得
+	modelManager_ = ModelManager::GetInstance();
 
 	// 板ポリのレンダラーを作成
 	planeRenderer = std::make_unique<PlaneRenderer>();
@@ -270,20 +274,14 @@ void ParticleManager::ShowImGui() {
 
 void ParticleManager::AddSetting(ParticleSetting& setting) {
 
-	// フルパスを作成
-	setting.textureFullPath = TextureFolderPath + setting.textureFileName;
-
-	// テクスチャを読み込み
-	textureManager->LoadTexture(setting.textureFullPath);
-
 	// 設定を追加
 	settings[setting.effectName] = setting;
 }
 
 void ParticleManager::AddInstance(const ParticleInstance& instance) {
 
-	// フルパスを取得
-	std::string key = instance.setting->textureFullPath;
+	// エフェクト名を取得
+	std::string key = instance.setting->effectName;
 
 	// 形状で分岐
 	switch (instance.setting->shape) {
@@ -491,12 +489,12 @@ void ParticleManager::UpdateGroups(std::unordered_map<std::string, ParticleGroup
 void ParticleManager::LoadParticleSettingsFromJSON() {
 
 	// ディレクトリ内の全jsonを走査して読み込む
-	if (!std::filesystem::exists(DataFolderPath)) {
-		std::filesystem::create_directories(DataFolderPath);
+	if (!std::filesystem::exists(kDataFolderPath)) {
+		std::filesystem::create_directories(kDataFolderPath);
 		return; // まだフォルダがない
 	}
 
-	for (const auto& entry : std::filesystem::directory_iterator(DataFolderPath)) {
+	for (const auto& entry : std::filesystem::directory_iterator(kDataFolderPath)) {
 		if (entry.path().extension() == ".json") {
 			LoadSettingsFromJSON(entry.path().string());
 		}
@@ -541,8 +539,7 @@ void ParticleManager::ShowEffectList() {
 			// デフォルト設定で作成
 			ParticleSetting newSetting;
 			newSetting.effectName = newName;
-			newSetting.textureFileName = "white.png"; // 仮
-			newSetting.textureFullPath = TextureFolderPath + "white.png";
+			newSetting.textureName = "white.png"; // 仮
 			newSetting.shape = ParticleShape::PLANE;
 
 			settings[newName] = newSetting;
@@ -605,10 +602,6 @@ void ParticleManager::ShowParameters() {
 
 	if (ImGui::Button("Apply Changes")) {
 
-		// テクスチャのロードもここで行う
-		p.textureFullPath = TextureFolderPath + p.textureFileName;
-		textureManager->LoadTexture(p.textureFullPath);
-
 		// マップに書き戻す
 		settings[currentEditName] = p;
 	}
@@ -648,12 +641,6 @@ void ParticleManager::ShowParameters() {
 
 		// ★一時的にtempSettingを正式にsettingsに登録する
 		std::string tempKey = "TEMP_PREVIEW_" + p.effectName;
-
-		// テクスチャのフルパスを確実に設定
-		p.textureFullPath = TextureFolderPath + p.textureFileName;
-
-		// テクスチャを読み込む
-		textureManager->LoadTexture(p.textureFullPath);
 
 		// 一時的に設定を登録
 		ParticleSetting tempSettingCopy = p;
@@ -696,18 +683,11 @@ void ParticleManager::ShowParameters() {
 
 			// テクスチャ名の入力
 			char texBuff[128];
-			strcpy_s(texBuff, p.textureFileName.c_str());
+			strcpy_s(texBuff, p.textureName.c_str());
 
 			// 1. 入力欄を表示 (ここでは文字列の更新だけ行う)
 			if (ImGui::InputText("Texture", texBuff, sizeof(texBuff))) {
-				p.textureFileName = texBuff;
-			}
-
-			// 2. ★重要: 「編集が確定した後（Enterやフォーカス外れ）」にロードを実行
-			if (ImGui::IsItemDeactivatedAfterEdit()) {
-
-				// ここで初めて重いロード処理を呼ぶ
-				textureManager->LoadTexture(p.textureFullPath);
+				p.textureName = texBuff;
 			}
 
 			// フラグ系
@@ -809,13 +789,13 @@ void ParticleManager::SaveSettingsToJSON(const std::string& effectName) {
 	}
 
 	// ディレクトリ確認
-	if (!std::filesystem::exists(DataFolderPath)) {
-		std::filesystem::create_directories(DataFolderPath);
+	if (!std::filesystem::exists(kDataFolderPath)) {
+		std::filesystem::create_directories(kDataFolderPath);
 	}
 
 	// JSONに変換して保存
 	json j = settings[effectName];
-	std::string path = DataFolderPath + effectName + ".json";
+	std::string path = kDataFolderPath + effectName + ".json";
 
 	std::ofstream o(path);
 	o << std::setw(4) << j << std::endl;
@@ -833,11 +813,17 @@ void ParticleManager::LoadSettingsFromJSON(const std::string& filePath) {
 	ParticleSetting setting;
 	setting = j; // JSON -> 構造体へ変換
 
-	// フルパスの作成
-	setting.textureFullPath = TextureFolderPath + setting.textureFileName;
+	// テクスチャのフルパスの作成
+	std::string textureFullPath = kTextureFolderPath + setting.textureName;
 
 	// テクスチャの読み込み
-	textureManager->LoadTexture(setting.textureFullPath);
+	textureManager->LoadTexture(textureFullPath);
+
+	// モデルのフルパスを作成
+	std::string modelFullPath = kModelFolderPath + setting.modelName;
+
+	// モデルの読み込み
+	modelManager_->LoadModelData(modelFullPath);
 
 	// マップに登録
 	settings[setting.effectName] = setting;
