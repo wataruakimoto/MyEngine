@@ -16,12 +16,13 @@ namespace Engine {
 
 	// パーティクルの形状
 	enum class ParticleShape {
-		PLANE,
-		RING,
-		CYLINDER,
-		CUBE,
-		SPHERE,
-		SHARD,
+		PLANE,	  // 板ポリ
+		RING,	  // リング
+		CYLINDER, // シリンダー
+		CUBE,	  // キューブ
+		SPHERE,	  // 球
+		SHARD,	  // シャード
+		MESH,	  // メッシュ
 	};
 
 	// マテリアルデータ
@@ -136,5 +137,6 @@ namespace Engine {
 			{ParticleShape::CUBE, "CUBE"},
 			{ParticleShape::SPHERE, "SPHERE"},
 			{ParticleShape::SHARD, "SHARD"},
+			{ParticleShape::MESH, "MESH"},
 			})
 }

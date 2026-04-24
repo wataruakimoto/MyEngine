@@ -16,9 +16,9 @@ namespace Engine {
 	/// ===== パーティクルエミッター ===== ///
 	class ParticleEmitter {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -48,9 +48,25 @@ namespace Engine {
 		/// </summary>
 		void Emit();
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
+
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// ワールド変換のゲッター
+		/// </summary>
+		/// <returns></returns>
+		Engine::WorldTransform& GetWorldTransform() { return worldTransform; }
+
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -65,9 +81,21 @@ namespace Engine {
 		/// <param name="frequency"></param>
 		void SetFrequency(float frequency) { this->frequency = frequency; }
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+		/// <summary>
+		/// 1回あたりの発生数のセッター
+		/// </summary>
+		/// <param name="count"></param>
+		void SetCount(uint32_t count) { this->count = count; }
+
+		/// <summary>
+		/// 発生フラグのセッター
+		/// </summary>
+		/// <param name="isEmitting"></param>
+		void SetEmitting(bool isEmitting) { this->isEmitting = isEmitting; }
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// エフェクト名
@@ -90,5 +118,8 @@ namespace Engine {
 
 		// ワールド変換情報
 		WorldTransform worldTransform;
+
+		// 発生フラグ
+		bool isEmitting = true;
 	};
 }

@@ -85,6 +85,9 @@ void IntroState::Update() {
 	}
 
 	ShowUI();
+
+	// パーティクルマネージャの更新
+	ParticleManager::GetInstance()->Update();
 }
 
 void IntroState::Deceleration() {
@@ -457,6 +460,9 @@ void EndingState::Update() {
 		// フェードインの更新
 		FadeIn();
 	}
+
+	// パーティクルマネージャの更新
+	ParticleManager::GetInstance()->Update();
 }
 
 void EndingState::ShowUI() {

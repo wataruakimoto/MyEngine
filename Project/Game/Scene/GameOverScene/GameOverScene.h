@@ -8,6 +8,7 @@
 #include "Player/Player.h"
 #include "Sprite/Sprite.h"
 #include "Light/LightManager.h"
+#include "Particle/ParticleManager.h"
 
 #include <memory>
 #include <optional>
@@ -26,6 +27,7 @@ namespace Engine {
 	class RadialBlurFilter;
 
 	class SpriteRenderer;
+	class ParticleRenderer;
 }
 
 /// ===== ゲームオーバーシーン ===== ///
@@ -170,4 +172,10 @@ private:
 
 	// ライトマネージャのポインタ
 	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+
+	// パーティクルマネージャのインスタンス
+	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
+
+	// パーティクルレンダラーのインスタンス
+	Engine::ParticleRenderer* particleRenderer_ = nullptr;
 };

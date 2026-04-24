@@ -290,6 +290,7 @@
     <ClCompile Include="Game\Level\LevelLoader.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
     <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -592,6 +593,7 @@
     <ClInclude Include="Engine\Math\Capsule.h" />
     <ClInclude Include="Engine\Math\Ellipsoid.h" />
     <ClInclude Include="Engine\3D\Light\LightManager.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

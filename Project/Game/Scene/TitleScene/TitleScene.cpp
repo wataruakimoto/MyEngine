@@ -6,6 +6,7 @@
 #include "Object/Object3dRenderer.h"
 #include "TransitionManager.h"
 #include "Transition/FadeTransition.h"
+#include "Particle/ParticleRenderer.h"
 
 #include <imgui.h>
 
@@ -17,6 +18,7 @@ void TitleScene::Initialize() {
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 	object3dRenderer_ = Object3dRenderer::GetInstance();
 	transitionManager_ = TransitionManager::GetInstance();
+	particleRenderer_ = ParticleRenderer::GetInstance();
 
 	// ライトマネージャの初期化
 	lightManager_ = std::make_unique<Engine::LightManager>();
@@ -34,6 +36,7 @@ void TitleScene::Initialize() {
 
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
+	particleManager_->SetCamera(camera_.get());
 
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
@@ -201,6 +204,9 @@ void TitleScene::Update() {
 
 	// 黒画面UIの更新
 	blackScreen_->Update();
+
+	// パーティクルマネージャの更新
+	particleManager_->Update();
 }
 
 void TitleScene::DrawFiltered() {
@@ -219,6 +225,12 @@ void TitleScene::DrawFiltered() {
 
 	// プレイヤー描画
 	player_->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	particleRenderer_->SettingDrawing();
+
+	// パーティクルシステムの描画
+	particleManager_->Draw();
 }
 
 void TitleScene::DrawUnfiltered() {

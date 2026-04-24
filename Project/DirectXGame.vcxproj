@@ -206,6 +206,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Scene\TransitionManager.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Math\AABB.h" />
@@ -324,6 +325,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Level\LevelLoader.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
     <ClInclude Include="Engine\3D\Light\LightManager.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

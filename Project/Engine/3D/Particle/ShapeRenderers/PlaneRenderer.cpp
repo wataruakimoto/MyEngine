@@ -49,7 +49,7 @@ void PlaneRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, cons
 	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
 
 	// 描画(DrawCall)
-	dxUtility->GetCommandList()->DrawIndexedInstanced(36, instanceCount, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(6, instanceCount, 0, 0, 0);
 }
 
 void PlaneRenderer::GenerateVertexData() {

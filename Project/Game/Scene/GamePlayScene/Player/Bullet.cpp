@@ -44,6 +44,7 @@ void Bullet::Initialize() {
 	// エミッターの生成・初期化
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", EmitterType::OneShot, 20);
 	particleEmitter->Initialize();
+	particleEmitter->GetWorldTransform().SetParent(&worldTransform_);
 };
 
 void Bullet::Update() {
@@ -105,9 +106,6 @@ void Bullet::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetTranslate());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -122,9 +120,6 @@ void Bullet::OnCollision(Collider* other) {
 			return;
 		}
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -132,9 +127,6 @@ void Bullet::OnCollision(Collider* other) {
 	}
 	// 衝突相手が障害物の場合
 	else if(typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
-
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
 
 		// パーティクル発生
 		particleEmitter->Emit();
