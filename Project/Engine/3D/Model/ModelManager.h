@@ -91,7 +91,7 @@ namespace Engine {
 		///-------------------------------------------///
 	private:
 
-		// モデルデータのマップコンテナ キー : ディレクトリ + ファイル名
+		// モデルデータのマップコンテナ キー : フルパス
 		std::map<std::string, std::unique_ptr<ModelData>> modelDatas;
 
 		// ベースのディレクトリパス
