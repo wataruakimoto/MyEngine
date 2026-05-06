@@ -42,8 +42,8 @@ namespace Engine {
 		/// </summary>
 		/// <param name="instanceCount">インスタンス数</param>
 		/// <param name="instanceSrvIndex">インスタンス用SRVインデックス</param>
-		/// <param name="texturePath">テクスチャパス</param>
-		virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) = 0;
+		/// <param name="textureFullPath">テクスチャのフルパス</param>
+		virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) = 0;
 
 		///-------------------------------------------/// 
 		/// クラス内関数

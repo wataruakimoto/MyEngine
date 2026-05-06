@@ -3,6 +3,7 @@
 #include "Texture/TextureManager.h"
 #include "MathMatrix.h"
 #include "Camera.h"
+#include "SrvManager.h"
 
 #include <imgui.h>
 
@@ -15,7 +16,7 @@ void Skybox::Initialize(const std::string relativePath) {
 	std::string fullPath = TextureManager::GetInstance()->GetBaseDirectoryPath() + "/" + relativePath;
 
 	// TextureManagerからSRVインデックスを取得
-	textureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(fullPath);
+	textureSrvIndex = TextureManager::GetInstance()->GetSRVIndexFullPath(fullPath);
 
 	// ワールド変換の初期化
 	worldTransform.Initialize();
@@ -62,7 +63,7 @@ void Skybox::Draw() {
 	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの場所を設定
-	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureSrvIndex));
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, SrvManager::GetInstance()->GetGPUDescriptorHandle(textureSrvIndex));
 
 	// 描画(DrawCall)
 	dxUtility_->GetCommandList()->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);

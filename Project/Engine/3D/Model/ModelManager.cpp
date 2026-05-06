@@ -11,16 +11,6 @@
 using namespace Engine;
 using namespace Logger;
 
-ModelManager* ModelManager::instance = nullptr;
-
-ModelManager* ModelManager::GetInstance() {
-
-	if (instance == nullptr) {
-		instance = new ModelManager;
-	}
-	return instance;
-}
-
 void ModelManager::Initialize() {}
 
 void ModelManager::Finalize() {
@@ -29,16 +19,64 @@ void ModelManager::Finalize() {
 	instance = nullptr;
 }
 
-void ModelManager::LoadModelData(const std::string& directoryName, const std::string& fileName) {
+Node ModelManager::ReadNode(aiNode* node) {
 
-	// マップコンテナに登録するためのキーを作成
-	std::string key = directoryName + "/" + fileName; // キー
+	Node result;
 
-	// 読み込み済みなら早期return
-	if (modelDatas.contains(key)) return;
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation; // nodeのlocalMatrixを取得
+	aiLocalMatrix.Transpose(); // 列ベクトル形式を行ベクトル形式に転置
+
+	for (uint32_t i = 0; i < 4; ++i) {
+		for (uint32_t j = 0; j < 4; ++j) {
+			result.localMatrix.m[i][j] = aiLocalMatrix[j][i];
+		}
+	}
+
+	result.name = node->mName.C_Str(); // Node名を格納
+	result.children.resize(node->mNumChildren); // 子ノードの数だけ確保
+
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+
+		// 再帰的に読んで階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
+}
+
+void ModelManager::LoadModel(const std::string& relativePath) {
 
 	// モデルのファイルまでのフルパスを作成
-	std::string fullPath = baseDirectoryPath + "/" + directoryName + "/" + fileName; // フルパス
+	std::string fullPath = baseDirectoryPath + "/" + relativePath; // フルパス
+
+	// フルパスを指定してモデルを読み込む
+	LoadModelBase(fullPath);
+}
+
+void ModelManager::LoadModelFullPath(const std::string& fullPath) {
+
+	// フルパスを指定してモデルを読み込む
+	LoadModelBase(fullPath);
+}
+
+ModelData* ModelManager::FindModel(const std::string& fileName) {
+
+	// モデルのファイルまでのフルパスを作成
+	std::string fullPath = baseDirectoryPath + "/" + fileName; // フルパス
+
+	// フルパスを指定してモデルデータを検索
+	return FindModelBase(fullPath);
+}
+
+ModelData* ModelManager::FindModelFullPath(const std::string& fullPath) {
+	
+	return FindModelBase(fullPath);
+}
+
+void ModelManager::LoadModelBase(const std::string& fullPath) {
+
+	// 読み込み済みなら早期return
+	if (modelDatas.contains(fullPath)) return;
 
 	// ファイルが存在するか確認
 	std::ifstream file(fullPath);
@@ -102,13 +140,13 @@ void ModelManager::LoadModelData(const std::string& directoryName, const std::st
 			std::string textureFileName = textureFilePath.C_Str();
 
 			// ファイル名だけを抽出
-			std::string filename = std::filesystem::path(textureFileName).filename().string();
+			std::string fileName = std::filesystem::path(textureFileName).filename().string();
 
 			// テクスチャファイルを探索
-			std::string foundTextureFilePath = FindTextureFilePath(directoryName, filename);
+			std::string foundTextureFilePath = FindTextureFilePath(fullPath, fileName);
 
 			// テクスチャ読み込み
-			TextureManager::GetInstance()->LoadTexture(foundTextureFilePath);
+			TextureManager::GetInstance()->LoadTextureFullPath(foundTextureFilePath);
 
 			// 見つかったテクスチャファイルパスをモデルデータに格納
 			modelData->material.textureFilePath = foundTextureFilePath;
@@ -118,73 +156,65 @@ void ModelManager::LoadModelData(const std::string& directoryName, const std::st
 	modelData->rootNode = ReadNode(scene->mRootNode);
 
 	// モデルデータをmapコンテナに格納する
-	modelDatas.insert(std::make_pair(key, std::move(modelData)));
+	modelDatas.insert(std::make_pair(fullPath, std::move(modelData)));
 }
 
-ModelData* ModelManager::FindModelData(const std::string& directoryName, const std::string& fileName) {
+std::string ModelManager::FindTextureFilePath(const std::string& modelFullPath, const std::string& filename) {
 
-	// マップコンテナから検索するためのキーを作成
-	std::string key = directoryName + "/" + fileName; // キー
+	// TextureManagerのベースディレクトリパスを取得 (Resources/Textures)
+	std::string textureBaseDirectoryPath = TextureManager::GetInstance()->GetBaseDirectoryPath();
+
+	// モデルの親ディレクトリパスを取得 (Resources/Models/ディレクトリ名)
+	std::filesystem::path modelDirectoryPath = std::filesystem::path(modelFullPath).parent_path();
+
+	// パターン１： Resources/Textures/ディレクトリ名/ファイル名
+	std::filesystem::path relativeDirectory = std::filesystem::relative(modelDirectoryPath, baseDirectoryPath);
+	std::filesystem::path path1 = std::filesystem::path(textureBaseDirectoryPath) / relativeDirectory / filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path1)) return path1.generic_string();
+
+	// パターン２： Resources/Textures/ファイル名
+	std::filesystem::path path2 = std::filesystem::path(textureBaseDirectoryPath) / filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path2)) return path2.generic_string();
+
+	// パターン3 : Resources/Models/ディレクトリ名/ファイル名
+	std::filesystem::path path3 = modelDirectoryPath / filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path3)) return path3.generic_string();
+
+	// どのパターンでも見つからなかったらログ出す
+	Log("ModelManager::FindTextureFilePath: Texture file not found for " + filename + "\n");
+
+	// 空文字を返す
+	return "";
+}
+
+ModelData* ModelManager::FindModelBase(const std::string& fullPath) {
 	
-	// 読み込み済みモデルを検索
-	if (modelDatas.contains(key)) {
+	// マップコンテナからフルパスをキーに検索
+	if (modelDatas.contains(fullPath)) {
 
 		// 一致したらモデルデータを返す
-		return modelDatas.at(key).get();
+		return modelDatas.at(fullPath).get();
 	}
 
-	// キーと一致するモデルデータが見つからなかったらログ出してnullptrを返す
-	Log("ModelManager::FindModelData: Model data not found for " + key + "\n");
+	// キーと一致するモデルデータが見つからないのでログ出す
+	Log("ModelManager::FindModelData: Model data not found for " + fullPath + "\n");
+
+	// nullptrを返す
 	return nullptr;
 }
 
-Node ModelManager::ReadNode(aiNode* node) {
+ModelManager* ModelManager::instance = nullptr;
 
-	Node result;
+ModelManager* ModelManager::GetInstance() {
 
-	aiMatrix4x4 aiLocalMatrix = node->mTransformation; // nodeのlocalMatrixを取得
-	aiLocalMatrix.Transpose(); // 列ベクトル形式を行ベクトル形式に転置
-
-	for (uint32_t i = 0; i < 4; ++i) {
-		for (uint32_t j = 0; j < 4; ++j) {
-			result.localMatrix.m[i][j] = aiLocalMatrix[j][i];
-		}
+	if (instance == nullptr) {
+		instance = new ModelManager;
 	}
-
-	result.name = node->mName.C_Str(); // Node名を格納
-	result.children.resize(node->mNumChildren); // 子ノードの数だけ確保
-
-	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
-
-		// 再帰的に読んで階層構造を作っていく
-		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
-	}
-
-	return result;
-}
-
-std::string ModelManager::FindTextureFilePath(const std::string& directoryName, const std::string& filename) {
-
-	// TextureManagerのベースディレクトリパスを取得
-	std::string textureBaseDirectoryPath = TextureManager::GetInstance()->GetBaseDirectoryPath();
-
-	// パターン１： Textures/ディレクトリ名/ファイル名
-	std::string path1 = textureBaseDirectoryPath + "/" + directoryName + "/" + filename;
-
-	// ファイルが存在したらパスを返す
-	if (std::filesystem::exists(path1)) return path1;
-
-	// パターン２： Textures/ファイル名
-	std::string path2 = textureBaseDirectoryPath + "/" + filename;
-
-	// ファイルが存在したらパスを返す
-	if (std::filesystem::exists(path2)) return path2;
-
-	// パターン3 : Models/ディレクトリ名/ファイル名
-	std::string path3 = baseDirectoryPath + "/" + directoryName + "/" + filename;
-
-	// ファイルが存在したらパスを返す
-	if (std::filesystem::exists(path3)) return path3;
-
-	return textureBaseDirectoryPath + "/" + "White.png"; // 見つからなかったら
+	return instance;
 }

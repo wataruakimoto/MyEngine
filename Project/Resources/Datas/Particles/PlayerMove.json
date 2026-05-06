@@ -45,6 +45,8 @@
         "max": 0.0,
         "min": 0.0
     },
+    "modelFileName": "player.obj",
+    "modelFullPath": "Resources/Models/Particles/player.obj",
     "rotate": {
         "x": 0.0,
         "y": 0.0,

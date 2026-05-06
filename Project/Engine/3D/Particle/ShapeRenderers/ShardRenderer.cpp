@@ -31,7 +31,7 @@ void ShardRenderer::Initialize() {
 void ShardRenderer::Update() {
 }
 
-void ShardRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
+void ShardRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -46,7 +46,7 @@ void ShardRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, cons
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(textureFullPath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawIndexedInstanced(12, instanceCount, 0, 0, 0);

@@ -13,8 +13,13 @@ void Model::Initialize(const std::string& directoryName, const std::string& file
 	// DXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
+	// モデルのファイルまでのフルパスを作成
+	const std::string baseDirectoryPath = ModelManager::GetInstance()->GetBaseDirectoryPath();
+
+	std::string fullPath = baseDirectoryPath + "/" + directoryName + "/" + fileName;
+	
 	// モデルデータを検索
-	modelData = ModelManager::GetInstance()->FindModelData(directoryName, fileName);
+	modelData = ModelManager::GetInstance()->FindModelFullPath(fullPath);
 
 	// 頂点データ初期化
 	InitializeVertexData();
@@ -23,7 +28,7 @@ void Model::Initialize(const std::string& directoryName, const std::string& file
 	InitializeMaterialData();
 
 	// 読み込んだテクスチャの番号を取得し、メンバ変数に書き込む
-	modelData->material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData->material.textureFilePath);
+	modelData->material.textureIndex = TextureManager::GetInstance()->GetSRVIndexFullPath(modelData->material.textureFilePath);
 }
 
 void Model::Draw() {
@@ -35,10 +40,10 @@ void Model::Draw() {
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableを設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSRVGPUHandleFullPath(modelData->material.textureFilePath));
 
 	// SRVのDescriptorTableを設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(8, TextureManager::GetInstance()->GetSRVGPUHandle(environmentMapFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(8, TextureManager::GetInstance()->GetSRVGPUHandleFullPath(environmentMapFilePath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), 1, 0, 0);

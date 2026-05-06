@@ -112,16 +112,6 @@ namespace Engine {
 		void LoadParticleSettingsFromJSON();
 
 		/// <summary>
-		/// エフェクトのリストを表示
-		/// </summary>
-		void ShowEffectList();
-
-		/// <summary>
-		/// パラメータを表示
-		/// </summary>
-		void ShowParameters();
-
-		/// <summary>
 		/// 設定をJSONに保存
 		/// </summary>
 		/// <param name="effectName">エフェクト名</param>
@@ -222,12 +212,6 @@ namespace Engine {
 
 		// Jsonデータを入れておくフォルダパス
 		const std::string kDataFolderPath = "Resources/Datas/Particles/";
-
-		// 画像データを入れておくフォルダパス
-		const std::string kTextureFolderPath = "Resources/Textures/";
-
-		// モデルデータを入れておくパス
-		const std::string kModelFolderPath = "Resources/Models/";
 
 		// エディタで選択中のエフェクト名
 		std::string currentEditName = "";

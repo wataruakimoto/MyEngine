@@ -23,7 +23,7 @@ void MeshRenderer::Initialize() {
 	modelManager = ModelManager::GetInstance();
 
 	// モデルデータをマネージャから検索して取得
-	modelData = modelManager->FindModelData("Player", "player.obj");
+	modelData = modelManager->FindModel("Player/player.obj");
 
 	// 頂点データ生成
 	GenerateVertexData();
@@ -35,7 +35,7 @@ void MeshRenderer::Initialize() {
 void MeshRenderer::Update() {
 }
 
-void MeshRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
+void MeshRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -47,7 +47,7 @@ void MeshRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(modelData->material.textureFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(modelData->material.textureFilePath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), instanceCount, 0, 0);
@@ -57,23 +57,23 @@ void MeshRenderer::GenerateVertexData() {
 
 	/// === VertexResourceを作る === ///
 	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * modelData->vertices.size());
-
+	
 	/// === VBVを作成する(値を設定するだけ) === ///
-
+	
 	// リソースの先頭アドレスから使う
 	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
-
+	
 	// 使用するリソースのサイズ 頂点のサイズ
 	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData->vertices.size());
-
+	
 	// 1頂点あたりのサイズ
 	vertexBufferView.StrideInBytes = sizeof(VertexData);
-
+	
 	// === VertexResourceにデータを書き込むためのアドレスを取得してVertexDataに割り当てる === ///
 	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
-
+	
 	/// === VertexResourceに初期値を書き込む === ///
-
+	
 	// 頂点データをモデルデータの頂点データで上書き
 	std::memcpy(vertexData, modelData->vertices.data(), sizeof(VertexData) * modelData->vertices.size());
 }

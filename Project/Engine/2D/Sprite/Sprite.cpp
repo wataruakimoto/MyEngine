@@ -2,6 +2,7 @@
 #include "MathMatrix.h"
 #include "WinApp.h"
 #include "DirectXUtility.h"
+#include "SrvManager.h"
 #include "Texture/TextureManager.h"
 
 #include <imgui.h>
@@ -13,6 +14,9 @@ void Sprite::Initialize(const std::string relativePath) {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
+
+	// SrvManagerのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
 
 	// TextureManagerのインスタンスを取得
 	textureManager = TextureManager::GetInstance();
@@ -116,7 +120,7 @@ void Sprite::Draw() {
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	/// === SRVのDescriptorTableの先頭を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(textureSrvIndex));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager->GetGPUDescriptorHandle(textureSrvIndex));
 
 	/// === 描画(DrawCall) === ///
 	dxUtility->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -151,10 +155,10 @@ void Sprite::ShowImGui(const char* name) {
 void Sprite::SetTexture(const std::string fullPath) {
 
 	// TextureManagerからSRVインデックスを取得
-	textureSrvIndex = textureManager->GetTextureIndexByFilePath(fullPath);
+	textureSrvIndex = textureManager->GetSRVIndexFullPath(fullPath);
 
 	// TextureManagerから画像のメタデータ取得
-	metadata = textureManager->GetMetadata(fullPath);
+	metadata = textureManager->GetMetadataFullPath(fullPath);
 }
 
 void Sprite::InitializeVertexData() {
