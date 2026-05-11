@@ -83,7 +83,7 @@
     },
     "shape": "SHARD",
     "textureFileName": "Red.png",
-    "textureFullPath": "Resources/Texture/Particles/Red.png",
+    "textureFullPath": "Resources/Textures/Particles/Red.png",
     "translate": {
         "x": 0.0,
         "y": 0.0,

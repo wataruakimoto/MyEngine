@@ -15,7 +15,7 @@ namespace Engine {
 
 		void Update() override;
 
-		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
 
 		///-------------------------------------------/// 
 		/// クラス内関数

@@ -20,6 +20,7 @@ namespace Engine {
 	class DirectXUtility;
 	class SrvManager;
 	class Camera;
+	class ModelManager;
 
 	/// ===== パ＝ティクルマネージャー ===== ///
 	class ParticleManager {
@@ -111,16 +112,6 @@ namespace Engine {
 		void LoadParticleSettingsFromJSON();
 
 		/// <summary>
-		/// エフェクトのリストを表示
-		/// </summary>
-		void ShowEffectList();
-
-		/// <summary>
-		/// パラメータを表示
-		/// </summary>
-		void ShowParameters();
-
-		/// <summary>
 		/// 設定をJSONに保存
 		/// </summary>
 		/// <param name="effectName">エフェクト名</param>
@@ -184,6 +175,9 @@ namespace Engine {
 		// カメラの借りポインタ
 		Camera* camera = nullptr;
 
+		// モデルマネージャのインスタンス
+		ModelManager* modelManager_ = nullptr;
+
 		// 設定のコンテナ エフェクト名、設定
 		std::unordered_map<std::string, ParticleSetting> settings;
 
@@ -217,10 +211,7 @@ namespace Engine {
 		std::unique_ptr<MeshRenderer> meshRenderer = nullptr;
 
 		// Jsonデータを入れておくフォルダパス
-		const std::string DataFolderPath = "Resources/Datas/Particles/";
-
-		// 画像データを入れておくフォルダパス
-		const std::string TextureFolderPath = "Resources/Textures/Particles/";
+		const std::string kDataFolderPath = "Resources/Datas/Particles/";
 
 		// エディタで選択中のエフェクト名
 		std::string currentEditName = "";

@@ -130,14 +130,12 @@ void DissolveFilter::CreateConfigData() {
 	configData_->edgeColor = { 0.0f,0.0f,0.0f }; // 黒に設定
 }
 
-void DissolveFilter::SetMaskTextureFilePath(const std::string relativePath) {
-
-	maskTextureFullPath = TextureManager::GetInstance()->GetBaseDirectoryPath() + "/" + relativePath;
+void DissolveFilter::SetMaskTextureFilePath(const std::string fileName) {
 
 	// テクスチャを読み込む
-	TextureManager::GetInstance()->LoadTexture(maskTextureFullPath);
+	TextureManager::GetInstance()->LoadTexture(fileName);
 
 	// SRVインデックスを取得
-	maskTextureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(maskTextureFullPath);
+	maskTextureSrvIndex = TextureManager::GetInstance()->GetSRVIndex(fileName);
 }
 

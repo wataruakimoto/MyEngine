@@ -142,52 +142,52 @@ void MyGame::LoadAllResource() {
 
 	/// ===== テクスチャの読み込み ===== ///
 
-	textureManager_->LoadTextureRelative("BlackScreen.png");
-	textureManager_->LoadTextureRelative("start.png");
-	textureManager_->LoadTextureRelative("title.png");
-	textureManager_->LoadTextureRelative("White1280x720.png");
-	textureManager_->LoadTextureRelative("Black1280x720.png");
-	textureManager_->LoadTextureRelative("LockOn.png");
-	textureManager_->LoadTextureRelative("2DReticle.png");
-	textureManager_->LoadTextureRelative("Rule/Rule.png");
-	textureManager_->LoadTextureRelative("Rule/Operation.png");
-	textureManager_->LoadTextureRelative("Norma/NormaText.png");
-	textureManager_->LoadTextureRelative("Norma/Slash.png");
-	textureManager_->LoadTextureRelative("Numbers.png");
-	textureManager_->LoadTextureRelative("Result/Clear.png");
-	textureManager_->LoadTextureRelative("Result/GameOver.png");
-	textureManager_->LoadTextureRelative("GameClear.png");
-	textureManager_->LoadTextureRelative("GameOver.png");
-	textureManager_->LoadTextureRelative("Guide/Mouse.png");
-	textureManager_->LoadTextureRelative("Guide/MouseClick.png");
-	textureManager_->LoadTextureRelative("Guide/ButtonA.png");
-	textureManager_->LoadTextureRelative("Guide/ButtonD.png");
-	textureManager_->LoadTextureRelative("Guide/PushA.png");
-	textureManager_->LoadTextureRelative("Guide/PushD.png");
-	textureManager_->LoadTextureRelative("Guide/Pause.png");
-	textureManager_->LoadTextureRelative("Guide/Back.png");
-	textureManager_->LoadTextureRelative("White1x1.png");
-	textureManager_->LoadTextureRelative("PauseUI/ResumeButton.png");
-	textureManager_->LoadTextureRelative("PauseUI/RestartButton.png");
-	textureManager_->LoadTextureRelative("PauseUI/QuitButton.png");
-	textureManager_->LoadTextureRelative("PauseUI/Frame.png");
-	textureManager_->LoadTextureRelative("SpaceToTitle.png");
+	textureManager_->LoadTexture("BlackScreen.png");
+	textureManager_->LoadTexture("start.png");
+	textureManager_->LoadTexture("title.png");
+	textureManager_->LoadTexture("White1280x720.png");
+	textureManager_->LoadTexture("Black1280x720.png");
+	textureManager_->LoadTexture("LockOn.png");
+	textureManager_->LoadTexture("2DReticle.png");
+	textureManager_->LoadTexture("Rule/Rule.png");
+	textureManager_->LoadTexture("Rule/Operation.png");
+	textureManager_->LoadTexture("Norma/NormaText.png");
+	textureManager_->LoadTexture("Norma/Slash.png");
+	textureManager_->LoadTexture("Numbers.png");
+	textureManager_->LoadTexture("Result/Clear.png");
+	textureManager_->LoadTexture("Result/GameOver.png");
+	textureManager_->LoadTexture("GameClear.png");
+	textureManager_->LoadTexture("GameOver.png");
+	textureManager_->LoadTexture("Guide/Mouse.png");
+	textureManager_->LoadTexture("Guide/MouseClick.png");
+	textureManager_->LoadTexture("Guide/ButtonA.png");
+	textureManager_->LoadTexture("Guide/ButtonD.png");
+	textureManager_->LoadTexture("Guide/PushA.png");
+	textureManager_->LoadTexture("Guide/PushD.png");
+	textureManager_->LoadTexture("Guide/Pause.png");
+	textureManager_->LoadTexture("Guide/Back.png");
+	textureManager_->LoadTexture("White1x1.png");
+	textureManager_->LoadTexture("PauseUI/ResumeButton.png");
+	textureManager_->LoadTexture("PauseUI/RestartButton.png");
+	textureManager_->LoadTexture("PauseUI/QuitButton.png");
+	textureManager_->LoadTexture("PauseUI/Frame.png");
+	textureManager_->LoadTexture("SpaceToTitle.png");
 
-	textureManager_->LoadTextureRelative("rostock_laage_airport_4k.dds");
+	textureManager_->LoadTexture("rostock_laage_airport_4k.dds");
 
 	/// ===== モデルの読み込み ===== ///
 
-	modelManager_->LoadModelData("Player", "player.obj");
-	modelManager_->LoadModelData("Cylinder", "cylinder.obj");
-	modelManager_->LoadModelData("Floor", "floor.obj");
-	modelManager_->LoadModelData("PlayerBullet", "PlayerBullet.obj");
-	modelManager_->LoadModelData("Enemy", "enemy.obj");
-	modelManager_->LoadModelData("Enemy", "Kamikaze.obj");
-	modelManager_->LoadModelData("EnemyBullet", "EnemyBullet.obj");
-	modelManager_->LoadModelData("Goal", "Goal.obj");
-	modelManager_->LoadModelData("Gate", "Gate.obj");
-	modelManager_->LoadModelData("Reticle", "Reticle.obj");
-	modelManager_->LoadModelData("Obstacle", "Obstacle.obj");
-	modelManager_->LoadModelData("Sphere", "sphere.obj");
-	modelManager_->LoadModelData("Terrain", "terrain.obj");
+	modelManager_->LoadModel("Player/player.obj");
+	modelManager_->LoadModel("Cylinder/cylinder.obj");
+	modelManager_->LoadModel("Floor/floor.obj");
+	modelManager_->LoadModel("PlayerBullet/PlayerBullet.obj");
+	modelManager_->LoadModel("Enemy/enemy.obj");
+	modelManager_->LoadModel("Enemy/Kamikaze.obj");
+	modelManager_->LoadModel("EnemyBullet/EnemyBullet.obj");
+	modelManager_->LoadModel("Goal/Goal.obj");
+	modelManager_->LoadModel("Gate/Gate.obj");
+	modelManager_->LoadModel("Reticle/Reticle.obj");
+	modelManager_->LoadModel("Obstacle/Obstacle.obj");
+	modelManager_->LoadModel("Sphere/sphere.obj");
+	modelManager_->LoadModel("Terrain/terrain.obj");
 }

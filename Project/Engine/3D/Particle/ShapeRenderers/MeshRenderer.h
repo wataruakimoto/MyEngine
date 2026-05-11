@@ -34,8 +34,8 @@ namespace Engine {
 		/// </summary>
 		/// <param name="instanceCount">インスタンスの数</param>
 		/// <param name="instanceSrvIndex">SRV番号</param>
-		/// <param name="texturePath">テクスチャのパス</param>
-		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		/// <param name="textureFullPath">テクスチャのフルパス</param>
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
 
 	/// ================================================== ///
 	/// クラス内関数
@@ -53,11 +53,11 @@ namespace Engine {
 	/// ================================================== ///
 	private:
 
-		// モデルのデータを格納するポインタ
-		ModelData* modelData = nullptr;
-
 		// モデルマネージャのインスタンス
 		ModelManager* modelManager = nullptr;
+
+		// モデルデータ
+		ModelData const* modelData = nullptr;
 	};
 }
 

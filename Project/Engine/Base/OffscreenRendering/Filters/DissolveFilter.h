@@ -55,8 +55,8 @@ namespace Engine {
 		/// <summary>
 		/// maskテクスチャの設定
 		/// </summary>
-		/// <param name="relativePath">相対パス</param>
-		void SetMaskTextureFilePath(const std::string relativePath);
+		/// <param name="fileName">ファイル名</param>
+		void SetMaskTextureFilePath(const std::string fileName);
 
 	///-------------------------------------------/// 
 	/// 構造体

@@ -15,9 +15,9 @@ namespace Engine {
 	/// === テクスチャマネージャ === ///
 	class TextureManager {
 
-		///-------------------------------------------/// 
-		/// シングルトン
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// シングルトン
+	/// ================================================== ///
 	private:
 
 		// インスタンス
@@ -32,81 +32,10 @@ namespace Engine {
 		// コピー代入演算子の封印
 		TextureManager& operator=(TextureManager&) = delete;
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
-	public:
 
-		/// <summary>
-		/// シングルトンインスタンスの取得
-		/// </summary>
-		/// <returns></returns>
-		static TextureManager* GetInstance();
-
-		/// <summary>
-		/// 初期化
-		/// </summary>
-		void Initialize();
-
-		/// <summary>
-		/// 終了
-		/// </summary>
-		void Finalize();
-
-		/// <summary>
-		/// DirectXTexでテクスチャを読む
-		/// </summary>
-		/// <param name="fullPath">フルパス</param>
-		void LoadTexture(const std::string& fullPath);
-
-		/// <summary>
-		/// 相対パスでテクスチャを読み込み
-		/// </summary>
-		/// <param name="relativePath"相対パス></param>
-		void LoadTextureRelative(const std::string& relativePath);
-
-		/// <summary>
-		/// SRVインデックスの開始番号
-		/// </summary>
-		/// <param name="filePath">ファイルパス</param>
-		/// <returns></returns>
-		uint32_t GetTextureIndexByFilePath(const std::string& filePath);
-
-		/// <summary>
-		/// テクスチャ番号からGPUハンドルを取得
-		/// </summary>
-		/// <param name="filePath">ファイルパス</param>
-		/// <returns></returns>
-		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const std::string& filePath);
-
-		/// <summary>
-		/// SRVインデックスからGPUハンドルを取得
-		/// </summary>
-		/// <param name="srvIndex"></param>
-		/// <returns></returns>
-		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const uint32_t srvIndex);
-
-		/// <summary>
-		/// メタデータを取得
-		/// </summary>
-		/// <param name="filePath">ファイルパス</param>
-		/// <returns></returns>
-		const DirectX::TexMetadata& GetMetadata(const std::string& filePath);
-
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// ベースディレクトリパスのゲッター
-		/// </summary>
-		/// <returns></returns>
-		const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
-
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
 	public:
 
 		// テクスチャ1枚分のデータ
@@ -119,15 +48,122 @@ namespace Engine {
 			D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
+
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
+
+		/// ================================================== ///
+		/// テクスチャの読み込み
+
+		/// <summary>
+		/// テクスチャの読み込み
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		void LoadTexture(const std::string& relativePath);
+
+		/// <summary>
+		/// テクスチャの読み込み
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		void LoadTextureFullPath(const std::string& fullPath);
+
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
+	private:
+
+		/// <summary>
+		/// テクスチャの読み込み
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		void LoadTextureBase(const std::string& fullPath);
+
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// シングルトンインスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static TextureManager* GetInstance();
+
+		/// <summary>
+		/// テクスチャデータの取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>テクスチャデータ</returns>
+		const TextureData& GetTextureData(const std::string& fullPath);
+
+		/// <summary>
+		/// メタデータの取得
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		/// <returns>メタデータ</returns>
+		const DirectX::TexMetadata& GetMetadata(const std::string& relativePath);
+
+		/// <summary>
+		/// メタデータを取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>メタデータ</returns>
+		const DirectX::TexMetadata& GetMetadataFullPath(const std::string& fullPath);
+
+		/// <summary>
+		/// SRVインデックスの取得
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		/// <returns>SRVインデックス</returns>
+		const uint32_t GetSRVIndex(const std::string& relativePath);
+
+		/// <summary>
+		/// SRVインデックスの取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>SRVインデックス</returns>
+		const uint32_t GetSRVIndexFullPath(const std::string& fullPath);
+
+		/// <summary>
+		/// CPUハンドルの取得
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		/// <returns>GPUハンドル</returns>
+		const D3D12_GPU_DESCRIPTOR_HANDLE& GetSRVGPUHandle(const std::string& relativePath);
+
+		/// <summary>
+		/// GPUハンドルの取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>GPUハンドル</returns>
+		const D3D12_GPU_DESCRIPTOR_HANDLE& GetSRVGPUHandleFullPath(const std::string& fullPath);
+
+		/// <summary>
+		/// ベースディレクトリパスのゲッター
+		/// </summary>
+		/// <returns></returns>
+		const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// DirectXUtilityのインスタンス
 		DirectXUtility* dxUtility_ = nullptr;
 
-		// テクスチャデータ
+		// テクスチャデータ Key: フルパス
 		std::unordered_map<std::string, TextureData> textureDatas;
 
 		// ベースのディレクトリパス
