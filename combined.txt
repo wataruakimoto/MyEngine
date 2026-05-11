@@ -48,6 +48,8 @@
 └── └── └── └──     ├── CubeRenderer.h
 └── └── └── └──     ├── CylinderRenderer.cpp
 └── └── └── └──     ├── CylinderRenderer.h
+└── └── └── └──     ├── MeshRenderer.cpp
+└── └── └── └──     ├── MeshRenderer.h
 └── └── └── └──     ├── ParticleRendererBase.h
 └── └── └── └──     ├── PlaneRenderer.cpp
 └── └── └── └──     ├── PlaneRenderer.h
@@ -445,6 +447,7 @@
 └── └── └── ├── MultiMaterial/
 └── └── └── ├── MultiMesh/
 └── └── └── ├── Obstacle/
+└── └── └── ├── Particles/
 └── └── └── ├── Plane/
 └── └── └── ├── Player/
 └── └── └── ├── PlayerBullet/
@@ -686,6 +689,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Scene\TransitionManager.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Math\AABB.h" />
@@ -804,6 +808,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Level\LevelLoader.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
     <ClInclude Include="Engine\3D\Light\LightManager.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
@@ -1228,6 +1233,7 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClCompile Include="Game\Level\LevelLoader.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
     <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -1530,6 +1536,7 @@ File Path: Project/DirectXGame.vcxproj.filters
     <ClInclude Include="Engine\Math\Capsule.h" />
     <ClInclude Include="Engine\Math\Ellipsoid.h" />
     <ClInclude Include="Engine\3D\Light\LightManager.h" />
+    <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">
@@ -1699,6 +1706,7 @@ File Path: Project/Engine/2D/Sprite/Sprite.cpp
 #include "MathMatrix.h"
 #include "WinApp.h"
 #include "DirectXUtility.h"
+#include "SrvManager.h"
 #include "Texture/TextureManager.h"
 
 #include <imgui.h>
@@ -1710,6 +1718,9 @@ void Sprite::Initialize(const std::string relativePath) {
 
 	// DirectXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
+
+	// SrvManagerのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
 
 	// TextureManagerのインスタンスを取得
 	textureManager = TextureManager::GetInstance();
@@ -1813,7 +1824,7 @@ void Sprite::Draw() {
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	/// === SRVのDescriptorTableの先頭を設定 === ///
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(textureSrvIndex));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, srvManager->GetGPUDescriptorHandle(textureSrvIndex));
 
 	/// === 描画(DrawCall) === ///
 	dxUtility->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
@@ -1848,10 +1859,10 @@ void Sprite::ShowImGui(const char* name) {
 void Sprite::SetTexture(const std::string fullPath) {
 
 	// TextureManagerからSRVインデックスを取得
-	textureSrvIndex = textureManager->GetTextureIndexByFilePath(fullPath);
+	textureSrvIndex = textureManager->GetSRVIndexFullPath(fullPath);
 
 	// TextureManagerから画像のメタデータ取得
-	metadata = textureManager->GetMetadata(fullPath);
+	metadata = textureManager->GetMetadataFullPath(fullPath);
 }
 
 void Sprite::InitializeVertexData() {
@@ -1939,6 +1950,7 @@ namespace Engine {
 
 	/// === 前方宣言 === ///
 	class DirectXUtility;
+	class SrvManager;
 	class TextureManager;
 
 	// スプライト
@@ -2188,6 +2200,9 @@ namespace Engine {
 		// TextureManagerのインスタンス
 		TextureManager* textureManager = nullptr;
 
+		// SrvManagerのインスタンス
+		SrvManager* srvManager = nullptr;
+
 		/// ===== GPU用の変数 ===== ///
 
 		// 頂点リソース
@@ -2412,16 +2427,6 @@ File Path: Project/Engine/2D/Texture/TextureManager.cpp
 using namespace Engine;
 using namespace StringUtility;
 
-TextureManager* TextureManager::instance = nullptr;
-
-TextureManager* TextureManager::GetInstance() {
-
-	if (instance == nullptr) {
-		instance = new TextureManager;
-	}
-	return instance;
-}
-
 void TextureManager::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
@@ -2436,28 +2441,37 @@ void TextureManager::Finalize() {
 	instance = nullptr;
 }
 
-void TextureManager::LoadTexture(const std::string& filePath) {
+void TextureManager::LoadTexture(const std::string& fileName) {
 
-	/// === ファイル読み込み === ///
+	// テクスチャのファイルまでのフルパスを生成
+	std::string fullPath = baseDirectoryPath + "/" + fileName;
 
-	// 読み込み済みテクスチャを検索
-	if (textureDatas.contains(filePath)) {
-		
-		// 読み込み済みなら終了
-		return;
-	}
+	// テクスチャの読み込み
+	LoadTextureBase(fullPath);
+}
+
+void TextureManager::LoadTextureFullPath(const std::string& fullPath) {
+
+	// テクスチャの読み込み
+	LoadTextureBase(fullPath);
+}
+
+void TextureManager::LoadTextureBase(const std::string& fullPath) {
+
+	// 読み込み済みテクスチャならばスキップ
+	if (textureDatas.contains(fullPath)) return;
 
 	// テクスチャ枚数上限チェック
 	assert(SrvManager::GetInstance()->CheckAllocate());
 
 	DirectX::ScratchImage image{};
 	// テクスチャファイルを読んでプログラムで扱えるようにする
-	std::wstring filePathW = ConvertString(filePath);
+	std::wstring filePathW = ConvertString(fullPath);
 
 	HRESULT hr;
 
 	if (filePathW.ends_with(L".dds")) { // .ddsファイルの場合。より安全な方法はいくらでもある
-		
+
 		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image); // sRGBまで含めたフォーマット情報が格納されているので、FLAGは立てない
 	}
 	else { // WICファイルの場合
@@ -2490,7 +2504,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 
 	/// === テクスチャデータ追加 === ///
 
-	TextureData& textureData = textureDatas[filePath];
+	TextureData& textureData = textureDatas[fullPath];
 
 	/// === テクスチャデータ書き込み === ///
 
@@ -2520,46 +2534,63 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	}
 }
 
-void TextureManager::LoadTextureRelative(const std::string& relativePath) {
+TextureManager* TextureManager::instance = nullptr;
 
-	// フルパスを生成
+TextureManager* TextureManager::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new TextureManager;
+	}
+	return instance;
+}
+
+const TextureManager::TextureData& TextureManager::GetTextureData(const std::string& fullPath) {
+	
+	// 読み込み済みのテクスチャか確認
+	assert(textureDatas.contains(fullPath));
+
+	return textureDatas.at(fullPath);
+}
+
+const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& relativePath) {
+
+	// テクスチャのファイルまでのフルパスを生成
 	std::string fullPath = baseDirectoryPath + "/" + relativePath;
 
-	// テクスチャ読み込み
-	LoadTexture(fullPath);
+	return GetTextureData(fullPath).metaData;
 }
 
-uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath) {
-
-	// 読み込み済みテクスチャを検索
-	if (textureDatas.contains(filePath)) {
-
-		// 読み込み済みなら要素番号を返す
-		uint32_t textureIndex = textureDatas[filePath].srvIndex;
-		return textureIndex;
-	}
-
-	assert(0);
-	return 0;
+const DirectX::TexMetadata& TextureManager::GetMetadataFullPath(const std::string& fullPath) {
+	
+	return GetTextureData(fullPath).metaData;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVGPUHandle(const std::string& filePath) {
+const uint32_t TextureManager::GetSRVIndex(const std::string& relativePath) {
 
-	TextureData& textureData = textureDatas[filePath];
-	return textureData.srvHandleGPU;
+	// テクスチャのファイルまでのフルパスを生成
+	std::string fullPath = baseDirectoryPath + "/" + relativePath;
+
+	return GetTextureData(fullPath).srvIndex;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVGPUHandle(const uint32_t srvIndex) {
+const uint32_t TextureManager::GetSRVIndexFullPath(const std::string& fullPath) {
 
-	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle = SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex);
-	return GPUHandle;
+	return GetTextureData(fullPath).srvIndex;
 }
 
-const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& filePath) {
+const D3D12_GPU_DESCRIPTOR_HANDLE& Engine::TextureManager::GetSRVGPUHandle(const std::string& relativePath) {
+	
+	// テクスチャのファイルまでのフルパスを生成
+	std::string fullPath = baseDirectoryPath + "/" + relativePath;
 
-	TextureData& textureData = textureDatas[filePath];
-	return textureData.metaData;
+	return GetTextureData(fullPath).srvHandleGPU;
 }
+
+const D3D12_GPU_DESCRIPTOR_HANDLE& TextureManager::GetSRVGPUHandleFullPath(const std::string& fullPath) {
+
+	return GetTextureData(fullPath).srvHandleGPU;
+}
+
 
 ============================================================
 File Path: Project/Engine/2D/Texture/TextureManager.h
@@ -2581,9 +2612,9 @@ namespace Engine {
 	/// === テクスチャマネージャ === ///
 	class TextureManager {
 
-		///-------------------------------------------/// 
-		/// シングルトン
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// シングルトン
+	/// ================================================== ///
 	private:
 
 		// インスタンス
@@ -2598,81 +2629,10 @@ namespace Engine {
 		// コピー代入演算子の封印
 		TextureManager& operator=(TextureManager&) = delete;
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
-	public:
 
-		/// <summary>
-		/// シングルトンインスタンスの取得
-		/// </summary>
-		/// <returns></returns>
-		static TextureManager* GetInstance();
-
-		/// <summary>
-		/// 初期化
-		/// </summary>
-		void Initialize();
-
-		/// <summary>
-		/// 終了
-		/// </summary>
-		void Finalize();
-
-		/// <summary>
-		/// DirectXTexでテクスチャを読む
-		/// </summary>
-		/// <param name="fullPath">フルパス</param>
-		void LoadTexture(const std::string& fullPath);
-
-		/// <summary>
-		/// 相対パスでテクスチャを読み込み
-		/// </summary>
-		/// <param name="relativePath"相対パス></param>
-		void LoadTextureRelative(const std::string& relativePath);
-
-		/// <summary>
-		/// SRVインデックスの開始番号
-		/// </summary>
-		/// <param name="filePath">ファイルパス</param>
-		/// <returns></returns>
-		uint32_t GetTextureIndexByFilePath(const std::string& filePath);
-
-		/// <summary>
-		/// テクスチャ番号からGPUハンドルを取得
-		/// </summary>
-		/// <param name="filePath">ファイルパス</param>
-		/// <returns></returns>
-		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const std::string& filePath);
-
-		/// <summary>
-		/// SRVインデックスからGPUハンドルを取得
-		/// </summary>
-		/// <param name="srvIndex"></param>
-		/// <returns></returns>
-		D3D12_GPU_DESCRIPTOR_HANDLE GetSRVGPUHandle(const uint32_t srvIndex);
-
-		/// <summary>
-		/// メタデータを取得
-		/// </summary>
-		/// <param name="filePath">ファイルパス</param>
-		/// <returns></returns>
-		const DirectX::TexMetadata& GetMetadata(const std::string& filePath);
-
-		///-------------------------------------------/// 
-		/// ゲッター
-		///-------------------------------------------///
-	public:
-
-		/// <summary>
-		/// ベースディレクトリパスのゲッター
-		/// </summary>
-		/// <returns></returns>
-		const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
-
-		///-------------------------------------------/// 
-		/// 構造体
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// 構造体
+	/// ================================================== ///
 	public:
 
 		// テクスチャ1枚分のデータ
@@ -2685,15 +2645,122 @@ namespace Engine {
 			D3D12_GPU_DESCRIPTOR_HANDLE srvHandleGPU;
 		};
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize();
+
+		/// <summary>
+		/// 終了
+		/// </summary>
+		void Finalize();
+
+		/// ================================================== ///
+		/// テクスチャの読み込み
+
+		/// <summary>
+		/// テクスチャの読み込み
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		void LoadTexture(const std::string& relativePath);
+
+		/// <summary>
+		/// テクスチャの読み込み
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		void LoadTextureFullPath(const std::string& fullPath);
+
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
+	private:
+
+		/// <summary>
+		/// テクスチャの読み込み
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		void LoadTextureBase(const std::string& fullPath);
+
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// シングルトンインスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static TextureManager* GetInstance();
+
+		/// <summary>
+		/// テクスチャデータの取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>テクスチャデータ</returns>
+		const TextureData& GetTextureData(const std::string& fullPath);
+
+		/// <summary>
+		/// メタデータの取得
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		/// <returns>メタデータ</returns>
+		const DirectX::TexMetadata& GetMetadata(const std::string& relativePath);
+
+		/// <summary>
+		/// メタデータを取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>メタデータ</returns>
+		const DirectX::TexMetadata& GetMetadataFullPath(const std::string& fullPath);
+
+		/// <summary>
+		/// SRVインデックスの取得
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		/// <returns>SRVインデックス</returns>
+		const uint32_t GetSRVIndex(const std::string& relativePath);
+
+		/// <summary>
+		/// SRVインデックスの取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>SRVインデックス</returns>
+		const uint32_t GetSRVIndexFullPath(const std::string& fullPath);
+
+		/// <summary>
+		/// CPUハンドルの取得
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		/// <returns>GPUハンドル</returns>
+		const D3D12_GPU_DESCRIPTOR_HANDLE& GetSRVGPUHandle(const std::string& relativePath);
+
+		/// <summary>
+		/// GPUハンドルの取得
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>GPUハンドル</returns>
+		const D3D12_GPU_DESCRIPTOR_HANDLE& GetSRVGPUHandleFullPath(const std::string& fullPath);
+
+		/// <summary>
+		/// ベースディレクトリパスのゲッター
+		/// </summary>
+		/// <returns></returns>
+		const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// DirectXUtilityのインスタンス
 		DirectXUtility* dxUtility_ = nullptr;
 
-		// テクスチャデータ
+		// テクスチャデータ Key: フルパス
 		std::unordered_map<std::string, TextureData> textureDatas;
 
 		// ベースのディレクトリパス
@@ -3126,8 +3193,13 @@ void Model::Initialize(const std::string& directoryName, const std::string& file
 	// DXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
+	// モデルのファイルまでのフルパスを作成
+	const std::string baseDirectoryPath = ModelManager::GetInstance()->GetBaseDirectoryPath();
+
+	std::string fullPath = baseDirectoryPath + "/" + directoryName + "/" + fileName;
+	
 	// モデルデータを検索
-	modelData = ModelManager::GetInstance()->FindModelData(directoryName, fileName);
+	modelData = ModelManager::GetInstance()->FindModelFullPath(fullPath);
 
 	// 頂点データ初期化
 	InitializeVertexData();
@@ -3136,7 +3208,7 @@ void Model::Initialize(const std::string& directoryName, const std::string& file
 	InitializeMaterialData();
 
 	// 読み込んだテクスチャの番号を取得し、メンバ変数に書き込む
-	modelData->material.textureIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(modelData->material.textureFilePath);
+	modelData->material.textureIndex = TextureManager::GetInstance()->GetSRVIndexFullPath(modelData->material.textureFilePath);
 }
 
 void Model::Draw() {
@@ -3148,10 +3220,10 @@ void Model::Draw() {
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(2, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableを設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSRVGPUHandle(modelData->material.textureFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(7, TextureManager::GetInstance()->GetSRVGPUHandleFullPath(modelData->material.textureFilePath));
 
 	// SRVのDescriptorTableを設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(8, TextureManager::GetInstance()->GetSRVGPUHandle(environmentMapFilePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(8, TextureManager::GetInstance()->GetSRVGPUHandleFullPath(environmentMapFilePath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), 1, 0, 0);
@@ -3385,16 +3457,6 @@ File Path: Project/Engine/3D/Model/ModelManager.cpp
 using namespace Engine;
 using namespace Logger;
 
-ModelManager* ModelManager::instance = nullptr;
-
-ModelManager* ModelManager::GetInstance() {
-
-	if (instance == nullptr) {
-		instance = new ModelManager;
-	}
-	return instance;
-}
-
 void ModelManager::Initialize() {}
 
 void ModelManager::Finalize() {
@@ -3403,16 +3465,64 @@ void ModelManager::Finalize() {
 	instance = nullptr;
 }
 
-void ModelManager::LoadModelData(const std::string& directoryName, const std::string& fileName) {
+Node ModelManager::ReadNode(aiNode* node) {
 
-	// マップコンテナに登録するためのキーを作成
-	std::string key = directoryName + "/" + fileName; // キー
+	Node result;
 
-	// 読み込み済みなら早期return
-	if (modelDatas.contains(key)) return;
+	aiMatrix4x4 aiLocalMatrix = node->mTransformation; // nodeのlocalMatrixを取得
+	aiLocalMatrix.Transpose(); // 列ベクトル形式を行ベクトル形式に転置
+
+	for (uint32_t i = 0; i < 4; ++i) {
+		for (uint32_t j = 0; j < 4; ++j) {
+			result.localMatrix.m[i][j] = aiLocalMatrix[j][i];
+		}
+	}
+
+	result.name = node->mName.C_Str(); // Node名を格納
+	result.children.resize(node->mNumChildren); // 子ノードの数だけ確保
+
+	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
+
+		// 再帰的に読んで階層構造を作っていく
+		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
+	}
+
+	return result;
+}
+
+void ModelManager::LoadModel(const std::string& relativePath) {
 
 	// モデルのファイルまでのフルパスを作成
-	std::string fullPath = baseDirectoryPath + "/" + directoryName + "/" + fileName; // フルパス
+	std::string fullPath = baseDirectoryPath + "/" + relativePath; // フルパス
+
+	// フルパスを指定してモデルを読み込む
+	LoadModelBase(fullPath);
+}
+
+void ModelManager::LoadModelFullPath(const std::string& fullPath) {
+
+	// フルパスを指定してモデルを読み込む
+	LoadModelBase(fullPath);
+}
+
+ModelData* ModelManager::FindModel(const std::string& fileName) {
+
+	// モデルのファイルまでのフルパスを作成
+	std::string fullPath = baseDirectoryPath + "/" + fileName; // フルパス
+
+	// フルパスを指定してモデルデータを検索
+	return FindModelBase(fullPath);
+}
+
+ModelData* ModelManager::FindModelFullPath(const std::string& fullPath) {
+	
+	return FindModelBase(fullPath);
+}
+
+void ModelManager::LoadModelBase(const std::string& fullPath) {
+
+	// 読み込み済みなら早期return
+	if (modelDatas.contains(fullPath)) return;
 
 	// ファイルが存在するか確認
 	std::ifstream file(fullPath);
@@ -3476,13 +3586,13 @@ void ModelManager::LoadModelData(const std::string& directoryName, const std::st
 			std::string textureFileName = textureFilePath.C_Str();
 
 			// ファイル名だけを抽出
-			std::string filename = std::filesystem::path(textureFileName).filename().string();
+			std::string fileName = std::filesystem::path(textureFileName).filename().string();
 
 			// テクスチャファイルを探索
-			std::string foundTextureFilePath = FindTextureFilePath(directoryName, filename);
+			std::string foundTextureFilePath = FindTextureFilePath(fullPath, fileName);
 
 			// テクスチャ読み込み
-			TextureManager::GetInstance()->LoadTexture(foundTextureFilePath);
+			TextureManager::GetInstance()->LoadTextureFullPath(foundTextureFilePath);
 
 			// 見つかったテクスチャファイルパスをモデルデータに格納
 			modelData->material.textureFilePath = foundTextureFilePath;
@@ -3492,75 +3602,67 @@ void ModelManager::LoadModelData(const std::string& directoryName, const std::st
 	modelData->rootNode = ReadNode(scene->mRootNode);
 
 	// モデルデータをmapコンテナに格納する
-	modelDatas.insert(std::make_pair(key, std::move(modelData)));
+	modelDatas.insert(std::make_pair(fullPath, std::move(modelData)));
 }
 
-ModelData* ModelManager::FindModelData(const std::string& directoryName, const std::string& fileName) {
+std::string ModelManager::FindTextureFilePath(const std::string& modelFullPath, const std::string& filename) {
 
-	// マップコンテナから検索するためのキーを作成
-	std::string key = directoryName + "/" + fileName; // キー
+	// TextureManagerのベースディレクトリパスを取得 (Resources/Textures)
+	std::string textureBaseDirectoryPath = TextureManager::GetInstance()->GetBaseDirectoryPath();
+
+	// モデルの親ディレクトリパスを取得 (Resources/Models/ディレクトリ名)
+	std::filesystem::path modelDirectoryPath = std::filesystem::path(modelFullPath).parent_path();
+
+	// パターン１： Resources/Textures/ディレクトリ名/ファイル名
+	std::filesystem::path relativeDirectory = std::filesystem::relative(modelDirectoryPath, baseDirectoryPath);
+	std::filesystem::path path1 = std::filesystem::path(textureBaseDirectoryPath) / relativeDirectory / filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path1)) return path1.generic_string();
+
+	// パターン２： Resources/Textures/ファイル名
+	std::filesystem::path path2 = std::filesystem::path(textureBaseDirectoryPath) / filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path2)) return path2.generic_string();
+
+	// パターン3 : Resources/Models/ディレクトリ名/ファイル名
+	std::filesystem::path path3 = modelDirectoryPath / filename;
+
+	// ファイルが存在したらパスを返す
+	if (std::filesystem::exists(path3)) return path3.generic_string();
+
+	// どのパターンでも見つからなかったらログ出す
+	Log("ModelManager::FindTextureFilePath: Texture file not found for " + filename + "\n");
+
+	// 空文字を返す
+	return "";
+}
+
+ModelData* ModelManager::FindModelBase(const std::string& fullPath) {
 	
-	// 読み込み済みモデルを検索
-	if (modelDatas.contains(key)) {
+	// マップコンテナからフルパスをキーに検索
+	if (modelDatas.contains(fullPath)) {
 
 		// 一致したらモデルデータを返す
-		return modelDatas.at(key).get();
+		return modelDatas.at(fullPath).get();
 	}
 
-	// キーと一致するモデルデータが見つからなかったらログ出してnullptrを返す
-	Log("ModelManager::FindModelData: Model data not found for " + key + "\n");
+	// キーと一致するモデルデータが見つからないのでログ出す
+	Log("ModelManager::FindModelData: Model data not found for " + fullPath + "\n");
+
+	// nullptrを返す
 	return nullptr;
 }
 
-Node ModelManager::ReadNode(aiNode* node) {
+ModelManager* ModelManager::instance = nullptr;
 
-	Node result;
+ModelManager* ModelManager::GetInstance() {
 
-	aiMatrix4x4 aiLocalMatrix = node->mTransformation; // nodeのlocalMatrixを取得
-	aiLocalMatrix.Transpose(); // 列ベクトル形式を行ベクトル形式に転置
-
-	for (uint32_t i = 0; i < 4; ++i) {
-		for (uint32_t j = 0; j < 4; ++j) {
-			result.localMatrix.m[i][j] = aiLocalMatrix[j][i];
-		}
+	if (instance == nullptr) {
+		instance = new ModelManager;
 	}
-
-	result.name = node->mName.C_Str(); // Node名を格納
-	result.children.resize(node->mNumChildren); // 子ノードの数だけ確保
-
-	for (uint32_t childIndex = 0; childIndex < node->mNumChildren; ++childIndex) {
-
-		// 再帰的に読んで階層構造を作っていく
-		result.children[childIndex] = ReadNode(node->mChildren[childIndex]);
-	}
-
-	return result;
-}
-
-std::string ModelManager::FindTextureFilePath(const std::string& directoryName, const std::string& filename) {
-
-	// TextureManagerのベースディレクトリパスを取得
-	std::string textureBaseDirectoryPath = TextureManager::GetInstance()->GetBaseDirectoryPath();
-
-	// パターン１： Textures/ディレクトリ名/ファイル名
-	std::string path1 = textureBaseDirectoryPath + "/" + directoryName + "/" + filename;
-
-	// ファイルが存在したらパスを返す
-	if (std::filesystem::exists(path1)) return path1;
-
-	// パターン２： Textures/ファイル名
-	std::string path2 = textureBaseDirectoryPath + "/" + filename;
-
-	// ファイルが存在したらパスを返す
-	if (std::filesystem::exists(path2)) return path2;
-
-	// パターン3 : Models/ディレクトリ名/ファイル名
-	std::string path3 = baseDirectoryPath + "/" + directoryName + "/" + filename;
-
-	// ファイルが存在したらパスを返す
-	if (std::filesystem::exists(path3)) return path3;
-
-	return textureBaseDirectoryPath + "/" + "White.png"; // 見つからなかったら
+	return instance;
 }
 
 
@@ -3584,9 +3686,9 @@ namespace Engine {
 	/// === モデルマネージャー === ///
 	class ModelManager {
 
-		///-------------------------------------------/// 
-		/// シングルトン
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// シングルトン
+	/// ================================================== ///
 	private:
 
 		// インスタンス
@@ -3604,16 +3706,10 @@ namespace Engine {
 		// コピー代入演算子(封印)
 		ModelManager& operator=(ModelManager&) = delete;
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
-
-		/// <summary>
-		/// インスタンスの取得
-		/// </summary>
-		/// <returns></returns>
-		static ModelManager* GetInstance();
 
 		/// <summary>
 		/// 初期化
@@ -3625,42 +3721,89 @@ namespace Engine {
 		/// </summary>
 		void Finalize();
 
-		/// <summary>
-		/// モデルデータの読み込み
-		/// </summary>
-		/// <param name="directoryName">ディレクトリ名</param>
-		/// <param name="fileName">ファイル名</param>
-		void LoadModelData(const std::string& directoryName, const std::string& fileName);
+		static Node ReadNode(aiNode* node);
 
+		/// ================================================== ///
+		/// モデル読み込み
+	
+		/// <summary>
+		/// モデルの読み込み
+		/// </summary>
+		/// <param name="relativePath">相対パス</param>
+		void LoadModel(const std::string& relativePath);
+
+		/// <summary>
+		/// モデルの読み込み
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		void LoadModelFullPath(const std::string& fullPath);
+
+		/// ================================================== ///
+		/// モデルの探索
+		
 		/// <summary>
 		/// モデルデータを検索
 		/// </summary>
-		/// <param name="directoryName">ディレクトリ名</param>
-		/// <param name="fileName">ファイル名</param>
+		/// <param name="relativePath">相対パス</param>
 		/// <returns>モデルデータ</returns>
-		ModelData* FindModelData(const std::string& directoryName, const std::string& fileName);
+		ModelData* FindModel(const std::string& relativePath);
+		
+		/// <summary>
+		/// モデルデータを検索
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>モデルデータ</returns>
+		ModelData* FindModelFullPath(const std::string& fullPath);
 
-		static Node ReadNode(aiNode* node);
-
-		///-------------------------------------------/// 
-		/// クラス内関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
 	private:
 
 		/// <summary>
-		/// 画像ファイルの探索
+		/// モデルの読み込み
 		/// </summary>
-		/// <param name="directoryName">ディレクトリ名</param>
-		/// <param name="filename">ファイル名</param>
-		/// <returns></returns>
-		std::string FindTextureFilePath(const std::string& directoryName, const std::string& filename);
+		/// <param name="fullPath">フルパス</param>
+		void LoadModelBase(const std::string& fullPath);
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+		/// <summary>
+		/// 画像ファイルを探索
+		/// </summary>
+		/// <param name="modelFullPath">モデルのフルパス</param>
+		/// <param name="fileName">ファイル名</param>
+		/// <returns>画像ファイルのパス</returns>
+		std::string FindTextureFilePath(const std::string& modelFullPath, const std::string& fileName);
+
+		/// <summary>
+		/// モデルの探索
+		/// </summary>
+		/// <param name="fullPath">フルパス</param>
+		/// <returns>モデルデータ</returns>
+		ModelData* FindModelBase(const std::string& fullPath);
+
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// インスタンスの取得
+		/// </summary>
+		/// <returns></returns>
+		static ModelManager* GetInstance();
+
+		/// <summary>
+		/// ベースディレクトリパスのゲッター
+		/// </summary>
+		/// <returns>ベースディレクトリパス</returns>
+		const std::string& GetBaseDirectoryPath() const { return baseDirectoryPath; }
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
-		// モデルデータのマップコンテナ キー : ディレクトリ + ファイル名
+		// モデルデータのマップコンテナ Key: フルパス
 		std::map<std::string, std::unique_ptr<ModelData>> modelDatas;
 
 		// ベースのディレクトリパス
@@ -4308,12 +4451,13 @@ namespace Engine {
 
 	// パーティクルの形状
 	enum class ParticleShape {
-		PLANE,
-		RING,
-		CYLINDER,
-		CUBE,
-		SPHERE,
-		SHARD,
+		PLANE,	  // 板ポリ
+		RING,	  // リング
+		CYLINDER, // シリンダー
+		CUBE,	  // キューブ
+		SPHERE,	  // 球
+		SHARD,	  // シャード
+		MESH,	  // メッシュ
 	};
 
 	// マテリアルデータ
@@ -4333,8 +4477,11 @@ namespace Engine {
 	struct ParticleSetting {
 
 		std::string effectName = ""; // エフェクト名
-		std::string textureFileName = ""; // テクスチャファイル名
+		std::string textureFileName = ""; // テクスチャ名
 		std::string textureFullPath = ""; // テクスチャのフルパス
+		std::string modelFileName = ""; // モデル名
+		std::string modelFullPath = ""; // モデルのフルパス
+
 		ParticleShape shape = ParticleShape::PLANE; // パーティクルの形状
 
 		bool useBillboard = true; // ビルボードを使うかどうか
@@ -4400,9 +4547,11 @@ namespace Engine {
 	};
 
 	// JSON用のシリアライズ・デシリアライズ定義
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParticleSetting,
-		effectName, textureFileName,
-		textureFullPath, shape,
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleSetting,
+		effectName,
+		textureFileName, textureFullPath,
+		modelFileName, modelFullPath,
+		shape,
 		useBillboard, useGravity,
 		scaleRandom, scaleRange, scale,
 		rotateRandom, rotateRange, rotate,
@@ -4413,7 +4562,7 @@ namespace Engine {
 		lifeTimeRandom, lifeTimeRange, lifeTime
 	)
 
-		NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParticleInstance,
+		NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleInstance,
 			setting,
 			scale, rotate, translate,
 			velocity, acceleration,
@@ -4428,6 +4577,7 @@ namespace Engine {
 			{ParticleShape::CUBE, "CUBE"},
 			{ParticleShape::SPHERE, "SPHERE"},
 			{ParticleShape::SHARD, "SHARD"},
+			{ParticleShape::MESH, "MESH"},
 			})
 }
 
@@ -4437,6 +4587,8 @@ File Path: Project/Engine/3D/Particle/ParticleEmitter.cpp
 #include "ParticleEmitter.h"
 #include "ParticleManager.h"
 #include "MathVector.h"
+
+#include <imgui.h>
 
 using namespace Engine;
 using namespace MathVector;
@@ -4450,34 +4602,38 @@ void ParticleEmitter::Initialize() {
 
 void ParticleEmitter::Update() {
 
-	// タイプに応じた発射処理
-	switch (emitterType) {
+	// 発生フラグが立っているとき
+	if (isEmitting) {
 
-	// 常に発射
-	case EmitterType::Constant:
-		Emit();
-		break;
+		// タイプに応じた発射処理
+		switch (emitterType) {
 
-	// 一定間隔ごとに発射
-	case EmitterType::Interval:
-
-		// タイマー更新
-		timer += deltaTime;
-
-		// 発生頻度を超えたらパーティクル発生
-		if (timer >= frequency) {
+			// 常に発射
+		case EmitterType::Constant:
 			Emit();
-			timer = 0.0f; // シンプルなリセットならこちら
+			break;
+
+			// 一定間隔ごとに発射
+		case EmitterType::Interval:
+
+			// タイマー更新
+			timer += deltaTime;
+
+			// 発生頻度を超えたらパーティクル発生
+			if (timer >= frequency) {
+				Emit();
+				timer = 0.0f; // シンプルなリセットならこちら
+			}
+			break;
+
+			// 呼んだときだけ
+		case EmitterType::OneShot:
+			// 何もしない
+			break;
+
+		default:
+			break;
 		}
-		break;
-
-	// 呼んだときだけ
-	case EmitterType::OneShot:
-		// 何もしない
-		break;
-
-	default:
-		break;
 	}
 
 	// ワールド変換の更新
@@ -4529,12 +4685,12 @@ void ParticleEmitter::Emit() {
 		if (setting->translateRandom) {
 
 			// 範囲からランダム生成
-			particle.translate = RandomVector3(setting->translateRange) + worldTransform.GetTranslate();
+			particle.translate = RandomVector3(setting->translateRange) + worldTransform.GetWorldPosition();
 		}
 		else {
 
 			// 固定値を代入
-			particle.translate = setting->translate + worldTransform.GetTranslate();
+			particle.translate = setting->translate + worldTransform.GetWorldPosition();
 		}
 
 		// 速度の設定
@@ -4590,6 +4746,35 @@ void ParticleEmitter::Emit() {
 	}
 }
 
+void ParticleEmitter::ShowImGui() {
+
+#ifdef USE_IMGUI
+
+	ImGui::Begin(effectName.c_str());
+
+	ImGui::Checkbox("Emitting", &isEmitting);
+
+	ImGui::Text("Emitter Type: %s", 
+		emitterType == EmitterType::Constant ? "Constant" :
+		emitterType == EmitterType::Interval ? "Interval" :
+		emitterType == EmitterType::OneShot ? "OneShot" : "Unknown");
+
+	ImGui::Text("Frequency: %.2f", frequency);
+
+	ImGui::Text("Count: %d", count);
+
+	if (ImGui::Button("Emit Test")) {
+		Emit();
+	}
+
+	worldTransform.ShowImGui();
+
+	ImGui::End();
+
+#endif // USE_IMGUI
+}
+
+
 ============================================================
 File Path: Project/Engine/3D/Particle/ParticleEmitter.h
 ============================================================
@@ -4611,9 +4796,9 @@ namespace Engine {
 	/// ===== パーティクルエミッター ===== ///
 	class ParticleEmitter {
 
-		///-------------------------------------------/// 
-		/// メンバ関数
-		///-------------------------------------------///
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -4643,9 +4828,25 @@ namespace Engine {
 		/// </summary>
 		void Emit();
 
-		///-------------------------------------------/// 
-		/// セッター
-		///-------------------------------------------///
+		/// <summary>
+		/// ImGui表示
+		/// </summary>
+		void ShowImGui();
+
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// ワールド変換のゲッター
+		/// </summary>
+		/// <returns></returns>
+		Engine::WorldTransform& GetWorldTransform() { return worldTransform; }
+
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 	public:
 
 		/// <summary>
@@ -4660,9 +4861,21 @@ namespace Engine {
 		/// <param name="frequency"></param>
 		void SetFrequency(float frequency) { this->frequency = frequency; }
 
-		///-------------------------------------------/// 
-		/// メンバ変数
-		///-------------------------------------------///
+		/// <summary>
+		/// 1回あたりの発生数のセッター
+		/// </summary>
+		/// <param name="count"></param>
+		void SetCount(uint32_t count) { this->count = count; }
+
+		/// <summary>
+		/// 発生フラグのセッター
+		/// </summary>
+		/// <param name="isEmitting"></param>
+		void SetEmitting(bool isEmitting) { this->isEmitting = isEmitting; }
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
 	private:
 
 		// エフェクト名
@@ -4685,6 +4898,9 @@ namespace Engine {
 
 		// ワールド変換情報
 		WorldTransform worldTransform;
+
+		// 発生フラグ
+		bool isEmitting = true;
 	};
 }
 
@@ -4697,6 +4913,7 @@ File Path: Project/Engine/3D/Particle/ParticleManager.cpp
 #include "DirectXUtility.h"
 #include "SrvManager.h"
 #include "Camera.h"
+#include "Model/ModelManager.h"
 #include "MathVector.h"
 #include "MathMatrix.h"
 
@@ -4721,6 +4938,12 @@ void ParticleManager::Initialize() {
 
 	// SRVマネージャーのインスタンスを取得
 	srvManager = SrvManager::GetInstance();
+
+	// モデルマネージャのインスタンスを取得
+	modelManager_ = ModelManager::GetInstance();
+
+	// JSONからパーティクル設定を全て読み込み
+	LoadParticleSettingsFromJSON();
 
 	// 板ポリのレンダラーを作成
 	planeRenderer = std::make_unique<PlaneRenderer>();
@@ -4747,8 +4970,10 @@ void ParticleManager::Initialize() {
 	// シャードのレンダラーを初期化
 	shardRenderer->Initialize();
 
-	// JSONからパーティクル設定を全て読み込み
-	LoadParticleSettingsFromJSON();
+	// メッシュのレンダラーを作成
+	meshRenderer = std::make_unique<MeshRenderer>();
+	// メッシュのレンダラーを初期化
+	meshRenderer->Initialize();
 }
 
 void ParticleManager::Update() {
@@ -4781,6 +5006,9 @@ void ParticleManager::Update() {
 
 	// シャードのパーティクルコンテナの更新
 	UpdateGroups(shardGroups);
+
+	// メッシュのパーティクルコンテナの更新
+	UpdateGroups(meshGroups);
 }
 
 void ParticleManager::Draw() {
@@ -4789,53 +5017,63 @@ void ParticleManager::Draw() {
 	assert(camera && "Camera is nullptr");
 
 	// 板ポリのパーティクルコンテナの描画
-	for (auto& [textureFileName, group] : planeGroups) {
+	for (auto& [effectName, group] : planeGroups) {
 
 		// リストが空なら描画しない
 		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// 板ポリレンダラーで描画
-		planeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+		planeRenderer->Draw(group.numInstance, group.srvIndex, settings[effectName].textureFullPath);
 	}
 
 	// リングのパーティクルコンテナの描画
-	for (auto& [textureFileName, group] : ringGroups) {
+	for (auto& [effectName, group] : ringGroups) {
 
 		// リストが空なら描画しない
 		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// リングレンダラーで描画
-		ringRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+		ringRenderer->Draw(group.numInstance, group.srvIndex, settings[effectName].textureFullPath);
 	}
 
 	// シリンダーのパーティクルコンテナの描画
-	for (auto& [textureFileName, group] : cylinderGroups) {
+	for (auto& [effectName, group] : cylinderGroups) {
 
 		// リストが空なら描画しない
 		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// シリンダーレンダラーで描画
-		cylinderRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+		cylinderRenderer->Draw(group.numInstance, group.srvIndex, settings[effectName].textureFullPath);
 	}
 
 	// キューブのパーティクルコンテナの描画
-	for (auto& [textureFileName, group] : cubeGroups) {
+	for (auto& [effectName, group] : cubeGroups) {
 
 		// リストが空なら描画しない
 		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// キューブレンダラーで描画
-		cubeRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+		cubeRenderer->Draw(group.numInstance, group.srvIndex, settings[effectName].textureFullPath);
 	}
 
 	// シャードのパーティクルコンテナの描画
-	for (auto& [textureFileName, group] : shardGroups) {
+	for (auto& [effectName, group] : shardGroups) {
 
 		// リストが空なら描画しない
 		if (group.particles.empty() || group.numInstance <= 0) continue;
 
 		// シャードレンダラーで描画
-		shardRenderer->Draw(group.numInstance, group.srvIndex, textureFileName);
+		shardRenderer->Draw(group.numInstance, group.srvIndex, settings[effectName].textureFullPath);
+	}
+
+	// メッシュのパーティクルコンテナの描画
+	for (auto& [effectName, group] : meshGroups) {
+
+		// リストが空なら描画しない
+		if (group.particles.empty() || group.numInstance <= 0) continue;
+
+		// メッシュレンダラーで描画
+		meshRenderer->Draw(group.numInstance, group.srvIndex, settings[effectName].textureFullPath);
 	}
 }
 
@@ -4854,90 +5092,6 @@ void ParticleManager::ShowImGui() {
 
 	ImGui::Begin("Particle Manager");
 
-	// 画面を左右に分割
-	ImGui::Columns(2, "ParticleEditorCols", true);
-
-	// 初回のみ左側の幅を固定（例: 200px）
-	static bool firstTime = true;
-	if (firstTime) {
-		ImGui::SetColumnWidth(0, 240.0f);
-		firstTime = false;
-	}
-
-	// ============================================================
-	// 【左側】 エフェクトリスト
-	// ============================================================
-
-	// ShowEffectList(); // 関数化している場合はこれを呼ぶだけ
-
-	// または直接書くなら以下のように BeginChild を使うと
-	// リスト部分だけスクロールできてエディタっぽくなります
-	ImGui::BeginChild("EffectListPanel", ImVec2(0, 0), true);
-	ShowEffectList();
-	ImGui::EndChild();
-
-	// ============================================================
-	// 次のカラム（右側）へ移動
-	// ============================================================
-	ImGui::NextColumn();
-
-	// ============================================================
-	// 【右側】 パラメータ詳細
-	// ============================================================
-
-	// 右側もスクロールできるようにChildで囲むのがおすすめ
-	ImGui::BeginChild("ParameterPanel", ImVec2(0, 0), false);
-	ShowParameters();
-	ImGui::EndChild();
-
-	// ============================================================
-	// カラム設定を解除（1カラムに戻す）
-	// ============================================================
-	ImGui::Columns(1);
-
-	ImGui::End();
-
-	ImGui::Begin("Particle Instances");
-
-	// グループコンテナのリスト
-	struct GroupContainerInfo {
-		const char* name;
-		std::unordered_map<std::string, ParticleGroup>* container;
-	} containers[] = {
-		{ "Plane", &planeGroups },
-		{ "Ring", &ringGroups },
-		{ "Cylinder", &cylinderGroups },
-		{ "Cube", &cubeGroups },
-		{ "Shard", &shardGroups },
-	};
-
-	for (const auto& containerInfo : containers) {
-		if (ImGui::TreeNode(containerInfo.name)) {
-			for (const auto& [textureKey, group] : *containerInfo.container) {
-				std::string groupLabel = textureKey + " (" + std::to_string(group.particles.size()) + " instances)";
-				if (ImGui::TreeNodeEx(groupLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-					int idx = 0;
-					for (const auto& inst : group.particles) {
-						std::string instLabel = "Instance " + std::to_string(idx);
-						if (ImGui::TreeNodeEx(instLabel.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-							ImGui::Text("Scale:      (%.2f, %.2f, %.2f)", inst.scale.x, inst.scale.y, inst.scale.z);
-							ImGui::Text("Rotate:     (%.2f, %.2f, %.2f)", inst.rotate.x, inst.rotate.y, inst.rotate.z);
-							ImGui::Text("Translate:  (%.2f, %.2f, %.2f)", inst.translate.x, inst.translate.y, inst.translate.z);
-							ImGui::Text("Velocity:   (%.2f, %.2f, %.2f)", inst.velocity.x, inst.velocity.y, inst.velocity.z);
-							ImGui::Text("Acceleration:(%.2f, %.2f, %.2f)", inst.acceleration.x, inst.acceleration.y, inst.acceleration.z);
-							ImGui::Text("Color:      (%.2f, %.2f, %.2f, %.2f)", inst.color.x, inst.color.y, inst.color.z, inst.color.w);
-							ImGui::Text("LifeTime:   %.2f", inst.lifeTime);
-							ImGui::Text("CurrentTime:%.2f", inst.currentTime);
-							ImGui::TreePop();
-						}
-						++idx;
-					}
-					ImGui::TreePop();
-				}
-			}
-			ImGui::TreePop();
-		}
-	}
 	ImGui::End();
 
 #endif // USE_IMGUI
@@ -4945,20 +5099,14 @@ void ParticleManager::ShowImGui() {
 
 void ParticleManager::AddSetting(ParticleSetting& setting) {
 
-	// フルパスを作成
-	setting.textureFullPath = TextureFolderPath + setting.textureFileName;
-
-	// テクスチャを読み込み
-	textureManager->LoadTexture(setting.textureFullPath);
-
 	// 設定を追加
 	settings[setting.effectName] = setting;
 }
 
 void ParticleManager::AddInstance(const ParticleInstance& instance) {
 
-	// フルパスを取得
-	std::string key = instance.setting->textureFullPath;
+	// エフェクト名を取得
+	std::string key = instance.setting->effectName;
 
 	// 形状で分岐
 	switch (instance.setting->shape) {
@@ -5030,6 +5178,20 @@ void ParticleManager::AddInstance(const ParticleInstance& instance) {
 		shardGroups[key].particles.push_back(instance);
 
 		break;
+
+	case ParticleShape::MESH:
+
+		// リソース未作成なら
+		if (!meshGroups[key].isResourceCreated) {
+
+			// リソース作成
+			CreateGroupResource(meshGroups[key]);
+		}
+
+		// グループのリストに追加
+		meshGroups[key].particles.push_back(instance);
+
+		break;
 	}
 }
 
@@ -5057,6 +5219,11 @@ void ParticleManager::Clear() {
 
 	// シャードのパーティクルをクリア
 	for (auto& [key, group] : shardGroups) {
+		group.particles.clear();
+	}
+
+	// メッシュのパーティクルをクリア
+	for (auto& [key, group] : meshGroups) {
 		group.particles.clear();
 	}
 }
@@ -5147,313 +5314,16 @@ void ParticleManager::UpdateGroups(std::unordered_map<std::string, ParticleGroup
 void ParticleManager::LoadParticleSettingsFromJSON() {
 
 	// ディレクトリ内の全jsonを走査して読み込む
-	if (!std::filesystem::exists(DataFolderPath)) {
-		std::filesystem::create_directories(DataFolderPath);
+	if (!std::filesystem::exists(kDataFolderPath)) {
+		std::filesystem::create_directories(kDataFolderPath);
 		return; // まだフォルダがない
 	}
 
-	for (const auto& entry : std::filesystem::directory_iterator(DataFolderPath)) {
+	for (const auto& entry : std::filesystem::directory_iterator(kDataFolderPath)) {
 		if (entry.path().extension() == ".json") {
 			LoadSettingsFromJSON(entry.path().string());
 		}
 	}
-}
-
-void ParticleManager::ShowEffectList() {
-
-#ifdef USE_IMGUI
-
-	ImGui::Text("Effect List");
-
-	// 全読み込みボタン
-	if (ImGui::Button("Reload All Files")) {
-		LoadParticleSettingsFromJSON();
-	}
-
-	ImGui::Separator();
-
-	// リスト表示
-	//ImGui::BeginChild("EffectListScroll", ImVec2(0, 300), true);
-	for (auto& [name, setting] : settings) {
-
-		bool isSelected = (currentEditName == name);
-
-		if (ImGui::Selectable(name.c_str(), isSelected)) {
-			currentEditName = name;
-
-			// ★重要: 選択した瞬間、本データを一時バッファにコピーする
-			tempSetting = setting;
-		}
-	}
-	//ImGui::EndChild();
-
-	ImGui::Separator();
-
-	// 新規作成
-	ImGui::InputText("New Name", inputNameBuffer, sizeof(inputNameBuffer));
-	if (ImGui::Button("Create New")) {
-		std::string newName = inputNameBuffer;
-		if (!newName.empty() && settings.find(newName) == settings.end()) {
-			// デフォルト設定で作成
-			ParticleSetting newSetting;
-			newSetting.effectName = newName;
-			newSetting.textureFileName = "white.png"; // 仮
-			newSetting.textureFullPath = TextureFolderPath + "white.png";
-			newSetting.shape = ParticleShape::PLANE;
-
-			settings[newName] = newSetting;
-			currentEditName = newName; // 選択状態にする
-			tempSetting = newSetting;
-
-			// バッファクリア
-			memset(inputNameBuffer, 0, sizeof(inputNameBuffer));
-		}
-	}
-
-#endif // USE_IMGUI
-}
-
-void ParticleManager::ShowParameters() {
-
-#ifdef USE_IMGUI
-
-	if (currentEditName.empty() || settings.find(currentEditName) == settings.end()) {
-		ImGui::Text("Select an effect to edit.");
-		return;
-	}
-
-	// 一時バッファ参照
-	ParticleSetting& p = tempSetting;
-
-	// -------------------------------------------------------------
-	// 1. 変更チェック
-	// -------------------------------------------------------------
-	bool isChanged = false;
-	json jsonTemp = tempSetting;
-	json jsonSaved = settings[currentEditName];
-	// 中身が違うなら「変更あり(未Apply)」
-	if (jsonTemp != jsonSaved) {
-		isChanged = true;
-	}
-
-	// -------------------------------------------------------------
-	// 2. タイトル表示 (変更があれば * をつける)
-	// -------------------------------------------------------------
-	if (isChanged) {
-		ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.5f, 1.0f), "Editing Buffer: %s (*)", p.effectName.c_str());
-	}
-	else {
-		ImGui::TextColored(ImVec4(0.0f, 1.0f, 1.0f, 1.0f), "Editing Buffer: %s", p.effectName.c_str());
-	}
-
-	ImGui::Separator();
-
-	// -------------------------------------------------------------
-	// 3. Applyボタン と Saveボタン
-	// -------------------------------------------------------------
-
-	// 変更があるならボタンを「赤色」にする
-	if (isChanged) {
-		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));        // 赤
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f)); // ホバー時の赤
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));  // 押した時の赤
-	}
-
-	if (ImGui::Button("Apply Changes")) {
-
-		// テクスチャのロードもここで行う
-		p.textureFullPath = TextureFolderPath + p.textureFileName;
-		textureManager->LoadTexture(p.textureFullPath);
-
-		// マップに書き戻す
-		settings[currentEditName] = p;
-	}
-
-	if (isChanged) ImGui::PopStyleColor(3); // 色を戻す
-
-	ImGui::SameLine();
-
-	if (isChanged) ImGui::BeginDisabled(); // 変更が残っている(未Apply)なら無効化
-
-	if (ImGui::Button("Save to File")) {
-		// JSONファイルとして書き出し
-		SaveSettingsToJSON(currentEditName);
-	}
-
-	// ホバー時にヒントを出すと親切
-	if (isChanged && ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled)) {
-		ImGui::SetTooltip("Apply changes first to save."); // 「先にApplyしてね」
-	}
-
-	if (isChanged) ImGui::EndDisabled(); // 無効化解除
-
-	// -------------------------------------------------------------
-	// 4. Revertボタン
-	// -------------------------------------------------------------
-	if (ImGui::Button("Revert")) {
-		// 元に戻す（本データから再度コピー）
-		tempSetting = settings[currentEditName];
-	}
-
-	ImGui::Separator();
-
-	// -------------------------------------------------------------
-	// 5. テストエミットボタン
-	// -------------------------------------------------------------
-	if (ImGui::Button("Test Emit (Preview)")) {
-
-		// ★一時的にtempSettingを正式にsettingsに登録する
-		std::string tempKey = "TEMP_PREVIEW_" + p.effectName;
-
-		// テクスチャのフルパスを確実に設定
-		p.textureFullPath = TextureFolderPath + p.textureFileName;
-
-		// テクスチャを読み込む
-		textureManager->LoadTexture(p.textureFullPath);
-
-		// 一時的に設定を登録
-		ParticleSetting tempSettingCopy = p;
-		tempSettingCopy.effectName = tempKey;
-		settings[tempKey] = tempSettingCopy;
-
-		for (int i = 0; i < 10; ++i) {
-			ParticleInstance instance;
-			instance.setting = &settings[tempKey]; // ★正式に登録された設定への参照
-
-			// 位置
-			instance.translate = p.translateRandom ? RandomVector3(p.translateRange) : p.translate;
-			// 速度
-			instance.velocity = p.velocityRandom ? RandomVector3(p.velocityRange) : p.velocity;
-			// 色
-			instance.color = p.colorRandom ? RandomVector4(p.colorRange) : p.color;
-			// スケール
-			instance.scale = p.scaleRandom ? RandomVector3(p.scaleRange) : p.scale;
-			// 回転
-			instance.rotate = p.rotateRandom ? RandomVector3(p.rotateRange) : p.rotate;
-			// 寿命
-			instance.lifeTime = p.lifeTimeRandom ? RandomFloat(p.lifeTimeRange.min, p.lifeTimeRange.max) : p.lifeTime;
-
-			AddInstance(instance);
-		}
-
-		// ★プレビュー後、一時設定を削除
-		settings.erase(tempKey);
-	}
-
-	ImGui::Separator();
-
-	// -------------------------------------------------------------
-	// 6. タブバーでパラメータ表示
-	// -------------------------------------------------------------
-	if (ImGui::BeginTabBar("ParamsTab")) {
-
-		// 1. 基本設定タブ
-		if (ImGui::BeginTabItem("Basic")) {
-
-			// テクスチャ名の入力
-			char texBuff[128];
-			strcpy_s(texBuff, p.textureFileName.c_str());
-
-			// 1. 入力欄を表示 (ここでは文字列の更新だけ行う)
-			if (ImGui::InputText("Texture", texBuff, sizeof(texBuff))) {
-				p.textureFileName = texBuff;
-			}
-
-			// 2. ★重要: 「編集が確定した後（Enterやフォーカス外れ）」にロードを実行
-			if (ImGui::IsItemDeactivatedAfterEdit()) {
-
-				// ここで初めて重いロード処理を呼ぶ
-				textureManager->LoadTexture(p.textureFullPath);
-			}
-
-			// フラグ系
-			ImGui::Checkbox("Use Billboard", &p.useBillboard);
-			//ImGui::Checkbox("Use Gravity", &p.useGravity);
-
-			// 形状 (Combo Box)
-			const char* items[] = { "PLANE", "RING", "CYLINDER", "CUBE", "SPHERE", "SHARD" };
-			int currentShape = static_cast<int>(p.shape);
-			if (ImGui::Combo("Shape", &currentShape, items, IM_ARRAYSIZE(items))) {
-				p.shape = static_cast<ParticleShape>(currentShape);
-			}
-
-			// 寿命
-			ImGui::Separator();
-			ImGui::Text("LifeTime");
-			ImGui::Checkbox("Random##Life", &p.lifeTimeRandom);
-			if (p.lifeTimeRandom) {
-				ImGui::DragFloat("Min", &p.lifeTimeRange.min, 0.1f);
-				ImGui::DragFloat("Max", &p.lifeTimeRange.max, 0.1f);
-			}
-			else {
-				ImGui::DragFloat("Value", &p.lifeTime, 0.1f);
-			}
-
-			ImGui::EndTabItem();
-		}
-
-		// 2. Transformタブ
-		if (ImGui::BeginTabItem("Transform")) {
-
-			// ヘルパーラムダ: Vector3のMin/Max or Fixedを表示
-			auto DrawVec3Control = [](const char* label, bool& isRandom, Vector3Range& range, Vector3& fixed) {
-				ImGui::PushID(label);
-				ImGui::Text("%s", label);
-				ImGui::Checkbox("Random", &isRandom);
-				if (isRandom) {
-					ImGui::DragFloat3("Min", &range.min.x, 0.01f);
-					ImGui::DragFloat3("Max", &range.max.x, 0.01f);
-				}
-				else {
-					ImGui::DragFloat3("Value", &fixed.x, 0.01f);
-				}
-				ImGui::Separator();
-				ImGui::PopID();
-				};
-
-			DrawVec3Control("Translate", p.translateRandom, p.translateRange, p.translate);
-			DrawVec3Control("Scale", p.scaleRandom, p.scaleRange, p.scale);
-			DrawVec3Control("Rotate", p.rotateRandom, p.rotateRange, p.rotate);
-
-			ImGui::EndTabItem();
-		}
-
-		// 3. Physics & Colorタブ
-		if (ImGui::BeginTabItem("Physics/Color")) {
-
-			// Velocity
-			ImGui::Text("Velocity");
-			ImGui::Checkbox("Random##Vel", &p.velocityRandom);
-			if (p.velocityRandom) {
-				ImGui::DragFloat3("Min##Vel", &p.velocityRange.min.x, 0.01f);
-				ImGui::DragFloat3("Max##Vel", &p.velocityRange.max.x, 0.01f);
-			}
-			else {
-				ImGui::DragFloat3("Value##Vel", &p.velocity.x, 0.01f);
-			}
-			ImGui::Separator();
-
-			// Acceleration
-			ImGui::DragFloat3("Acceleration", &p.acceleration.x, 0.01f);
-
-			// Color
-			ImGui::Text("Color");
-			ImGui::Checkbox("Random##Col", &p.colorRandom);
-			if (p.colorRandom) {
-				ImGui::ColorEdit4("Min##Col", &p.colorRange.min.x);
-				ImGui::ColorEdit4("Max##Col", &p.colorRange.max.x);
-			}
-			else {
-				ImGui::ColorEdit4("Value##Col", &p.color.x);
-			}
-
-			ImGui::EndTabItem();
-		}
-
-		ImGui::EndTabBar();
-	}
-
-#endif // USE_IMGUI
 }
 
 void ParticleManager::SaveSettingsToJSON(const std::string& effectName) {
@@ -5465,13 +5335,13 @@ void ParticleManager::SaveSettingsToJSON(const std::string& effectName) {
 	}
 
 	// ディレクトリ確認
-	if (!std::filesystem::exists(DataFolderPath)) {
-		std::filesystem::create_directories(DataFolderPath);
+	if (!std::filesystem::exists(kDataFolderPath)) {
+		std::filesystem::create_directories(kDataFolderPath);
 	}
 
 	// JSONに変換して保存
 	json j = settings[effectName];
-	std::string path = DataFolderPath + effectName + ".json";
+	std::string path = kDataFolderPath + effectName + ".json";
 
 	std::ofstream o(path);
 	o << std::setw(4) << j << std::endl;
@@ -5489,11 +5359,35 @@ void ParticleManager::LoadSettingsFromJSON(const std::string& filePath) {
 	ParticleSetting setting;
 	setting = j; // JSON -> 構造体へ変換
 
-	// フルパスの作成
-	setting.textureFullPath = TextureFolderPath + setting.textureFileName;
+	/// ========== テクスチャの読み込み ========== ///
 
-	// テクスチャの読み込み
-	textureManager->LoadTexture(setting.textureFullPath);
+	// テクスチャファイル名が空でないなら
+	if (!setting.textureFileName.empty()) {
+
+		// テクスチャのベースディレクトリパスを取得
+		const std::string textureBasePath = textureManager->GetBaseDirectoryPath();
+
+		// テクスチャのフルパスの作成
+		std::filesystem::path textureFullPath = std::filesystem::path(textureBasePath) / "Particles" / setting.textureFileName;
+
+		// テクスチャの読み込み
+		textureManager->LoadTextureFullPath(textureFullPath.generic_string());
+	}
+
+	/// ========== モデルの読み込み ========== ///
+
+	// モデルファイル名が空でないなら
+	if (!setting.modelFileName.empty()) {
+
+		// モデルのベースディレクトリパスを取得
+		const std::string modelBasePath = modelManager_->GetBaseDirectoryPath();
+
+		// モデルのフルパスを作成
+		std::filesystem::path modelFullPath = std::filesystem::path(modelBasePath) / "Particles" / setting.modelFileName;
+
+		// モデルの読み込み
+		modelManager_->LoadModelFullPath(modelFullPath.generic_string());
+	}
 
 	// マップに登録
 	settings[setting.effectName] = setting;
@@ -5566,6 +5460,7 @@ File Path: Project/Engine/3D/Particle/ParticleManager.h
 #include "ShapeRenderers/CylinderRenderer.h"
 #include "ShapeRenderers/CubeRenderer.h"
 #include "ShapeRenderers/ShardRenderer.h"
+#include "ShapeRenderers/MeshRenderer.h"
 
 #include <unordered_map>
 #include <string>
@@ -5579,6 +5474,7 @@ namespace Engine {
 	class DirectXUtility;
 	class SrvManager;
 	class Camera;
+	class ModelManager;
 
 	/// ===== パ＝ティクルマネージャー ===== ///
 	class ParticleManager {
@@ -5670,16 +5566,6 @@ namespace Engine {
 		void LoadParticleSettingsFromJSON();
 
 		/// <summary>
-		/// エフェクトのリストを表示
-		/// </summary>
-		void ShowEffectList();
-
-		/// <summary>
-		/// パラメータを表示
-		/// </summary>
-		void ShowParameters();
-
-		/// <summary>
 		/// 設定をJSONに保存
 		/// </summary>
 		/// <param name="effectName">エフェクト名</param>
@@ -5743,6 +5629,9 @@ namespace Engine {
 		// カメラの借りポインタ
 		Camera* camera = nullptr;
 
+		// モデルマネージャのインスタンス
+		ModelManager* modelManager_ = nullptr;
+
 		// 設定のコンテナ エフェクト名、設定
 		std::unordered_map<std::string, ParticleSetting> settings;
 
@@ -5752,6 +5641,7 @@ namespace Engine {
 		std::unordered_map<std::string, ParticleGroup> cylinderGroups;
 		std::unordered_map<std::string, ParticleGroup> cubeGroups;
 		std::unordered_map<std::string, ParticleGroup> shardGroups;
+		std::unordered_map<std::string, ParticleGroup> meshGroups;
 
 		// Δt
 		const float kDeltaTime = 1.0f / 60.0f;
@@ -5771,11 +5661,11 @@ namespace Engine {
 		// シャードのレンダラー
 		std::unique_ptr<ShardRenderer> shardRenderer = nullptr;
 
-		// Jsonデータを入れておくフォルダパス
-		const std::string DataFolderPath = "Resources/Datas/Particles/";
+		// メッシュのレンダラー
+		std::unique_ptr<MeshRenderer> meshRenderer = nullptr;
 
-		// 画像データを入れておくフォルダパス
-		const std::string TextureFolderPath = "Resources/Textures/Particles/";
+		// Jsonデータを入れておくフォルダパス
+		const std::string kDataFolderPath = "Resources/Datas/Particles/";
 
 		// エディタで選択中のエフェクト名
 		std::string currentEditName = "";
@@ -6039,7 +5929,7 @@ void CubeRenderer::Initialize() {
 void CubeRenderer::Update() {
 }
 
-void CubeRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
+void CubeRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -6054,7 +5944,7 @@ void CubeRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(textureFullPath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawIndexedInstanced(36, instanceCount, 0, 0, 0);
@@ -6208,7 +6098,7 @@ namespace Engine {
 
 		void Update() override;
 
-		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -6279,7 +6169,7 @@ void CylinderRenderer::Update() {
 	}
 }
 
-void CylinderRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
+void CylinderRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -6294,7 +6184,7 @@ void CylinderRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, c
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(textureFullPath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawIndexedInstanced(6 * kCylinderDivide, instanceCount, 0, 0, 0);
@@ -6425,7 +6315,7 @@ namespace Engine {
 
 		void Update() override;
 
-		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -6457,6 +6347,176 @@ namespace Engine {
 		float kUVSpeed = 0.1f; // 10秒で1周
 	};
 }
+
+
+============================================================
+File Path: Project/Engine/3D/Particle/ShapeRenderers/MeshRenderer.cpp
+============================================================
+#include "MeshRenderer.h"
+#include "DirectXUtility.h"
+#include "SrvManager.h"
+#include "Texture/TextureManager.h"
+#include "Model/ModelManager.h"
+#include "MathMatrix.h"
+
+using namespace Engine;
+using namespace MathMatrix;
+
+void MeshRenderer::Initialize() {
+
+	// DirectXUtilityのインスタンスを取得
+	dxUtility = DirectXUtility::GetInstance();
+
+	// SrvManagerのインスタンスを取得
+	srvManager = SrvManager::GetInstance();
+
+	// TextureManagerのインスタンスを取得
+	textureManager = TextureManager::GetInstance();
+
+	// ModelManagerのインスタンスを取得
+	modelManager = ModelManager::GetInstance();
+
+	// モデルデータをマネージャから検索して取得
+	modelData = modelManager->FindModel("Player/player.obj");
+
+	// 頂点データ生成
+	GenerateVertexData();
+
+	// マテリアルデータ生成
+	GenerateMaterialData();
+}
+
+void MeshRenderer::Update() {
+}
+
+void MeshRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
+
+	// 頂点バッファビューを設定
+	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
+
+	/// === InstanceDataのCBufferの場所を設定 === ///
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(0, srvManager->GetGPUDescriptorHandle(instanceSrvIndex));
+
+	// マテリアルCBufferの場所を設定
+	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
+
+	// SRVのDescriptorTableの先頭を設定
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(modelData->material.textureFilePath));
+
+	// 描画(DrawCall)
+	dxUtility->GetCommandList()->DrawInstanced(UINT(modelData->vertices.size()), instanceCount, 0, 0);
+}
+
+void MeshRenderer::GenerateVertexData() {
+
+	/// === VertexResourceを作る === ///
+	vertexResource = dxUtility->CreateBufferResource(sizeof(VertexData) * modelData->vertices.size());
+	
+	/// === VBVを作成する(値を設定するだけ) === ///
+	
+	// リソースの先頭アドレスから使う
+	vertexBufferView.BufferLocation = vertexResource->GetGPUVirtualAddress();
+	
+	// 使用するリソースのサイズ 頂点のサイズ
+	vertexBufferView.SizeInBytes = UINT(sizeof(VertexData) * modelData->vertices.size());
+	
+	// 1頂点あたりのサイズ
+	vertexBufferView.StrideInBytes = sizeof(VertexData);
+	
+	// === VertexResourceにデータを書き込むためのアドレスを取得してVertexDataに割り当てる === ///
+	vertexResource->Map(0, nullptr, reinterpret_cast<void**>(&vertexData));
+	
+	/// === VertexResourceに初期値を書き込む === ///
+	
+	// 頂点データをモデルデータの頂点データで上書き
+	std::memcpy(vertexData, modelData->vertices.data(), sizeof(VertexData) * modelData->vertices.size());
+}
+
+void MeshRenderer::GenerateIndexData() {
+
+	// 参照は使わないため何もしない
+}
+
+void MeshRenderer::GenerateMaterialData() {
+
+	/// === MaterialResourceを作る === ///
+	materialResource = dxUtility->CreateBufferResource(sizeof(Material));
+
+	/// === MaterialResourceにデータを書き込むためのアドレスを取得してMaterialDataに割り当てる === ///
+	materialResource->Map(0, nullptr, reinterpret_cast<void**>(&materialData));
+
+	/// === MaterialDataに初期値を書き込む === ///
+	materialData->color = Vector4(1.0f, 1.0f, 1.0f, 1.0f); // 白
+	materialData->uvTransform = MakeIdentity4x4(); // 単位行列で初期化
+}
+
+
+============================================================
+File Path: Project/Engine/3D/Particle/ShapeRenderers/MeshRenderer.h
+============================================================
+#pragma once
+
+#include "ParticleRendererBase.h"
+#include "Data/ModelData.h"
+
+namespace Engine {
+
+	/// ==========  前方宣言 ========== ///
+
+	class ModelManager;
+
+	/// <summary>
+	/// メッシュレンダラー
+	/// </summary>
+	class MeshRenderer : public ParticleRendererBase {
+
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
+	public:
+
+		/// <summary>
+		/// 初期化
+		/// </summary>
+		void Initialize() override;
+
+		/// <summary>
+		/// 更新
+		/// </summary>
+		void Update() override;
+
+		/// <summary>
+		/// インスタンス描画
+		/// </summary>
+		/// <param name="instanceCount">インスタンスの数</param>
+		/// <param name="instanceSrvIndex">SRV番号</param>
+		/// <param name="textureFullPath">テクスチャのフルパス</param>
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
+
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
+	private:
+
+		void GenerateVertexData() override;
+
+		void GenerateIndexData() override;
+
+		void GenerateMaterialData() override;
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
+	private:
+
+		// モデルマネージャのインスタンス
+		ModelManager* modelManager = nullptr;
+
+		// モデルデータ
+		ModelData const* modelData = nullptr;
+	};
+}
+
 
 
 ============================================================
@@ -6506,8 +6566,8 @@ namespace Engine {
 		/// </summary>
 		/// <param name="instanceCount">インスタンス数</param>
 		/// <param name="instanceSrvIndex">インスタンス用SRVインデックス</param>
-		/// <param name="texturePath">テクスチャパス</param>
-		virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) = 0;
+		/// <param name="textureFullPath">テクスチャのフルパス</param>
+		virtual void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) = 0;
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -6534,6 +6594,8 @@ namespace Engine {
 		///-------------------------------------------///
 	protected:
 
+		/// ========== シングルトン ========== ///
+
 		// DirectXUtilityのインスタンス
 		DirectXUtility* dxUtility = nullptr;
 
@@ -6542,6 +6604,8 @@ namespace Engine {
 
 		// TextureManagerのインスタンス
 		TextureManager* textureManager = nullptr;
+
+		/// ==========  ========== ///
 
 		// 頂点リソース
 		Microsoft::WRL::ComPtr <ID3D12Resource> vertexResource;
@@ -6605,7 +6669,7 @@ void PlaneRenderer::Initialize() {
 void PlaneRenderer::Update() {
 }
 
-void PlaneRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
+void PlaneRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -6620,10 +6684,10 @@ void PlaneRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, cons
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(textureFullPath));
 
 	// 描画(DrawCall)
-	dxUtility->GetCommandList()->DrawIndexedInstanced(36, instanceCount, 0, 0, 0);
+	dxUtility->GetCommandList()->DrawIndexedInstanced(6, instanceCount, 0, 0, 0);
 }
 
 void PlaneRenderer::GenerateVertexData() {
@@ -6724,7 +6788,7 @@ namespace Engine {
 
 		void Update() override;
 
-		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -6795,7 +6859,7 @@ void RingRenderer::Update() {
 	}
 }
 
-void RingRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
+void RingRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -6810,7 +6874,7 @@ void RingRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(textureFullPath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawIndexedInstanced(6 * kRingDivide, instanceCount, 0, 0, 0);
@@ -6931,7 +6995,7 @@ namespace Engine {
 
 		void Update() override;
 
-		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -7000,7 +7064,7 @@ void ShardRenderer::Initialize() {
 void ShardRenderer::Update() {
 }
 
-void ShardRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) {
+void ShardRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) {
 
 	// 頂点バッファビューを設定
 	dxUtility->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView);
@@ -7015,7 +7079,7 @@ void ShardRenderer::Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, cons
 	dxUtility->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの先頭を設定
-	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandle(texturePath));
+	dxUtility->GetCommandList()->SetGraphicsRootDescriptorTable(2, textureManager->GetSRVGPUHandleFullPath(textureFullPath));
 
 	// 描画(DrawCall)
 	dxUtility->GetCommandList()->DrawIndexedInstanced(12, instanceCount, 0, 0, 0);
@@ -7139,7 +7203,7 @@ namespace Engine {
 
 		void Update() override;
 
-		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& texturePath) override;
+		void Draw(uint16_t instanceCount, uint16_t instanceSrvIndex, const std::string& textureFullPath) override;
 
 		///-------------------------------------------/// 
 		/// クラス内関数
@@ -7369,6 +7433,7 @@ File Path: Project/Engine/3D/Skybox/Skybox.cpp
 #include "Texture/TextureManager.h"
 #include "MathMatrix.h"
 #include "Camera.h"
+#include "SrvManager.h"
 
 #include <imgui.h>
 
@@ -7381,7 +7446,7 @@ void Skybox::Initialize(const std::string relativePath) {
 	std::string fullPath = TextureManager::GetInstance()->GetBaseDirectoryPath() + "/" + relativePath;
 
 	// TextureManagerからSRVインデックスを取得
-	textureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(fullPath);
+	textureSrvIndex = TextureManager::GetInstance()->GetSRVIndexFullPath(fullPath);
 
 	// ワールド変換の初期化
 	worldTransform.Initialize();
@@ -7428,7 +7493,7 @@ void Skybox::Draw() {
 	dxUtility_->GetCommandList()->SetGraphicsRootConstantBufferView(1, materialResource->GetGPUVirtualAddress());
 
 	// SRVのDescriptorTableの場所を設定
-	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, TextureManager::GetInstance()->GetSRVGPUHandle(textureSrvIndex));
+	dxUtility_->GetCommandList()->SetGraphicsRootDescriptorTable(2, SrvManager::GetInstance()->GetGPUDescriptorHandle(textureSrvIndex));
 
 	// 描画(DrawCall)
 	dxUtility_->GetCommandList()->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
@@ -10621,15 +10686,13 @@ void DissolveFilter::CreateConfigData() {
 	configData_->edgeColor = { 0.0f,0.0f,0.0f }; // 黒に設定
 }
 
-void DissolveFilter::SetMaskTextureFilePath(const std::string relativePath) {
-
-	maskTextureFullPath = TextureManager::GetInstance()->GetBaseDirectoryPath() + "/" + relativePath;
+void DissolveFilter::SetMaskTextureFilePath(const std::string fileName) {
 
 	// テクスチャを読み込む
-	TextureManager::GetInstance()->LoadTexture(maskTextureFullPath);
+	TextureManager::GetInstance()->LoadTexture(fileName);
 
 	// SRVインデックスを取得
-	maskTextureSrvIndex = TextureManager::GetInstance()->GetTextureIndexByFilePath(maskTextureFullPath);
+	maskTextureSrvIndex = TextureManager::GetInstance()->GetSRVIndex(fileName);
 }
 
 
@@ -10694,8 +10757,8 @@ namespace Engine {
 		/// <summary>
 		/// maskテクスチャの設定
 		/// </summary>
-		/// <param name="relativePath">相対パス</param>
-		void SetMaskTextureFilePath(const std::string relativePath);
+		/// <param name="fileName">ファイル名</param>
+		void SetMaskTextureFilePath(const std::string fileName);
 
 	///-------------------------------------------/// 
 	/// 構造体
@@ -191715,54 +191778,54 @@ void MyGame::LoadAllResource() {
 
 	/// ===== テクスチャの読み込み ===== ///
 
-	textureManager_->LoadTextureRelative("BlackScreen.png");
-	textureManager_->LoadTextureRelative("start.png");
-	textureManager_->LoadTextureRelative("title.png");
-	textureManager_->LoadTextureRelative("White1280x720.png");
-	textureManager_->LoadTextureRelative("Black1280x720.png");
-	textureManager_->LoadTextureRelative("LockOn.png");
-	textureManager_->LoadTextureRelative("2DReticle.png");
-	textureManager_->LoadTextureRelative("Rule/Rule.png");
-	textureManager_->LoadTextureRelative("Rule/Operation.png");
-	textureManager_->LoadTextureRelative("Norma/NormaText.png");
-	textureManager_->LoadTextureRelative("Norma/Slash.png");
-	textureManager_->LoadTextureRelative("Numbers.png");
-	textureManager_->LoadTextureRelative("Result/Clear.png");
-	textureManager_->LoadTextureRelative("Result/GameOver.png");
-	textureManager_->LoadTextureRelative("GameClear.png");
-	textureManager_->LoadTextureRelative("GameOver.png");
-	textureManager_->LoadTextureRelative("Guide/Mouse.png");
-	textureManager_->LoadTextureRelative("Guide/MouseClick.png");
-	textureManager_->LoadTextureRelative("Guide/ButtonA.png");
-	textureManager_->LoadTextureRelative("Guide/ButtonD.png");
-	textureManager_->LoadTextureRelative("Guide/PushA.png");
-	textureManager_->LoadTextureRelative("Guide/PushD.png");
-	textureManager_->LoadTextureRelative("Guide/Pause.png");
-	textureManager_->LoadTextureRelative("Guide/Back.png");
-	textureManager_->LoadTextureRelative("White1x1.png");
-	textureManager_->LoadTextureRelative("PauseUI/ResumeButton.png");
-	textureManager_->LoadTextureRelative("PauseUI/RestartButton.png");
-	textureManager_->LoadTextureRelative("PauseUI/QuitButton.png");
-	textureManager_->LoadTextureRelative("PauseUI/Frame.png");
-	textureManager_->LoadTextureRelative("SpaceToTitle.png");
+	textureManager_->LoadTexture("BlackScreen.png");
+	textureManager_->LoadTexture("start.png");
+	textureManager_->LoadTexture("title.png");
+	textureManager_->LoadTexture("White1280x720.png");
+	textureManager_->LoadTexture("Black1280x720.png");
+	textureManager_->LoadTexture("LockOn.png");
+	textureManager_->LoadTexture("2DReticle.png");
+	textureManager_->LoadTexture("Rule/Rule.png");
+	textureManager_->LoadTexture("Rule/Operation.png");
+	textureManager_->LoadTexture("Norma/NormaText.png");
+	textureManager_->LoadTexture("Norma/Slash.png");
+	textureManager_->LoadTexture("Numbers.png");
+	textureManager_->LoadTexture("Result/Clear.png");
+	textureManager_->LoadTexture("Result/GameOver.png");
+	textureManager_->LoadTexture("GameClear.png");
+	textureManager_->LoadTexture("GameOver.png");
+	textureManager_->LoadTexture("Guide/Mouse.png");
+	textureManager_->LoadTexture("Guide/MouseClick.png");
+	textureManager_->LoadTexture("Guide/ButtonA.png");
+	textureManager_->LoadTexture("Guide/ButtonD.png");
+	textureManager_->LoadTexture("Guide/PushA.png");
+	textureManager_->LoadTexture("Guide/PushD.png");
+	textureManager_->LoadTexture("Guide/Pause.png");
+	textureManager_->LoadTexture("Guide/Back.png");
+	textureManager_->LoadTexture("White1x1.png");
+	textureManager_->LoadTexture("PauseUI/ResumeButton.png");
+	textureManager_->LoadTexture("PauseUI/RestartButton.png");
+	textureManager_->LoadTexture("PauseUI/QuitButton.png");
+	textureManager_->LoadTexture("PauseUI/Frame.png");
+	textureManager_->LoadTexture("SpaceToTitle.png");
 
-	textureManager_->LoadTextureRelative("rostock_laage_airport_4k.dds");
+	textureManager_->LoadTexture("rostock_laage_airport_4k.dds");
 
 	/// ===== モデルの読み込み ===== ///
 
-	modelManager_->LoadModelData("Player", "player.obj");
-	modelManager_->LoadModelData("Cylinder", "cylinder.obj");
-	modelManager_->LoadModelData("Floor", "floor.obj");
-	modelManager_->LoadModelData("PlayerBullet", "PlayerBullet.obj");
-	modelManager_->LoadModelData("Enemy", "enemy.obj");
-	modelManager_->LoadModelData("Enemy", "Kamikaze.obj");
-	modelManager_->LoadModelData("EnemyBullet", "EnemyBullet.obj");
-	modelManager_->LoadModelData("Goal", "Goal.obj");
-	modelManager_->LoadModelData("Gate", "Gate.obj");
-	modelManager_->LoadModelData("Reticle", "Reticle.obj");
-	modelManager_->LoadModelData("Obstacle", "Obstacle.obj");
-	modelManager_->LoadModelData("Sphere", "sphere.obj");
-	modelManager_->LoadModelData("Terrain", "terrain.obj");
+	modelManager_->LoadModel("Player/player.obj");
+	modelManager_->LoadModel("Cylinder/cylinder.obj");
+	modelManager_->LoadModel("Floor/floor.obj");
+	modelManager_->LoadModel("PlayerBullet/PlayerBullet.obj");
+	modelManager_->LoadModel("Enemy/enemy.obj");
+	modelManager_->LoadModel("Enemy/Kamikaze.obj");
+	modelManager_->LoadModel("EnemyBullet/EnemyBullet.obj");
+	modelManager_->LoadModel("Goal/Goal.obj");
+	modelManager_->LoadModel("Gate/Gate.obj");
+	modelManager_->LoadModel("Reticle/Reticle.obj");
+	modelManager_->LoadModel("Obstacle/Obstacle.obj");
+	modelManager_->LoadModel("Sphere/sphere.obj");
+	modelManager_->LoadModel("Terrain/terrain.obj");
 }
 
 
@@ -192010,7 +192073,8 @@ File Path: Project/Game/Scene/DebugScene/DebugScene.cpp
 ============================================================
 #include "DebugScene.h"
 #include "SceneManager.h"
-#include "Object/Object3dRenderer.h"
+#include "Particle/ParticleRenderer.h"
+#include "Particle/ParticleManager.h"
 
 #include <imgui.h>
 
@@ -192018,64 +192082,61 @@ using namespace Engine;
 
 void DebugScene::Initialize() {
 
+	worldTransform.Initialize();
+
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->GetWorldTransform().SetRotate({ 0.39f,0.0f,0.0f });
-	camera->GetWorldTransform().SetTranslate({ 0.0f,5.0f,-10.0f });
+	camera->GetWorldTransform().SetParent(&worldTransform);
+	camera->GetWorldTransform().SetRotate({ 0.2f,0.0f,0.0f });
+	camera->GetWorldTransform().SetTranslate({ 0.0f,2.5f,-8.0f });
 
 	// シーンマネージャのインスタンス取得
 	sceneManager = SceneManager::GetInstance();
 
-	// ライトマネージャの初期化
-	lightManager_ = std::make_unique<Engine::LightManager>();
-	lightManager_->Initialize();
+	// パーティクルレンダラーのインスタンス取得
+	particleRenderer = ParticleRenderer::GetInstance();
 
-	// インスタンス取得
-	object3dRenderer_ = Object3dRenderer::GetInstance();
-	object3dRenderer_->SetDefaultCamera(camera.get());
+	// パーティクルマネージャのインスタンス取得
+	particleManager = ParticleManager::GetInstance();
+	// パーティクルマネージャにカメラをセット
+	particleManager->SetCamera(camera.get());
 
-	// モデルの生成
-	model_ = std::make_unique<Model>();
-	model_->Initialize("Sphere", "sphere.obj");
-
-	// オブジェクトの生成
-	object_ = std::make_unique<Object3d>();
-	object_->Initialize();
-	object_->SetModel(model_.get());
-
-	// モデルの生成
-	modelT_ = std::make_unique<Model>();
-	modelT_->Initialize("Terrain", "terrain.obj");
-
-	// オブジェクトの生成
-	objectT_ = std::make_unique<Object3d>();
-	objectT_->Initialize();
-	objectT_->SetModel(modelT_.get());
+	// パーティクルエミッターの生成
+	emitter_ = std::make_unique<ParticleEmitter>("PlayerMove", EmitterType::Interval, 1);
+	// パーティクルエミッターの初期化
+	emitter_->Initialize();
+	// パーティクルエミッターに位置をセット
+	emitter_->GetWorldTransform().SetParent(&worldTransform);
+	// 発生頻度をセット
+	emitter_->SetFrequency(0.1f);
 }
 
 void DebugScene::Update() {
 
+	// ワールド変換に位置を加算
+	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.1f });
+
+	// ワールド変換の更新
+	worldTransform.Update();
+
 	// カメラの更新
 	camera->Update();
 
-	// オブジェクトの更新
-	object_->Update();
+	// パーティクルマネージャの更新
+	particleManager->Update();
 
-	objectT_->Update();
+	// パーティクルエミッターの更新
+	emitter_->Update();
 }
 
 void DebugScene::DrawFiltered() {
 
-	/// === 3Dオブジェクトの描画準備 === ///
-	object3dRenderer_->SettingDrawingOpaque();
+	/// === パーティクル描画 === ///
+	particleRenderer->SettingDrawing();
 
-	lightManager_->Draw();
-
-	// オブジェクトの描画
-	object_->Draw();
-
-	objectT_->Draw();
+	// パーティクルマネージャの描画
+	particleManager->Draw();
 }
 
 void DebugScene::DrawUnfiltered() {
@@ -192092,27 +192153,11 @@ void DebugScene::ShowImGui() {
 
 	camera->ShowImGuiTree();
 
-	if (ImGui::TreeNode("モンボ")) {
-
-		object_->ShowImGui();
-
-		model_->ShowImGui();
-
-		ImGui::TreePop();
-	}
-
-	if (ImGui::TreeNode("地面")) {
-
-		objectT_->ShowImGui();
-
-		modelT_->ShowImGui();
-
-		ImGui::TreePop();
-	}
+	worldTransform.ShowImGui();
 
 	ImGui::End();
 
-	lightManager_->ShowImGui();
+	emitter_->ShowImGui();
 
 #endif // USE_IMGUI
 }
@@ -192125,19 +192170,16 @@ File Path: Project/Game/Scene/DebugScene/DebugScene.h
 
 #include "BaseScene.h"
 #include "Camera.h"
-
-#include "Light/LightManager.h"
-#include "Object/Object3d.h"
-#include "Model/Model.h"
-
-#include <memory>
+#include "Particle/ParticleEmitter.h"
+#include "WorldTransform.h"
 
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
 
 	class SceneManager;
-	class Object3dRenderer;
+	class ParticleRenderer;
+	class ParticleManager;
 }
 
 /// ===== デバッグシーン ===== ///
@@ -192189,23 +192231,16 @@ private:
 	// シーンマネージャのポインタ
 	Engine::SceneManager* sceneManager = nullptr;
 
-	// ライトマネージャのポインタ
-	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+	// パーティクルレンダラーのポインタ
+	Engine::ParticleRenderer* particleRenderer = nullptr;
 
-	// 3Dオブジェクトレンダラーのインスタンス
-	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+	// パーティクルマネージャのポインタ
+	Engine::ParticleManager* particleManager = nullptr;
 
-	// オブジェクト
-	std::unique_ptr <Engine::Object3d > object_ = nullptr;
+	// パーティクルエミッターのポインタ
+	std::unique_ptr<Engine::ParticleEmitter> emitter_ = nullptr;
 
-	// モデル
-	std::unique_ptr<Engine::Model> model_ = nullptr;
-
-	// オブジェクト
-	std::unique_ptr <Engine::Object3d > objectT_ = nullptr;
-
-	// モデル
-	std::unique_ptr<Engine::Model> modelT_ = nullptr;
+	Engine::WorldTransform worldTransform;
 };
 
 ============================================================
@@ -192221,6 +192256,7 @@ File Path: Project/Game/Scene/GameClearScene/GameClearScene.cpp
 #include "SceneManager.h"
 #include "input.h"
 #include "Sprite/SpriteRenderer.h"
+#include "Particle/ParticleRenderer.h"
 
 using namespace Engine;
 
@@ -192233,6 +192269,7 @@ void GameClearScene::Initialize() {
 	sceneManager_ = SceneManager::GetInstance();
 	input_ = Input::GetInstance();
 	spriteRenderer_ = SpriteRenderer::GetInstance();
+	particleRenderer_ = ParticleRenderer::GetInstance();
 
 	// ライトマネージャの初期化
 	lightManager_ = std::make_unique<Engine::LightManager>();
@@ -192251,6 +192288,7 @@ void GameClearScene::Initialize() {
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
 	filterManager_->SetCamera(camera_.get());
+	particleManager_->SetCamera(camera_.get());
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
@@ -192370,6 +192408,9 @@ void GameClearScene::Update() {
 
 		break;
 	}
+
+	// パーティクルマネージャの更新
+	particleManager_->Update();
 }
 
 void GameClearScene::DrawFiltered() {
@@ -192388,6 +192429,12 @@ void GameClearScene::DrawFiltered() {
 
 	// プレイヤーの描画
 	player_->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	particleRenderer_->SettingDrawing();
+
+	// パーティクルシステムの描画
+	particleManager_->Draw();
 }
 
 void GameClearScene::DrawUnfiltered() {
@@ -192467,6 +192514,7 @@ File Path: Project/Game/Scene/GameClearScene/GameClearScene.h
 #include "Player/Player.h"
 #include "Light/LightManager.h"
 #include "Sprite/Sprite.h"
+#include "Particle/ParticleManager.h"
 
 #include <memory>
 #include <optional>
@@ -192483,6 +192531,7 @@ namespace Engine {
 	class SceneManager;
 	class Input;
 	class SpriteRenderer;
+	class ParticleRenderer;
 }
 
 /// ===== ゲームクリアシーン ===== ///
@@ -192606,6 +192655,13 @@ private:
 
 	// スプライトレンダラーのインスタンス
 	Engine::SpriteRenderer* spriteRenderer_ = nullptr;
+
+	// パーティクルマネージャのインスタンス
+	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
+
+	// パーティクルレンダラーのインスタンス
+	Engine::ParticleRenderer* particleRenderer_ = nullptr;
+
 };
 
 ============================================================
@@ -192623,6 +192679,7 @@ File Path: Project/Game/Scene/GameOverScene/GameOverScene.cpp
 #include "Transition/FadeTransition.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "Sprite/SpriteRenderer.h"
+#include "Particle/ParticleRenderer.h"
 
 using namespace Engine;
 
@@ -192635,6 +192692,7 @@ void GameOverScene::Initialize() {
 	sceneManager_ = SceneManager::GetInstance();
 	transitionManager = TransitionManager::GetInstance();
 	spriteRenderer_ = SpriteRenderer::GetInstance();
+	particleRenderer_ = ParticleRenderer::GetInstance();
 
 	// ライトマネージャの初期化
 	lightManager_ = std::make_unique<Engine::LightManager>();
@@ -192657,6 +192715,7 @@ void GameOverScene::Initialize() {
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
 	filterManager_->SetCamera(camera_.get());
+	particleManager_->SetCamera(camera_.get());
 
 	// カメラコントローラーの生成&初期化
 	cameraController_ = std::make_unique<FollowCameraController>();
@@ -192788,6 +192847,9 @@ void GameOverScene::Update() {
 
 	// ガイドスプライトの更新
 	guide_->Update();
+
+	// パーティクルマネージャの更新
+	particleManager_->Update();
 }
 
 void GameOverScene::DrawFiltered() {
@@ -192806,6 +192868,12 @@ void GameOverScene::DrawFiltered() {
 
 	// プレイヤーの描画
 	player_->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	particleRenderer_->SettingDrawing();
+
+	// パーティクルシステムの描画
+	particleManager_->Draw();
 }
 
 void GameOverScene::DrawUnfiltered() {
@@ -192943,6 +193011,7 @@ File Path: Project/Game/Scene/GameOverScene/GameOverScene.h
 #include "Player/Player.h"
 #include "Sprite/Sprite.h"
 #include "Light/LightManager.h"
+#include "Particle/ParticleManager.h"
 
 #include <memory>
 #include <optional>
@@ -192961,6 +193030,7 @@ namespace Engine {
 	class RadialBlurFilter;
 
 	class SpriteRenderer;
+	class ParticleRenderer;
 }
 
 /// ===== ゲームオーバーシーン ===== ///
@@ -193105,6 +193175,12 @@ private:
 
 	// ライトマネージャのポインタ
 	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+
+	// パーティクルマネージャのインスタンス
+	Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
+
+	// パーティクルレンダラーのインスタンス
+	Engine::ParticleRenderer* particleRenderer_ = nullptr;
 };
 
 ============================================================
@@ -193950,6 +194026,11 @@ void Enemy::Initialize() {
 	// エミッタ生成
 	particleEmitterBlack = std::make_unique<ParticleEmitter>("EnemyDeathBlack", EmitterType::OneShot, 40);
 	particleEmitterWhite = std::make_unique<ParticleEmitter>("EnemyDeathWhite", EmitterType::OneShot, 10);
+	// エミッタの初期化
+	particleEmitterBlack->Initialize();
+	particleEmitterWhite->Initialize();
+	particleEmitterBlack->GetWorldTransform().SetParent(&worldTransform_);
+	particleEmitterWhite->GetWorldTransform().SetParent(&worldTransform_);
 }
 
 void Enemy::Update() {
@@ -194027,6 +194108,10 @@ void Enemy::Update() {
 
 	// 3Dオブジェクトの更新
 	object->Update();
+
+	// エミッターの更新
+	particleEmitterBlack->Update();
+	particleEmitterWhite->Update();
 }
 
 void Enemy::Draw() {
@@ -194063,10 +194148,6 @@ void Enemy::OnCollision(Collider* other) {
 
 	// 衝突相手が弾の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
-
-		// エミッターの位置を設定
-		particleEmitterBlack->SetTranslate(worldTransform_.GetWorldPosition());
-		particleEmitterWhite->SetTranslate(worldTransform_.GetWorldPosition());
 
 		// パーティクル発生
 		particleEmitterWhite->Emit();
@@ -194413,6 +194494,7 @@ void EnemyBullet::Initialize() {
 	// エミッターの生成
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletRed", EmitterType::OneShot, 20);
 	particleEmitter->Initialize();
+	particleEmitter->GetWorldTransform().SetParent(&worldTransform_);
 };
 
 void EnemyBullet::Update() {
@@ -194474,9 +194556,6 @@ void EnemyBullet::OnCollision(Collider* other) {
 	// 衝突相手が自機の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayer)) {
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -194485,9 +194564,6 @@ void EnemyBullet::OnCollision(Collider* other) {
 	// 衝突相手が自機の弾の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kPlayerBullet)) {
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -194495,9 +194571,6 @@ void EnemyBullet::OnCollision(Collider* other) {
 	}
 	// 衝突相手が障害物の場合
 	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
-
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
 
 		// パーティクル発生
 		particleEmitter->Emit();
@@ -196963,6 +197036,9 @@ void IntroState::Update() {
 	}
 
 	ShowUI();
+
+	// パーティクルマネージャの更新
+	ParticleManager::GetInstance()->Update();
 }
 
 void IntroState::Deceleration() {
@@ -197335,6 +197411,9 @@ void EndingState::Update() {
 		// フェードインの更新
 		FadeIn();
 	}
+
+	// パーティクルマネージャの更新
+	ParticleManager::GetInstance()->Update();
 }
 
 void EndingState::ShowUI() {
@@ -197845,6 +197924,7 @@ void Bullet::Initialize() {
 	// エミッターの生成・初期化
 	particleEmitter = std::make_unique<ParticleEmitter>("BulletBlue", EmitterType::OneShot, 20);
 	particleEmitter->Initialize();
+	particleEmitter->GetWorldTransform().SetParent(&worldTransform_);
 };
 
 void Bullet::Update() {
@@ -197906,9 +197986,6 @@ void Bullet::OnCollision(Collider* other) {
 	// 衝突相手が敵の場合
 	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetTranslate());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -197923,9 +198000,6 @@ void Bullet::OnCollision(Collider* other) {
 			return;
 		}
 
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
-
 		// パーティクル発生
 		particleEmitter->Emit();
 
@@ -197933,9 +198007,6 @@ void Bullet::OnCollision(Collider* other) {
 	}
 	// 衝突相手が障害物の場合
 	else if(typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
-
-		// エミッターの位置を設定
-		particleEmitter->SetTranslate(worldTransform_.GetWorldPosition());
 
 		// パーティクル発生
 		particleEmitter->Emit();
@@ -198159,6 +198230,24 @@ void Player::Initialize() {
 	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
 
 	hp_ = 5;
+
+	// 移動パーティクルの生成
+	moveEmitter_ = std::make_unique<Engine::ParticleEmitter>("PlayerMove", Engine::EmitterType::Interval, 1);
+	// 移動パーティクルの初期化
+	moveEmitter_->Initialize();
+	// 移動パーティクルの位置をプレイヤーに設定
+	moveEmitter_->GetWorldTransform().SetParent(&worldTransform_);
+	// パーティクルを出さないようにする
+	moveEmitter_->SetEmitting(false);
+
+	// エミッターの生成
+	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);
+	particleEmitterRed->Initialize();
+	particleEmitterRed->GetWorldTransform().SetParent(&worldTransform_);
+
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 40);
+	particleEmitterBlue->Initialize();
+	particleEmitterBlue->GetWorldTransform().SetParent(&worldTransform_);
 }
 
 void Player::Update() {
@@ -198237,6 +198326,11 @@ void Player::Update() {
 
 	// 3Dオブジェクトの更新
 	object->Update();
+
+	// エミッターの更新
+	moveEmitter_->Update();
+	particleEmitterRed->Update();
+	particleEmitterBlue->Update();
 }
 
 void Player::Draw() {
@@ -198302,6 +198396,8 @@ void Player::ShowImGui() {
 	model->ShowImGui();
 
 	ImGui::End();
+
+	moveEmitter_->ShowImGui();
 
 #endif // USE_IMGUI
 }
@@ -198533,6 +198629,26 @@ void Player::MoveToReticle() {
 
 	// 速度を加算
 	velocity_ += moveVelocity;
+
+	float speed = Length(velocity_);
+
+	// 速度が0より大きいなら
+	if (speed > 0.0f) {
+		
+		float targetFrequency = baseFrequency_ / speed;
+
+		// パーティクルの頻度を設定
+		moveEmitter_->SetFrequency(baseFrequency_);
+
+		// パーティクルを出す
+		moveEmitter_->SetEmitting(true);
+	}
+	// 速度が0未満なら
+	else {
+
+		// パーティクルを出さない
+		moveEmitter_->SetEmitting(false);
+	}
 }
 
 void Player::ClampPosition() {
@@ -198592,6 +198708,8 @@ void Player::DamageProcess(uint16_t damage) {
 }
 
 void Player::AutoPilotInitialize() {
+
+	moveEmitter_->SetEmitting(true);
 }
 
 void Player::AutoPilotUpdate() {
@@ -198619,6 +198737,24 @@ void Player::AutoPilotUpdate() {
 
 	// 1.0fを超えないようにクランプ
 	speedRate_ = std::clamp(speedRate_, 0.0f, 1.0f);
+
+	// 速度が0より大きいなら
+	if (moveSpeedAuto > 0.0f) {
+
+		float targetFrequency = baseFrequency_ * moveSpeedAuto;
+
+		// パーティクルの頻度を設定
+		moveEmitter_->SetFrequency(targetFrequency);
+
+		// パーティクルを出す
+		moveEmitter_->SetEmitting(true);
+	}
+	// 速度が0未満なら
+	else {
+
+		// パーティクルを出さない
+		moveEmitter_->SetEmitting(false);
+	}
 }
 
 void Player::ManualInitialize() {
@@ -198766,6 +198902,9 @@ void Player::ManualUpdate() {
 	if (invincibleTimer_ > 0.0f) {
 		invincibleTimer_ -= 1.0f;
 	}
+
+	// 移動パーティクルの発生フラグを立てる
+	moveEmitter_->SetEmitting(true);
 }
 
 void Player::DeadInitialize() {
@@ -198784,9 +198923,8 @@ void Player::DeadInitialize() {
 
 	isParticleEmitted_ = false;
 
-	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 40);
+	// 移動パーティクルを停止
+	moveEmitter_->SetEmitting(false);
 }
 
 void Player::DeadUpdate() {
@@ -198835,10 +198973,6 @@ void Player::DeadUpdate() {
 		worldTransform_.SetTranslate(Translate);
 
 		if (!isParticleEmitted_) {
-
-			// エミッターの位置を設定
-			particleEmitterRed->SetTranslate(worldTransform_.GetWorldPosition());
-			particleEmitterBlue->SetTranslate(worldTransform_.GetWorldPosition());
 
 			// パーティクルを発生させる
 			particleEmitterRed->Emit();
@@ -199215,6 +199349,11 @@ private:
 
 	// 状態変更リクエスト
 	std::optional<PlayerState> stateRequest_ = std::nullopt;
+
+	// 移動時のエミッター
+	std::unique_ptr<Engine::ParticleEmitter> moveEmitter_ = nullptr;
+
+	const float baseFrequency_ = 0.1f; // 基本の発生頻度 (秒)
 };
 
 ============================================================
@@ -201682,6 +201821,7 @@ File Path: Project/Game/Scene/TitleScene/TitleScene.cpp
 #include "Object/Object3dRenderer.h"
 #include "TransitionManager.h"
 #include "Transition/FadeTransition.h"
+#include "Particle/ParticleRenderer.h"
 
 #include <imgui.h>
 
@@ -201693,6 +201833,7 @@ void TitleScene::Initialize() {
 	spriteRenderer_ = SpriteRenderer::GetInstance();
 	object3dRenderer_ = Object3dRenderer::GetInstance();
 	transitionManager_ = TransitionManager::GetInstance();
+	particleRenderer_ = ParticleRenderer::GetInstance();
 
 	// ライトマネージャの初期化
 	lightManager_ = std::make_unique<Engine::LightManager>();
@@ -201710,6 +201851,7 @@ void TitleScene::Initialize() {
 
 	// カメラの設定
 	object3dRenderer_->SetDefaultCamera(camera_.get());
+	particleManager_->SetCamera(camera_.get());
 
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
@@ -201877,6 +202019,9 @@ void TitleScene::Update() {
 
 	// 黒画面UIの更新
 	blackScreen_->Update();
+
+	// パーティクルマネージャの更新
+	particleManager_->Update();
 }
 
 void TitleScene::DrawFiltered() {
@@ -201895,6 +202040,12 @@ void TitleScene::DrawFiltered() {
 
 	// プレイヤー描画
 	player_->Draw();
+
+	/// === パーティクルの描画準備 === ///
+	particleRenderer_->SettingDrawing();
+
+	// パーティクルシステムの描画
+	particleManager_->Draw();
 }
 
 void TitleScene::DrawUnfiltered() {
@@ -202149,6 +202300,7 @@ File Path: Project/Game/Scene/TitleScene/TitleScene.h
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
 #include "Light/LightManager.h"
+#include "Particle/ParticleManager.h"
 
 #include <memory>
 #include <optional>
@@ -202159,6 +202311,7 @@ namespace Engine {
 	class Object3dRenderer;
     class RadialBlurFilter;
     class TransitionManager;
+    class ParticleRenderer;
 }
 
 // タイトルの流れの状態
@@ -202332,6 +202485,12 @@ private:
 
     // ライトマネージャのポインタ
     std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+
+    // パーティクルマネージャのインスタンス
+    Engine::ParticleManager* particleManager_ = Engine::ParticleManager::GetInstance();
+
+    // パーティクルレンダラーのインスタンス
+    Engine::ParticleRenderer* particleRenderer_ = nullptr;
 };
 
 ============================================================
