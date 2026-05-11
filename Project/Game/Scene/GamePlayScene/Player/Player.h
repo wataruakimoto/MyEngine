@@ -345,4 +345,9 @@ private:
 
 	// 状態変更リクエスト
 	std::optional<PlayerState> stateRequest_ = std::nullopt;
+
+	// 移動時のエミッター
+	std::unique_ptr<Engine::ParticleEmitter> moveEmitter_ = nullptr;
+
+	const float baseFrequency_ = 0.1f; // 基本の発生頻度 (秒)
 };

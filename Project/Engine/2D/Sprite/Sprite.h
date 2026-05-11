@@ -14,6 +14,7 @@ namespace Engine {
 
 	/// === 前方宣言 === ///
 	class DirectXUtility;
+	class SrvManager;
 	class TextureManager;
 
 	// スプライト
@@ -262,6 +263,9 @@ namespace Engine {
 
 		// TextureManagerのインスタンス
 		TextureManager* textureManager = nullptr;
+
+		// SrvManagerのインスタンス
+		SrvManager* srvManager = nullptr;
 
 		/// ===== GPU用の変数 ===== ///
 

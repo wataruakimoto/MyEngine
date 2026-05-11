@@ -68,6 +68,24 @@ void Player::Initialize() {
 	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
 
 	hp_ = 5;
+
+	// 移動パーティクルの生成
+	moveEmitter_ = std::make_unique<Engine::ParticleEmitter>("PlayerMove", Engine::EmitterType::Interval, 1);
+	// 移動パーティクルの初期化
+	moveEmitter_->Initialize();
+	// 移動パーティクルの位置をプレイヤーに設定
+	moveEmitter_->GetWorldTransform().SetParent(&worldTransform_);
+	// パーティクルを出さないようにする
+	moveEmitter_->SetEmitting(false);
+
+	// エミッターの生成
+	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);
+	particleEmitterRed->Initialize();
+	particleEmitterRed->GetWorldTransform().SetParent(&worldTransform_);
+
+	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 40);
+	particleEmitterBlue->Initialize();
+	particleEmitterBlue->GetWorldTransform().SetParent(&worldTransform_);
 }
 
 void Player::Update() {
@@ -146,6 +164,11 @@ void Player::Update() {
 
 	// 3Dオブジェクトの更新
 	object->Update();
+
+	// エミッターの更新
+	moveEmitter_->Update();
+	particleEmitterRed->Update();
+	particleEmitterBlue->Update();
 }
 
 void Player::Draw() {
@@ -211,6 +234,8 @@ void Player::ShowImGui() {
 	model->ShowImGui();
 
 	ImGui::End();
+
+	moveEmitter_->ShowImGui();
 
 #endif // USE_IMGUI
 }
@@ -442,6 +467,26 @@ void Player::MoveToReticle() {
 
 	// 速度を加算
 	velocity_ += moveVelocity;
+
+	float speed = Length(velocity_);
+
+	// 速度が0より大きいなら
+	if (speed > 0.0f) {
+		
+		float targetFrequency = baseFrequency_ / speed;
+
+		// パーティクルの頻度を設定
+		moveEmitter_->SetFrequency(baseFrequency_);
+
+		// パーティクルを出す
+		moveEmitter_->SetEmitting(true);
+	}
+	// 速度が0未満なら
+	else {
+
+		// パーティクルを出さない
+		moveEmitter_->SetEmitting(false);
+	}
 }
 
 void Player::ClampPosition() {
@@ -501,6 +546,8 @@ void Player::DamageProcess(uint16_t damage) {
 }
 
 void Player::AutoPilotInitialize() {
+
+	moveEmitter_->SetEmitting(true);
 }
 
 void Player::AutoPilotUpdate() {
@@ -528,6 +575,24 @@ void Player::AutoPilotUpdate() {
 
 	// 1.0fを超えないようにクランプ
 	speedRate_ = std::clamp(speedRate_, 0.0f, 1.0f);
+
+	// 速度が0より大きいなら
+	if (moveSpeedAuto > 0.0f) {
+
+		float targetFrequency = baseFrequency_ * moveSpeedAuto;
+
+		// パーティクルの頻度を設定
+		moveEmitter_->SetFrequency(targetFrequency);
+
+		// パーティクルを出す
+		moveEmitter_->SetEmitting(true);
+	}
+	// 速度が0未満なら
+	else {
+
+		// パーティクルを出さない
+		moveEmitter_->SetEmitting(false);
+	}
 }
 
 void Player::ManualInitialize() {
@@ -675,6 +740,9 @@ void Player::ManualUpdate() {
 	if (invincibleTimer_ > 0.0f) {
 		invincibleTimer_ -= 1.0f;
 	}
+
+	// 移動パーティクルの発生フラグを立てる
+	moveEmitter_->SetEmitting(true);
 }
 
 void Player::DeadInitialize() {
@@ -693,9 +761,8 @@ void Player::DeadInitialize() {
 
 	isParticleEmitted_ = false;
 
-	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 40);
+	// 移動パーティクルを停止
+	moveEmitter_->SetEmitting(false);
 }
 
 void Player::DeadUpdate() {
@@ -744,10 +811,6 @@ void Player::DeadUpdate() {
 		worldTransform_.SetTranslate(Translate);
 
 		if (!isParticleEmitted_) {
-
-			// エミッターの位置を設定
-			particleEmitterRed->SetTranslate(worldTransform_.GetWorldPosition());
-			particleEmitterBlue->SetTranslate(worldTransform_.GetWorldPosition());
 
 			// パーティクルを発生させる
 			particleEmitterRed->Emit();

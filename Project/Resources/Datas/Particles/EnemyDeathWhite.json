@@ -83,7 +83,7 @@
     },
     "shape": "CUBE",
     "textureFileName": "White.png",
-    "textureFullPath": "Resources/Texture/Particles/White.png",
+    "textureFullPath": "Resources/Textures/Particles/White.png",
     "translate": {
         "x": 0.0,
         "y": 0.0,

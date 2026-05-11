@@ -2,19 +2,16 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
-
-#include "Light/LightManager.h"
-#include "Object/Object3d.h"
-#include "Model/Model.h"
-
-#include <memory>
+#include "Particle/ParticleEmitter.h"
+#include "WorldTransform.h"
 
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
 
 	class SceneManager;
-	class Object3dRenderer;
+	class ParticleRenderer;
+	class ParticleManager;
 }
 
 /// ===== デバッグシーン ===== ///
@@ -66,21 +63,14 @@ private:
 	// シーンマネージャのポインタ
 	Engine::SceneManager* sceneManager = nullptr;
 
-	// ライトマネージャのポインタ
-	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+	// パーティクルレンダラーのポインタ
+	Engine::ParticleRenderer* particleRenderer = nullptr;
 
-	// 3Dオブジェクトレンダラーのインスタンス
-	Engine::Object3dRenderer* object3dRenderer_ = nullptr;
+	// パーティクルマネージャのポインタ
+	Engine::ParticleManager* particleManager = nullptr;
 
-	// オブジェクト
-	std::unique_ptr <Engine::Object3d > object_ = nullptr;
+	// パーティクルエミッターのポインタ
+	std::unique_ptr<Engine::ParticleEmitter> emitter_ = nullptr;
 
-	// モデル
-	std::unique_ptr<Engine::Model> model_ = nullptr;
-
-	// オブジェクト
-	std::unique_ptr <Engine::Object3d > objectT_ = nullptr;
-
-	// モデル
-	std::unique_ptr<Engine::Model> modelT_ = nullptr;
+	Engine::WorldTransform worldTransform;
 };

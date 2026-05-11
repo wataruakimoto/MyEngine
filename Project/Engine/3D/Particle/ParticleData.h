@@ -16,12 +16,13 @@ namespace Engine {
 
 	// パーティクルの形状
 	enum class ParticleShape {
-		PLANE,
-		RING,
-		CYLINDER,
-		CUBE,
-		SPHERE,
-		SHARD,
+		PLANE,	  // 板ポリ
+		RING,	  // リング
+		CYLINDER, // シリンダー
+		CUBE,	  // キューブ
+		SPHERE,	  // 球
+		SHARD,	  // シャード
+		MESH,	  // メッシュ
 	};
 
 	// マテリアルデータ
@@ -41,8 +42,11 @@ namespace Engine {
 	struct ParticleSetting {
 
 		std::string effectName = ""; // エフェクト名
-		std::string textureFileName = ""; // テクスチャファイル名
+		std::string textureFileName = ""; // テクスチャ名
 		std::string textureFullPath = ""; // テクスチャのフルパス
+		std::string modelFileName = ""; // モデル名
+		std::string modelFullPath = ""; // モデルのフルパス
+
 		ParticleShape shape = ParticleShape::PLANE; // パーティクルの形状
 
 		bool useBillboard = true; // ビルボードを使うかどうか
@@ -108,9 +112,11 @@ namespace Engine {
 	};
 
 	// JSON用のシリアライズ・デシリアライズ定義
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParticleSetting,
-		effectName, textureFileName,
-		textureFullPath, shape,
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleSetting,
+		effectName,
+		textureFileName, textureFullPath,
+		modelFileName, modelFullPath,
+		shape,
 		useBillboard, useGravity,
 		scaleRandom, scaleRange, scale,
 		rotateRandom, rotateRange, rotate,
@@ -121,7 +127,7 @@ namespace Engine {
 		lifeTimeRandom, lifeTimeRange, lifeTime
 	)
 
-		NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ParticleInstance,
+		NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleInstance,
 			setting,
 			scale, rotate, translate,
 			velocity, acceleration,
@@ -136,5 +142,6 @@ namespace Engine {
 			{ParticleShape::CUBE, "CUBE"},
 			{ParticleShape::SPHERE, "SPHERE"},
 			{ParticleShape::SHARD, "SHARD"},
+			{ParticleShape::MESH, "MESH"},
 			})
 }

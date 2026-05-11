@@ -2,6 +2,8 @@
 #include "ParticleManager.h"
 #include "MathVector.h"
 
+#include <imgui.h>
+
 using namespace Engine;
 using namespace MathVector;
 using namespace MathRandom;
@@ -14,34 +16,38 @@ void ParticleEmitter::Initialize() {
 
 void ParticleEmitter::Update() {
 
-	// タイプに応じた発射処理
-	switch (emitterType) {
+	// 発生フラグが立っているとき
+	if (isEmitting) {
 
-	// 常に発射
-	case EmitterType::Constant:
-		Emit();
-		break;
+		// タイプに応じた発射処理
+		switch (emitterType) {
 
-	// 一定間隔ごとに発射
-	case EmitterType::Interval:
-
-		// タイマー更新
-		timer += deltaTime;
-
-		// 発生頻度を超えたらパーティクル発生
-		if (timer >= frequency) {
+			// 常に発射
+		case EmitterType::Constant:
 			Emit();
-			timer = 0.0f; // シンプルなリセットならこちら
+			break;
+
+			// 一定間隔ごとに発射
+		case EmitterType::Interval:
+
+			// タイマー更新
+			timer += deltaTime;
+
+			// 発生頻度を超えたらパーティクル発生
+			if (timer >= frequency) {
+				Emit();
+				timer = 0.0f; // シンプルなリセットならこちら
+			}
+			break;
+
+			// 呼んだときだけ
+		case EmitterType::OneShot:
+			// 何もしない
+			break;
+
+		default:
+			break;
 		}
-		break;
-
-	// 呼んだときだけ
-	case EmitterType::OneShot:
-		// 何もしない
-		break;
-
-	default:
-		break;
 	}
 
 	// ワールド変換の更新
@@ -93,12 +99,12 @@ void ParticleEmitter::Emit() {
 		if (setting->translateRandom) {
 
 			// 範囲からランダム生成
-			particle.translate = RandomVector3(setting->translateRange) + worldTransform.GetTranslate();
+			particle.translate = RandomVector3(setting->translateRange) + worldTransform.GetWorldPosition();
 		}
 		else {
 
 			// 固定値を代入
-			particle.translate = setting->translate + worldTransform.GetTranslate();
+			particle.translate = setting->translate + worldTransform.GetWorldPosition();
 		}
 
 		// 速度の設定
@@ -152,4 +158,32 @@ void ParticleEmitter::Emit() {
 		// マネージャーにインスタンスを追加
 		ParticleManager::GetInstance()->AddInstance(particle);
 	}
+}
+
+void ParticleEmitter::ShowImGui() {
+
+#ifdef USE_IMGUI
+
+	ImGui::Begin(effectName.c_str());
+
+	ImGui::Checkbox("Emitting", &isEmitting);
+
+	ImGui::Text("Emitter Type: %s", 
+		emitterType == EmitterType::Constant ? "Constant" :
+		emitterType == EmitterType::Interval ? "Interval" :
+		emitterType == EmitterType::OneShot ? "OneShot" : "Unknown");
+
+	ImGui::Text("Frequency: %.2f", frequency);
+
+	ImGui::Text("Count: %d", count);
+
+	if (ImGui::Button("Emit Test")) {
+		Emit();
+	}
+
+	worldTransform.ShowImGui();
+
+	ImGui::End();
+
+#endif // USE_IMGUI
 }

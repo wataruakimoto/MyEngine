@@ -6,16 +6,6 @@
 using namespace Engine;
 using namespace StringUtility;
 
-TextureManager* TextureManager::instance = nullptr;
-
-TextureManager* TextureManager::GetInstance() {
-
-	if (instance == nullptr) {
-		instance = new TextureManager;
-	}
-	return instance;
-}
-
 void TextureManager::Initialize() {
 
 	// DirectXUtilityのインスタンスを取得
@@ -30,28 +20,37 @@ void TextureManager::Finalize() {
 	instance = nullptr;
 }
 
-void TextureManager::LoadTexture(const std::string& filePath) {
+void TextureManager::LoadTexture(const std::string& fileName) {
 
-	/// === ファイル読み込み === ///
+	// テクスチャのファイルまでのフルパスを生成
+	std::string fullPath = baseDirectoryPath + "/" + fileName;
 
-	// 読み込み済みテクスチャを検索
-	if (textureDatas.contains(filePath)) {
-		
-		// 読み込み済みなら終了
-		return;
-	}
+	// テクスチャの読み込み
+	LoadTextureBase(fullPath);
+}
+
+void TextureManager::LoadTextureFullPath(const std::string& fullPath) {
+
+	// テクスチャの読み込み
+	LoadTextureBase(fullPath);
+}
+
+void TextureManager::LoadTextureBase(const std::string& fullPath) {
+
+	// 読み込み済みテクスチャならばスキップ
+	if (textureDatas.contains(fullPath)) return;
 
 	// テクスチャ枚数上限チェック
 	assert(SrvManager::GetInstance()->CheckAllocate());
 
 	DirectX::ScratchImage image{};
 	// テクスチャファイルを読んでプログラムで扱えるようにする
-	std::wstring filePathW = ConvertString(filePath);
+	std::wstring filePathW = ConvertString(fullPath);
 
 	HRESULT hr;
 
 	if (filePathW.ends_with(L".dds")) { // .ddsファイルの場合。より安全な方法はいくらでもある
-		
+
 		hr = DirectX::LoadFromDDSFile(filePathW.c_str(), DirectX::DDS_FLAGS_NONE, nullptr, image); // sRGBまで含めたフォーマット情報が格納されているので、FLAGは立てない
 	}
 	else { // WICファイルの場合
@@ -84,7 +83,7 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 
 	/// === テクスチャデータ追加 === ///
 
-	TextureData& textureData = textureDatas[filePath];
+	TextureData& textureData = textureDatas[fullPath];
 
 	/// === テクスチャデータ書き込み === ///
 
@@ -114,43 +113,59 @@ void TextureManager::LoadTexture(const std::string& filePath) {
 	}
 }
 
-void TextureManager::LoadTextureRelative(const std::string& relativePath) {
+TextureManager* TextureManager::instance = nullptr;
 
-	// フルパスを生成
+TextureManager* TextureManager::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new TextureManager;
+	}
+	return instance;
+}
+
+const TextureManager::TextureData& TextureManager::GetTextureData(const std::string& fullPath) {
+	
+	// 読み込み済みのテクスチャか確認
+	assert(textureDatas.contains(fullPath));
+
+	return textureDatas.at(fullPath);
+}
+
+const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& relativePath) {
+
+	// テクスチャのファイルまでのフルパスを生成
 	std::string fullPath = baseDirectoryPath + "/" + relativePath;
 
-	// テクスチャ読み込み
-	LoadTexture(fullPath);
+	return GetTextureData(fullPath).metaData;
 }
 
-uint32_t TextureManager::GetTextureIndexByFilePath(const std::string& filePath) {
-
-	// 読み込み済みテクスチャを検索
-	if (textureDatas.contains(filePath)) {
-
-		// 読み込み済みなら要素番号を返す
-		uint32_t textureIndex = textureDatas[filePath].srvIndex;
-		return textureIndex;
-	}
-
-	assert(0);
-	return 0;
+const DirectX::TexMetadata& TextureManager::GetMetadataFullPath(const std::string& fullPath) {
+	
+	return GetTextureData(fullPath).metaData;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVGPUHandle(const std::string& filePath) {
+const uint32_t TextureManager::GetSRVIndex(const std::string& relativePath) {
 
-	TextureData& textureData = textureDatas[filePath];
-	return textureData.srvHandleGPU;
+	// テクスチャのファイルまでのフルパスを生成
+	std::string fullPath = baseDirectoryPath + "/" + relativePath;
+
+	return GetTextureData(fullPath).srvIndex;
 }
 
-D3D12_GPU_DESCRIPTOR_HANDLE TextureManager::GetSRVGPUHandle(const uint32_t srvIndex) {
+const uint32_t TextureManager::GetSRVIndexFullPath(const std::string& fullPath) {
 
-	D3D12_GPU_DESCRIPTOR_HANDLE GPUHandle = SrvManager::GetInstance()->GetGPUDescriptorHandle(srvIndex);
-	return GPUHandle;
+	return GetTextureData(fullPath).srvIndex;
 }
 
-const DirectX::TexMetadata& TextureManager::GetMetadata(const std::string& filePath) {
+const D3D12_GPU_DESCRIPTOR_HANDLE& Engine::TextureManager::GetSRVGPUHandle(const std::string& relativePath) {
+	
+	// テクスチャのファイルまでのフルパスを生成
+	std::string fullPath = baseDirectoryPath + "/" + relativePath;
 
-	TextureData& textureData = textureDatas[filePath];
-	return textureData.metaData;
+	return GetTextureData(fullPath).srvHandleGPU;
+}
+
+const D3D12_GPU_DESCRIPTOR_HANDLE& TextureManager::GetSRVGPUHandleFullPath(const std::string& fullPath) {
+
+	return GetTextureData(fullPath).srvHandleGPU;
 }

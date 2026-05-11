@@ -6,6 +6,7 @@
 #include "ShapeRenderers/CylinderRenderer.h"
 #include "ShapeRenderers/CubeRenderer.h"
 #include "ShapeRenderers/ShardRenderer.h"
+#include "ShapeRenderers/MeshRenderer.h"
 
 #include <unordered_map>
 #include <string>
@@ -19,6 +20,7 @@ namespace Engine {
 	class DirectXUtility;
 	class SrvManager;
 	class Camera;
+	class ModelManager;
 
 	/// ===== パ＝ティクルマネージャー ===== ///
 	class ParticleManager {
@@ -110,16 +112,6 @@ namespace Engine {
 		void LoadParticleSettingsFromJSON();
 
 		/// <summary>
-		/// エフェクトのリストを表示
-		/// </summary>
-		void ShowEffectList();
-
-		/// <summary>
-		/// パラメータを表示
-		/// </summary>
-		void ShowParameters();
-
-		/// <summary>
 		/// 設定をJSONに保存
 		/// </summary>
 		/// <param name="effectName">エフェクト名</param>
@@ -183,6 +175,9 @@ namespace Engine {
 		// カメラの借りポインタ
 		Camera* camera = nullptr;
 
+		// モデルマネージャのインスタンス
+		ModelManager* modelManager_ = nullptr;
+
 		// 設定のコンテナ エフェクト名、設定
 		std::unordered_map<std::string, ParticleSetting> settings;
 
@@ -192,6 +187,7 @@ namespace Engine {
 		std::unordered_map<std::string, ParticleGroup> cylinderGroups;
 		std::unordered_map<std::string, ParticleGroup> cubeGroups;
 		std::unordered_map<std::string, ParticleGroup> shardGroups;
+		std::unordered_map<std::string, ParticleGroup> meshGroups;
 
 		// Δt
 		const float kDeltaTime = 1.0f / 60.0f;
@@ -211,11 +207,11 @@ namespace Engine {
 		// シャードのレンダラー
 		std::unique_ptr<ShardRenderer> shardRenderer = nullptr;
 
-		// Jsonデータを入れておくフォルダパス
-		const std::string DataFolderPath = "Resources/Datas/Particles/";
+		// メッシュのレンダラー
+		std::unique_ptr<MeshRenderer> meshRenderer = nullptr;
 
-		// 画像データを入れておくフォルダパス
-		const std::string TextureFolderPath = "Resources/Textures/Particles/";
+		// Jsonデータを入れておくフォルダパス
+		const std::string kDataFolderPath = "Resources/Datas/Particles/";
 
 		// エディタで選択中のエフェクト名
 		std::string currentEditName = "";
