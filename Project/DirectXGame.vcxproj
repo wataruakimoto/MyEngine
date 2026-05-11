@@ -207,6 +207,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
+    <ClCompile Include="Engine\Math\MathQuaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Math\AABB.h" />
@@ -222,6 +223,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FogFilter.h" />
     <ClInclude Include="Engine\Math\OBB.h" />
     <ClInclude Include="Engine\Math\Plane.h" />
+    <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Scene\BaseTransition.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
@@ -326,6 +328,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
     <ClInclude Include="Engine\3D\Light\LightManager.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
+    <ClInclude Include="Engine\Math\MathQuaternion.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
