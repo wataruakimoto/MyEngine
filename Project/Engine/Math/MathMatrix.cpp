@@ -1,7 +1,9 @@
 #include "MathMatrix.h"
+#include "MathVector.h"
 
 #include <cassert>
 #include <cmath>
+#include <numbers>
 
 using namespace Engine;
 
@@ -297,6 +299,19 @@ Matrix4x4 MathMatrix::MakeAffineMatrix(const Vector3& scale, const Vector3& rota
 	return resultAffine;
 }
 
+Matrix4x4 MathMatrix::MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate) {
+
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
+	
+	Matrix4x4 rotateMatrix = MakeRotateMatrix(rotate);
+
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
+
+	Matrix4x4 result = scaleMatrix * rotateMatrix * translateMatrix;
+
+	return result;
+}
+
 Matrix4x4 MathMatrix::MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
 
 	Matrix4x4 resultPerspectiveFov = {};
@@ -327,7 +342,7 @@ Matrix4x4 MathMatrix::MakeOrthographicMatrix(float left, float top, float right,
 }
 
 Matrix4x4 MathMatrix::MakeViewportMatrix(float x, float y, float width, float height, float minZ, float maxZ) {
-	
+
 	Matrix4x4 resultViewport = {};
 
 	resultViewport.m[0][0] = width / 2.0f;
@@ -339,6 +354,117 @@ Matrix4x4 MathMatrix::MakeViewportMatrix(float x, float y, float width, float he
 	resultViewport.m[3][3] = 1.0f;
 
 	return resultViewport;
+}
+
+/// ================================================== ///
+/// 任意軸回転行列の作成
+Matrix4x4 MathMatrix::MakeRotateAxisAngle(const Vector3& axis, float radian) {
+
+	float cosTheta = cosf(radian);
+	float sinTheta = sinf(radian);
+
+	Matrix4x4 result = MakeIdentity4x4();
+
+	result.m[0][0] = axis.x * axis.x * (1.0f - cosTheta) + cosTheta;
+	result.m[0][1] = axis.x * axis.y * (1.0f - cosTheta) + axis.z * sinTheta;
+	result.m[0][2] = axis.x * axis.z * (1.0f - cosTheta) - axis.y * sinTheta;
+
+	result.m[1][0] = axis.y * axis.x * (1.0f - cosTheta) - axis.z * sinTheta;
+	result.m[1][1] = axis.y * axis.y * (1.0f - cosTheta) + cosTheta;
+	result.m[1][2] = axis.y * axis.z * (1.0f - cosTheta) + axis.x * sinTheta;
+
+	result.m[2][0] = axis.z * axis.x * (1.0f - cosTheta) + axis.y * sinTheta;
+	result.m[2][1] = axis.z * axis.y * (1.0f - cosTheta) - axis.x * sinTheta;
+	result.m[2][2] = axis.z * axis.z * (1.0f - cosTheta) + cosTheta;
+
+	return result;
+}
+
+/// ================================================== ///
+/// 2つの方向ベクトルから回転行列を作成
+Matrix4x4 MathMatrix::DirectionToDirection(const Vector3& from, const Vector3& to) {
+
+	// 外積で回転軸を求める
+	Vector3 cross = MathVector::Cross(from, to);
+
+	// 内積でcosθを求める
+	float cosTheta = MathVector::Dot(from, to);
+	// 外積の長さでsinθを求める
+	float sinTheta = MathVector::Length(cross);
+
+	// fromとtoがほとんど同じ向き(0°)な場合 (cosθ ≒ 1)
+	if (cosTheta >= 1.0f - 1e-6f) {
+
+		// 単位行列を返す
+		return MakeIdentity4x4();
+	}
+	// fromとtoがほとんど逆向き(180°)な場合 (cosθ ≒ -1)
+	else if (cosTheta <= -1.0f + 1e-6f) {
+
+		// 外積が0ベクトルになり回転軸が定まらないので
+		// fromと平行ではない軸との外積から直行する回転軸を求める
+
+		// 直行する回転軸
+		Vector3 axis;
+
+		// fromのx成分とy成分がともに小さい(45°未満)なら
+		if (std::abs(from.x) < 0.7071f || std::abs(from.y) < 0.7071f) {
+			
+			// x軸とは平行に近いので、z軸(0,0,1)との外積を回転軸とする
+			axis = MathVector::Cross(from, { 0.0f, 0.0f, 1.0f });
+		}
+		// fromのx成分とz成分がともに小さい(45°未満)なら
+		else if (std::abs(from.x) < 0.7071f || std::abs(from.z) < 0.7071f) {
+			
+			// x軸とは平行に近いので、y軸(0,1,0)との外積を回転軸とする
+			axis = MathVector::Cross(from, { 0.0f, 1.0f, 0.0f });
+		}
+
+		// 180度回転行列を返す
+		return MakeRotateAxisAngle(MathVector::Normalize(axis), std::numbers::pi_v<float>);
+	}
+	// それ以外の場合
+	else {
+		
+		// 回転軸を正規化する
+		Vector3 axis = MathVector::Normalize(cross);
+
+		// cosθから角度を求める
+		float angle = acosf(cosTheta);
+
+		// 通常の回転行列を返す
+		return MakeRotateAxisAngle(axis, angle);
+	}
+}
+
+Matrix4x4 MathMatrix::MakeRotateMatrix(const Quaternion& q) {
+	
+	float xx = q.x * q.x;
+	float yy = q.y * q.y;
+	float zz = q.z * q.z;
+	float ww = q.w * q.w;
+	float xy = q.x * q.y;
+	float xz = q.x * q.z;
+	float yz = q.y * q.z;
+	float wx = q.w * q.x;
+	float wy = q.w * q.y;
+	float wz = q.w * q.z;
+
+	Matrix4x4 result = MakeIdentity4x4();
+
+	result.m[0][0] = ww + xx - yy - zz;
+	result.m[0][1] = 2.0f * (xy + wz);
+	result.m[0][2] = 2.0f * (xz - wy);
+
+	result.m[1][0] = 2.0f * (xy - wz);
+	result.m[1][1] = ww - xx + yy - zz;
+	result.m[1][2] = 2.0f * (yz + wx);
+
+	result.m[2][0] = 2.0f * (xz + wy);
+	result.m[2][1] = 2.0f * (yz - wx);
+	result.m[2][2] = ww - xx - yy + zz;
+
+	return result;
 }
 
 //Matrix4x4 MathMatrix::operator+(const Matrix4x4& m1, const Matrix4x4& m2) {

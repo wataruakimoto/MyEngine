@@ -1,18 +1,22 @@
 #include "WorldTransform.h"
 #include "MathVector.h"
 #include "MathMatrix.h"
+#include "MathQuaternion.h"
 
 #include <imgui.h>
 
 using namespace Engine;
 using namespace MathVector;
 using namespace MathMatrix;
+using namespace MathQuaternion;
 
 void WorldTransform::Initialize() {
 
 	scale_ = { 1.0f, 1.0f, 1.0f };
 
 	rotate_ = { 0.0f, 0.0f, 0.0f };
+
+	rotateQuaternion_ = Identity();
 
 	translate_ = { 0.0f, 0.0f, 0.0f };
 
@@ -23,6 +27,7 @@ void WorldTransform::Update() {
 
 	// ワールド行列を作成
 	worldMatrix_ = MakeAffineMatrix(scale_, rotate_, translate_);
+	//worldMatrix_ = MakeAffineMatrix(scale_, rotateQuaternion_, translate_);
 
 	// 親が割り当てられていたら
 	if (parent_) {
@@ -43,29 +48,10 @@ void WorldTransform::ShowImGui() {
 		ImGui::DragFloat3("拡大縮小", &scale_.x, 0.1f);
 		ImGui::DragFloat3("回転", &rotate_.x, 0.01f);
 		ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
+		ImGui::DragFloat4("回転クォータニオン", &rotateQuaternion_.x, 0.01f);
 
 		// ワールド行列を表示
-		if (ImGui::TreeNodeEx("ワールド行列", ImGuiTreeNodeFlags_DefaultOpen)) {
-
-			if (ImGui::BeginTable("MatrixTable", 4, ImGuiTableFlags_Borders)) {
-
-				for (int row = 0; row < 4; ++row) {
-
-					ImGui::TableNextRow();
-
-					for (int col = 0; col < 4; ++col) {
-
-						ImGui::TableSetColumnIndex(col);
-
-						ImGui::Text("%.2f", worldMatrix_.m[row][col]);
-					}
-				}
-
-				ImGui::EndTable();
-			}
-
-			ImGui::TreePop();
-		}
+		ShowImGuiMatrix4x4Tree("ワールド行列", worldMatrix_);
 
 		ImGui::TreePop();
 	}

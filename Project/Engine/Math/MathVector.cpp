@@ -1,5 +1,6 @@
 #include "MathVector.h"
 #include "WinApp.h"
+#include "MathQuaternion.h"
 
 #define _USE_MATH_DEFINES
 
@@ -259,6 +260,21 @@ float MathVector::ConvertDegreesToRadians(float degrees) {
 float MathVector::ConvertRadiansToDegrees(float radians) {
 	
 	return radians * (180.0f / std::numbers::pi_v<float>);
+}
+
+/// ================================================== ///
+/// ベクトルをクォータニオンで回転させる
+Vector3 MathVector::RotateVector(const Vector3& v, const Quaternion& q) {
+	
+	Quaternion r = { v.x, v.y, v.z, 0.0f };
+
+	// 共役クォータニオンを取得
+	Quaternion c = MathQuaternion::Conjugate(q);
+	
+	// 回転を適用
+	Quaternion result = MathQuaternion::Multiply(MathQuaternion::Multiply(q, r), c);
+
+	return { result.x, result.y, result.z };
 }
 
 Vector2 MathVector::operator+(const Vector2& v1, const Vector2& v2) {

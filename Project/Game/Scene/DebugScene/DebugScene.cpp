@@ -42,7 +42,7 @@ void DebugScene::Initialize() {
 void DebugScene::Update() {
 
 	// ワールド変換に位置を加算
-	worldTransform.AddTranslate({ 0.0f, 0.0f, 0.1f });
+	//worldTransform.AddTranslate({ 0.0f, 0.0f, 0.1f });
 
 	// ワールド変換の更新
 	worldTransform.Update();

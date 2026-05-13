@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Quaternion.h"
+#include "Vector3.h"
 
 namespace Engine {
 
@@ -12,6 +13,22 @@ namespace Engine {
 		/// ================================================== ///
 		/// 関数
 		/// ================================================== ///
+		
+		/// <summary>
+		/// 加算
+		/// </summary>
+		/// <param name="q1">左オペランド</param>
+		/// <param name="q2">右オペランド</param>
+		/// <returns>加算の結果</returns>
+		Quaternion Add(const Quaternion& q1, const Quaternion& q2);
+
+		/// <summary>
+		/// 減算
+		/// </summary>
+		/// <param name="q1">左オペランド</param>
+		/// <param name="q2">右オペランド</param>
+		/// <returns>減算の結果</returns>
+		Quaternion Subtract(const Quaternion& q1, const Quaternion& q2);
 
 		/// <summary>
 		/// 積
@@ -20,6 +37,22 @@ namespace Engine {
 		/// <param name="q2">右オペランド</param>
 		/// <returns>積の結果</returns>
 		Quaternion Multiply(const Quaternion& q1, const Quaternion& q2);
+
+		/// <summary>
+		/// スカラー倍
+		/// </summary>
+		/// <param name="q">クォータニオン</param>
+		/// <param name="s">スカラー</param>
+		/// <returns>スカラー倍されたクォータニオン</returns>
+		Quaternion Multiply(const Quaternion& q, float s);
+
+		/// <summary>
+		/// 内積
+		/// </summary>
+		/// <param name="q1">クォータニオン</param>
+		/// <param name="q2">クォータニオン</param>
+		/// <returns>内積</returns>
+		float Dot(const Quaternion& q1, const Quaternion& q2);
 
 		/// <summary>
 		/// 共役クォータニオン
@@ -55,10 +88,39 @@ namespace Engine {
 		/// <returns>逆クォータニオン</returns>
 		Quaternion Inverse(const Quaternion& q);
 
+		/// <summary>
+		/// 任意軸回転クォータニオンの作成
+		/// </summary>
+		/// <param name="axis">回転軸</param>
+		/// <param name="angle">回転角度</param>
+		/// <returns>回転クォータニオン</returns>
+		Quaternion MakeRotateAxisAngle(const Vector3& axis, float angle);
+
+		/// <summary>
+		/// 球面線形補間
+		/// </summary>
+		/// <param name="q1">開始クォータニオン</param>
+		/// <param name="q2">終了クォータニオン</param>
+		/// <param name="t">補間パラメータ (0.0 から 1.0)</param>
+		/// <returns>補間されたクォータニオン</returns>
+		Quaternion Slerp(const Quaternion& q1, const Quaternion& q2, float t);
+
 		/// ================================================== ///
 		/// オペレーター演算子
 		/// ================================================== ///
+		
+		Quaternion operator+(const Quaternion& q1, const Quaternion& q2);
+		Quaternion operator+(const Quaternion& q);
+
+		Quaternion operator-(const Quaternion& q1, const Quaternion& q2);
+		Quaternion operator-(const Quaternion& q);
 
 		Quaternion operator*(const Quaternion& q1, const Quaternion& q2);
+
+		Quaternion operator*(const Quaternion& q, float s);
+		Quaternion operator*(float s, const Quaternion& q);
+
+		Quaternion operator/(const Quaternion& q, float s);
+		Quaternion operator/(float s, const Quaternion& q);
 	}
 }

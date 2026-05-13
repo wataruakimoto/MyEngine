@@ -2,6 +2,7 @@
 
 #include "Vector3.h"
 #include "Matrix4x4.h"
+#include "Quaternion.h"
 
 namespace Engine {
 
@@ -57,6 +58,12 @@ namespace Engine {
 		/// </summary>
 		/// <returns></returns>
 		const Vector3& GetRotate() const { return rotate_; }
+		
+		/// <summary>
+		/// クォータニオン形式の回転のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Quaternion& GetRotateQuaternion() const { return rotateQuaternion_; }
 
 		/// <summary>
 		/// 平行移動のゲッター
@@ -106,6 +113,12 @@ namespace Engine {
 		void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
 
 		/// <summary>
+		/// 回転のセッター（クォータニオン版）
+		/// </summary>
+		/// <param name="rotate">回転</param>
+		void SetRotateQuaternion(const Quaternion& rotate) { rotateQuaternion_ = rotate; }
+
+		/// <summary>
 		/// 平行移動のセッター
 		/// </summary>
 		/// <param name="translate">平行移動</param>
@@ -127,6 +140,8 @@ namespace Engine {
 
 		// 回転
 		Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
+
+		Quaternion rotateQuaternion_{};
 
 		// 平行移動
 		Vector3 translate_ = { 0.0f, 0.0f, 0.0f };

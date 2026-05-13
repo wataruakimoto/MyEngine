@@ -86,15 +86,7 @@ void Camera::ShowImGui(const char* name) {
 	worldTransform_.ShowImGui();
 
 	// ビュー行列を表示
-	if (ImGui::TreeNodeEx("ビュー行列")) {
-
-		for (int i = 0; i < 4; ++i) {
-
-			ImGui::Text("%f, %f, %f, %f", viewMatrix.m[i][0], viewMatrix.m[i][1], viewMatrix.m[i][2], viewMatrix.m[i][3]);
-		}
-
-		ImGui::TreePop();
-	}
+	ShowImGuiMatrix4x4Tree("ビュー行列", viewMatrix);
 
 	ImGui::End();
 
@@ -114,15 +106,7 @@ void Camera::ShowImGuiTree() {
 		worldTransform_.ShowImGui();
 
 		// ビュー行列を表示
-		if (ImGui::TreeNodeEx("ビュー行列")) {
-
-			for (int i = 0; i < 4; ++i) {
-
-				ImGui::Text("%f, %f, %f, %f", viewMatrix.m[i][0], viewMatrix.m[i][1], viewMatrix.m[i][2], viewMatrix.m[i][3]);
-			}
-
-			ImGui::TreePop();
-		}
+		ShowImGuiMatrix4x4Tree("ビュー行列", viewMatrix);
 
 		ImGui::TreePop();
 	}

@@ -3,6 +3,7 @@
 #include "Vector2.h"
 #include "Vector3.h"
 #include "Vector4.h"
+#include "Quaternion.h"
 
 namespace Engine {
 
@@ -21,6 +22,8 @@ namespace Engine {
 		Vector3 Lerp(const Vector3& start, const Vector3& end, float t);
 
 		Vector4 Lerp(const Vector4& start, const Vector4& end, float t);
+
+		Quaternion Lerp(const Quaternion& start, const Quaternion& end, float t);
 
 		/// ===== In ゆっくり始まって速く終わる ===== ///
 

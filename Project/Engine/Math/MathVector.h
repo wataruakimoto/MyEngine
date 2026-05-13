@@ -4,6 +4,7 @@
 #include "Vector3.h"
 #include "Vector4.h"
 #include "Matrix4x4.h"
+#include "Quaternion.h"
 
 namespace Engine {
 
@@ -68,6 +69,14 @@ namespace Engine {
 
 		// ラジアンを角度に変換
 		float ConvertRadiansToDegrees(float radians);
+
+		/// <summary>
+		/// ベクトルをクォータニオンで回転させる
+		/// </summary>
+		/// <param name="v">ベクトル</param>
+		/// <param name="q">クォータニオン</param>
+		/// <returns>回転ベクトル</returns>
+		Vector3 RotateVector(const Vector3& v, const Quaternion& q);
 
 		///-------------------------------------------/// 
 		/// オペレーター演算子
