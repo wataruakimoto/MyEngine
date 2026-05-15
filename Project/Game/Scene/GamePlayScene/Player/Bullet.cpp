@@ -15,7 +15,7 @@ void Bullet::Initialize() {
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("PlayerBullet", "PlayerBullet.obj");
+	model->Initialize("PlayerBullet/PlayerBullet.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();
@@ -155,7 +155,7 @@ void Bullet::Move() {
 	float pitch = atan2f(-direction_.y, horizontalLength);
 
 	// 回転の設定
-	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+	worldTransform_.SetRotate(Vector3{ pitch, yaw, 0.0f });
 
 	/// ===== 速度の処理 ===== ///
 

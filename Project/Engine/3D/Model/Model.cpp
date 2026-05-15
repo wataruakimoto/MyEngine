@@ -8,15 +8,16 @@
 using namespace Engine;
 using namespace MathMatrix;
 
-void Model::Initialize(const std::string& directoryName, const std::string& fileName) {
+void Model::Initialize(const std::string& relativePath) {
 
 	// DXUtilityのインスタンスを取得
 	dxUtility = DirectXUtility::GetInstance();
 
-	// モデルのファイルまでのフルパスを作成
+	// モデルマネージャからベースのディレクトリを取得
 	const std::string baseDirectoryPath = ModelManager::GetInstance()->GetBaseDirectoryPath();
 
-	std::string fullPath = baseDirectoryPath + "/" + directoryName + "/" + fileName;
+	// モデルのファイルまでのフルパスを作成
+	std::string fullPath = baseDirectoryPath + "/" + relativePath;
 	
 	// モデルデータを検索
 	modelData = ModelManager::GetInstance()->FindModelFullPath(fullPath);

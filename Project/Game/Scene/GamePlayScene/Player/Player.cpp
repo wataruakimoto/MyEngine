@@ -23,7 +23,7 @@ void Player::Initialize() {
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("Player", "player.obj");
+	model->Initialize("Player/player.obj");
 	model->SetDiffuseSetting(2); // HalfLambert反射
 
 	// 3Dオブジェクトの生成・初期化
@@ -409,7 +409,7 @@ void Player::Rolling() {
 	float currentAngle = rollDirection_ * -1.0f * kMaxRollAngle_ * easeT;
 
 	// 回転をZのみ設定
-	Vector3 currentRotate = worldTransform_.GetRotate();
+	Vector3 currentRotate = worldTransform_.GetRotateVector();
 	currentRotate.z = currentAngle;
 	worldTransform_.SetRotate(currentRotate);
 
@@ -451,7 +451,7 @@ void Player::MoveToReticle() {
 	float pitch = atan2f(-toReticle.y, xzLength);
 
 	// 回転を取得
-	Vector3 currentRotate = worldTransform_.GetRotate();
+	Vector3 currentRotate = worldTransform_.GetRotateVector();
 
 	// 回転させる
 	currentRotate.x = pitch;
@@ -553,7 +553,7 @@ void Player::AutoPilotInitialize() {
 void Player::AutoPilotUpdate() {
 
 	// 現在の回転を取得
-	Vector3 currentRotate = worldTransform_.GetRotate();
+	Vector3 currentRotate = worldTransform_.GetRotateVector();
 	Vector3 targetRotate = { 0.0f, 0.0f, 0.0f }; // 正面を向く
 
 	// 回転を補間

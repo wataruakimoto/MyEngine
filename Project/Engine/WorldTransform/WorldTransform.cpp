@@ -14,9 +14,7 @@ void WorldTransform::Initialize() {
 
 	scale_ = { 1.0f, 1.0f, 1.0f };
 
-	rotate_ = { 0.0f, 0.0f, 0.0f };
-
-	rotateQuaternion_ = Identity();
+	rotate_ = Identity();
 
 	translate_ = { 0.0f, 0.0f, 0.0f };
 
@@ -27,7 +25,6 @@ void WorldTransform::Update() {
 
 	// ワールド行列を作成
 	worldMatrix_ = MakeAffineMatrix(scale_, rotate_, translate_);
-	//worldMatrix_ = MakeAffineMatrix(scale_, rotateQuaternion_, translate_);
 
 	// 親が割り当てられていたら
 	if (parent_) {
@@ -46,9 +43,8 @@ void WorldTransform::ShowImGui() {
 
 		// 各種値を表示
 		ImGui::DragFloat3("拡大縮小", &scale_.x, 0.1f);
-		ImGui::DragFloat3("回転", &rotate_.x, 0.01f);
+		ImGui::DragFloat4("回転", &rotate_.x, 0.01f);
 		ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
-		ImGui::DragFloat4("回転クォータニオン", &rotateQuaternion_.x, 0.01f);
 
 		// ワールド行列を表示
 		ShowImGuiMatrix4x4Tree("ワールド行列", worldMatrix_);
@@ -61,12 +57,22 @@ void WorldTransform::ShowImGui() {
 
 void WorldTransform::AddRotate(const Vector3& value) {
 
-	rotate_ += value;
+	// 引数のオイラー角をクォータニオンに変換
+	Quaternion addRotate = EulerToQuaternion(value);
+
+	// 現在の回転に加算
+	rotate_ += addRotate;
 }
 
 void WorldTransform::AddTranslate(const Vector3& value) {
 
 	translate_ += value;
+}
+
+Vector3 WorldTransform::GetRotateVector() const {
+	
+	// クォータニオンをオイラー角に変換して返す
+	return QuaternionToEuler(rotate_);
 }
 
 Vector3 WorldTransform::GetWorldScale() const {
@@ -112,4 +118,10 @@ Vector3 WorldTransform::GetWorldPosition() const {
 	};
 
 	return worldPosition;
+}
+
+void WorldTransform::SetRotate(const Vector3& rotate) {
+
+	//  引数のオイラー角をクォータニオンに変換して保存
+	rotate_ = EulerToQuaternion(rotate);
 }

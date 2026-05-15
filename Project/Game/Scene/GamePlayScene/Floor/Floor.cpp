@@ -9,7 +9,7 @@ void Floor::Initialize() {
 
 	// モデルの生成・初期化
 	model_ = std::make_unique<Model>();
-	model_->Initialize("Floor", "floor.obj");
+	model_->Initialize("Floor/floor.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	for (int i = 0; i < 20; ++i) {

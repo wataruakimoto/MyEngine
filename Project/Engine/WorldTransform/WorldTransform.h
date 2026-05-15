@@ -52,18 +52,18 @@ namespace Engine {
 		/// </summary>
 		/// <returns></returns>
 		const Vector3& GetScale() const { return scale_; }
+		
+		/// <summary>
+		/// 回転のゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Quaternion& GetRotate() const { return rotate_; }
 
 		/// <summary>
 		/// 回転のゲッター
 		/// </summary>
 		/// <returns></returns>
-		const Vector3& GetRotate() const { return rotate_; }
-		
-		/// <summary>
-		/// クォータニオン形式の回転のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Quaternion& GetRotateQuaternion() const { return rotateQuaternion_; }
+		Vector3 GetRotateVector() const;
 
 		/// <summary>
 		/// 平行移動のゲッター
@@ -110,13 +110,13 @@ namespace Engine {
 		/// 回転のセッター
 		/// </summary>
 		/// <param name="rotate">回転</param>
-		void SetRotate(const Vector3& rotate) { rotate_ = rotate; }
+		void SetRotate(const Vector3& rotate);
 
 		/// <summary>
-		/// 回転のセッター（クォータニオン版）
+		/// 回転のセッター
 		/// </summary>
 		/// <param name="rotate">回転</param>
-		void SetRotateQuaternion(const Quaternion& rotate) { rotateQuaternion_ = rotate; }
+		void SetRotate(const Quaternion& rotate) { rotate_ = rotate; }
 
 		/// <summary>
 		/// 平行移動のセッター
@@ -139,12 +139,10 @@ namespace Engine {
 		Vector3 scale_ = { 1.0f, 1.0f, 1.0f };
 
 		// 回転
-		Vector3 rotate_ = { 0.0f, 0.0f, 0.0f };
-
-		Quaternion rotateQuaternion_{};
+		Quaternion rotate_ = {};
 
 		// 平行移動
-		Vector3 translate_ = { 0.0f, 0.0f, 0.0f };
+		Vector3 translate_ = {};
 
 		// ワールド行列
 		Matrix4x4 worldMatrix_ = {};

@@ -15,7 +15,7 @@ void EnemyBullet::Initialize() {
 
 	// モデルの生成・初期化
 	model = std::make_unique<Model>();
-	model->Initialize("EnemyBullet", "EnemyBullet.obj");
+	model->Initialize("EnemyBullet/EnemyBullet.obj");
 
 	// 3Dオブジェクトの生成・初期化
 	object = std::make_unique<Object3d>();
@@ -145,7 +145,7 @@ void EnemyBullet::Move() {
 	float pitch = atan2f(-direction_.y, horizontalLength);
 
 	// 回転の設定
-	worldTransform_.SetRotate({ pitch, yaw, 0.0f });
+	worldTransform_.SetRotate(Vector3{ pitch, yaw, 0.0f });
 
 	/// ===== 速度の処理 ===== ///
 

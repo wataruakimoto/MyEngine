@@ -22,7 +22,7 @@ void FollowCameraController::Initialize() {
 	camera_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// カメラのワールド変換の初期化
-	camera_->GetWorldTransform().SetRotate({ 0.0f, 0.0f, 0.0f });
+	camera_->GetWorldTransform().SetRotate(Vector3{ 0.0f, 0.0f, 0.0f });
 	camera_->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, 0.0f });
 }
 
@@ -109,7 +109,7 @@ void FollowCameraController::Follow() {
 	if (player) {
 
 		// 回転行列を作成
-		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform_.GetRotate());
+		Matrix4x4 rotateMatrix = MakeRotateMatrix(worldTransform_.GetRotateVector());
 
 		// オフセットを回転に合わせる
 		Vector3 offset = TransformNormal(followOffsetTranslate_, rotateMatrix);
@@ -155,7 +155,7 @@ void FollowCameraController::DutchRoll() {
 		currentTilt_ = Lerp(currentTilt_, targetTilt, kTiltDelay_);
 
 		// 現在の回転を取得
-		Vector3 currentRotation = worldTransform_.GetRotate();
+		Vector3 currentRotation = worldTransform_.GetRotateVector();
 
 		// Z軸に傾きを適用
 		currentRotation.z = currentTilt_;

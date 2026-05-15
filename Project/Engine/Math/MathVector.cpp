@@ -10,6 +10,8 @@
 
 using namespace Engine;
 
+/// ================================================== ///
+/// 加算
 Vector2 MathVector::Add(const Vector2& v1, const Vector2& v2) {
 
 	Vector2 result;
@@ -43,6 +45,8 @@ Vector4 MathVector::Add(const Vector4& v1, const Vector4& v2) {
 	return result;
 }
 
+/// ================================================== ///
+/// 減算
 Vector2 MathVector::Subtract(const Vector2& v1, const Vector2& v2) {
 	
 	Vector2 result;
@@ -76,7 +80,9 @@ Vector4 MathVector::Subtract(const Vector4& v1, const Vector4& v2) {
 	return result;
 }
 
-Vector2 MathVector::Multiply(float s, const Vector2& v) {
+/// ================================================== ///
+/// 
+Vector2 MathVector::Multiply(const Vector2& v, float s) {
 	
 	Vector2 result;
 
@@ -86,7 +92,7 @@ Vector2 MathVector::Multiply(float s, const Vector2& v) {
 	return result;
 }
 
-Vector3 MathVector::Multiply(float s, const Vector3& v) {
+Vector3 MathVector::Multiply(const Vector3& v, float s) {
 
 	Vector3 result;
 
@@ -97,7 +103,7 @@ Vector3 MathVector::Multiply(float s, const Vector3& v) {
 	return result;
 }
 
-Vector4 MathVector::Multiply(float s, const Vector4& v) {
+Vector4 MathVector::Multiply(const Vector4& v, float s) {
 	
 	Vector4 result;
 
@@ -391,14 +397,14 @@ Vector4& MathVector::operator-=(Vector4& v1, const Vector4& v2) {
 	return v1;
 }
 
-Vector2 MathVector::operator*(float s, const Vector2& v) {
-	
-	return { v.x * s, v.y * s };
+Vector2 MathVector::operator*(const Vector2& v, float s) {
+
+	return Multiply(v, s);
 }
 
-Vector2 MathVector::operator*(const Vector2& v, float s) {
+Vector2 MathVector::operator*(float s, const Vector2& v) {
 	
-	return s * v;
+	return Multiply(v, s);
 }
 
 Vector2& MathVector::operator*=(Vector2& v, float s) {
@@ -409,14 +415,14 @@ Vector2& MathVector::operator*=(Vector2& v, float s) {
 	return v;
 }
 
-Vector3 MathVector::operator*(float s, const Vector3& v) {
-
-	return Multiply(s, v);
-}
-
 Vector3 MathVector::operator*(const Vector3& v, float s) {
 
-	return s * v;
+	return Multiply(v, s);
+}
+
+Vector3 MathVector::operator*(float s, const Vector3& v) {
+
+	return Multiply(v, s);
 }
 
 Vector3& MathVector::operator *= (Vector3 & v, float s) {
@@ -428,14 +434,14 @@ Vector3& MathVector::operator *= (Vector3 & v, float s) {
 	return v;
 }
 
-Vector4 MathVector::operator*(float s, const Vector4& v) {
-	
-	return { v.x * s, v.y * s, v.z * s, v.w * s };
-}
-
 Vector4 MathVector::operator*(const Vector4& v, float s) {
 	
-	return s * v;
+	return Multiply(v, s);
+}
+
+Vector4 MathVector::operator*(float s, const Vector4& v) {
+
+	return Multiply(v, s);
 }
 
 Vector4& MathVector::operator*=(Vector4& v, float s) {
@@ -450,7 +456,7 @@ Vector4& MathVector::operator*=(Vector4& v, float s) {
 
 Vector2 MathVector::operator/(const Vector2& v, float s) {
 	
-	return Multiply(1.0f / s, v);
+	return Multiply(v, 1.0f / s);
 }
 
 Vector2& MathVector::operator/=(Vector2& v, float s) {
@@ -463,7 +469,7 @@ Vector2& MathVector::operator/=(Vector2& v, float s) {
 
 Vector3 MathVector::operator/(const Vector3& v, float s) {
 
-	return Multiply(1.0f / s, v);
+	return Multiply(v, 1.0f / s);
 }
 
 Vector3& MathVector::operator/=(Vector3& v, float s) {
@@ -477,7 +483,7 @@ Vector3& MathVector::operator/=(Vector3& v, float s) {
 
 Vector4 MathVector::operator/(const Vector4& v, float s) {
 	
-	return Multiply(1.0f / s, v);
+	return Multiply(v, 1.0f / s);
 }
 
 Vector4& MathVector::operator/=(Vector4& v, float s) {

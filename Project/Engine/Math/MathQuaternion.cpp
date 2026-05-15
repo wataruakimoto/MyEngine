@@ -3,6 +3,7 @@
 #include "Easing.h"
 
 #include <cmath>
+#include <numbers>
 
 using namespace Engine;
 using namespace Easing;
@@ -200,6 +201,77 @@ Quaternion MathQuaternion::Slerp(const Quaternion& q1, const Quaternion& q2, flo
 	return result;
 }
 
+/// ================================================== ///
+/// クォータニオンをオイラー角に変換
+Vector3 MathQuaternion::QuaternionToEuler(const Quaternion& q) {
+
+	Vector3 result{};
+
+	/// ========== X軸(ピッチ)の回転 ========== ///
+
+	// sin(pitch)を計算
+	float sinp = 2.0f * (q.w * q.x - q.y * q.z);
+
+	// sin(pitch)の絶対値が1(90°)以上の場合は
+	if(std::abs(sinp) >= 1.0f) {
+		
+		// ジンバルロックが発生するので、sin(pitch)の符号に応じて90°または-90°を返す
+		result.x = std::copysignf(std::numbers::pi_v<float> / 2.0f, sinp);
+	}
+	// 絶対値が1(90°)未満の場合は
+	else {
+
+		// 逆正弦を計算する
+		result.x = asinf(sinp);
+	}
+
+	/// ========== Y軸(ヨー)の回転 ========== ///
+
+	// sin(yaw)を計算
+	float siny = 2.0f * (q.w * q.y + q.z * q.x);
+	// cos(yaw)を計算
+	float cosy = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+	
+	// 逆正接を計算する
+	result.y = atan2f(siny, cosy);
+
+	/// ========== Z軸(ロール)の回転 ========== ///
+
+	// sin(roll)を計算
+	float sinr = 2.0f * (q.w * q.z + q.x * q.y);
+	// cos(roll)を計算
+	float cosr = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+
+	// 逆正接を計算する
+	result.z = atan2f(sinr, cosr);
+
+	return result;
+}
+
+/// ================================================== ///
+/// オイラー角をクォータニオンに変換
+Quaternion MathQuaternion::EulerToQuaternion(const Vector3& v) {
+
+	// Y軸(ヨー)、X軸(ピッチ)、Z軸(ロール)の順で計算
+	
+	// オイラー角を半分にする
+	float cy = cosf(v.y * 0.5f); // cos(yaw/2)
+	float sy = sinf(v.y * 0.5f); // sin(yaw/2)
+	float cp = cosf(v.x * 0.5f); // cos(pitch/2)
+	float sp = sinf(v.x * 0.5f); // sin(pitch/2)
+	float cr = cosf(v.z * 0.5f); // cos(roll/2)
+	float sr = sinf(v.z * 0.5f); // sin(roll/2)
+
+	Quaternion result{};
+
+	result.w = cr * cp * cy + sr * sp * sy;
+	result.x = sr * cp * cy - cr * sp * sy;
+	result.y = cr * sp * cy + sr * cp * sy;
+	result.z = cr * cp * sy - sr * sp * cy;
+
+	return result;
+}
+
 Quaternion MathQuaternion::operator+(const Quaternion& q1, const Quaternion& q2) {
 	
 	return Add(q1, q2);
@@ -208,6 +280,11 @@ Quaternion MathQuaternion::operator+(const Quaternion& q1, const Quaternion& q2)
 Quaternion MathQuaternion::operator+(const Quaternion& q) {
 	
 	return q;
+}
+
+Quaternion MathQuaternion::operator+=(Quaternion& q1, const Quaternion& q2) {
+	
+	return q1 = Add(q1, q2);
 }
 
 Quaternion MathQuaternion::operator-(const Quaternion& q1, const Quaternion& q2) {
@@ -220,9 +297,19 @@ Quaternion MathQuaternion::operator-(const Quaternion& q) {
 	return { -q.x, -q.y, -q.z, -q.w };
 }
 
+Quaternion MathQuaternion::operator-=(Quaternion& q1, const Quaternion& q2) {
+
+	return q1 = Subtract(q1, q2);
+}
+
 Quaternion MathQuaternion::operator*(const Quaternion& q1, const Quaternion& q2) {
    
 	return Multiply(q1, q2);
+}
+
+Quaternion MathQuaternion::operator*=(Quaternion& q1, const Quaternion& q2) {
+	
+	return q1 = Multiply(q1, q2);
 }
 
 Quaternion MathQuaternion::operator*(const Quaternion& q, float s) {
@@ -235,6 +322,11 @@ Quaternion MathQuaternion::operator*(float s, const Quaternion& q) {
 	return Multiply(q, s);
 }
 
+Quaternion MathQuaternion::operator*=(Quaternion& q, float s) {
+	
+	return q = Multiply(q, s);
+}
+
 Quaternion MathQuaternion::operator/(const Quaternion& q, float s) {
 	
 	return Multiply(q, 1.0f / s);
@@ -243,4 +335,9 @@ Quaternion MathQuaternion::operator/(const Quaternion& q, float s) {
 Quaternion MathQuaternion::operator/(float s, const Quaternion& q) {
 	
 	return Multiply(Inverse(q), s);
+}
+
+Quaternion MathQuaternion::operator/=(Quaternion& q, float s) {
+	
+	return q = Multiply(q, 1.0f / s);
 }

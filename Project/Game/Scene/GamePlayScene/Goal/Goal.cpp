@@ -17,7 +17,7 @@ void Goal::Initialize() {
 
 	// モデルの生成・初期化
 	model_ = std::make_unique<Model>();
-	model_->Initialize("Goal", "Goal.obj");
+	model_->Initialize("Goal/Goal.obj");
 	model_->SetColor({ 1.0f, 1.0f, 1.0f, 0.9f });
 
 	// 3Dオブジェクトの生成・初期化
@@ -34,7 +34,7 @@ void Goal::Initialize() {
 
 	// ゲート用のモデルの生成・初期化
 	gateModel_ = std::make_unique<Model>();
-	gateModel_->Initialize("Gate", "Gate.obj");
+	gateModel_->Initialize("Gate/Gate.obj");
 
 	// ゲート用の3Dオブジェクトの生成・初期化
 	gateObject_ = std::make_unique<Object3d>();
@@ -53,7 +53,7 @@ void Goal::Update() {
 	worldTransform_.Update();
 
 	object_->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
-	object_->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
+	object_->GetWorldTransform().SetRotate(worldTransform_.GetRotateVector());
 
 	// 3Dオブジェクトの更新
 	object_->Update();

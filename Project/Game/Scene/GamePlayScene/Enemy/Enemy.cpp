@@ -26,13 +26,13 @@ void Enemy::Initialize() {
 	case EnemyType::Normal:
 	default:
 
-		model->Initialize("Enemy", "enemy.obj");
+		model->Initialize("Enemy/enemy.obj");
 
 		break;
 
 	case EnemyType::Kamikaze:
 
-		model->Initialize("Enemy", "Kamikaze.obj");
+		model->Initialize("Enemy/Kamikaze.obj");
 
 		break;
 	}
@@ -225,7 +225,7 @@ void Enemy::AimToPlayer() {
 	float roll = 0.0f;
 
 	// 向きを変える
-	worldTransform_.SetRotate({ pitch, yaw, roll });
+	worldTransform_.SetRotate(Vector3{ pitch, yaw, roll });
 }
 
 void Enemy::Fire() {
@@ -322,5 +322,5 @@ void Enemy::MoveForward() {
 	}
 
 	// 向きをセット
-	worldTransform_.SetRotate({ pitch, yaw, drillRotation_ });
+	worldTransform_.SetRotate(Vector3{ pitch, yaw, drillRotation_ });
 }

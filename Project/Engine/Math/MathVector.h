@@ -8,26 +8,86 @@
 
 namespace Engine {
 
+	/// <summary>
+	/// ベクトル計算
+	/// </summary>
 	namespace MathVector {
 
-		///-------------------------------------------/// 
-		/// 静的メンバ関数
-		///-------------------------------------------///
+		/// ================================================== ///
+		/// 関数
+		/// ================================================== ///
 
-		// 加算
+		/// <summary>
+		/// 加算
+		/// </summary>
+		/// <param name="v1">左オペランド</param>
+		/// <param name="v2">右オペランド</param>
+		/// <returns>加算結果</returns>
 		Vector2 Add(const Vector2& v1, const Vector2& v2);
+
+		/// <summary>
+		/// 加算
+		/// </summary>
+		/// <param name="v1">左オペランド</param>
+		/// <param name="v2">右オペランド</param>
+		/// <returns>加算結果</returns>
 		Vector3 Add(const Vector3& v1, const Vector3& v2);
+
+		/// <summary>
+		/// 加算
+		/// </summary>
+		/// <param name="v1">左オペランド</param>
+		/// <param name="v2">右オペランド</param>
+		/// <returns>加算結果</returns>
 		Vector4 Add(const Vector4& v1, const Vector4& v2);
 
-		// 減算
+		/// <summary>
+		/// 減算
+		/// </summary>
+		/// <param name="v1">左オペランド</param>
+		/// <param name="v2">右オペランド</param>
+		/// <returns>減算結果</returns>
 		Vector2 Subtract(const Vector2& v1, const Vector2& v2);
+
+		/// <summary>
+		/// 減算
+		/// </summary>
+		/// <param name="v1">左オペランド</param>
+		/// <param name="v2">右オペランド</param>
+		/// <returns>減算結果</returns>
 		Vector3 Subtract(const Vector3& v1, const Vector3& v2);
+
+		/// <summary>
+		/// 減算
+		/// </summary>
+		/// <param name="v1">左オペランド</param>
+		/// <param name="v2">右オペランド</param>
+		/// <returns>減算結果</returns>
 		Vector4 Subtract(const Vector4& v1, const Vector4& v2);
 
-		// 積
-		Vector2 Multiply(float s, const Vector2& v);
-		Vector3 Multiply(float s, const Vector3& v);
-		Vector4 Multiply(float s, const Vector4& v);
+		/// <summary>
+		/// スカラー倍
+		/// </summary>
+		/// <param name="v">ベクトル</param>
+		/// <param name="s">スカラー値</param>
+		/// <returns>スカラー倍結果</returns>
+		Vector2 Multiply(const Vector2& v, float s);
+
+		/// <summary>
+		/// スカラー倍
+		/// </summary>
+		/// <param name="v">ベクトル</param>
+		/// <param name="s">スカラー値</param>
+		/// <returns>スカラー倍結果</returns>
+		Vector3 Multiply(const Vector3& v, float s);
+		
+		/// <summary>
+		/// スカラー倍
+		/// </summary>
+		/// <param name="v">ベクトル</param>
+		/// <param name="s">スカラー値</param>
+		/// <returns>スカラー倍結果</returns>
+		Vector4 Multiply(const Vector4& v, float s);
 
 		// 内積
 		float Dot(const Vector2& v1, const Vector2& v2);
@@ -78,9 +138,9 @@ namespace Engine {
 		/// <returns>回転ベクトル</returns>
 		Vector3 RotateVector(const Vector3& v, const Quaternion& q);
 
-		///-------------------------------------------/// 
-		/// オペレーター演算子
-		///-------------------------------------------///
+		/// ================================================== ///
+		/// 演算子オーバーロード
+		/// ================================================== ///
 
 		/// ===== 加算 ===== ///
 
@@ -112,16 +172,16 @@ namespace Engine {
 
 		/// ===== 乗算 ===== ///
 
-		Vector2 operator*(float s, const Vector2& v);
 		Vector2 operator*(const Vector2& v, float s);
+		Vector2 operator*(float s, const Vector2& v);
 		Vector2& operator*=(Vector2& v, float s);
 
-		Vector3 operator*(float s, const Vector3& v);
 		Vector3 operator*(const Vector3& v, float s);
+		Vector3 operator*(float s, const Vector3& v);
 		Vector3& operator*=(Vector3& v, float s);
 
-		Vector4 operator*(float s, const Vector4& v);
 		Vector4 operator*(const Vector4& v, float s);
+		Vector4 operator*(float s, const Vector4& v);
 		Vector4& operator*=(Vector4& v, float s);
 
 		/// ===== 除算 ===== ///
