@@ -53,7 +53,7 @@ void Goal::Update() {
 	worldTransform_.Update();
 
 	object_->GetWorldTransform().SetTranslate(worldTransform_.GetWorldPosition());
-	object_->GetWorldTransform().SetRotate(worldTransform_.GetRotateVector());
+	object_->GetWorldTransform().SetRotate(worldTransform_.GetRotate());
 
 	// 3Dオブジェクトの更新
 	object_->Update();

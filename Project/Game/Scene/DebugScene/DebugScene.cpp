@@ -13,8 +13,7 @@ void DebugScene::Initialize() {
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->GetWorldTransform().SetRotate(Vector3{ 0.2f,0.0f,0.0f });
-	camera->GetWorldTransform().SetTranslate({ 0.0f,2.5f,-8.0f });
+	camera->GetWorldTransform().SetTranslate({ 0.0f,0.0f,-10.0f });
 
 	// シーンマネージャのインスタンス取得
 	sceneManager = SceneManager::GetInstance();
@@ -47,6 +46,9 @@ void DebugScene::Update() {
 
 	// カメラの更新
 	camera->Update();
+
+	// Y軸回転を加算
+	worldTransform.AddRotate({ 0.0f, 0.01f, 0.0f });
 
 	// ワールド変換の更新
 	worldTransform.Update();

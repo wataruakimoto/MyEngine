@@ -14,7 +14,9 @@ void WorldTransform::Initialize() {
 
 	scale_ = { 1.0f, 1.0f, 1.0f };
 
-	rotate_ = Identity();
+	rotate_ = { 0.0f, 0.0f, 0.0f };
+
+	rotateQuaternion_ = Identity();
 
 	translate_ = { 0.0f, 0.0f, 0.0f };
 
@@ -24,7 +26,7 @@ void WorldTransform::Initialize() {
 void WorldTransform::Update() {
 
 	// ワールド行列を作成
-	worldMatrix_ = MakeAffineMatrix(scale_, rotate_, translate_);
+	worldMatrix_ = MakeAffineMatrix(scale_, rotateQuaternion_, translate_);
 
 	// 親が割り当てられていたら
 	if (parent_) {
@@ -43,8 +45,20 @@ void WorldTransform::ShowImGui() {
 
 		// 各種値を表示
 		ImGui::DragFloat3("拡大縮小", &scale_.x, 0.1f);
-		ImGui::DragFloat4("回転", &rotate_.x, 0.01f);
+		ImGui::DragFloat4("回転", &rotateQuaternion_.x, 0.01f);
 		ImGui::DragFloat3("平行移動", &translate_.x, 0.1f);
+
+		// 回転のオイラー角表示
+		bool isChanged = false;
+
+		isChanged |= ImGui::SliderAngle("x回転", &rotate_.x, -180.0f, 180.0f);
+		isChanged |= ImGui::SliderAngle("y回転", &rotate_.y, -180.0f, 180.0f);
+		isChanged |= ImGui::SliderAngle("z回転", &rotate_.z, -180.0f, 180.0f);
+
+		if (isChanged) {
+			
+			rotateQuaternion_ = EulerToQuaternion(rotate_);
+		}
 
 		// ワールド行列を表示
 		ShowImGuiMatrix4x4Tree("ワールド行列", worldMatrix_);
@@ -61,7 +75,13 @@ void WorldTransform::AddRotate(const Vector3& value) {
 	Quaternion addRotate = EulerToQuaternion(value);
 
 	// 現在の回転に加算
-	rotate_ += addRotate;
+	rotateQuaternion_ *= addRotate;
+
+	// 正規化しておく
+	rotateQuaternion_ = Normalize(rotateQuaternion_);
+
+	// 回転のオイラー角も更新しておく
+	rotate_ = QuaternionToEuler(rotateQuaternion_);
 }
 
 void WorldTransform::AddTranslate(const Vector3& value) {
@@ -69,10 +89,10 @@ void WorldTransform::AddTranslate(const Vector3& value) {
 	translate_ += value;
 }
 
-Vector3 WorldTransform::GetRotateVector() const {
-	
+Vector3 WorldTransform::GetRotate() const {
+
 	// クォータニオンをオイラー角に変換して返す
-	return QuaternionToEuler(rotate_);
+	return QuaternionToEuler(rotateQuaternion_);
 }
 
 Vector3 WorldTransform::GetWorldScale() const {
@@ -122,6 +142,16 @@ Vector3 WorldTransform::GetWorldPosition() const {
 
 void WorldTransform::SetRotate(const Vector3& rotate) {
 
+	rotate_ = rotate;
+
 	//  引数のオイラー角をクォータニオンに変換して保存
-	rotate_ = EulerToQuaternion(rotate);
+	rotateQuaternion_ = EulerToQuaternion(rotate);
+}
+
+void WorldTransform::SetRotate(const Quaternion& rotate) {
+
+	rotateQuaternion_ = rotate;
+
+	// クォータニオンをオイラー角に変換して保存
+	rotate_ = QuaternionToEuler(rotate);
 }

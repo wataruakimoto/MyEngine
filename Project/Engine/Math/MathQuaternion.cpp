@@ -217,33 +217,37 @@ Vector3 MathQuaternion::QuaternionToEuler(const Quaternion& q) {
 		
 		// ジンバルロックが発生するので、sin(pitch)の符号に応じて90°または-90°を返す
 		result.x = std::copysignf(std::numbers::pi_v<float> / 2.0f, sinp);
+
+		result.y = atan2f(-2.0f * (q.x * q.y - q.w * q.z), 1.0f - 2.0f * (q.x * q.x + q.z * q.z));
+
+		result.z = 0.0f;
 	}
 	// 絶対値が1(90°)未満の場合は
 	else {
 
 		// 逆正弦を計算する
 		result.x = asinf(sinp);
+
+		/// ========== Y軸(ヨー)の回転 ========== ///
+
+		// sin(yaw)を計算
+		float siny = 2.0f * (q.w * q.y + q.z * q.x);
+		// cos(yaw)を計算
+		float cosy = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
+
+		// 逆正接を計算する
+		result.y = atan2f(siny, cosy);
+
+		/// ========== Z軸(ロール)の回転 ========== ///
+
+		// sin(roll)を計算
+		float sinr = 2.0f * (q.w * q.z + q.x * q.y);
+		// cos(roll)を計算
+		float cosr = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
+
+		// 逆正接を計算する
+		result.z = atan2f(sinr, cosr);
 	}
-
-	/// ========== Y軸(ヨー)の回転 ========== ///
-
-	// sin(yaw)を計算
-	float siny = 2.0f * (q.w * q.y + q.z * q.x);
-	// cos(yaw)を計算
-	float cosy = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
-	
-	// 逆正接を計算する
-	result.y = atan2f(siny, cosy);
-
-	/// ========== Z軸(ロール)の回転 ========== ///
-
-	// sin(roll)を計算
-	float sinr = 2.0f * (q.w * q.z + q.x * q.y);
-	// cos(roll)を計算
-	float cosr = 1.0f - 2.0f * (q.y * q.y + q.z * q.z);
-
-	// 逆正接を計算する
-	result.z = atan2f(sinr, cosr);
 
 	return result;
 }
@@ -265,9 +269,9 @@ Quaternion MathQuaternion::EulerToQuaternion(const Vector3& v) {
 	Quaternion result{};
 
 	result.w = cr * cp * cy + sr * sp * sy;
-	result.x = sr * cp * cy - cr * sp * sy;
-	result.y = cr * sp * cy + sr * cp * sy;
-	result.z = cr * cp * sy - sr * sp * cy;
+	result.x = cr * sp * cy + sr * cp * sy;
+	result.y = cr * cp * sy - sr * sp * cy;
+	result.z = sr * cp * cy - cr * sp * sy;
 
 	return result;
 }

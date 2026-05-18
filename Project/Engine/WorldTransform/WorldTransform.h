@@ -52,18 +52,18 @@ namespace Engine {
 		/// </summary>
 		/// <returns></returns>
 		const Vector3& GetScale() const { return scale_; }
-		
-		/// <summary>
-		/// 回転のゲッター
-		/// </summary>
-		/// <returns></returns>
-		const Quaternion& GetRotate() const { return rotate_; }
 
 		/// <summary>
 		/// 回転のゲッター
 		/// </summary>
 		/// <returns></returns>
-		Vector3 GetRotateVector() const;
+		Vector3 GetRotate() const;
+		
+		/// <summary>
+		/// 回転クォータニオンのゲッター
+		/// </summary>
+		/// <returns></returns>
+		const Quaternion& GetRotateQuaternion() const { return rotateQuaternion_; }
 
 		/// <summary>
 		/// 平行移動のゲッター
@@ -109,14 +109,14 @@ namespace Engine {
 		/// <summary>
 		/// 回転のセッター
 		/// </summary>
-		/// <param name="rotate">回転</param>
+		/// <param name="rotate">回転のオイラー角</param>
 		void SetRotate(const Vector3& rotate);
 
 		/// <summary>
 		/// 回転のセッター
 		/// </summary>
-		/// <param name="rotate">回転</param>
-		void SetRotate(const Quaternion& rotate) { rotate_ = rotate; }
+		/// <param name="rotate">回転のクォータニオン</param>
+		void SetRotate(const Quaternion& rotate);
 
 		/// <summary>
 		/// 平行移動のセッター
@@ -139,7 +139,10 @@ namespace Engine {
 		Vector3 scale_ = { 1.0f, 1.0f, 1.0f };
 
 		// 回転
-		Quaternion rotate_ = {};
+		Vector3 rotate_ = {};
+
+		// 回転クォータニオン
+		Quaternion rotateQuaternion_ = {};
 
 		// 平行移動
 		Vector3 translate_ = {};
