@@ -2,13 +2,17 @@
 
 #include "Matrix4x4.h"
 #include "Vector3.h"
+#include "Quaternion.h"
 
 namespace Engine {
 
+	/// <summary>
+	/// 行列計算
+	/// </summary>
 	namespace MathMatrix {
 
 		///=====================================================/// 
-		/// 静的メンバ関数
+		/// 関数
 		///=====================================================///
 
 		// 行列の加法
@@ -47,6 +51,9 @@ namespace Engine {
 		// 3次元アフィン変換行列
 		Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
 
+		// 3次元アフィン変換行列（クォータニオン版）
+		Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Quaternion& rotate, const Vector3& translate);
+
 		// 透視投影行列
 		Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip);
 
@@ -56,21 +63,44 @@ namespace Engine {
 		// ビューポート行列
 		Matrix4x4 MakeViewportMatrix(float x, float y, float width, float height, float minZ, float maxZ);
 
+		/// <summary>
+		/// 任意軸回転行列の作成
+		/// </summary>
+		/// <param name="axis">回転軸</param>
+		/// <param name="radian">回転角（ラジアン）</param>
+		/// <returns>回転行列</returns>
+		Matrix4x4 MakeRotateAxisAngle(const Vector3& axis, float radian);
+
+		/// <summary>
+		/// 2つの方向ベクトルから回転行列を作成
+		/// </summary>
+		/// <param name="from">開始方向ベクトル</param>
+		/// <param name="to">目標方向ベクトル</param>
+		/// <returns>回転行列</returns>
+		Matrix4x4 DirectionToDirection(const Vector3& from, const Vector3& to);
+		
+		/// <summary>
+		/// 回転行列の作成
+		/// </summary>
+		/// <param name="q">クォータニオン</param>
+		/// <returns>回転行列</returns>
+		Matrix4x4 MakeRotateMatrix(const Quaternion& q);
+
 		///=====================================================/// 
 		/// オペレーター演算子
 		///=====================================================///
 
-			//Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2);
+		//Matrix4x4 operator+(const Matrix4x4& m1, const Matrix4x4& m2);
 
-			//Matrix4x4 operator+(const Matrix4x4& m);
+		//Matrix4x4 operator+(const Matrix4x4& m);
 
-			//Matrix4x4& operator+=(Matrix4x4& m1, const Matrix4x4& m2);
+		//Matrix4x4& operator+=(Matrix4x4& m1, const Matrix4x4& m2);
 
-			//Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2);
+		//Matrix4x4 operator-(const Matrix4x4& m1, const Matrix4x4& m2);
 
-			//Matrix4x4 operator-(const Matrix4x4& m);
+		//Matrix4x4 operator-(const Matrix4x4& m);
 
-			//Matrix4x4& operator-=(Matrix4x4& m1, const Matrix4x4& m2);
+		//Matrix4x4& operator-=(Matrix4x4& m1, const Matrix4x4& m2);
 
 		Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2);
 

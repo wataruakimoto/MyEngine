@@ -26,7 +26,7 @@ void Obstacle::Initialize() {
 	// モデルの生成
 	model_ = std::make_unique<Model>();
 	// モデルの初期化
-	model_->Initialize("Obstacle", "Obstacle.obj");
+	model_->Initialize("Obstacle/Obstacle.obj");
 
 	// 3Dオブジェクトの生成
 	object_ = std::make_unique<Object3d>();

@@ -22,7 +22,7 @@ void FollowCameraController::Initialize() {
 	camera_->GetWorldTransform().SetParent(&worldTransform_);
 
 	// カメラのワールド変換の初期化
-	camera_->GetWorldTransform().SetRotate({ 0.0f, 0.0f, 0.0f });
+	camera_->GetWorldTransform().SetRotate(Vector3{ 0.0f, 0.0f, 0.0f });
 	camera_->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, 0.0f });
 }
 

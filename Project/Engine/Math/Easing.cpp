@@ -1,11 +1,13 @@
 #include "Easing.h"
 #include "MathVector.h"
+#include "MathQuaternion.h"
 
 #include <cmath>
 #include <numbers>
 
 using namespace Engine;
 using namespace MathVector;
+using namespace MathQuaternion;
 
 float Easing::Lerp(float start, float end, float t) {
 
@@ -27,7 +29,12 @@ Vector4 Easing::Lerp(const Vector4& start, const Vector4& end, float t) {
 	return start + (end - start) * t;
 }
 
-float Engine::Easing::EaseInSine(float t) {
+Quaternion Easing::Lerp(const Quaternion& start, const Quaternion& end, float t) {
+	
+	return start + (end - start) * t;
+}
+
+float Easing::EaseInSine(float t) {
 	
 	return 1.0f - std::cosf((t * std::numbers::pi_v<float>) / 2.0f);
 }
@@ -37,7 +44,7 @@ float Easing::EaseInCubic(float t) {
 	return t * t * t;
 }
 
-float Engine::Easing::EaseOutSine(float t) {
+float Easing::EaseOutSine(float t) {
 	
 	return std::sinf((t * std::numbers::pi_v<float>) / 2.0f);
 }
@@ -80,7 +87,7 @@ float Easing::EaseOutBounce(float t) {
 	}
 }
 
-float Engine::Easing::EaseInOutSine(float t) {
+float Easing::EaseInOutSine(float t) {
 	
 	return -(std::cosf(std::numbers::pi_v<float> *t) - 1.0f) / 2.0f;
 }
@@ -97,7 +104,7 @@ float Easing::EaseInOutQuad(float t) {
 	}
 }
 
-float Engine::Easing::EaseInOutCubic(float t) {
+float Easing::EaseInOutCubic(float t) {
 	
 	if (t < 0.5f) {
 

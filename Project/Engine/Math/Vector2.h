@@ -4,9 +4,11 @@
 
 namespace Engine {
 
+	/// <summary>
+	/// 2次元ベクトル
+	/// </summary>
 	struct Vector2 {
-		float x;
-		float y;
+		float x, y;
 	};
 
 	// JSON用のシリアライズ・デシリアライズ定義
