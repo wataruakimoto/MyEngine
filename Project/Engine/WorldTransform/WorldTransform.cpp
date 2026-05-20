@@ -71,28 +71,16 @@ void WorldTransform::ShowImGui() {
 
 void WorldTransform::AddRotate(const Vector3& value) {
 
-	// 引数のオイラー角をクォータニオンに変換
-	Quaternion addRotate = EulerToQuaternion(value);
+	// オイラー角に加算
+	rotate_ += value;
 
-	// 現在の回転に加算
-	rotateQuaternion_ *= addRotate;
-
-	// 正規化しておく
-	rotateQuaternion_ = Normalize(rotateQuaternion_);
-
-	// 回転のオイラー角も更新しておく
-	rotate_ = QuaternionToEuler(rotateQuaternion_);
+	// 加算後のオイラー角をクォータニオンに変換して保存
+	rotateQuaternion_ = EulerToQuaternion(rotate_);
 }
 
 void WorldTransform::AddTranslate(const Vector3& value) {
 
 	translate_ += value;
-}
-
-Vector3 WorldTransform::GetRotate() const {
-
-	// クォータニオンをオイラー角に変換して返す
-	return QuaternionToEuler(rotateQuaternion_);
 }
 
 Vector3 WorldTransform::GetWorldScale() const {

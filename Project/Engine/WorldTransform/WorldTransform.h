@@ -57,7 +57,7 @@ namespace Engine {
 		/// 回転のゲッター
 		/// </summary>
 		/// <returns></returns>
-		Vector3 GetRotate() const;
+		Vector3 GetRotate() const { return rotate_; }
 		
 		/// <summary>
 		/// 回転クォータニオンのゲッター
