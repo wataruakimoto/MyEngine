@@ -182,6 +182,117 @@ void ParticleManager::ShowImGui() {
 
 	ImGui::Begin("Particle Manager");
 
+	// ==========================================
+	// 1. 既存エフェクトの選択
+	// ==========================================
+	if (ImGui::BeginCombo("Select Effect", currentEditName.c_str())) {
+		for (auto& [name, setting] : settings) {
+			bool isSelected = (currentEditName == name);
+			if (ImGui::Selectable(name.c_str(), isSelected)) {
+				currentEditName = name;
+				tempSetting = setting; // 選択した設定を編集用バッファにコピー
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::Separator();
+
+	// ==========================================
+	// 2. 新規エフェクトの作成
+	// ==========================================
+	ImGui::InputText("New Effect Name", inputNameBuffer, sizeof(inputNameBuffer));
+	ImGui::SameLine();
+	if (ImGui::Button("Create New")) {
+		std::string newName = inputNameBuffer;
+		// 名前が空でなく、まだ存在しない名前なら作成
+		if (!newName.empty() && settings.find(newName) == settings.end()) {
+			ParticleSetting newSetting;
+			newSetting.effectName = newName;
+			settings[newName] = newSetting;
+
+			// 作成したものをすぐに選択状態にする
+			currentEditName = newName;
+			tempSetting = newSetting;
+		}
+	}
+
+	ImGui::Separator();
+
+	// ==========================================
+	// 3. パラメータの編集
+	// ==========================================
+	if (!currentEditName.empty()) {
+		ImGui::Text("Editing: %s", currentEditName.c_str());
+
+		// --- 形状の編集 ---
+		const char* shapeNames[] = { "PLANE", "RING", "CYLINDER", "CUBE", "SPHERE", "SHARD", "MESH" };
+		int shapeIndex = static_cast<int>(tempSetting.shape);
+		if (ImGui::Combo("Shape", &shapeIndex, shapeNames, IM_ARRAYSIZE(shapeNames))) {
+			tempSetting.shape = static_cast<ParticleShape>(shapeIndex);
+		}
+
+		// ビルボードフラグ
+		ImGui::Checkbox("Use Billboard", &tempSetting.useBillboard);
+
+		// --- 寿命の設定 ---
+		if (ImGui::TreeNode("LifeTime")) {
+			ImGui::Checkbox("Random##Life", &tempSetting.lifeTimeRandom);
+			if (tempSetting.lifeTimeRandom) {
+				ImGui::DragFloat("Min##Life", &tempSetting.lifeTimeRange.min, 0.01f, 0.0f, 10.0f);
+				ImGui::DragFloat("Max##Life", &tempSetting.lifeTimeRange.max, 0.01f, 0.0f, 10.0f);
+			}
+			else {
+				ImGui::DragFloat("Value##Life", &tempSetting.lifeTime, 0.01f, 0.0f, 10.0f);
+			}
+			ImGui::TreePop();
+		}
+
+		// --- スケールの設定 ---
+		if (ImGui::TreeNode("Scale")) {
+			ImGui::Checkbox("Random##Scale", &tempSetting.scaleRandom);
+			if (tempSetting.scaleRandom) {
+				ImGui::DragFloat3("Min##Scale", &tempSetting.scaleRange.min.x, 0.01f);
+				ImGui::DragFloat3("Max##Scale", &tempSetting.scaleRange.max.x, 0.01f);
+			}
+			else {
+				ImGui::DragFloat3("Value##Scale", &tempSetting.scale.x, 0.01f);
+			}
+			ImGui::TreePop();
+		}
+
+		// --- 速度の設定 ---
+		if (ImGui::TreeNode("Velocity")) {
+			ImGui::Checkbox("Random##Vel", &tempSetting.velocityRandom);
+			if (tempSetting.velocityRandom) {
+				ImGui::DragFloat3("Min##Vel", &tempSetting.velocityRange.min.x, 0.01f);
+				ImGui::DragFloat3("Max##Vel", &tempSetting.velocityRange.max.x, 0.01f);
+			}
+			else {
+				ImGui::DragFloat3("Value##Vel", &tempSetting.velocity.x, 0.01f);
+			}
+			ImGui::TreePop();
+		}
+
+		// ※ Rotate, Translate, Acceleration, Color なども同様に追加します
+
+		ImGui::Separator();
+
+		// ==========================================
+		// 4. 適用と保存
+		// ==========================================
+		if (ImGui::Button("Apply & Save JSON")) {
+			// 一時バッファ(tempSetting)の内容を本来のマップに反映
+			settings[currentEditName] = tempSetting;
+
+			// すでに用意されているJSON保存関数を呼び出す
+			SaveSettingsToJSON(currentEditName);
+		}
+	}
+
 	ImGui::End();
 
 #endif // USE_IMGUI
