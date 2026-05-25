@@ -1,0 +1,97 @@
+#pragma once
+
+#include <list>
+#include <memory>
+
+/// === 前方宣言 === ///
+
+class Player;
+class Enemy;
+class Bullet;
+class EnemyBullet;
+class Obstacle;
+class Goal;
+
+/// <summary>
+/// ゲームオブジェクト管理クラス
+/// </summary>
+class GameObjectManager {
+
+	/// ================================================== ///
+	/// メンバ関数
+	/// ================================================== ///
+public:
+
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Initialize();
+
+	/// <summary>
+	/// 更新
+	/// </summary>
+	void Update();
+
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw();
+
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+public:
+
+	Player* GetPlayer() const { return player_.get(); }
+
+	const std::list<std::unique_ptr<Enemy>>& GetEnemies() const { return enemies_; }
+
+	const std::list<std::unique_ptr<Bullet>>& GetPlayerBullets() const { return playerBullets_; }
+
+	const std::list<std::unique_ptr<EnemyBullet>>& GetEnemyBullets() const { return enemyBullets_; }
+
+	const std::list<std::unique_ptr<Obstacle>>& GetObstacles() const { return obstacles_; }
+
+	Goal* GetGoal() const { return goal_.get(); }
+
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
+public:
+
+	void SetPlayer(std::unique_ptr<Player> player) { player_ = std::move(player); }
+
+	void AddEnemy(std::unique_ptr<Enemy> enemy) { enemies_.push_back(std::move(enemy)); }
+
+	void AddPlayerBullet(std::unique_ptr<Bullet> bullet) { playerBullets_.push_back(std::move(bullet)); }
+
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) { enemyBullets_.push_back(std::move(bullet)); }
+
+	void AddObstacle(std::unique_ptr<Obstacle> obstacle) { obstacles_.push_back(std::move(obstacle)); }
+
+	void SetGoal(std::unique_ptr<Goal> goal) { goal_ = std::move(goal); }
+
+	/// ================================================== ///
+	/// メンバ変数
+	/// ================================================== ///
+private:
+
+	// プレイヤーのポインタ
+	std::unique_ptr<Player> player_ = nullptr;
+
+	// 敵のリスト
+	std::list<std::unique_ptr<Enemy>> enemies_;
+
+	// 自機の弾のリスト
+	std::list<std::unique_ptr<Bullet>> playerBullets_;
+
+	// 敵の弾のリスト
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+
+	// 障害物のリスト
+	std::list<std::unique_ptr<Obstacle>> obstacles_;
+
+	// ゴールのポインタ
+	std::unique_ptr<Goal> goal_ = nullptr;
+};
+

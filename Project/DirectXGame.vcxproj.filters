@@ -292,6 +292,7 @@
     <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
     <ClCompile Include="Engine\Math\MathQuaternion.cpp" />
+    <ClCompile Include="GameObjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -597,6 +598,7 @@
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
     <ClInclude Include="Engine\Math\Quaternion.h" />
     <ClInclude Include="Engine\Math\MathQuaternion.h" />
+    <ClInclude Include="GameObjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">
