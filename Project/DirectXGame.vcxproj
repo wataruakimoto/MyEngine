@@ -112,6 +112,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scene\GamePlayScene\CameraManager.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.cpp" />
@@ -171,6 +172,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\GraphicsPipelineBuilder.cpp" />
     <ClCompile Include="Game\Level\LevelLoader.cpp" />
     <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
+    <ClCompile Include="Game\Level\LevelBuilder.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -211,6 +213,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\MathQuaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scene\GamePlayScene\CameraManager.h" />
     <ClInclude Include="Engine\Math\AABB.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.h" />
@@ -331,6 +334,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Light\LightManager.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
     <ClInclude Include="Engine\Math\MathQuaternion.h" />
+    <ClInclude Include="Game\Level\LevelBuilder.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

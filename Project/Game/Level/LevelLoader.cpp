@@ -45,4 +45,14 @@ void LevelLoader::LoadLevel(const std::string& filePath) {
 			levelData_.obstacleSpawnDatas.push_back(obstacleData.get<ObstacleSpawnData>());
 		}
 	}
+
+	// ゴールの位置の読み込み
+	if (jsonData.contains("goal") && jsonData["goal"].is_object()) {
+
+		const auto& goalData = jsonData["goal"];
+
+		if (goalData.contains("position")) {
+			levelData_.goalPosition = goalData["position"].get<Vector3>();
+		}
+	}
 }

@@ -619,7 +619,7 @@ void Player::ManualUpdate() {
 	context.player = this;
 	context.reticle = reticle_.get();
 	context.lockOn = lockOn_.get();
-	context.scene = gamePlayScene_;
+	context.objManager = objManager_;
 
 	// 各キーの入力の状態
 	bool isMouseLeftPush = Input::GetInstance()->PushMouseButton(MouseButton::Left); // 左クリック

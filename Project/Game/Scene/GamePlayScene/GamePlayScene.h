@@ -3,12 +3,6 @@
 #include "PlayState.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleManager.h"
-#include "Player/Player.h"
-#include "Player/Bullet.h"
-#include "Enemy/Enemy.h"
-#include "Enemy/EnemyBullet.h"
-#include "Camera.h"
-#include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
 #include "UI/RuleUI.h"
@@ -17,10 +11,11 @@
 #include "UI/GuideUI.h"
 #include "Fade/whiteFade.h"
 #include "Fade/BlackFade.h"
-#include "Goal/Goal.h"
-#include "LevelLoader.h"
-#include "Obstacle/Obstacle.h"
 #include "Light/LightManager.h"
+
+#include "GameObjectManager.h"
+#include "CameraManager.h"
+#include "LevelLoader.h"
 
 #include <list>
 #include <memory>
@@ -85,23 +80,6 @@ public:
 	void ChangeState(std::unique_ptr<IPlayState> newState);
 
 	/// <summary>
-	/// 自機の弾の追加
-	/// </summary>
-	/// <param name="bullet"></param>
-	void AddPlayerBullet(std::unique_ptr<Bullet> bullet);
-
-	/// <summary>
-	/// 敵の弾の追加
-	/// </summary>
-	/// <param name="bullet"></param>
-	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet);
-	
-	/// <summary>
-	/// リストで管理しているオブジェクトの更新
-	/// </summary>
-	void UpdateListObjects();
-
-	/// <summary>
 	/// プレイヤーがダメージを受けたときの処理
 	/// </summary>
 	/// <param name="currentHP">現在のHP</param>
@@ -133,32 +111,9 @@ public:
 private:
 
 	/// <summary>
-	/// レベルデータの読み込みと適用
-	/// </summary>
-	void LoadLevelAndApply();
-
-	/// <summary>
-	/// レベルデータから敵をスポーン
-	/// </summary>
-	/// <param name="levelData">レベルデータ</param>
-	void SpawnEnemiesFromLevelData(const GameLevelData& levelData);
-
-	/// <summary>
-	/// レベルデータから障害物をスポーン
-	/// </summary>
-	/// <param name="levelData">レベルデータ</param>
-	void SpawnObstaclesFromLevelData(const GameLevelData& levelData);
-
-	/// <summary>
 	/// オリジンシフトの確認と実行
 	/// </summary>
 	void CheckOriginShift();
-
-	/// <summary>
-	/// オブジェクトを手前にずらす
-	/// </summary>
-	/// <param name="shiftZ">手前にずらす量</param>
-	void ShiftWorld(float shiftZ);
 
 ///-------------------------------------------/// 
 /// ゲッター
@@ -166,12 +121,6 @@ private:
 public:
 
 	const int& GetKillCount() const { return killCount_; }
-
-	ICameraController* GetCameraController() { return cameraController_.get(); }
-
-	Player* GetPlayer() { return player_.get(); }
-
-	Goal* GetGoal() { return goal_.get(); }
 
 	RuleUI* GetRuleUI() { return ruleUI_.get(); }
 
@@ -185,13 +134,24 @@ public:
 
 	BlackFade* GetBlackFade() { return blackFade_.get(); }
 
-	const std::list<std::unique_ptr<Enemy>>& GetEnemies() const { return enemies_; }
+	GameObjectManager* GetGameObjectManager() { return gameObjectManager_.get(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
+	// オブジェクトマネージャー
+	std::unique_ptr<GameObjectManager> gameObjectManager_ = nullptr;
+
+	// カメラマネージャー
+	std::unique_ptr<CameraManager> cameraManager_ = nullptr;
+
+	// レベルローダー
+	std::unique_ptr<LevelLoader> levelLoader_ = nullptr;
+	// レベルデータのファイル名
+	const std::string kLevelDataFileName_ = "LevelData.json";
+	
 	std::unique_ptr<IPlayState> state_ = nullptr;
 	std::unique_ptr<IPlayState> pauseState_ = nullptr;
 
@@ -201,42 +161,13 @@ private:
 	// ループする距離
 	const float kLoopDistance = 1000.0f;
 
-	float worldShiftZ_ = 0.0f;
-
-	/// ========== レベルデータ ========== ///
-
-	LevelLoader levelLoader_;
-
-	const std::string kLevelDataFileName_ = "LevelData.json";
-
 	/// ===== オブジェクト ===== ///
-
-	// カメラコントローラのポインタ
-	std::unique_ptr<ICameraController> cameraController_ = nullptr;
-
-	// プレイヤーのポインタ
-	std::unique_ptr<Player> player_ = nullptr;
-
-	// 敵のリスト
-	std::list<std::unique_ptr<Enemy>> enemies_;
-
-	// 自機の弾のリスト
-	std::list<std::unique_ptr<Bullet>> playerBullets_;
-
-	// 敵の弾のリスト
-	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
-
-	// 障害物のリスト
-	std::list<std::unique_ptr<Obstacle>> obstacles_;
 
 	// フロアのポインタ
 	std::unique_ptr<Floor> floor_ = nullptr;
 
 	// シリンダーのポインタ
 	std::unique_ptr<Cylinder> cylinder_ = nullptr;
-
-	// ゴールのポインタ
-	std::unique_ptr<Goal> goal_ = nullptr;
 
 	/// ===== スプライト ===== ///
 
@@ -259,9 +190,6 @@ private:
 	std::unique_ptr<BlackFade> blackFade_ = nullptr;
 
 	/// ===== エンジン ===== ///
-
-	// カメラ
-	std::unique_ptr<Engine::Camera> camera_ = nullptr;
 
 	// 衝突マネージャのポインタ
 	std::unique_ptr<Engine::CollisionManager> collisionManager_ = nullptr;

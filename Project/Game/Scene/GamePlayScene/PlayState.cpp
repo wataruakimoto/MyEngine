@@ -22,7 +22,7 @@ void IntroState::Initialize(GamePlayScene* scene) {
 	scene_ = scene;
 
 	// プレイヤーのポインタを取得
-	player_ = scene_->GetPlayer();
+	player_ = scene_->GetGameObjectManager()->GetPlayer();
 
 	// 減速開始時の速度を保存
 	initialSpeed_ = player_->GetMoveSpeedAuto();
@@ -31,7 +31,7 @@ void IntroState::Initialize(GamePlayScene* scene) {
 	player_->SetPlayerState(PlayerState::AutoPilot);
 
 	// ゴールのポインタを取得
-	goal_ = scene_->GetGoal();
+	goal_ = scene_->GetGameObjectManager()->GetGoal();
 
 	// フィルターマネージャのインスタンスを取得
 	filterManager_ = FilterManager::GetInstance();
@@ -71,9 +71,6 @@ void IntroState::Update() {
 	}
 
 	Deceleration();
-
-	// ゴールの更新
-	goal_->Update();
 
 	/// ===== UI表示の処理 ===== ///
 
@@ -148,13 +145,13 @@ void PlayState::Initialize(GamePlayScene* scene) {
 	scene_ = scene;
 
 	// プレイヤーのポインタを取得
-	player_ = scene_->GetPlayer();
+	player_ = scene_->GetGameObjectManager()->GetPlayer();
 
 	// プレイヤーモードをゲームプレイに変更
 	player_->SetPlayerState(PlayerState::Manual);
 
 	// ゴールのポインタを取得
-	goal_ = scene_->GetGoal();
+	goal_ = scene_->GetGameObjectManager()->GetGoal();
 
 	// ノルマUIのポインタを取得
 	normaUI_ = scene_->GetNormaUI();
@@ -178,15 +175,6 @@ void PlayState::Update() {
 	}
 
 	/// ===== 各種オブジェクトの更新 ===== ///
-
-	// プレイヤー更新
-	player_->Update();
-
-	// リストで管理しているオブジェクトの更新
-	scene_->UpdateListObjects();
-
-	// ゴールの更新
-	goal_->Update();
 
 	// ノルマUIに目標値を設定
 	normaUI_->SetTargetValue(goal_->GetNormaCount());
@@ -349,13 +337,13 @@ void EndingState::Initialize(GamePlayScene* scene) {
 	scene_ = scene;
 
 	// プレイヤーのポインタを取得
-	player_ = scene_->GetPlayer();
+	player_ = scene_->GetGameObjectManager()->GetPlayer();
 
 	// プレイヤーモードをオートパイロットに変更
 	player_->SetPlayerState(PlayerState::AutoPilot);
 
 	// ゴールのポインタを取得
-	goal_ = scene_->GetGoal();
+	goal_ = scene_->GetGameObjectManager()->GetGoal();
 
 	// リザルトUIのポインタを取得
 	resultUI_ = scene_->GetResultUI();
@@ -426,12 +414,6 @@ void EndingState::Initialize(GamePlayScene* scene) {
 }
 
 void EndingState::Update() {
-
-	// プレイヤー更新
-	player_->Update();
-
-	// ゴールの更新
-	goal_->Update();
 
 	/// ===== UI表示の処理 ===== ///
 

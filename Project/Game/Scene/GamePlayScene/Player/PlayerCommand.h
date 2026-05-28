@@ -6,7 +6,7 @@
 class Player;
 class Reticle;
 class LockOn;
-class GamePlayScene;
+class GameObjectManager;
 
 // プレイヤーからの情報
 struct PlayerContext {
@@ -14,7 +14,7 @@ struct PlayerContext {
 	Player* player = nullptr;
 	Reticle* reticle = nullptr;
 	LockOn* lockOn = nullptr;
-	GamePlayScene* scene = nullptr;
+	GameObjectManager* objManager = nullptr;
 };
 
 /// <summary>

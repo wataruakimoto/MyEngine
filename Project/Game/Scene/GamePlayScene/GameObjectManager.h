@@ -1,16 +1,14 @@
 #pragma once
 
+#include "Player/Player.h"
+#include "Enemy/Enemy.h"
+#include "Player/Bullet.h"
+#include "Enemy/EnemyBullet.h"
+#include "Obstacle/Obstacle.h"
+#include "Goal/Goal.h"
+
 #include <list>
 #include <memory>
-
-/// === 前方宣言 === ///
-
-class Player;
-class Enemy;
-class Bullet;
-class EnemyBullet;
-class Obstacle;
-class Goal;
 
 /// <summary>
 /// ゲームオブジェクト管理クラス
@@ -37,10 +35,20 @@ public:
 	/// </summary>
 	void Draw();
 
-	/// ================================================== ///
-	/// クラス内関数
-	/// ================================================== ///
-private:
+	/// <summary>
+	/// 透明オブジェクトの描画
+	/// </summary>
+	void DrawAlpha();
+
+	/// <summary>
+	/// ImGuiの表示
+	/// </summary>
+	void ShowImGui();
+
+	/// <summary>
+	/// クリア
+	/// </summary>
+	void Clear();
 
 	/// <summary>
 	/// ワールド全体をずらす
@@ -48,10 +56,10 @@ private:
 	/// <param name="shiftZ">Z方向のシフト量</param>
 	void ShiftWorld(float shiftZ);
 
-	/// <summary>
-	/// オリジンシフトの確認と実行
-	/// </summary>
-	void CheckOriginShift();
+	/// ================================================== ///
+	/// クラス内関数
+	/// ================================================== ///
+private:
 
 	/// ================================================== ///
 	/// ゲッター

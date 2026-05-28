@@ -66,6 +66,6 @@ protected:
 	// カメラのワールド変換
 	Engine::WorldTransform worldTransform_;
 
-	// カメラ(ゲームシーンからの借りポインタ)
+	// カメラの借りポインタ
 	Engine::Camera* camera_ = nullptr;
 };

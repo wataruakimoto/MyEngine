@@ -1,10 +1,6 @@
 #include "GameObjectManager.h"
-#include "Player/Player.h"
-#include "Enemy/Enemy.h"
-#include "Player/Bullet.h"
-#include "Enemy/EnemyBullet.h"
-#include "Obstacle/Obstacle.h"
-#include "Goal/Goal.h"
+
+#include <imgui.h>
 
 void GameObjectManager::Initialize() {
 }
@@ -67,9 +63,62 @@ void GameObjectManager::Draw() {
 	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		obstacle->Draw();
 	}
+}
+
+void GameObjectManager::DrawAlpha() {
 
 	// ゴールの描画
 	if (goal_) goal_->Draw();
+}
+
+void GameObjectManager::ShowImGui() {
+
+	// プレイヤーのImGui
+	if (player_) player_->ShowImGui();
+
+	// 敵のImGui
+	for (std::unique_ptr<Enemy>& enemy : enemies_) {
+		enemy->ShowImGui();
+	}
+
+	// プレイヤーの弾のImGui
+	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
+		bullet->ShowImGui();
+	}
+
+	// 敵の弾のImGui
+	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+		bullet->ShowImGui();
+	}
+
+	// 障害物のImGui
+	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		obstacle->ShowImGui();
+	}
+
+	// ゴールのImGui
+	if (goal_) goal_->ShowImGui();
+}
+
+void GameObjectManager::Clear() {
+
+	// プレイヤーのクリア
+	player_.reset();
+
+	// 敵のクリア
+	enemies_.clear();
+
+	// プレイヤーの弾のクリア
+	playerBullets_.clear();
+
+	// 敵の弾のクリア
+	enemyBullets_.clear();
+
+	// 障害物のクリア
+	obstacles_.clear();
+
+	// ゴールのクリア
+	goal_.reset();
 }
 
 /// ================================================== ///
@@ -105,21 +154,4 @@ void GameObjectManager::ShiftWorld(float shiftZ) {
 	// ゴールを手前にずらす
 	goal_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 	goal_->GetGateWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-}
-
-/// ================================================== ///
-/// オリジンシフトの確認と実行
-void GameObjectManager::CheckOriginShift() {
-
-	// プレイヤーのワールド座標のZ座標を取得
-	const float playerZ = player_->GetWorldTransform().GetWorldPosition().z;
-
-	// プレイヤーのZ座標がループ距離を超えたら
-	if (playerZ >= kLoopDistance) {
-
-		const float shiftZ = kLoopDistance - 100;
-
-		// ワールド全体を手前にずらす
-		ShiftWorld(shiftZ);
-	}
 }

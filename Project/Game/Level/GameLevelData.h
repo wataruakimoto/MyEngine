@@ -28,6 +28,7 @@ struct GameLevelData {
 	Engine::Vector3 playerPosition; // プレイヤーの開始位置
 	std::vector<EnemySpawnData> enemySpawnDatas; // 敵の出現データのリスト
 	std::vector<ObstacleSpawnData> obstacleSpawnDatas; // 障害物の出現データのリスト
+	Engine::Vector3 goalPosition; // ゴールの位置
 };
 
 inline EnemyType EnemyTypeFromString(const std::string& typeStr) {

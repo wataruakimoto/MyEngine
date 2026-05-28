@@ -2,9 +2,9 @@
 #include "Player/Player.h"
 #include "Reticle/Reticle.h"
 #include "LockOn/LockOn.h"
-#include "GamePlayScene.h"
 #include "Bullet.h"
 #include "MathVector.h"
+#include "GameObjectManager.h"
 
 using namespace Engine;
 using namespace MathVector;
@@ -34,13 +34,13 @@ void NormalShotCommand::Execute(const PlayerContext& context) {
 	bullet->SetDirection(direction);
 
 	// ゲームプレイシーンの弾をリストに登録
-	context.scene->AddPlayerBullet(std::move(bullet));
+	context.objManager->AddPlayerBullet(std::move(bullet));
 }
 
 void LockOnAimCommand::Execute(const PlayerContext& context) {
 
 	// ロックオンのターゲットを更新
-	context.lockOn->SearchTarget(context.scene->GetEnemies());
+	context.lockOn->SearchTarget(context.objManager->GetEnemies());
 }
 
 void LockOnShotCommand::Execute(const PlayerContext& context) {
@@ -84,7 +84,7 @@ void LockOnShotCommand::Execute(const PlayerContext& context) {
 	bullet->SetIsLockOn(true);
 
 	// ゲームプレイシーンの弾をリストに登録
-	context.scene->AddPlayerBullet(std::move(bullet));
+	context.objManager->AddPlayerBullet(std::move(bullet));
 }
 
 void BarrelRollCommand::Execute(const PlayerContext& context) {

@@ -2,12 +2,14 @@
 #include "Input.h"
 #include "Vector3.h"
 #include "OffscreenRendering/FilterManager.h"
-#include "CameraControll/FollowCamera/FollowCameraController.h"
-
 #include "Sprite/SpriteRenderer.h"
 #include "Object/Object3dRenderer.h"
 #include "Particle/ParticleRenderer.h"
 #include "LineManager.h"
+
+#include "CameraControll/FollowCamera/FollowCameraController.h"
+#include "LevelBuilder.h"
+#include "Player/Player.h"
 
 using namespace Engine;
 
@@ -19,21 +21,23 @@ void GamePlayScene::Initialize() {
 	particleRenderer_ = ParticleRenderer::GetInstance();
 	lineManager_ = LineManager::GetInstance();
 
-	// カメラの生成&初期化
-	camera_ = std::make_unique<Engine::Camera>();
-	camera_->Initialize();
-	camera_->SetFarClip(950.0f); // ファークリップを950に設定
+	// オブジェクトマネージャーの生成
+	gameObjectManager_ = std::make_unique<GameObjectManager>();
+	// オブジェクトマネージャーの初期化
+	gameObjectManager_->Initialize();
 
-	// カメラコントローラーの生成&初期化
-	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->SetCamera(camera_.get());
-	cameraController_->Initialize();
+	// カメラマネージャーの生成
+	cameraManager_ = std::make_unique<CameraManager>();
+	// カメラマネージャーの初期化
+	cameraManager_->Initialize();
+	// カメラのファークリップ距離を設定
+	cameraManager_->GetCamera()->SetFarClip(950.0f);
 
 	// カメラの設定
-	object3dRenderer_->SetDefaultCamera(camera_.get());
-	FilterManager::GetInstance()->SetCamera(camera_.get());
-	particleManager_->SetCamera(camera_.get());
-	lineManager_->SetDefaultCamera(camera_.get());
+	object3dRenderer_->SetDefaultCamera(cameraManager_->GetCamera());
+	FilterManager::GetInstance()->SetCamera(cameraManager_->GetCamera());
+	particleManager_->SetCamera(cameraManager_->GetCamera());
+	lineManager_->SetDefaultCamera(cameraManager_->GetCamera());
 
 	// 衝突マネージャの初期化
 	collisionManager_ = std::make_unique<Engine::CollisionManager>();
@@ -43,14 +47,13 @@ void GamePlayScene::Initialize() {
 	lightManager_->Initialize();
 
 	// プレイヤーの生成&初期化
-	player_ = std::make_unique<Player>();
-	player_->SetCamera(camera_.get());
-	player_->Initialize();
-	player_->SetGamePlayScene(this);
-	player_->SetMoveSpeedAuto(6.0f);
-
-	// キャストし追従カメラの方を呼び出す
-	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
+	std::unique_ptr<Player> player = std::make_unique<Player>();
+	player->SetCamera(cameraManager_->GetCamera());
+	player->Initialize();
+	player->SetGamePlayScene(this);
+	player->SetMoveSpeedAuto(6.0f);
+	// オブジェクトマネージャーにプレイヤーを登録
+	gameObjectManager_->SetPlayer(std::move(player));
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
@@ -60,11 +63,28 @@ void GamePlayScene::Initialize() {
 	cylinder_ = std::make_unique<Cylinder>();
 	cylinder_->Initialize();
 
-	// ゴールの生成&初期化
-	goal_ = std::make_unique<Goal>();
-	goal_->Initialize();
-	// プレイヤーをゴールに設定
-	goal_->SetPlayer(player_.get());
+	// 追従カメラコントローラーの生成
+	auto followCameraController = std::make_unique<FollowCameraController>();
+	// 追従カメラコントローラーの初期化
+	followCameraController->Initialize();
+	// 追従カメラコントローラーにプレイヤーのポインタを渡す
+	followCameraController->SetPlayer(gameObjectManager_->GetPlayer());
+	// 追従カメラコントローラーをカメラマネージャーに登録
+	cameraManager_->AddCameraController("FollowCamera", std::move(followCameraController));
+	// カメラマネージャーのアクティブカメラを追従カメラに設定
+	cameraManager_->SwitchCameraController("FollowCamera");
+
+	/// ========== レベルロード ========== ///
+
+	// レベルローダーの生成
+	levelLoader_ = std::make_unique<LevelLoader>();
+	// レベルローダーの初期化
+	levelLoader_->LoadLevel(kLevelDataFileName_);
+
+	// レベルビルダーの生成
+	LevelBuilder levelBuilder;
+	// レベルデータからレベルを構築
+	levelBuilder.BuildLevel(levelLoader_->GetLevelData(), gameObjectManager_.get());
 
 	// ルールUIの生成&初期化
 	ruleUI_ = std::make_unique<RuleUI>();
@@ -74,7 +94,7 @@ void GamePlayScene::Initialize() {
 	normaUI_ = std::make_unique<NormaUI>();
 	normaUI_->Initialize();
 	// ノルマUIに目標値を設定
-	normaUI_->SetTargetValue(goal_->GetNormaCount());
+	normaUI_->SetTargetValue(gameObjectManager_->GetGoal()->GetNormaCount());
 	// ノルマUIに現在値を設定
 	normaUI_->SetCurrentValue(0);
 
@@ -96,27 +116,26 @@ void GamePlayScene::Initialize() {
 	blackFade_ = std::make_unique<BlackFade>();
 	blackFade_->Initialize();
 
-	/// ========== レベルロード ========== ///
-
-	LoadLevelAndApply();
-
 	// 初期状態をイントロに設定
 	ChangeState(std::make_unique<IntroState>());
 }
 
 void GamePlayScene::Update() {
 
-	// カメラコントローラの更新
-	cameraController_->Update();
+	// オブジェクトマネージャーの更新
+	gameObjectManager_->Update();
+
+	// カメラマネージャーの更新
+	cameraManager_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+	floor_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+	cylinder_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();
@@ -159,38 +178,13 @@ void GamePlayScene::DrawFiltered() {
 	// フロアの描画
 	floor_->Draw();
 
-	// 敵描画
-	for (std::unique_ptr<Enemy>& enemy : enemies_) {
-
-		enemy->Draw();
-	}
-
-	// 敵の弾の描画
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-
-		bullet->Draw();
-	}
-
-	// 弾の描画
-	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
-
-		bullet->Draw();
-	}
-
-	// 障害物の描画
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
-
-		obstacle->Draw();
-	}
-
-	// プレイヤー描画
-	player_->Draw();
+	// オブジェクトマネージャーの描画
+	gameObjectManager_->Draw();
 
 	/// === 半透明オブジェクトの描画準備 === ///
 	object3dRenderer_->SettingDrawingAlpha();
 
-	// ゴールの描画
-	goal_->Draw();
+	gameObjectManager_->DrawAlpha();
 
 	/// === パーティクルの描画準備 === ///
 	particleRenderer_->SettingDrawing();
@@ -232,34 +226,14 @@ void GamePlayScene::DrawUnfiltered() {
 }
 
 void GamePlayScene::Finalize() {
-
-	// 敵の解放
-	for (std::unique_ptr<Enemy>& enemy : enemies_) {
-
-		enemy->Finalize();
-	}
-
-	// プレイヤーの解放
-	player_->Finalize();
 }
 
 void GamePlayScene::ShowImGui() {
 
 	Input::GetInstance()->ShowImgui();
 
-	camera_->ShowImGui("Camera");
-
-	cameraController_->ShowImGui();
-
-	player_->ShowImGui();
-
-	for (std::unique_ptr<Enemy>& enemy : enemies_) { enemy->ShowImGui(); }
-
-	for (std::unique_ptr<Bullet>& bullet : playerBullets_) { bullet->ShowImGui(); }
-
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) { bullet->ShowImGui(); }
-
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) { obstacle->ShowImGui(); }
+	// オブジェクトマネージャーのImGui表示
+	gameObjectManager_->ShowImGui();
 
 	floor_->ShowImGui();
 
@@ -275,8 +249,6 @@ void GamePlayScene::ShowImGui() {
 
 	whiteFade_->ShowImGui();
 
-	goal_->ShowImGui();
-
 	lightManager_->ShowImGui();
 }
 
@@ -286,21 +258,21 @@ void GamePlayScene::CheckAllCollisions() {
 	collisionManager_->Reset();
 
 	// コライダーをリストに追加
-	collisionManager_->AddCollider(player_->GetCollider());
+	collisionManager_->AddCollider(gameObjectManager_->GetPlayer()->GetCollider());
 
-	for (std::unique_ptr<Enemy>& enemy : enemies_) {
+	for (const std::unique_ptr<Enemy>& enemy : gameObjectManager_->GetEnemies()) {
 		collisionManager_->AddCollider(enemy->GetCollider());
 	}
 
-	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
+	for (const std::unique_ptr<Bullet>& bullet : gameObjectManager_->GetPlayerBullets()) {
 		collisionManager_->AddCollider(bullet->GetCollider());
 	}
 
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+	for (const std::unique_ptr<EnemyBullet>& bullet : gameObjectManager_->GetEnemyBullets()) {
 		collisionManager_->AddCollider(bullet->GetCollider());
 	}
 
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+	for (const std::unique_ptr<Obstacle>& obstacle : gameObjectManager_->GetObstacles()) {
 		collisionManager_->AddCollider(obstacle->GetCollider());
 	}
 
@@ -315,65 +287,6 @@ void GamePlayScene::ChangeState(std::unique_ptr<IPlayState> newState) {
 
 	// 新しい状態の初期化
 	state_->Initialize(this);
-}
-
-void GamePlayScene::AddPlayerBullet(std::unique_ptr<Bullet> bullet) {
-
-	// 弾をリストに登録
-	playerBullets_.push_back(std::move(bullet));
-}
-
-void GamePlayScene::AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) {
-
-	// 弾をリストに登録
-	enemyBullets_.push_back(std::move(bullet));
-}
-
-void GamePlayScene::UpdateListObjects() {
-
-	// デスフラグの立った敵を削除
-	for (auto ite = enemies_.begin(); ite != enemies_.end(); ) {
-
-		if ((*ite)->IsDead()) {
-
-			// 敵を削除
-			ite = enemies_.erase(ite);
-		}
-		else {
-
-			// プレイヤーを敵にセット
-			(*ite)->SetPlayer(player_.get());
-
-			// 敵更新
-			(*ite)->Update();
-
-			// 次の敵へ
-			++ite;
-		}
-	}
-
-	// デスフラグが立った弾を削除
-	playerBullets_.remove_if([](std::unique_ptr<Bullet>& bullet) {return bullet->IsDead(); });
-
-	// 弾の更新
-	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
-
-		bullet->Update();
-	}
-
-	// デスフラグが立った敵の弾を削除
-	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {return bullet->IsDead(); });
-
-	// 敵の弾の更新
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-		bullet->Update();
-	}
-
-	// 障害物の更新
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
-
-		obstacle->Update();
-	}
 }
 
 void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
@@ -416,11 +329,6 @@ void GamePlayScene::Restart() {
 
 	/// ===== オブジェクトのクリア ===== ///
 
-	enemies_.clear();
-	playerBullets_.clear();
-	enemyBullets_.clear();
-	obstacles_.clear();
-
 	particleManager_->Clear();
 
 	/// ===== 進行度のリセット ===== ///
@@ -430,18 +338,14 @@ void GamePlayScene::Restart() {
 
 	/// ===== 初期化 ===== ///
 
-	cameraController_->Initialize();
-
-	player_->Initialize();
-	player_->GetWorldTransform().SetTranslate({ 0.0f, 5.0f, 0.0f });
-	player_->SetMoveSpeedAuto(6.0f);
-
-	goal_->Initialize();
-
 	ruleUI_->Initialize();
 
 	/// ========== レベルのリセット ========== ///
-	LoadLevelAndApply();
+
+	// レベルビルダーの生成
+	LevelBuilder levelBuilder;
+	// レベルデータからレベルを構築
+	levelBuilder.BuildLevel(levelLoader_->GetLevelData(), gameObjectManager_.get());
 
 	/// ===== フェードのリセット ===== ///
 
@@ -457,51 +361,9 @@ void GamePlayScene::Restart() {
 	ChangeState(std::make_unique<IntroState>());
 }
 
-void GamePlayScene::LoadLevelAndApply() {
-
-	levelLoader_.LoadLevel(kLevelDataFileName_);
-	const GameLevelData& levelData = levelLoader_.GetLevelData();
-
-	// プレイヤー開始位置（※メンバ名は必ず統一）
-	player_->GetWorldTransform().SetTranslate(levelData.playerPosition);
-
-	// 敵生成
-	SpawnEnemiesFromLevelData(levelData);
-
-	// 障害物生成
-	SpawnObstaclesFromLevelData(levelData);
-}
-
-void GamePlayScene::SpawnEnemiesFromLevelData(const GameLevelData& levelData) {
-
-	enemies_.clear();
-
-	for (const EnemySpawnData& spawn : levelData.enemySpawnDatas) {
-		std::unique_ptr<Enemy> enemy = std::make_unique<Enemy>();
-		enemy->SetEnemyType(spawn.type);
-		enemy->Initialize();
-		enemy->GetWorldTransform().SetTranslate(spawn.position);
-		enemy->SetGamePlayScene(this);
-		enemies_.push_back(std::move(enemy));
-	}
-}
-
-void GamePlayScene::SpawnObstaclesFromLevelData(const GameLevelData& levelData) {
-
-	obstacles_.clear();
-
-	for (const ObstacleSpawnData& spawn : levelData.obstacleSpawnDatas) {
-		std::unique_ptr<Obstacle> obstacle = std::make_unique<Obstacle>();
-		obstacle->Initialize();
-		obstacle->GetWorldTransform().SetScale(spawn.scale);
-		obstacle->GetWorldTransform().SetTranslate(spawn.position);
-		obstacles_.push_back(std::move(obstacle));
-	}
-}
-
 void GamePlayScene::CheckOriginShift() {
 
-	float playerZ = player_->GetWorldTransform().GetWorldPosition().z;
+	float playerZ = gameObjectManager_->GetPlayer()->GetWorldTransform().GetWorldPosition().z;
 
 	// プレイヤーのZ座標がループ距離を超えたら
 	if (playerZ >= kLoopDistance) {
@@ -509,41 +371,7 @@ void GamePlayScene::CheckOriginShift() {
 		float shiftZ = kLoopDistance - 100;
 
 		// ワールドを手前にずらす
-		ShiftWorld(shiftZ);
+		gameObjectManager_->ShiftWorld(-shiftZ);
+		cameraManager_->ShiftWorld(-shiftZ);
 	}
-}
-
-void GamePlayScene::ShiftWorld(float shiftZ) {
-
-	worldShiftZ_ += shiftZ;
-
-	// カメラを手前にずらす
-	cameraController_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-
-	// プレイヤーを手前にずらす
-	player_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-
-	// 敵を手前にずらす
-	for (std::unique_ptr<Enemy>& enemy : enemies_) {
-		enemy->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-	}
-
-	// 弾を手前にずらす
-	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
-		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-	}
-
-	// 敵の弾を手前にずらす
-	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-		bullet->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-	}
-
-	// 障害物を手前にずらす
-	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
-		obstacle->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-	}
-
-	// ゴールを手前にずらす
-	goal_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-	goal_->GetGateWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 }
