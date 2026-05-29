@@ -98,9 +98,6 @@ void IntroState::Deceleration() {
 	// プレイヤーの速度を設定
 	player_->SetMoveSpeedAuto(playerSpeed);
 
-	// プレイヤーの更新
-	player_->Update();
-
 	// ブラーの強度を補間して計算
 	float blurStrength = Lerp(initialBlurStrength_, 0.0f, t);
 
