@@ -150,9 +150,6 @@ void PlayState::Initialize(GamePlayScene* scene) {
 	// ゴールのポインタを取得
 	goal_ = scene_->GetGameObjectManager()->GetGoal();
 
-	// ノルマUIのポインタを取得
-	normaUI_ = scene_->GetNormaUI();
-
 	// ガイドUIのポインタを取得
 	guideUI_ = scene_->GetGuideUI();
 
@@ -173,14 +170,6 @@ void PlayState::Update() {
 
 	/// ===== 各種オブジェクトの更新 ===== ///
 
-	// ノルマUIに目標値を設定
-	normaUI_->SetTargetValue(goal_->GetNormaCount());
-	// ノルマUIに現在値を設定
-	normaUI_->SetCurrentValue(scene_->GetKillCount());
-
-	// ノルマUIの更新
-	normaUI_->Update();
-
 	// ガイドUIの更新
 	guideUI_->Update();
 
@@ -192,11 +181,8 @@ void PlayState::Update() {
 	// 衝突判定と応答
 	scene_->CheckAllCollisions();
 
-	// ゴールとプレイヤーの衝突判定
-	goal_->CheckGateCollision(scene_->GetKillCount());
-
 	// ゴールライン到達の判定
-	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goal_->GetWorldTransform().GetTranslate().z;
+	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goal_->GetWorldTransform().GetWorldPosition().z;
 
 	// プレイヤーのデスフラグを取得
 	bool isPlayerDead = player_->IsDead();
@@ -221,9 +207,6 @@ void PlayState::Update() {
 void PlayState::DrawUI() {
 
 	player_->DrawUI();
-
-	// ノルマUIの描画
-	normaUI_->Draw();
 
 	// ガイドUIの描画
 	guideUI_->Draw();
@@ -363,8 +346,6 @@ void EndingState::Initialize(GamePlayScene* scene) {
 
 	isPlayerDead_ = player_->IsDead();
 
-	isClear_ = scene_->GetKillCount() >= goal_->GetNormaCount();
-
 	// プレイヤーが死んでたら
 	if (isPlayerDead_) {
 
@@ -495,9 +476,6 @@ void PauseState::Initialize(GamePlayScene* scene) {
 	pauseUI = std::make_unique<PauseUI>();
 	pauseUI->Initialize();
 
-	// ノルマUIのポインタを取得
-	normaUI_ = scene_->GetNormaUI();
-
 	// ガイドUIのポインタを取得
 	guideUI_ = scene_->GetGuideUI();
 
@@ -589,9 +567,6 @@ void PauseState::DrawPauseUI() {
 
 	// ポーズUIの描画
 	pauseUI->Draw();
-
-	// ノルマUIの描画
-	normaUI_->Draw();
 
 	// ガイドUIの描画
 	guideUI_->Draw();

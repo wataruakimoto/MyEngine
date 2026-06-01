@@ -25,6 +25,8 @@ void GamePlayScene::Initialize() {
 	gameObjectManager_ = std::make_unique<GameObjectManager>();
 	// オブジェクトマネージャーの初期化
 	gameObjectManager_->Initialize();
+	// オブジェクトマネージャーにシーンのポインタを渡す
+	gameObjectManager_->SetGamePlayScene(this);
 
 	// カメラマネージャーの生成
 	cameraManager_ = std::make_unique<CameraManager>();
@@ -51,6 +53,7 @@ void GamePlayScene::Initialize() {
 	player->SetCamera(cameraManager_->GetCamera());
 	player->Initialize();
 	player->SetGamePlayScene(this);
+	player->SetGameObjectManager(gameObjectManager_.get());
 	player->SetMoveSpeedAuto(6.0f);
 	// オブジェクトマネージャーにプレイヤーを登録
 	gameObjectManager_->SetPlayer(std::move(player));
@@ -89,14 +92,6 @@ void GamePlayScene::Initialize() {
 	// ルールUIの生成&初期化
 	ruleUI_ = std::make_unique<RuleUI>();
 	ruleUI_->Initialize();
-
-	// ノルマUIの生成&初期化
-	normaUI_ = std::make_unique<NormaUI>();
-	normaUI_->Initialize();
-	// ノルマUIに目標値を設定
-	normaUI_->SetTargetValue(gameObjectManager_->GetGoal()->GetNormaCount());
-	// ノルマUIに現在値を設定
-	normaUI_->SetCurrentValue(0);
 
 	// リザルトUIの生成&初期化
 	resultUI_ = std::make_unique<ResultUI>();
@@ -241,8 +236,6 @@ void GamePlayScene::ShowImGui() {
 
 	ruleUI_->ShowImGui();
 
-	normaUI_->ShowImGui();
-
 	resultUI_->ShowImGui();
 
 	guideUI_->ShowImGui();
@@ -334,7 +327,6 @@ void GamePlayScene::Restart() {
 	/// ===== 進行度のリセット ===== ///
 
 	killCount_ = 0;
-	normaUI_->SetCurrentValue(0);
 
 	/// ===== 初期化 ===== ///
 
@@ -371,7 +363,7 @@ void GamePlayScene::CheckOriginShift() {
 		float shiftZ = kLoopDistance - 100;
 
 		// ワールドを手前にずらす
-		gameObjectManager_->ShiftWorld(-shiftZ);
-		cameraManager_->ShiftWorld(-shiftZ);
+		gameObjectManager_->ShiftWorld(shiftZ);
+		cameraManager_->ShiftWorld(shiftZ);
 	}
 }

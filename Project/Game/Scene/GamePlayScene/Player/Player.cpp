@@ -315,15 +315,6 @@ void Player::OnCollision(Collider* other) {
 	}
 }
 
-void Player::OnGateCollision() {
-
-	// すでにやられていたら何もしない
-	if (state_ == PlayerState::Dead) return;
-
-	// 死亡状態に変更をリクエスト
-	stateRequest_ = PlayerState::Dead;
-}
-
 void Player::Fire(PlayerContext context) {
 
 	// ロックオンモードなら

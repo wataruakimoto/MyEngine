@@ -37,6 +37,7 @@ void LevelBuilder::SpawnEnemiesFromLevelData(const GameLevelData& levelData, Gam
 		enemy->GetWorldTransform().SetTranslate(spawn.position);
 		// 敵にプレイヤーのポインタを渡す
 		enemy->SetPlayer(gameObjectManager->GetPlayer());
+		enemy->SetGameObjectManager(gameObjectManager);
 
 		// 敵をゲームオブジェクトマネージャーに追加
 		gameObjectManager->AddEnemy(std::move(enemy));
@@ -65,8 +66,6 @@ void LevelBuilder::SetGoalFromLevelData(const GameLevelData& levelData, GameObje
 	goal->Initialize();
 	// ゴールの位置をレベルデータから設定
 	goal->GetWorldTransform().SetTranslate(levelData.goalPosition);
-	// ゴールにプレイヤーを設定
-	goal->SetPlayer(gameObjectManager->GetPlayer());
 
 	// ゴールをゲームオブジェクトマネージャーに追加
 	gameObjectManager->SetGoal(std::move(goal));

@@ -259,9 +259,6 @@
     <ClCompile Include="Game\Scene\GamePlayScene\UI\GuideUI.cpp">
       <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp">
-      <Filter>Game\Scene\GamePlayScene\UI</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene\UI\PauseUI.cpp">
       <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClCompile>
@@ -556,9 +553,6 @@
       <Filter>Game\Scene\GamePlayScene\SkyBox</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h">
-      <Filter>Game\Scene\GamePlayScene\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\UI\NormaUI.h">
       <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\UI\PauseUI.h">

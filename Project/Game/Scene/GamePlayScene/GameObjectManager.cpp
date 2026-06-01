@@ -1,4 +1,5 @@
 #include "GameObjectManager.h"
+#include "GamePlayScene.h"
 
 #include <imgui.h>
 
@@ -32,6 +33,19 @@ void GameObjectManager::Update() {
 
 	// ゴールの更新
 	if (goal_) goal_->Update();
+
+	for (const std::unique_ptr<Enemy>& enemy : enemies_){
+
+		// 敵が死んでいたら
+		if (enemy->IsDead()) {
+			
+			// 敵が死んだときの処理を呼び出す
+			gamePlayScene_->OnEnemyDefeated();
+
+			// 倒した数を増やす
+			gamePlayScene_->AddKillCount();
+		}
+	}
 
 	// 死んだオブジェクトの削除
 	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) { return enemy->IsDead(); });
@@ -83,12 +97,12 @@ void GameObjectManager::ShowImGui() {
 
 	// プレイヤーの弾のImGui
 	for (std::unique_ptr<Bullet>& bullet : playerBullets_) {
-		bullet->ShowImGui();
+		//bullet->ShowImGui();
 	}
 
 	// 敵の弾のImGui
 	for (std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
-		bullet->ShowImGui();
+		//bullet->ShowImGui();
 	}
 
 	// 障害物のImGui
@@ -153,5 +167,4 @@ void GameObjectManager::ShiftWorld(float shiftZ) {
 
 	// ゴールを手前にずらす
 	goal_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
-	goal_->GetGateWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 }

@@ -6,7 +6,6 @@
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
 #include "UI/RuleUI.h"
-#include "UI/NormaUI.h"
 #include "UI/ResultUI.h"
 #include "UI/GuideUI.h"
 #include "Fade/whiteFade.h"
@@ -124,8 +123,6 @@ public:
 
 	RuleUI* GetRuleUI() { return ruleUI_.get(); }
 
-	NormaUI* GetNormaUI() { return normaUI_.get(); }
-
 	GuideUI* GetGuideUI() { return guideUI_.get(); }
 
 	ResultUI* GetResultUI() { return resultUI_.get(); }
@@ -173,9 +170,6 @@ private:
 
 	// ルールUI
 	std::unique_ptr<RuleUI> ruleUI_ = nullptr;
-
-	// ノルマUI
-	std::unique_ptr<NormaUI> normaUI_ = nullptr;
 
 	// ガイドUI
 	std::unique_ptr<GuideUI> guideUI_ = nullptr;

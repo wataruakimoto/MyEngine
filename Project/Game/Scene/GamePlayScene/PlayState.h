@@ -10,7 +10,6 @@ class ICameraController;
 class Player;
 class Goal;
 class RuleUI;
-class NormaUI;
 class GuideUI;
 class ResultUI;
 class WhiteFade;
@@ -185,9 +184,6 @@ private:
 	// ゴールの借りポインタ
 	Goal* goal_ = nullptr;
 
-	// ノルマUIの借りポインタ
-	NormaUI* normaUI_ = nullptr;
-
 	// ガイドUIの借りポインタ
 	GuideUI* guideUI_ = nullptr;
 
@@ -280,9 +276,6 @@ private:
 
 	// ポーズUIのインスタンス
 	std::unique_ptr<PauseUI> pauseUI = nullptr;
-
-	// ノルマUIの借りポインタ
-	NormaUI* normaUI_ = nullptr;
 
 	// ガイドUIの借りポインタ
 	GuideUI* guideUI_ = nullptr;

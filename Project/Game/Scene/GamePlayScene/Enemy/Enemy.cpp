@@ -1,7 +1,6 @@
 #include "Enemy.h"
 #include "Collision/CollisionTypeIDDef.h"
 #include "Player/Player.h"
-#include "GamePlayScene.h"
 #include "GameObjectManager.h"
 #include "EnemyBullet.h"
 #include "MathVector.h"
@@ -187,10 +186,6 @@ void Enemy::OnCollision(Collider* other) {
 		// パーティクル発生
 		particleEmitterWhite->Emit();
 		particleEmitterBlack->Emit();
-
-		gamePlayScene_->OnEnemyDefeated();
-
-		gamePlayScene_->AddKillCount();
 
 		// 死亡
 		isDead = true;

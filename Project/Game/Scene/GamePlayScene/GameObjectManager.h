@@ -10,6 +10,10 @@
 #include <list>
 #include <memory>
 
+/// === 前方宣言 === ///
+
+class GamePlayScene;
+
 /// <summary>
 /// ゲームオブジェクト管理クラス
 /// </summary>
@@ -95,6 +99,8 @@ public:
 
 	void SetGoal(std::unique_ptr<Goal> goal) { goal_ = std::move(goal); }
 
+	void SetGamePlayScene(GamePlayScene* scene) { gamePlayScene_ = scene; }
+
 	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///
@@ -127,5 +133,8 @@ private:
 
 	// ゴールのポインタ
 	std::unique_ptr<Goal> goal_ = nullptr;
+
+	// ゲームプレイシーンの借りポインタ
+	GamePlayScene* gamePlayScene_ = nullptr;
 };
 
