@@ -112,6 +112,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameRule.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\CameraManager.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.cpp" />
@@ -212,6 +213,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\MathQuaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameRule.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraManager.h" />
     <ClInclude Include="Engine\Math\AABB.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
