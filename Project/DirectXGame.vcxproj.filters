@@ -268,9 +268,6 @@
     <ClCompile Include="Game\Scene\GamePlayScene\UI\RuleUI.cpp">
       <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\PlayState.cpp">
-      <Filter>Game\Scene\GamePlayScene</Filter>
-    </ClCompile>
     <ClCompile Include="Engine\Line\LineRenderer.cpp" />
     <ClCompile Include="Engine\Line\LineManager.cpp" />
     <ClCompile Include="Engine\Base\GraphicsPipelineBuilder.cpp" />
@@ -282,8 +279,6 @@
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\FadeTransition.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\SlideTransition.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
     <ClCompile Include="Game\Level\LevelLoader.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
     <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
@@ -292,7 +287,11 @@
     <ClCompile Include="Game\Scene\GamePlayScene\GameObjectManager.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\CameraManager.cpp" />
     <ClCompile Include="Game\Level\LevelBuilder.cpp" />
-    <ClCompile Include="GameRule.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\GameRule.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\IntroState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\PlayState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\EndingState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\PauseState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -565,9 +564,6 @@
     <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h">
       <Filter>Game\Scene\GamePlayScene\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\PlayState.h">
-      <Filter>Game\Scene\GamePlayScene</Filter>
-    </ClInclude>
     <ClInclude Include="Engine\Math\Plane.h" />
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Math\AABB.h" />
@@ -584,8 +580,6 @@
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
     <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
     <ClInclude Include="Game\Scene\System\Transition\SlideTransition.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
     <ClInclude Include="Game\Level\GameLevelData.h" />
     <ClInclude Include="Game\Level\LevelLoader.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.h" />
@@ -598,7 +592,12 @@
     <ClInclude Include="Game\Scene\GamePlayScene\GameObjectManager.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraManager.h" />
     <ClInclude Include="Game\Level\LevelBuilder.h" />
-    <ClInclude Include="GameRule.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\GameRule.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\IPlayState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\IntroState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\PlayState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\EndingState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\PauseState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

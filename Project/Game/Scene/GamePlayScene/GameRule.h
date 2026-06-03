@@ -1,5 +1,9 @@
 #pragma once
 
+/// === 前方宣言 === ///
+
+class GamePlayScene;
+
 /// <summary>
 /// ゲームルールクラス
 /// </summary>
@@ -42,7 +46,11 @@ public:
 	/// ================================================== ///
 public:
 
-
+	/// <summary>
+	/// シーンのセッター
+	/// </summary>
+	/// <param name="scene">シーン</param>
+	void SetPlayScene(GamePlayScene* scene) { scene_ = scene; }
 
 	/// ================================================== ///
 	/// メンバ変数
@@ -54,5 +62,10 @@ private:
 
 	// ゲームオーバーフラグ
 	bool isGameOver_ = false;
+
+	/// ===== 借りポインタ・インスタンス ===== ///
+
+	// シーンの借りポインタ
+	GamePlayScene* scene_ = nullptr;
 };
 

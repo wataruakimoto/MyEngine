@@ -9,6 +9,10 @@
 
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "LevelBuilder.h"
+#include "State/IntroState.h"
+#include "State/PlayState.h"
+#include "State/EndingState.h"
+#include "State/PauseState.h"
 #include "Player/Player.h"
 
 using namespace Engine;
@@ -88,28 +92,6 @@ void GamePlayScene::Initialize() {
 	LevelBuilder levelBuilder;
 	// レベルデータからレベルを構築
 	levelBuilder.BuildLevel(levelLoader_->GetLevelData(), gameObjectManager_.get());
-
-	// ルールUIの生成&初期化
-	ruleUI_ = std::make_unique<RuleUI>();
-	ruleUI_->Initialize();
-
-	// リザルトUIの生成&初期化
-	resultUI_ = std::make_unique<ResultUI>();
-	resultUI_->Initialize();
-
-	// ガイドUIの生成&初期化
-	guideUI_ = std::make_unique<GuideUI>();
-	guideUI_->Initialize();
-
-	// 白フェードの初期化
-	whiteFade_ = std::make_unique<WhiteFade>();
-	whiteFade_->Initialize();
-	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::Out);
-	whiteFade_->SetFadeDuration(1.5f);
-
-	// 黒フェードの初期化
-	blackFade_ = std::make_unique<BlackFade>();
-	blackFade_->Initialize();
 
 	// 初期状態をイントロに設定
 	ChangeState(std::make_unique<IntroState>());
@@ -192,32 +174,6 @@ void GamePlayScene::DrawUnfiltered() {
 
 	/// === UIの描画準備 === ///
 	spriteRenderer_->SettingDrawing();
-
-	// TODO: 全てのスプライト個々の描画
-
-	// ルールUIの描画
-	ruleUI_->Draw();
-
-	// リザルトUIの描画
-	resultUI_->Draw();
-
-	if (PlayState* playState = dynamic_cast<PlayState*>(state_.get())) {
-		
-		// プレイ状態ならプレイUIの描画
-		playState->DrawUI();
-	}
-
-	if (PauseState* pauseState = dynamic_cast<PauseState*>(state_.get())) {
-
-		// ポーズ状態ならポーズUIの描画
-		pauseState->DrawPauseUI();
-	}
-
-	// 白フェードの描画
-	whiteFade_->Draw();
-
-	// 黒フェードの描画
-	blackFade_->Draw();
 }
 
 void GamePlayScene::Finalize() {
@@ -233,14 +189,6 @@ void GamePlayScene::ShowImGui() {
 	floor_->ShowImGui();
 
 	cylinder_->ShowImGui();
-
-	ruleUI_->ShowImGui();
-
-	resultUI_->ShowImGui();
-
-	guideUI_->ShowImGui();
-
-	whiteFade_->ShowImGui();
 
 	lightManager_->ShowImGui();
 }
@@ -330,18 +278,12 @@ void GamePlayScene::Restart() {
 
 	/// ===== 初期化 ===== ///
 
-	ruleUI_->Initialize();
-
 	/// ========== レベルのリセット ========== ///
 
 	// レベルビルダーの生成
 	LevelBuilder levelBuilder;
 	// レベルデータからレベルを構築
 	levelBuilder.BuildLevel(levelLoader_->GetLevelData(), gameObjectManager_.get());
-
-	/// ===== フェードのリセット ===== ///
-
-	whiteFade_->StartFadeAnimation(WhiteFade::FadeType::Out);
 
 	/// ===== 状態の更新 ===== ///
 

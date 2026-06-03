@@ -1,20 +1,15 @@
 #pragma once
 #include "BaseScene.h"
-#include "PlayState.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleManager.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
-#include "UI/RuleUI.h"
-#include "UI/ResultUI.h"
-#include "UI/GuideUI.h"
-#include "Fade/whiteFade.h"
-#include "Fade/BlackFade.h"
 #include "Light/LightManager.h"
 
 #include "GameObjectManager.h"
 #include "CameraManager.h"
 #include "LevelLoader.h"
+#include "State/IPlayState.h"
 
 #include <list>
 #include <memory>
@@ -121,16 +116,6 @@ public:
 
 	const int& GetKillCount() const { return killCount_; }
 
-	RuleUI* GetRuleUI() { return ruleUI_.get(); }
-
-	GuideUI* GetGuideUI() { return guideUI_.get(); }
-
-	ResultUI* GetResultUI() { return resultUI_.get(); }
-
-	WhiteFade* GetWhiteFade() { return whiteFade_.get(); }
-
-	BlackFade* GetBlackFade() { return blackFade_.get(); }
-
 	GameObjectManager* GetGameObjectManager() { return gameObjectManager_.get(); }
 
 ///-------------------------------------------/// 
@@ -165,23 +150,6 @@ private:
 
 	// シリンダーのポインタ
 	std::unique_ptr<Cylinder> cylinder_ = nullptr;
-
-	/// ===== スプライト ===== ///
-
-	// ルールUI
-	std::unique_ptr<RuleUI> ruleUI_ = nullptr;
-
-	// ガイドUI
-	std::unique_ptr<GuideUI> guideUI_ = nullptr;
-
-	// リザルトUI
-	std::unique_ptr<ResultUI> resultUI_ = nullptr;
-
-	// 白フェードのポインタ
-	std::unique_ptr<WhiteFade> whiteFade_ = nullptr;
-
-	// 黒フェードのポインタ
-	std::unique_ptr<BlackFade> blackFade_ = nullptr;
 
 	/// ===== エンジン ===== ///
 
