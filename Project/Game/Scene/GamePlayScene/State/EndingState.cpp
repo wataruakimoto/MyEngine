@@ -41,9 +41,6 @@ void EndingState::Initialize(GamePlayScene* scene) {
 		// プレイヤーの速度を0にする
 		player_->SetMoveSpeedAuto(0.0f);
 
-		// 黒フェードの開始
-		blackFade_->StartFadeAnimation(BlackFade::FadeType::In);
-
 		// フェード開始
 		isFadeStarted_ = true;
 
@@ -89,8 +86,12 @@ void EndingState::Update() {
 	// プレイヤーが生きていて、アニメーションが完了していなかったら
 	if (!isPlayerDead_ && !isAnimationFinished_) {
 
-		// リザルトUIの表示
-		ShowUI();
+		// リザルトUIの更新
+		resultUI_->Update();
+
+		if (resultUI_->IsAnimationFinished()) {
+			isAnimationFinished_ = true;
+		}
 	}
 
 	/// ===== フェードの処理 ===== ///
@@ -99,10 +100,6 @@ void EndingState::Update() {
 	if (isAnimationFinished_) {
 
 		if (!isFadeStarted_) {
-
-			// フェードインの開始
-			whiteFade_->StartFadeAnimation(WhiteFade::FadeType::In);
-			blackFade_->StartFadeAnimation(BlackFade::FadeType::In);
 
 			// フェード開始
 			isFadeStarted_ = true;
@@ -117,15 +114,10 @@ void EndingState::Update() {
 }
 
 /// ================================================== ///
-/// UI表示の処理
-void EndingState::ShowUI() {
+/// 描画
+void EndingState::Draw() {
 
-	// リザルトUIの更新
-	resultUI_->Update();
-
-	if (resultUI_->IsAnimationFinished()) {
-		isAnimationFinished_ = true;
-	}
+	resultUI_->Draw();
 }
 
 /// ================================================== ///
@@ -135,29 +127,17 @@ void EndingState::FadeIn() {
 	// プレイヤーが生きていて、クリアしていたら
 	if (!isPlayerDead_ && isClear_) {
 
-		// 白フェードの更新
-		whiteFade_->Update();
+		vignetteFilter_->SetIsActive(false);
 
-		if (whiteFade_->IsFadeFinished()) {
-
-			vignetteFilter_->SetIsActive(false);
-
-			// シーン切り替え
-			SceneManager::GetInstance()->ChangeScene("CLEAR");
-		}
+		// シーン切り替え
+		SceneManager::GetInstance()->ChangeScene("CLEAR");
 	}
 	// ゲームオーバーなら
 	else {
 
-		// 黒フェードの更新
-		blackFade_->Update();
+		vignetteFilter_->SetIsActive(false);
 
-		if (blackFade_->IsFadeFinished()) {
-
-			vignetteFilter_->SetIsActive(false);
-
-			// シーン切り替え
-			SceneManager::GetInstance()->ChangeScene("OVER");
-		}
+		// シーン切り替え
+		SceneManager::GetInstance()->ChangeScene("OVER");
 	}
 }

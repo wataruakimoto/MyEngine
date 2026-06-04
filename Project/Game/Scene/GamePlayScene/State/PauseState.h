@@ -23,11 +23,21 @@ class PauseState : public IPlayState {
 	/// ================================================== ///
 public:
 
+	/// <summary>
+	/// 初期化
+	/// </summary>
+	/// <param name="scene">ゲームプレイシーンのポインタ</param>
 	void Initialize(GamePlayScene* scene) override;
 
+	/// <summary>
+	/// 更新
+	/// </summary>
 	void Update() override;
 
-	void DrawPauseUI();
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw() override;
 
 	/// ================================================== ///
 	/// メンバ変数

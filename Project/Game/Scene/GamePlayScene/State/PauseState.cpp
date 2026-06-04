@@ -37,12 +37,9 @@ void PauseState::Update() {
 
 	if (isSelectedRestart_) {
 
-		if (whiteFade_->IsFadeFinished()) {
+		vignetteFilter_->SetIsActive(false);
 
-			vignetteFilter_->SetIsActive(false);
-
-			SceneManager::GetInstance()->ChangeScene("PLAY");
-		}
+		SceneManager::GetInstance()->ChangeScene("PLAY");
 
 		return;
 	}
@@ -70,7 +67,7 @@ void PauseState::Update() {
 
 			// 白フェードの開始
 			transitionManager_->StartInTransition(
-				std::make_unique<FadeTransition>(Vector3( 1.0f, 1.0f, 1.0f ), 1.0f, 0.0f),
+				std::make_unique<FadeTransition>(Vector3(1.0f, 1.0f, 1.0f), 1.0f, 0.0f),
 				[]() {},
 				2.0f // 遷移にかける時間 (秒)
 			);
@@ -106,8 +103,8 @@ void PauseState::Update() {
 }
 
 /// ================================================== ///
-/// UI表示の処理
-void PauseState::DrawPauseUI() {
+/// 描画
+void PauseState::Draw() {
 
 	// ポーズUIの描画
 	pauseUI->Draw();

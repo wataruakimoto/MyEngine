@@ -84,9 +84,10 @@ void PlayState::Update() {
 }
 
 /// ================================================== ///
-/// UI表示の処理
-void PlayState::DrawUI() {
+/// 描画
+void PlayState::Draw() {
 
+	// プレイヤーのUIの描画
 	player_->DrawUI();
 
 	// ガイドUIの描画

@@ -34,6 +34,11 @@ public:
 	/// </summary>
 	void Update() override;
 
+	/// <summary>
+	/// 描画
+	/// </summary>
+	void Draw() override;
+
 	/// ================================================== ///
 	/// クラス内関数
 	/// ================================================== ///
@@ -43,11 +48,6 @@ private:
 	/// 減速処理
 	/// </summary>
 	void Deceleration();
-
-	/// <summary>
-	/// UI表示処理
-	/// </summary>
-	void ShowUI();
 
 	/// ================================================== ///
 	/// メンバ変数
@@ -60,7 +60,7 @@ private:
 	float decelerationTimer_ = 0.0f;
 
 	// 減速にかける時間(秒)
-	const float kDecelerationDuration = 3.0f;
+	const float kDecelerationDuration = 2.0f;
 
 	// 減速完了フラグ
 	bool isDecelerateFinished_ = false;

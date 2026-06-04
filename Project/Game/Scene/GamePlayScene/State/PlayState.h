@@ -38,9 +38,9 @@ public:
 	void Update() override;
 
 	/// <summary>
-	/// UI表示
+	/// 描画
 	/// </summary>
-	void DrawUI();
+	void Draw() override;
 
 	/// <summary>
 	/// プレイヤーがダメージを受けたときの処理

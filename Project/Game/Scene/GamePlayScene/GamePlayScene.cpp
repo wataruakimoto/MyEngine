@@ -174,6 +174,9 @@ void GamePlayScene::DrawUnfiltered() {
 
 	/// === UIの描画準備 === ///
 	spriteRenderer_->SettingDrawing();
+
+	// 状態の描画
+	state_->Draw();
 }
 
 void GamePlayScene::Finalize() {

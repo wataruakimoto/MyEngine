@@ -4,17 +4,15 @@
 #include "SceneManager.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "Input.h"
-#include "Camera.h"
-#include "CameraControll/ICameraController.h"
 #include "Player/Player.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
-#include "SkyBox/SkyBoxGame.h"
 #include "UI/TitleUI.h"
 #include "UI/StartUI.h"
 #include "UI/BlackScreen.h"
 #include "Light/LightManager.h"
 #include "Particle/ParticleManager.h"
+#include "CameraManager.h"
 
 #include <memory>
 #include <optional>
@@ -131,12 +129,6 @@ private:
     // 入力のインスタンス
     Engine::Input* input_ = Engine::Input::GetInstance();
 
-    // カメラ
-    std::unique_ptr<Engine::Camera> camera_ = nullptr;
-
-    // カメラコントローラ
-    std::unique_ptr<ICameraController> cameraController_ = nullptr;
-
     // プレイヤー
     std::unique_ptr<Player> player_ = nullptr;
 
@@ -146,10 +138,7 @@ private:
     // シリンダー
     std::unique_ptr<Cylinder> cylinder_ = nullptr;
 
-    // 天球
-    std::unique_ptr<SkyBoxGame> skyBox_ = nullptr;
-
-    // 黒画面UI
+   // 黒画面UI
     std::unique_ptr<BlackScreen> blackScreen_ = nullptr;
 
     // タイトルUI
@@ -205,4 +194,7 @@ private:
 
     // パーティクルレンダラーのインスタンス
     Engine::ParticleRenderer* particleRenderer_ = nullptr;
+
+    // カメラマネージャー
+    std::unique_ptr<CameraManager> cameraManager_ = nullptr;
 };

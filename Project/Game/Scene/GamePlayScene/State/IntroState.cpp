@@ -65,6 +65,7 @@ void IntroState::Update() {
 		isDecelerateFinished_ = true;
 	}
 
+	// 減速の処理
 	Deceleration();
 
 	// ゴールの更新
@@ -81,10 +82,21 @@ void IntroState::Update() {
 
 	ruleUI_->Update();
 
-	ShowUI();
+	if (ruleUI_->IsAnimationFinished()) {
+
+		isFinished_ = true;
+	}
 
 	// パーティクルマネージャの更新
 	ParticleManager::GetInstance()->Update();
+}
+
+/// ================================================== ///
+/// 描画
+void IntroState::Draw() {
+
+	// ルールUIの表示
+	ruleUI_->Draw();
 }
 
 /// ================================================== ///
@@ -121,20 +133,4 @@ void IntroState::Deceleration() {
 
 		radialBlurFilter_->SetIsActive(false);
 	}
-}
-
-/// ================================================== ///
-/// UI表示の処理
-void IntroState::ShowUI() {
-
-	// ルールUIの表示
-	ruleUI_->Draw();
-
-	if (ruleUI_->IsAnimationFinished()) {
-
-		isFinished_ = true;
-	}
-
-	// 白フェードの更新
-	whiteFade_->Update();
 }
