@@ -46,7 +46,7 @@ void CollisionManager::Reset() {
 	colliders_.clear();
 }
 
-void CollisionManager::AddCollider(Collider* collider) {
+void CollisionManager::RegisterCollider(Collider* collider) {
 
 	// コライダーをリストに追加
 	colliders_.push_back(collider);

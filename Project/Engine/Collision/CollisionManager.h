@@ -24,22 +24,35 @@ namespace Engine {
 	/// ================================================== ///
 	public:
 
-		// 初期化
+		/// <summary>
+		/// 初期化
+		/// </summary>
 		void Initialize();
 
-		// 更新
+		/// <summary>
+		/// 更新
+		/// </summary>
 		void Update();
 
-		// 描画
+		/// <summary>
+		/// 描画
+		/// </summary>
 		void Draw();
 
-		// リセット
+		/// <summary>
+		/// リセット
+		/// </summary>
 		void Reset();
 
-		// コライダーの追加
-		void AddCollider(Collider* collider);
+		/// <summary>
+		/// コライダーの登録
+		/// </summary>
+		/// <param name="collider">登録するコライダー</param>
+		void RegisterCollider(Collider* collider);
 
-		// 全ての衝突判定の確認
+		/// <summary>
+		/// 全ての衝突判定の確認
+		/// </summary>
 		void CheckAllCollisions();
 
 	/// ================================================== ///

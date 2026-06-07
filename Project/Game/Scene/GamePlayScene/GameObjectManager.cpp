@@ -168,3 +168,24 @@ void GameObjectManager::ShiftWorld(float shiftZ) {
 	// ゴールを手前にずらす
 	goal_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 }
+
+void GameObjectManager::RegisterAllColliders(Engine::CollisionManager* collisionManager) {
+
+	collisionManager->RegisterCollider(player_->GetCollider());
+
+	for (const std::unique_ptr<Enemy>& enemy : enemies_) {
+		collisionManager->RegisterCollider(enemy->GetCollider());
+	}
+
+	for (const std::unique_ptr<Bullet>& bullet : playerBullets_) {
+		collisionManager->RegisterCollider(bullet->GetCollider());
+	}
+
+	for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets_) {
+		collisionManager->RegisterCollider(bullet->GetCollider());
+	}
+
+	for (const std::unique_ptr<Obstacle>& obstacle : obstacles_) {
+		collisionManager->RegisterCollider(obstacle->GetCollider());
+	}
+}

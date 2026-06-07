@@ -201,24 +201,8 @@ void GamePlayScene::CheckAllCollisions() {
 	// 衝突マネージャのリセット
 	collisionManager_->Reset();
 
-	// コライダーをリストに追加
-	collisionManager_->AddCollider(gameObjectManager_->GetPlayer()->GetCollider());
-
-	for (const std::unique_ptr<Enemy>& enemy : gameObjectManager_->GetEnemies()) {
-		collisionManager_->AddCollider(enemy->GetCollider());
-	}
-
-	for (const std::unique_ptr<Bullet>& bullet : gameObjectManager_->GetPlayerBullets()) {
-		collisionManager_->AddCollider(bullet->GetCollider());
-	}
-
-	for (const std::unique_ptr<EnemyBullet>& bullet : gameObjectManager_->GetEnemyBullets()) {
-		collisionManager_->AddCollider(bullet->GetCollider());
-	}
-
-	for (const std::unique_ptr<Obstacle>& obstacle : gameObjectManager_->GetObstacles()) {
-		collisionManager_->AddCollider(obstacle->GetCollider());
-	}
+	// オブジェクトマネージャーの全オブジェクトの衝突をチェック
+	gameObjectManager_->RegisterAllColliders(collisionManager_.get());
 
 	// 衝突判定と応答
 	collisionManager_->CheckAllCollisions();

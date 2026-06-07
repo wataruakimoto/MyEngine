@@ -14,6 +14,10 @@
 
 class GamePlayScene;
 
+namespace Engine {
+	class CollisionManager;
+}
+
 /// <summary>
 /// ゲームオブジェクト管理クラス
 /// </summary>
@@ -59,6 +63,12 @@ public:
 	/// </summary>
 	/// <param name="shiftZ">Z方向のシフト量</param>
 	void ShiftWorld(float shiftZ);
+
+	/// <summary>
+	/// 全オブジェクトのコライダーを登録
+	/// </summary>
+	/// <param name="collisionManager">衝突判定マネージャー</param>
+	void RegisterAllColliders(Engine::CollisionManager* collisionManager);
 
 	/// ================================================== ///
 	/// クラス内関数
