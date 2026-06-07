@@ -62,6 +62,18 @@ private:
 
 	// ゲームオーバーフラグ
 	bool isGameOver_ = false;
+		
+	// 残り時間
+	float remainingTime_ = 0.0f;
+
+	// 初期時間
+	const float initialTime_ = 60.0f;
+
+	// 最大時間
+	const float maxTime_ = 99.0f;
+
+	// デルタタイム
+	const float deltaTime_ = 1.0f/60.0f;
 
 	/// ===== 借りポインタ・インスタンス ===== ///
 

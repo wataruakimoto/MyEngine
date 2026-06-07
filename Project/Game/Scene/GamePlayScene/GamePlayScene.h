@@ -10,6 +10,7 @@
 #include "CameraManager.h"
 #include "LevelLoader.h"
 #include "State/IPlayState.h"
+#include "GameRule.h"
 
 #include <list>
 #include <memory>

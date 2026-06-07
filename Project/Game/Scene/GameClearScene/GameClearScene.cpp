@@ -32,20 +32,17 @@ void GameClearScene::Initialize() {
 	fogFilter_->SetStartDistance(500.0f); // フォグ開始距離を500に設定
 	fogFilter_->SetIsActive(true);    // フォグを有効化
 
-	// カメラの生成&初期化
-	camera_ = std::make_unique<Engine::Camera>();
-	camera_->Initialize();
-	camera_->SetFarClip(950.0f); // ファークリップを950に設定
+	// カメラマネージャーの生成
+	cameraManager_ = std::make_unique<CameraManager>();
+	// カメラマネージャーの初期化
+	cameraManager_->Initialize();
+	// カメラのファークリップ距離を設定
+	cameraManager_->GetCamera()->SetFarClip(950.0f);
 
 	// カメラの設定
-	object3dRenderer_->SetDefaultCamera(camera_.get());
-	filterManager_->SetCamera(camera_.get());
-	particleManager_->SetCamera(camera_.get());
-
-	// カメラコントローラーの生成&初期化
-	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->SetCamera(camera_.get());
-	cameraController_->Initialize();
+	object3dRenderer_->SetDefaultCamera(cameraManager_->GetCamera());
+	filterManager_->SetCamera(cameraManager_->GetCamera());
+	particleManager_->SetCamera(cameraManager_->GetCamera());
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
@@ -59,13 +56,21 @@ void GameClearScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
 	player_->SetPlayerState(PlayerState::AutoPilot); // オートモードに設定
-	player_->SetCamera(camera_.get());
+	player_->SetCamera(cameraManager_->GetCamera());
 
 	playerMoveSpeed_ = 1.0f;
 	player_->SetMoveSpeedAuto(playerMoveSpeed_);
 
-	// キャストし追従カメラの方を呼び出す
-	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
+	// 追従カメラコントローラーの生成
+	auto followCameraController = std::make_unique<FollowCameraController>();
+	// 追従カメラコントローラーの初期化
+	followCameraController->Initialize();
+	// 追従カメラコントローラーにプレイヤーのポインタを渡す
+	followCameraController->SetPlayer(player_.get());
+	// 追従カメラコントローラーをカメラマネージャーに登録
+	cameraManager_->AddCameraController("FollowCamera", std::move(followCameraController));
+	// カメラマネージャーのアクティブカメラを追従カメラに設定
+	cameraManager_->SwitchCameraController("FollowCamera");
 
 	// テキストスプライトの生成&初期化
 	text_ = std::make_unique<Engine::Sprite>();
@@ -83,17 +88,17 @@ void GameClearScene::Initialize() {
 
 void GameClearScene::Update() {
 
-	// カメラコントローラの更新
-	cameraController_->Update();
+	// カメラマネージャーの更新
+	cameraManager_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+	floor_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+	cylinder_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();
