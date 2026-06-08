@@ -2,8 +2,6 @@
 #include "BaseScene.h"
 #include "Collision/CollisionManager.h"
 #include "Particle/ParticleManager.h"
-#include "Floor/Floor.h"
-#include "Cylinder/Cylinder.h"
 #include "Light/LightManager.h"
 
 #include "GameObjectManager.h"
@@ -84,11 +82,11 @@ public:
 	/// 敵を倒したときの処理
 	/// </summary>
 	void OnEnemyDefeated();
-	
+
 	/// <summary>
-	/// 倒した数をカウントアップ
+	/// ゴールに到達したときの処理
 	/// </summary>
-	void AddKillCount() { killCount_++; }
+	void OnGoalReached();
 
 	/// <summary>
 	/// ポーズの切り替え
@@ -115,9 +113,9 @@ private:
 ///-------------------------------------------///
 public:
 
-	const int& GetKillCount() const { return killCount_; }
-
 	GameObjectManager* GetGameObjectManager() { return gameObjectManager_.get(); }
+
+	CameraManager* GetCameraManager() { return cameraManager_.get(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
@@ -138,19 +136,11 @@ private:
 	std::unique_ptr<IPlayState> state_ = nullptr;
 	std::unique_ptr<IPlayState> pauseState_ = nullptr;
 
-	// 敵を倒した数
-	int killCount_ = 0;
+	// ゲームルール
+	std::unique_ptr<GameRule> gameRule_ = nullptr;
 
 	// ループする距離
 	const float kLoopDistance = 1000.0f;
-
-	/// ===== オブジェクト ===== ///
-
-	// フロアのポインタ
-	std::unique_ptr<Floor> floor_ = nullptr;
-
-	// シリンダーのポインタ
-	std::unique_ptr<Cylinder> cylinder_ = nullptr;
 
 	/// ===== エンジン ===== ///
 

@@ -29,7 +29,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	/// <param name="scene"></param>
+	/// <param name="scene">ゲームプレイシーンのポインタ</param>
 	void Initialize(GamePlayScene* scene) override;
 
 	/// <summary>
@@ -48,11 +48,6 @@ public:
 	/// <param name="currentHP">現在のHP</param>
 	void OnPlayerDamaged(uint16_t currentHP);
 
-	/// <summary>
-	/// 敵を倒したときの処理
-	/// </summary>
-	void OnEnemyDefeated();
-
 	/// ================================================== ///
 	/// クラス内関数
 	/// ================================================== ///
@@ -64,6 +59,17 @@ private:
 	void UpdateVignetteEffect();
 
 	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
+public:
+
+	/// <summary>
+	/// ゴールフラグのセッター
+	/// </summary>
+	/// <param name="isGoalReached">ゴールしたかどうか</param>
+	void SetGoalReached(bool isGoalReached) { isGoalReached_ = isGoalReached; }
+
+	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///
 private:
@@ -72,6 +78,9 @@ private:
 	bool isDamageVignetteActive_ = false; // ダメージ時の一時ビネット有効フラグ
 	float damageVignetteTimer_ = 0.0f; // ダメージビネットのタイマー
 	const float kDamageVignetteDuration_ = 1.0f; // ダメージビネットの持続時間 (秒)
+
+	// ゴールしたかどうか
+	bool isGoalReached_ = false;
 
 	/// ===== 借りポインタ・インスタンス ===== ///
 

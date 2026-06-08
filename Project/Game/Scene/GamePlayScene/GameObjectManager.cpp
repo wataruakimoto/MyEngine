@@ -4,6 +4,14 @@
 #include <imgui.h>
 
 void GameObjectManager::Initialize() {
+
+	// フロアを生成
+	floor_ = std::make_unique<Floor>();
+	floor_->Initialize();
+
+	// シリンダーの生成
+	cylinder_ = std::make_unique<Cylinder>();
+	cylinder_->Initialize();
 }
 
 void GameObjectManager::Update() {
@@ -34,6 +42,18 @@ void GameObjectManager::Update() {
 	// ゴールの更新
 	if (goal_) goal_->Update();
 
+	// カメラの座標をフロアに設定
+	floor_->SetCameraTranslate(gamePlayScene_->GetCameraManager()->GetCamera()->GetWorldTransform().GetWorldPosition());
+
+	// フロアの更新
+	floor_->Update();
+
+	// カメラの座標をシリンダーに設定
+	cylinder_->SetCameraTranslate(gamePlayScene_->GetCameraManager()->GetCamera()->GetWorldTransform().GetWorldPosition());
+
+	// シリンダーの更新
+	cylinder_->Update();
+
 	for (const std::unique_ptr<Enemy>& enemy : enemies_){
 
 		// 敵が死んでいたら
@@ -41,10 +61,14 @@ void GameObjectManager::Update() {
 			
 			// 敵が死んだときの処理を呼び出す
 			gamePlayScene_->OnEnemyDefeated();
-
-			// 倒した数を増やす
-			gamePlayScene_->AddKillCount();
 		}
+	}
+
+	// プレイヤーがゴールより奥にいたら
+	if (player_->GetWorldTransform().GetWorldPosition().z >= goal_->GetWorldTransform().GetWorldPosition().z) {
+
+		// ゴールに到達したときの処理を呼び出す
+		gamePlayScene_->OnGoalReached();
 	}
 
 	// 死んだオブジェクトの削除
@@ -54,6 +78,12 @@ void GameObjectManager::Update() {
 }
 
 void GameObjectManager::Draw() {
+
+	// シリンダーの描画
+	if (cylinder_) cylinder_->Draw();
+
+	// フロアの描画
+	if (floor_) floor_->Draw();
 
 	// プレイヤーの描画
 	if (player_) player_->Draw();
@@ -112,6 +142,10 @@ void GameObjectManager::ShowImGui() {
 
 	// ゴールのImGui
 	if (goal_) goal_->ShowImGui();
+
+	if (floor_) floor_->ShowImGui();
+
+	if (cylinder_) cylinder_->ShowImGui();
 }
 
 void GameObjectManager::Clear() {

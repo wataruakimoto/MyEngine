@@ -60,14 +60,11 @@ void PlayState::Update() {
 	// 衝突判定と応答
 	scene_->CheckAllCollisions();
 
-	// ゴールライン到達の判定
-	bool isReachedGoalLine = player_->GetWorldTransform().GetWorldPosition().z >= goal_->GetWorldTransform().GetWorldPosition().z;
-
 	// プレイヤーのデスフラグを取得
 	bool isPlayerDead = player_->IsDead();
 
-	// ゴールラインに到達していたら
-	if (isReachedGoalLine) {
+	// ゴールに到達していたら
+	if (isGoalReached_) {
 
 		isFinished_ = true;
 	}
@@ -105,16 +102,6 @@ void PlayState::OnPlayerDamaged(uint16_t currentHP) {
 	// ビネットフィルターを有効化
 	if (vignetteFilter_) {
 		vignetteFilter_->SetIsActive(true);
-	}
-}
-
-/// ================================================== ///
-/// 敵を倒したときの処理
-void PlayState::OnEnemyDefeated() {
-
-	// カメラシェイクを開始
-	if (cameraController_) {
-		dynamic_cast<FollowCameraController*>(cameraController_)->StartShake(0.5f, 0.1f);
 	}
 }
 

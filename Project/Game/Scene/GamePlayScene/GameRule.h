@@ -24,6 +24,12 @@ public:
 	/// </summary>
 	void Update();
 
+	/// <summary>
+	/// ボーナスタイムの追加
+	/// </summary>
+	/// <param name="time">追加する時間</param>
+	void AddBonusTime(float time);
+
 	/// ================================================== ///
 	/// ゲッター
 	/// ================================================== ///
@@ -32,14 +38,20 @@ public:
 	/// <summary>
 	/// クリア判定
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>クリアかどうか</returns>
 	bool IsClear() const { return isClear_; }
 
 	/// <summary>
 	/// ゲームオーバー判定
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>ゲームオーバーかどうか</returns>
 	bool IsGameOver() const { return isGameOver_; }
+
+	/// <summary>
+	/// 残り時間のゲッター
+	/// </summary>
+	/// <returns>残り時間</returns>
+	float GetRemainingTime() const { return remainingTime_; }
 
 	/// ================================================== ///
 	/// セッター

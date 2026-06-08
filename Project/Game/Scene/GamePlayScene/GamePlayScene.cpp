@@ -25,13 +25,6 @@ void GamePlayScene::Initialize() {
 	particleRenderer_ = ParticleRenderer::GetInstance();
 	lineManager_ = LineManager::GetInstance();
 
-	// オブジェクトマネージャーの生成
-	gameObjectManager_ = std::make_unique<GameObjectManager>();
-	// オブジェクトマネージャーの初期化
-	gameObjectManager_->Initialize();
-	// オブジェクトマネージャーにシーンのポインタを渡す
-	gameObjectManager_->SetGamePlayScene(this);
-
 	// カメラマネージャーの生成
 	cameraManager_ = std::make_unique<CameraManager>();
 	// カメラマネージャーの初期化
@@ -52,6 +45,13 @@ void GamePlayScene::Initialize() {
 	lightManager_ = std::make_unique<Engine::LightManager>();
 	lightManager_->Initialize();
 
+	// オブジェクトマネージャーの生成
+	gameObjectManager_ = std::make_unique<GameObjectManager>();
+	// オブジェクトマネージャーの初期化
+	gameObjectManager_->Initialize();
+	// オブジェクトマネージャーにシーンのポインタを渡す
+	gameObjectManager_->SetGamePlayScene(this);
+
 	// プレイヤーの生成&初期化
 	std::unique_ptr<Player> player = std::make_unique<Player>();
 	player->SetCamera(cameraManager_->GetCamera());
@@ -61,14 +61,6 @@ void GamePlayScene::Initialize() {
 	player->SetMoveSpeedAuto(6.0f);
 	// オブジェクトマネージャーにプレイヤーを登録
 	gameObjectManager_->SetPlayer(std::move(player));
-
-	// フロアを生成
-	floor_ = std::make_unique<Floor>();
-	floor_->Initialize();
-
-	// シリンダーの生成
-	cylinder_ = std::make_unique<Cylinder>();
-	cylinder_->Initialize();
 
 	// 追従カメラコントローラーの生成
 	auto followCameraController = std::make_unique<FollowCameraController>();
@@ -95,6 +87,11 @@ void GamePlayScene::Initialize() {
 
 	// 初期状態をイントロに設定
 	ChangeState(std::make_unique<IntroState>());
+
+	// ゲームルールの生成
+	gameRule_ = std::make_unique<GameRule>();
+	// ゲームルールの初期化
+	gameRule_->Initialize();
 }
 
 void GamePlayScene::Update() {
@@ -104,18 +101,6 @@ void GamePlayScene::Update() {
 
 	// カメラマネージャーの更新
 	cameraManager_->Update();
-
-	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
-
-	// フロアの更新
-	floor_->Update();
-
-	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
-
-	// シリンダーの更新
-	cylinder_->Update();
 
 	// オリジンシフトの確認と実行
 	CheckOriginShift();
@@ -138,6 +123,9 @@ void GamePlayScene::Update() {
 			// エンディング状態は何もしない (シーン移行はフェード終了時に行う)
 		}
 	}
+
+	// ゲームルールの更新
+	gameRule_->Update();
 }
 
 void GamePlayScene::DrawFiltered() {
@@ -148,12 +136,6 @@ void GamePlayScene::DrawFiltered() {
 	lightManager_->Draw();
 
 	//TODO: 全ての3Dオブジェクト個々の描画
-
-	// シリンダーの描画
-	cylinder_->Draw();
-
-	// フロアの描画
-	floor_->Draw();
 
 	// オブジェクトマネージャーの描画
 	gameObjectManager_->Draw();
@@ -189,10 +171,6 @@ void GamePlayScene::ShowImGui() {
 	// オブジェクトマネージャーのImGui表示
 	gameObjectManager_->ShowImGui();
 
-	floor_->ShowImGui();
-
-	cylinder_->ShowImGui();
-
 	lightManager_->ShowImGui();
 }
 
@@ -225,11 +203,33 @@ void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
 	}
 }
 
+/// ================================================== ///
+/// 敵を倒したときの処理
 void GamePlayScene::OnEnemyDefeated() {
 
+	// 現在のカメラマンコントローラーを取得
+	ICameraController* currentCameraController = cameraManager_->GetCurrentController();
+
+	// 受け取ったカメラが追従カメラコントローラーだったら
+	if (auto followCameraController = dynamic_cast<FollowCameraController*>(currentCameraController)) {
+		
+		// カメラをシェイクさせる
+		followCameraController->StartShake(2.0f, 0.2f);
+	}
+
+	// ボーナスタイムを追加
+	gameRule_->AddBonusTime(5.0f);
+}
+
+/// ================================================== ///
+/// ゴールに到達したときの処理
+void GamePlayScene::OnGoalReached() {
+
+	// 状態がプレイ状態のとき
 	if (auto playState = dynamic_cast<PlayState*>(state_.get())) {
 
-		playState->OnEnemyDefeated();
+		// ゴール到達の処理
+		playState->SetGoalReached(true);
 	}
 }
 
@@ -258,12 +258,6 @@ void GamePlayScene::Restart() {
 	/// ===== オブジェクトのクリア ===== ///
 
 	particleManager_->Clear();
-
-	/// ===== 進行度のリセット ===== ///
-
-	killCount_ = 0;
-
-	/// ===== 初期化 ===== ///
 
 	/// ========== レベルのリセット ========== ///
 

@@ -6,6 +6,8 @@
 #include "Enemy/EnemyBullet.h"
 #include "Obstacle/Obstacle.h"
 #include "Goal/Goal.h"
+#include "Floor/Floor.h"
+#include "Cylinder/Cylinder.h"
 
 #include <list>
 #include <memory>
@@ -143,6 +145,12 @@ private:
 
 	// ゴールのポインタ
 	std::unique_ptr<Goal> goal_ = nullptr;
+
+	// フロアのポインタ
+	std::unique_ptr<Floor> floor_ = nullptr;
+
+	// シリンダーのポインタ
+	std::unique_ptr<Cylinder> cylinder_ = nullptr;
 
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;

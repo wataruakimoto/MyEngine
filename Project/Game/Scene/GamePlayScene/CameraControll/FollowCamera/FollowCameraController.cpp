@@ -65,7 +65,7 @@ void FollowCameraController::StartShake(float intensity, float duration) {
 	shakeTimer_ = 0.0f;
 
 	// シェイク範囲を強度に応じて設定
-	shakeRange_ = { {-intensity, -intensity, -intensity}, {intensity, intensity, intensity} };
+	shakeRange_ = { {-intensity, -intensity, 0.0f}, {intensity, intensity, 0.0f} };
 }
 
 void FollowCameraController::Shake() {
