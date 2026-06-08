@@ -2,6 +2,7 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
+#include "Particle/ParticleEmitter.h"
 
 namespace Engine {
 
@@ -66,4 +67,7 @@ private:
 
 	// パーティクルマネージャのポインタ
 	Engine::ParticleManager* particleManager = nullptr;
+
+	// パーティクルエミッターのポインタ
+	std::unique_ptr<Engine::ParticleEmitter> emitter = nullptr;
 };
