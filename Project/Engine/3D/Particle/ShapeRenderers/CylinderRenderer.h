@@ -36,7 +36,7 @@ namespace Engine {
 	private:
 
 		// シリンダーの設定
-		const uint32_t kCylinderDivide = 32; // 円の分割数
+		const uint32_t kCylinderDivide = 4; // 円の分割数
 		const float kTopRadius = 1.0f; // 上側の半径
 		const float kBottomRadius = 1.0f; // 下側の半径
 		const float kHeight = 3.0f; // 高さ

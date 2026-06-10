@@ -89,6 +89,12 @@ namespace Engine {
 		/// </summary>
 		void Clear();
 
+		/// <summary>
+		/// インスタンスの削除
+		/// </summary>
+		/// <param name="effectName">エフェクト名</param>
+		void ClearInstance(const std::string& effectName);
+
 		///-------------------------------------------/// 
 		/// クラス内関数
 		///-------------------------------------------///

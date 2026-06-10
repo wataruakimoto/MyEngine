@@ -81,6 +81,15 @@ void ParticleManager::Update() {
 	billboardMatrix.m[3][0] = 0.0f;
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
+	
+	// 各種レンダラーの更新
+
+	planeRenderer->Update();
+	ringRenderer->Update();
+	cylinderRenderer->Update();
+	cubeRenderer->Update();
+	shardRenderer->Update();
+	meshRenderer->Update();
 
 	// 板ポリのパーティクルコンテナの更新
 	UpdateGroups(planeGroups);
@@ -429,20 +438,35 @@ void ParticleManager::Clear() {
 	}
 }
 
+void ParticleManager::ClearInstance(const std::string& effectName) {
+
+	// すべてのグループのコンテナから、該当する名前のパーティクルリストをクリアする
+	if (planeGroups.contains(effectName))    planeGroups[effectName].particles.clear();
+	if (ringGroups.contains(effectName))     ringGroups[effectName].particles.clear();
+	if (cylinderGroups.contains(effectName)) cylinderGroups[effectName].particles.clear();
+	if (cubeGroups.contains(effectName))     cubeGroups[effectName].particles.clear();
+	if (shardGroups.contains(effectName))    shardGroups[effectName].particles.clear();
+	if (meshGroups.contains(effectName))     meshGroups[effectName].particles.clear();
+}
+
 void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {
 
 	// 全パーティクルの更新
 	for (auto ite = particles.begin(); ite != particles.end(); ) {
 
-		// 時間経過
-		ite->currentTime += kDeltaTime;
+		// 無限フラグが立っていない場合
+		if (!ite->isInfinite) {
 
-		// 寿命が来ていたら
-		if (ite->currentTime >= ite->lifeTime) {
-			// リストから削除
-			ite = particles.erase(ite);
-			// 次のパーティクルへ
-			continue;
+			// 時間経過
+			ite->currentTime += kDeltaTime;
+
+			// 寿命を超えているなら
+			if (ite->currentTime >= ite->lifeTime) {
+				// リストから削除
+				ite = particles.erase(ite);
+				// 次のパーティクルへ
+				continue;
+			}
 		}
 
 		// 0.0f(生まれたて) -> 1.0f(死ぬ直前)

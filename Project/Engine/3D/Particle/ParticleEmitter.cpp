@@ -143,6 +143,9 @@ void ParticleEmitter::Emit() {
 			particle.color = setting->color;
 		}
 
+		// 無限かどうかの設定
+		particle.isInfinite = setting->isInfinite;
+
 		// 寿命の設定
 		if (setting->lifeTimeRandom) {
 

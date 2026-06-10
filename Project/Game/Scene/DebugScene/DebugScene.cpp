@@ -35,9 +35,10 @@ void DebugScene::Initialize() {
 	setting.textureFullPath = "Resources/Textures/Particles/gradationLine.png";
 	setting.shape = ParticleShape::CYLINDER;
 	setting.useBillboard = false;
-	setting.lifeTime = 2.0f;
-	setting.scale = { 1.0f,1.0f,1.0f };
-	setting.color = { 1.0f,0.0f,0.0f,1.0f };
+	setting.isInfinite = true;
+	setting.scale = { 1.0f,0.5f,1.0f };
+	setting.rotate = { 0.0f,3.14f/4.0f,0.0f };
+	setting.color = { 0.0f,1.0f,1.0f,0.75f };
 
 	particleManager->AddSetting(setting);
 
@@ -58,6 +59,10 @@ void DebugScene::Update() {
 
 	if (Input::GetInstance()->TriggerKey(VK_SPACE)) {
 		emitter->Emit();
+	}
+
+	if (Input::GetInstance()->TriggerKey('C')) {
+		particleManager->ClearInstance("Cylinder");
 	}
 }
 
