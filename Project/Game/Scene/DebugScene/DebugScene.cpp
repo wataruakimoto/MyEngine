@@ -44,7 +44,10 @@ void DebugScene::Initialize() {
 
 	emitter = std::make_unique<ParticleEmitter>("Cylinder", EmitterType::OneShot, 1);
 	emitter->Initialize();
-	emitter->SetTranslate({ 0.0f,0.0f,0.0f });
+
+	emitterB = std::make_unique<ParticleEmitter>("Cylinder", EmitterType::OneShot, 1);
+	emitterB->Initialize();
+	emitterB->SetTranslate({ 5.0f,0.0f,0.0f });
 }
 
 void DebugScene::Update() {
@@ -56,13 +59,18 @@ void DebugScene::Update() {
 	particleManager->Update();
 
 	emitter->Update();
+	emitterB->Update();
 
 	if (Input::GetInstance()->TriggerKey(VK_SPACE)) {
 		emitter->Emit();
 	}
 
+	if (Input::GetInstance()->TriggerKey(VK_RETURN)) {
+		emitterB->Emit();
+	}
+
 	if (Input::GetInstance()->TriggerKey('C')) {
-		particleManager->ClearInstance("Cylinder");
+		particleManager->ClearInstance(emitter.get());
 	}
 }
 

@@ -438,15 +438,34 @@ void ParticleManager::Clear() {
 	}
 }
 
-void ParticleManager::ClearInstance(const std::string& effectName) {
+void ParticleManager::ClearInstance(const ParticleEmitter* emitter) {
 
-	// すべてのグループのコンテナから、該当する名前のパーティクルリストをクリアする
-	if (planeGroups.contains(effectName))    planeGroups[effectName].particles.clear();
-	if (ringGroups.contains(effectName))     ringGroups[effectName].particles.clear();
-	if (cylinderGroups.contains(effectName)) cylinderGroups[effectName].particles.clear();
-	if (cubeGroups.contains(effectName))     cubeGroups[effectName].particles.clear();
-	if (shardGroups.contains(effectName))    shardGroups[effectName].particles.clear();
-	if (meshGroups.contains(effectName))     meshGroups[effectName].particles.clear();
+	if (!emitter) return;
+
+	// 条件に一致する（生成元エミッターが一致する）パーティクルを削除するラムダ式
+	auto shouldRemove = [emitter](const ParticleInstance& p) {
+		return p.emitter == emitter;
+		};
+
+	// すべての形状のグループを走査して、該当するエミッターのパーティクルのみを削除
+	for (auto& [name, group] : planeGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : ringGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : cylinderGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : cubeGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : shardGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : meshGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
 }
 
 void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {

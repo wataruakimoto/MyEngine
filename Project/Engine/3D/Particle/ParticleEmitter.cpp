@@ -70,6 +70,7 @@ void ParticleEmitter::Emit() {
 
 		// 参照元を紐づけ
 		particle.setting = setting;
+		particle.emitter = this;
 
 		// スケールの設定
 		if(setting->scaleRandom) {

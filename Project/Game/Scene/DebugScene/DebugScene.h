@@ -70,4 +70,5 @@ private:
 
 	// パーティクルエミッターのポインタ
 	std::unique_ptr<Engine::ParticleEmitter> emitter = nullptr;
+	std::unique_ptr<Engine::ParticleEmitter> emitterB = nullptr;
 };

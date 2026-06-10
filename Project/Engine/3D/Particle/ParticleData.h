@@ -14,6 +14,10 @@
 
 namespace Engine {
 
+	/// === 前方宣言 === ///
+	
+	class ParticleEmitter;
+
 	// パーティクルの形状
 	enum class ParticleShape {
 		PLANE,	  // 板ポリ
@@ -89,6 +93,8 @@ namespace Engine {
 		// Flyweightパターンの参照元
 		const ParticleSetting* setting; // 参照元の設定
 
+		const ParticleEmitter* emitter; // 参照元のエミッター
+
 		Vector3 scale = {}; // スケール
 		Vector3 rotate = {}; // 回転
 		Vector3 translate = {}; // 位置
@@ -132,7 +138,7 @@ namespace Engine {
 	)
 
 		NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleInstance,
-			setting,
+			setting, emitter,
 			scale, rotate, translate,
 			velocity, acceleration,
 			color, lifeTime, currentTime
