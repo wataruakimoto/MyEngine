@@ -10,7 +10,7 @@
 
 /// === 前方宣言 === ///
 class Player;
-class GamePlayScene;
+class GameObjectManager;
 
 /// ===== 敵 ===== ///
 class Enemy : public BaseCharacter {
@@ -87,10 +87,10 @@ public:
 	void SetPlayer(Player* player) { this->player = player; }
 
 	/// <summary>
-	/// ゲームプレイシーンのセッター
+	/// オブジェクトマネージャーのセッター
 	/// </summary>
-	/// <param name="scene"></param>
-	void SetGamePlayScene(GamePlayScene* scene) { this->gamePlayScene_ = scene; }
+	/// <param name="objManager">オブジェクトマネージャー</param>
+	void SetGameObjectManager(GameObjectManager* objManager) { objManager_ = objManager; }
 
 	void SetEnemyType(EnemyType type) { enemyType_ = type; }
 
@@ -119,8 +119,8 @@ private:
 	// プレイヤーの借りポインタ
 	Player* player = nullptr;
 
-	// ゲームプレイシーンの借りポインタ
-	GamePlayScene* gamePlayScene_ = nullptr;
+	// ゲームオブジェクトマネージャーの借りポインタ
+	GameObjectManager* objManager_ = nullptr;
 
 	float moveSpeed = 0.2f;
 

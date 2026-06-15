@@ -89,6 +89,12 @@ namespace Engine {
 		/// </summary>
 		void Clear();
 
+		/// <summary>
+		/// インスタンスの削除
+		/// </summary>
+		/// <param name="emitter">エミッター</param>
+		void ClearInstance(const ParticleEmitter* emitter);
+
 		///-------------------------------------------/// 
 		/// クラス内関数
 		///-------------------------------------------///

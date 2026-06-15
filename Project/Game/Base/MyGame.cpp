@@ -172,6 +172,7 @@ void MyGame::LoadAllResource() {
 	textureManager_->LoadTexture("PauseUI/QuitButton.png");
 	textureManager_->LoadTexture("PauseUI/Frame.png");
 	textureManager_->LoadTexture("SpaceToTitle.png");
+	textureManager_->LoadTexture("Particles/gradationLine.png");
 
 	textureManager_->LoadTexture("rostock_laage_airport_4k.dds");
 

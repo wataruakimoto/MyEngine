@@ -24,28 +24,33 @@ void TitleScene::Initialize() {
 	lightManager_ = std::make_unique<Engine::LightManager>();
 	lightManager_->Initialize();
 
-	// カメラの生成&初期化
-	camera_ = std::make_unique<Engine::Camera>();
-	camera_->Initialize();
-	camera_->SetFarClip(950.0f); // ファークリップを950に設定
-
-	// カメラコントローラーの生成&初期化
-	cameraController_ = std::make_unique<FollowCameraController>();
-	cameraController_->SetCamera(camera_.get());
-	cameraController_->Initialize();
+	// カメラマネージャーの生成
+	cameraManager_ = std::make_unique<CameraManager>();
+	// カメラマネージャーの初期化
+	cameraManager_->Initialize();
+	// カメラのファークリップ距離を設定
+	cameraManager_->GetCamera()->SetFarClip(950.0f);
 
 	// カメラの設定
-	object3dRenderer_->SetDefaultCamera(camera_.get());
-	particleManager_->SetCamera(camera_.get());
+	object3dRenderer_->SetDefaultCamera(cameraManager_->GetCamera());
+	particleManager_->SetCamera(cameraManager_->GetCamera());
 
 	// プレイヤーの生成&初期化
 	player_ = std::make_unique<Player>();
 	player_->Initialize();
 	player_->SetPlayerState(PlayerState::AutoPilot); // タイトルモードに設定
-	player_->SetCamera(camera_.get());
+	player_->SetCamera(cameraManager_->GetCamera());
 
-	// キャストし追従カメラの方を呼び出す
-	dynamic_cast<FollowCameraController*>(cameraController_.get())->SetPlayer(player_.get());
+	// 追従カメラコントローラーの生成
+	auto followCameraController = std::make_unique<FollowCameraController>();
+	// 追従カメラコントローラーの初期化
+	followCameraController->Initialize();
+	// 追従カメラコントローラーにプレイヤーのポインタを渡す
+	followCameraController->SetPlayer(player_.get());
+	// 追従カメラコントローラーをカメラマネージャーに登録
+	cameraManager_->AddCameraController("FollowCamera", std::move(followCameraController));
+	// カメラマネージャーのアクティブカメラを追従カメラに設定
+	cameraManager_->SwitchCameraController("FollowCamera");
 
 	// フロアを生成
 	floor_ = std::make_unique<Floor>();
@@ -54,14 +59,6 @@ void TitleScene::Initialize() {
 	// シリンダーの生成
 	cylinder_ = std::make_unique<Cylinder>();
 	cylinder_->Initialize();
-
-	// スカイボックスの生成
-	skyBox_ = std::make_unique<SkyBoxGame>();
-	skyBox_->Initialize();
-	// カメラを設定
-	skyBox_->SetCamera(camera_.get());
-	// プレイヤーを設定
-	skyBox_->SetPlayer(player_.get());
 
 	// 黒画面UIの生成&初期化
 	blackScreen_ = std::make_unique<BlackScreen>();
@@ -76,7 +73,7 @@ void TitleScene::Initialize() {
 	startUI_->Initialize();
 
 	// フィルターマネージャにカメラを設定
-	filterManager_->SetCamera(camera_.get());
+	filterManager_->SetCamera(cameraManager_->GetCamera());
 
 	// ラジアルブラーをフィルターマネージャから受け取っとく
 	radialBlurFilter_ = filterManager_->GetRadialBlurFilter();
@@ -172,8 +169,8 @@ void TitleScene::Update() {
 		break;
 	}
 
-	// カメラコントローラの更新
-	cameraController_->Update();
+	// カメラマネージャーの更新
+	cameraManager_->Update();
 
 	// プレイヤーループ処理
 	PlayerLoop();
@@ -182,19 +179,16 @@ void TitleScene::Update() {
 	player_->Update();
 
 	// カメラの座標をフロアに設定
-	floor_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+	floor_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
 
 	// フロアの更新
 	floor_->Update();
 
 	// カメラの座標をシリンダーに設定
-	cylinder_->SetCameraTranslate(camera_->GetWorldTransform().GetWorldPosition());
+	cylinder_->SetCameraTranslate(cameraManager_->GetCamera()->GetWorldTransform().GetWorldPosition());
 
 	// シリンダーの更新
 	cylinder_->Update();
-
-	// スカイボックスの更新
-	skyBox_->Update();
 
 	// タイトルUIの更新
 	titleUI_->Update();
@@ -253,9 +247,6 @@ void TitleScene::Finalize() {
 
 void TitleScene::ShowImGui() {
 
-	// カメラコントローラのImGui表示
-	cameraController_->ShowImGui();
-
 	// プレイヤーのImGui表示
 	player_->ShowImGui();
 
@@ -264,9 +255,6 @@ void TitleScene::ShowImGui() {
 
 	// シリンダーのImGui表示
 	cylinder_->ShowImGui();
-
-	// スカイボックスのImGui表示
-	skyBox_->ShowImGui();
 
 	// タイトルUIのImGui表示
 	titleUI_->ShowImGui();
@@ -292,9 +280,7 @@ void TitleScene::PlayerLoop() {
 	// プレイヤーがループさせる距離を超えたら
 	if (playerZ >= kLoopDistance) {
 
-		// カメラを手前にずらす
-		cameraController_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -kLoopDistance });
-
+		cameraManager_->ShiftWorld(-kLoopDistance);
 		// プレイヤーを手前にずらす
 		player_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -kLoopDistance });
 	}

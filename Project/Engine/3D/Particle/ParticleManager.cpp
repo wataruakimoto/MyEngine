@@ -81,6 +81,15 @@ void ParticleManager::Update() {
 	billboardMatrix.m[3][0] = 0.0f;
 	billboardMatrix.m[3][1] = 0.0f;
 	billboardMatrix.m[3][2] = 0.0f;
+	
+	// 各種レンダラーの更新
+
+	planeRenderer->Update();
+	ringRenderer->Update();
+	cylinderRenderer->Update();
+	cubeRenderer->Update();
+	shardRenderer->Update();
+	meshRenderer->Update();
 
 	// 板ポリのパーティクルコンテナの更新
 	UpdateGroups(planeGroups);
@@ -181,6 +190,117 @@ void ParticleManager::ShowImGui() {
 #ifdef USE_IMGUI
 
 	ImGui::Begin("Particle Manager");
+
+	// ==========================================
+	// 1. 既存エフェクトの選択
+	// ==========================================
+	if (ImGui::BeginCombo("Select Effect", currentEditName.c_str())) {
+		for (auto& [name, setting] : settings) {
+			bool isSelected = (currentEditName == name);
+			if (ImGui::Selectable(name.c_str(), isSelected)) {
+				currentEditName = name;
+				tempSetting = setting; // 選択した設定を編集用バッファにコピー
+			}
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::Separator();
+
+	// ==========================================
+	// 2. 新規エフェクトの作成
+	// ==========================================
+	ImGui::InputText("New Effect Name", inputNameBuffer, sizeof(inputNameBuffer));
+	ImGui::SameLine();
+	if (ImGui::Button("Create New")) {
+		std::string newName = inputNameBuffer;
+		// 名前が空でなく、まだ存在しない名前なら作成
+		if (!newName.empty() && settings.find(newName) == settings.end()) {
+			ParticleSetting newSetting;
+			newSetting.effectName = newName;
+			settings[newName] = newSetting;
+
+			// 作成したものをすぐに選択状態にする
+			currentEditName = newName;
+			tempSetting = newSetting;
+		}
+	}
+
+	ImGui::Separator();
+
+	// ==========================================
+	// 3. パラメータの編集
+	// ==========================================
+	if (!currentEditName.empty()) {
+		ImGui::Text("Editing: %s", currentEditName.c_str());
+
+		// --- 形状の編集 ---
+		const char* shapeNames[] = { "PLANE", "RING", "CYLINDER", "CUBE", "SPHERE", "SHARD", "MESH" };
+		int shapeIndex = static_cast<int>(tempSetting.shape);
+		if (ImGui::Combo("Shape", &shapeIndex, shapeNames, IM_ARRAYSIZE(shapeNames))) {
+			tempSetting.shape = static_cast<ParticleShape>(shapeIndex);
+		}
+
+		// ビルボードフラグ
+		ImGui::Checkbox("Use Billboard", &tempSetting.useBillboard);
+
+		// --- 寿命の設定 ---
+		if (ImGui::TreeNode("LifeTime")) {
+			ImGui::Checkbox("Random##Life", &tempSetting.lifeTimeRandom);
+			if (tempSetting.lifeTimeRandom) {
+				ImGui::DragFloat("Min##Life", &tempSetting.lifeTimeRange.min, 0.01f, 0.0f, 10.0f);
+				ImGui::DragFloat("Max##Life", &tempSetting.lifeTimeRange.max, 0.01f, 0.0f, 10.0f);
+			}
+			else {
+				ImGui::DragFloat("Value##Life", &tempSetting.lifeTime, 0.01f, 0.0f, 10.0f);
+			}
+			ImGui::TreePop();
+		}
+
+		// --- スケールの設定 ---
+		if (ImGui::TreeNode("Scale")) {
+			ImGui::Checkbox("Random##Scale", &tempSetting.scaleRandom);
+			if (tempSetting.scaleRandom) {
+				ImGui::DragFloat3("Min##Scale", &tempSetting.scaleRange.min.x, 0.01f);
+				ImGui::DragFloat3("Max##Scale", &tempSetting.scaleRange.max.x, 0.01f);
+			}
+			else {
+				ImGui::DragFloat3("Value##Scale", &tempSetting.scale.x, 0.01f);
+			}
+			ImGui::TreePop();
+		}
+
+		// --- 速度の設定 ---
+		if (ImGui::TreeNode("Velocity")) {
+			ImGui::Checkbox("Random##Vel", &tempSetting.velocityRandom);
+			if (tempSetting.velocityRandom) {
+				ImGui::DragFloat3("Min##Vel", &tempSetting.velocityRange.min.x, 0.01f);
+				ImGui::DragFloat3("Max##Vel", &tempSetting.velocityRange.max.x, 0.01f);
+			}
+			else {
+				ImGui::DragFloat3("Value##Vel", &tempSetting.velocity.x, 0.01f);
+			}
+			ImGui::TreePop();
+		}
+
+		// ※ Rotate, Translate, Acceleration, Color なども同様に追加します
+
+		ImGui::Separator();
+
+		// ==========================================
+		// 4. 適用と保存
+		// ==========================================
+		if (ImGui::Button("Apply & Save JSON")) {
+			// 一時バッファ(tempSetting)の内容を本来のマップに反映
+			settings[currentEditName] = tempSetting;
+
+			// すでに用意されているJSON保存関数を呼び出す
+			SaveSettingsToJSON(currentEditName);
+		}
+	}
 
 	ImGui::End();
 
@@ -318,20 +438,54 @@ void ParticleManager::Clear() {
 	}
 }
 
+void ParticleManager::ClearInstance(const ParticleEmitter* emitter) {
+
+	if (!emitter) return;
+
+	// 条件に一致する（生成元エミッターが一致する）パーティクルを削除するラムダ式
+	auto shouldRemove = [emitter](const ParticleInstance& p) {
+		return p.emitter == emitter;
+		};
+
+	// すべての形状のグループを走査して、該当するエミッターのパーティクルのみを削除
+	for (auto& [name, group] : planeGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : ringGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : cylinderGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : cubeGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : shardGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+	for (auto& [name, group] : meshGroups) {
+		group.particles.remove_if(shouldRemove);
+	}
+}
+
 void ParticleManager::UpdateParticles(std::list<ParticleInstance>& particles) {
 
 	// 全パーティクルの更新
 	for (auto ite = particles.begin(); ite != particles.end(); ) {
 
-		// 時間経過
-		ite->currentTime += kDeltaTime;
+		// 無限フラグが立っていない場合
+		if (!ite->isInfinite) {
 
-		// 寿命が来ていたら
-		if (ite->currentTime >= ite->lifeTime) {
-			// リストから削除
-			ite = particles.erase(ite);
-			// 次のパーティクルへ
-			continue;
+			// 時間経過
+			ite->currentTime += kDeltaTime;
+
+			// 寿命を超えているなら
+			if (ite->currentTime >= ite->lifeTime) {
+				// リストから削除
+				ite = particles.erase(ite);
+				// 次のパーティクルへ
+				continue;
+			}
 		}
 
 		// 0.0f(生まれたて) -> 1.0f(死ぬ直前)

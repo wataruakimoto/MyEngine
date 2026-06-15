@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "Collision/CollisionTypeIDDef.h"
 #include "Player/Player.h"
-#include "GamePlayScene.h"
+#include "GameObjectManager.h"
 #include "EnemyBullet.h"
 #include "MathVector.h"
 #include "Easing.h"
@@ -187,10 +187,6 @@ void Enemy::OnCollision(Collider* other) {
 		particleEmitterWhite->Emit();
 		particleEmitterBlack->Emit();
 
-		gamePlayScene_->OnEnemyDefeated();
-
-		gamePlayScene_->AddKillCount();
-
 		// 死亡
 		isDead = true;
 	}
@@ -247,7 +243,7 @@ void Enemy::Fire() {
 	bullet->SetDirection(direction);
 
 	// ゲームプレイシーンの弾をリストに登録
-	gamePlayScene_->AddEnemyBullet(std::move(bullet));
+	objManager_->AddEnemyBullet(std::move(bullet));
 
 	// 射撃間隔タイマーをリセット
 	fireTimer_ = kFireDuration_;

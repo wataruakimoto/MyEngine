@@ -118,7 +118,7 @@ void LightManager::CreateDirectionalLight() {
 	directionalLightData_->active = 1; // 有効
 	directionalLightData_->color = { 1.0f, 1.0f, 1.0f }; // 色は白
 	directionalLightData_->direction = { 0.0f, -1.0f, 0.0f }; // 下向き
-	directionalLightData_->intensity = 0.5f; // 輝度は最大
+	directionalLightData_->intensity = 1.0f; // 輝度は最大
 }
 
 void LightManager::CreatePointLight() {
@@ -130,7 +130,7 @@ void LightManager::CreatePointLight() {
 	pointLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&pointLightData_));
 
 	// 点光源データの初期値を書き込む
-	pointLightData_->active = 1; // 有効
+	pointLightData_->active = 0; // 有効
 	pointLightData_->color = { 1.0f, 1.0f, 1.0f }; // 色は白
 	pointLightData_->position = { 0.0f, 0.0f, 0.0f }; // 位置は原点
 	pointLightData_->intensity = 1.0f; // 輝度は最大
@@ -147,7 +147,7 @@ void LightManager::CreateSpotLight() {
 	spotLightResource_->Map(0, nullptr, reinterpret_cast<void**>(&spotLightData_));
 
 	// スポットライトデータの初期値を書き込む
-	spotLightData_->active = 1; // 有効
+	spotLightData_->active = 0; // 有効
 	spotLightData_->color = { 1.0f, 1.0f, 1.0f }; // 色は白
 	spotLightData_->position = { 0.0f, 0.0f, 0.0f }; // 位置は原点
 	spotLightData_->direction = { 0.0f, -1.0f, 0.0f }; // 下向き

@@ -14,6 +14,7 @@
 
 /// === 前方宣言 === ///
 class GamePlayScene;
+class GameObjectManager;
 class Enemy;
 class Reticle3D;
 class LockOn;
@@ -70,11 +71,6 @@ public:
 	/// 衝突時の処理
 	/// </summary>
 	void OnCollision(Engine::Collider * other) override;
-
-	/// <summary>
-	/// ゲート衝突時の処理
-	/// </summary>
-	void OnGateCollision();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -171,6 +167,12 @@ public:
 	void SetGamePlayScene(GamePlayScene* scene) { this->gamePlayScene_ = scene; }
 
 	/// <summary>
+	/// オブジェクトマネージャーのセッター
+	/// </summary>
+	/// <param name="objManager">オブジェクトマネージャー</param>
+	void SetGameObjectManager(GameObjectManager* objManager) { this->objManager_ = objManager; }
+
+	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
@@ -210,6 +212,9 @@ private:
 
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;
+
+	// ゲームオブジェクトマネージャーの借りポインタ
+	GameObjectManager* objManager_ = nullptr;
 
 	/// ===== コマンド ===== ///
 

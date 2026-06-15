@@ -5,16 +5,6 @@
 
 using namespace Engine;
 
-AudioManager* AudioManager::instance = nullptr;
-
-AudioManager* AudioManager::GetInstance() {
-
-	if (instance == nullptr) {
-		instance = new AudioManager;
-	}
-	return instance;
-}
-
 void AudioManager::Initialize() {
 
 	HRESULT result = XAudio2Create(&xAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR);
@@ -23,20 +13,36 @@ void AudioManager::Initialize() {
 }
 
 void AudioManager::Finalize() {
+
+	SoundUnloadAll();
+
+	// 再生中のBGMがあれば
+	if (pBGMSourceVoice) {
+		pBGMSourceVoice->Stop(); // 再生停止
+		pBGMSourceVoice->DestroyVoice(); // SourceVoiceの破棄
+		pBGMSourceVoice = nullptr; // ポインタをnullptrに設定
+	}
+
 	xAudio2.Reset();
 	delete instance;
 	instance = nullptr;
 }
 
-void AudioManager::SoundLoadWave(const char* filename) {
+void AudioManager::SoundLoadWave(const std::string& fileName) {
+
+	// すでに読み込まれていたら早期リターン
+	if (soundDatas.find(fileName) != soundDatas.end()) return;
 
 	/// === ファイルオープン === ///
 
 	// ファイル入力ストリームのインスタンス
 	std::ifstream file;
 
+	// ベースディレクトリパスとファイル名を結合してフルパスを作成
+	std::string fullPath = baseDirectoryPath + fileName;
+
 	// .wavファイルをバイナリモードで開く
-	file.open(filename, std::ios_base::binary);
+	file.open(fullPath, std::ios_base::binary);
 
 	// ファイルオープン失敗を検出する
 	assert(file.is_open());
@@ -72,28 +78,22 @@ void AudioManager::SoundLoadWave(const char* filename) {
 
 	// Dataチャンクの読み込み
 	ChunkHeader data;
-	file.read((char*)&data, sizeof(data));
+	while (file.read((char*)&data, sizeof(data))) {
+		// dataチャンク発見で終了
+		if (strncmp(data.id, "data", 4) == 0) {
+			break;
+		}
 
-	// bextを検出した場合
-	if (strncmp(data.id, "bext", 4) == 0) {
-
-		// 読み取り位置をJUNKチャンクの終わりまで進める
+		// その他のチャンク（bext, junk, LIST, INFO等）をスキップ
 		file.seekg(data.size, std::ios_base::cur);
 
-		// 再読み込み
-		file.read((char*)&data, sizeof(data));
+		// アラインメント対応（サイズが奇数の場合、パディングバイトが存在）
+		if (data.size % 2 != 0) {
+			file.seekg(1, std::ios_base::cur);
+		}
 	}
 
-	// junkチャンクを検出した場合
-	if (strncmp(data.id, "junk", 4) == 0) {
-
-		// 読み取り位置をjunkチャンクの終わりまで進める
-		file.seekg(data.size, std::ios_base::cur);
-
-		// 再読み込み
-		file.read((char*)&data, sizeof(data));
-	}
-
+	// dataチャンク確認
 	if (strncmp(data.id, "data", 4) != 0) {
 		assert(0);
 	}
@@ -114,26 +114,67 @@ void AudioManager::SoundLoadWave(const char* filename) {
 	sound.pBuffer = reinterpret_cast<BYTE*>(pBuffer);
 	sound.bufferSize = data.size;
 
-	soundData = sound;
+	soundDatas[fileName] = sound;
 }
 
-void AudioManager::SoundUnload() {
+void AudioManager::SoundUnload(const std::string& fileName) {
 
-	delete[] soundData.pBuffer;
-
-	soundData.pBuffer = 0;
-	soundData.bufferSize = 0;
-	soundData.wfex = {};
+	auto it = soundDatas.find(fileName);
+	if (it != soundDatas.end()) {
+		delete[] it->second.pBuffer;
+		soundDatas.erase(it);
+	}
 }
 
-void AudioManager::SoundPlayWave() {
+void AudioManager::SoundUnloadAll() {
+
+	// 全ての音声データを解放
+	for (auto& soundData : soundDatas) {
+		delete[] soundData.second.pBuffer;
+	}
+}
+
+void AudioManager::SoundPlayWave(const std::string& fileName, float volume, SoundType type) {
+
+	// 音声データの検索
+	auto it = soundDatas.find(fileName);
+	if (it == soundDatas.end()) {
+		assert(0);
+	}
+
+	// 音声データの取得
+	const SoundData& soundData = it->second;
 
 	HRESULT result;
 
 	// 波形フォーマットを元にSourceVoiceの生成
 	IXAudio2SourceVoice* pSourceVoice = nullptr;
-	result = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
-	assert(SUCCEEDED(result));
+
+	// BGMの場合
+	if (type == SoundType::BGM) {
+
+		// すでにBGMが再生されている場合
+		if (pBGMSourceVoice != nullptr) {
+			pBGMSourceVoice->Stop(); // 再生停止
+			pBGMSourceVoice->DestroyVoice(); // SourceVoiceの破棄
+			pBGMSourceVoice = nullptr; // ポインタをnullptrに設定
+		}
+
+		// 新しいBGM用SourceVoiceの生成
+		result = xAudio2->CreateSourceVoice(&pBGMSourceVoice, &soundData.wfex);
+		assert(SUCCEEDED(result));
+		pSourceVoice = pBGMSourceVoice;
+	}
+	// SEの場合
+	else {
+
+		// SE用のSourceVoiceの生成
+		result = xAudio2->CreateSourceVoice(&pSourceVoice, &soundData.wfex);
+		assert(SUCCEEDED(result));
+	}
+
+	// 音量の設定
+	pSourceVoice->SetVolume(volume);
 
 	// 再生する波形データの設定
 	XAUDIO2_BUFFER buf{};
@@ -141,7 +182,27 @@ void AudioManager::SoundPlayWave() {
 	buf.AudioBytes = soundData.bufferSize;
 	buf.Flags = XAUDIO2_END_OF_STREAM;
 
+	if (type == SoundType::BGM) {
+		buf.LoopCount = XAUDIO2_LOOP_INFINITE; // BGMはループ再生
+	}
+	else {
+		buf.LoopCount = 0; // SEはループなし
+	}
+
 	// 波形データの再生
 	result = pSourceVoice->SubmitSourceBuffer(&buf);
+	assert(SUCCEEDED(result));
+
 	result = pSourceVoice->Start();
+	assert(SUCCEEDED(result));
+}
+
+AudioManager* AudioManager::instance = nullptr;
+
+AudioManager* AudioManager::GetInstance() {
+
+	if (instance == nullptr) {
+		instance = new AudioManager;
+	}
+	return instance;
 }

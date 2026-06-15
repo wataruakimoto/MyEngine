@@ -112,6 +112,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Scene\GamePlayScene\GameRule.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\CameraManager.cpp" />
     <ClCompile Include="Engine\Math\Easing.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\CubeRenderer.cpp" />
@@ -119,8 +121,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\MathRandom.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FogFilter.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\GameObjectManager.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\EndingState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\PauseState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\PlayState.cpp" />
     <ClCompile Include="Game\Scene\System\Transition\FadeTransition.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\BlackFade.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\BlackScreen.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.cpp" />
@@ -170,6 +175,8 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\GraphicsPipelineBuilder.cpp" />
     <ClCompile Include="Game\Level\LevelLoader.cpp" />
     <ClCompile Include="Engine\3D\Light\LightManager.cpp" />
+    <ClCompile Include="Game\Level\LevelBuilder.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\State\IntroState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Game\Base\MyGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\TitleScene.cpp" />
@@ -185,9 +192,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\SkyBox\SkyBoxGame.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\TitleUI.cpp" />
     <ClCompile Include="Game\Scene\TitleScene\UI\StartUI.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Fade\WhiteFade.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\RuleUI.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\UI\NormaUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\ResultUI.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleManager.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.cpp" />
@@ -195,7 +200,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\ShardRenderer.cpp" />
     <ClCompile Include="Engine\Base\SceneBuffer.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\PlayState.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\PauseUI.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\PlayerCommand.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Reticle\Reticle.cpp" />
@@ -208,8 +212,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\Obstacle\Obstacle.cpp" />
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
     <ClCompile Include="Engine\Math\MathQuaternion.cpp" />
+    <ClCompile Include="Engine\3D\Particle\ParticleEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Scene\GamePlayScene\GameRule.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\CameraManager.h" />
     <ClInclude Include="Engine\Math\AABB.h" />
     <ClInclude Include="Engine\Math\Easing.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\CylinderRenderer.h" />
@@ -227,9 +234,13 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Math\Sphere.h" />
     <ClInclude Include="Engine\Scene\BaseTransition.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\GameObjectManager.h" />
     <ClInclude Include="Game\Level\GameLevelData.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\EndingState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\IPlayState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\PauseState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\PlayState.h" />
     <ClInclude Include="Game\Scene\System\Transition\FadeTransition.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\BlackFade.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\BlackScreen.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\CameraControll\FollowCamera\FollowCameraController.h" />
@@ -300,9 +311,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\TitleScene\UI\TitleUI.h" />
     <ClInclude Include="Game\Scene\TitleScene\UI\StartUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Goal\Goal.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Fade\WhiteFade.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\RuleUI.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\UI\NormaUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\ResultUI.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleManager.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\PlaneRenderer.h" />
@@ -311,7 +320,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\SceneBuffer.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\PlayState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\PauseUI.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\PlayerCommand.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Reticle\Reticle.h" />
@@ -329,6 +337,9 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Light\LightManager.h" />
     <ClInclude Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.h" />
     <ClInclude Include="Engine\Math\MathQuaternion.h" />
+    <ClInclude Include="Game\Level\LevelBuilder.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\State\IntroState.h" />
+    <ClInclude Include="Engine\3D\Particle\ParticleEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

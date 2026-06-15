@@ -1,14 +1,13 @@
 #pragma once
 
 #include "BaseScene.h"
-#include "Camera.h"
-#include "CameraControll/ICameraController.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
 #include "Player/Player.h"
 #include "Sprite/Sprite.h"
 #include "Light/LightManager.h"
 #include "Particle/ParticleManager.h"
+#include "CameraManager.h"
 
 #include <memory>
 #include <optional>
@@ -101,11 +100,8 @@ private:
 ///-------------------------------------------///
 private:
 
-	// カメラ
-	std::unique_ptr<Engine::Camera> camera_ = nullptr;
-
-	// カメラコントローラ
-	std::unique_ptr<ICameraController> cameraController_ = nullptr;
+	// カメラマネージャー
+	std::unique_ptr<CameraManager> cameraManager_ = nullptr;
 
 	// 床
 	std::unique_ptr<Floor> floor_ = nullptr;

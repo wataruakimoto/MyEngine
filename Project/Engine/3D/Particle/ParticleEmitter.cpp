@@ -70,6 +70,7 @@ void ParticleEmitter::Emit() {
 
 		// 参照元を紐づけ
 		particle.setting = setting;
+		particle.emitter = this;
 
 		// スケールの設定
 		if(setting->scaleRandom) {
@@ -142,6 +143,9 @@ void ParticleEmitter::Emit() {
 			// 固定値を代入
 			particle.color = setting->color;
 		}
+
+		// 無限かどうかの設定
+		particle.isInfinite = setting->isInfinite;
 
 		// 寿命の設定
 		if (setting->lifeTimeRandom) {

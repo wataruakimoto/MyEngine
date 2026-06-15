@@ -17,13 +17,6 @@ void FollowCameraController::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-
-	// カメラのワールド変換の親をセット
-	camera_->GetWorldTransform().SetParent(&worldTransform_);
-
-	// カメラのワールド変換の初期化
-	camera_->GetWorldTransform().SetRotate(Vector3{ 0.0f, 0.0f, 0.0f });
-	camera_->GetWorldTransform().SetTranslate({ 0.0f, 0.0f, 0.0f });
 }
 
 void FollowCameraController::Update() {
@@ -45,9 +38,6 @@ void FollowCameraController::Update() {
 
 	// ワールド変換の更新
 	worldTransform_.Update();
-
-	// カメラの更新
-	camera_->Update();
 }
 
 void FollowCameraController::ShowImGui() {
@@ -60,9 +50,6 @@ void FollowCameraController::ShowImGui() {
 
 	// ワールド変換のImGui表示
 	worldTransform_.ShowImGui();
-
-	// ImGuiのツリー表示
-	camera_->ShowImGuiTree();
 
 	ImGui::End();
 
@@ -78,7 +65,7 @@ void FollowCameraController::StartShake(float intensity, float duration) {
 	shakeTimer_ = 0.0f;
 
 	// シェイク範囲を強度に応じて設定
-	shakeRange_ = { {-intensity, -intensity, -intensity}, {intensity, intensity, intensity} };
+	shakeRange_ = { {-intensity, -intensity, 0.0f}, {intensity, intensity, 0.0f} };
 }
 
 void FollowCameraController::Shake() {

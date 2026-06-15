@@ -14,6 +14,10 @@
 
 namespace Engine {
 
+	/// === 前方宣言 === ///
+	
+	class ParticleEmitter;
+
 	// パーティクルの形状
 	enum class ParticleShape {
 		PLANE,	  // 板ポリ
@@ -76,6 +80,8 @@ namespace Engine {
 		Vector4Range colorRange = {}; // 色の範囲
 		Vector4 color = { 1.0f,1.0f,1.0f,1.0f }; // 色の固定値
 
+		bool isInfinite = false; // 無限に発生させるかどうか
+
 		bool lifeTimeRandom = false; // 寿命をランダムにするかどうか
 		floatRange lifeTimeRange = {}; // 寿命の範囲
 		float lifeTime = 1.0f; // 寿命の固定値
@@ -87,12 +93,15 @@ namespace Engine {
 		// Flyweightパターンの参照元
 		const ParticleSetting* setting; // 参照元の設定
 
+		const ParticleEmitter* emitter; // 参照元のエミッター
+
 		Vector3 scale = {}; // スケール
 		Vector3 rotate = {}; // 回転
 		Vector3 translate = {}; // 位置
 		Vector3 velocity = {}; // 速度
 		Vector3 acceleration = {}; // 加速度
 		Vector4 color = {}; // 色
+		bool isInfinite = false; // 無限に発生させるかどうか
 		float lifeTime = 0.0f; // 寿命
 		float currentTime = 0.0f; // 現在の時間
 	};
@@ -124,11 +133,12 @@ namespace Engine {
 		velocityRandom, velocityRange, velocity,
 		accelerationRandom, accelerationRange, acceleration,
 		colorRandom, colorRange, color,
+		isInfinite,
 		lifeTimeRandom, lifeTimeRange, lifeTime
 	)
 
 		NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleInstance,
-			setting,
+			setting, emitter,
 			scale, rotate, translate,
 			velocity, acceleration,
 			color, lifeTime, currentTime

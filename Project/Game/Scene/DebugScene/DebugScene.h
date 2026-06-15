@@ -2,17 +2,15 @@
 
 #include "BaseScene.h"
 #include "Camera.h"
-#include "Light/LightManager.h"
-#include "WorldTransform.h"
-#include "Object/Object3d.h"
-#include "Model/Model.h"
+#include "Particle/ParticleEmitter.h"
 
 namespace Engine {
 
 	/// ===== 前方宣言 ===== ///
 
 	class SceneManager;
-	class Object3dRenderer;
+	class ParticleRenderer;
+	class ParticleManager;
 }
 
 /// ===== デバッグシーン ===== ///
@@ -64,18 +62,13 @@ private:
 	// シーンマネージャのポインタ
 	Engine::SceneManager* sceneManager = nullptr;
 
-	// ライトマネージャのポインタ
-	std::unique_ptr<Engine::LightManager> lightManager_ = nullptr;
+	// パーティクルレンダラーのポインタ
+	Engine::ParticleRenderer* particleRenderer = nullptr;
 
-	// オブジェクトレンダラーのポインタ
-	Engine::Object3dRenderer* object3dRenderer = nullptr;
+	// パーティクルマネージャのポインタ
+	Engine::ParticleManager* particleManager = nullptr;
 
-	// ワールド変換
-	Engine::WorldTransform worldTransform;
-
-	// オブジェクトのポインタ
-	std::unique_ptr<Engine::Object3d> object = nullptr;
-
-	// モデルのポインタ
-	std::unique_ptr<Engine::Model> model = nullptr;
+	// パーティクルエミッターのポインタ
+	std::unique_ptr<Engine::ParticleEmitter> emitter = nullptr;
+	std::unique_ptr<Engine::ParticleEmitter> emitterB = nullptr;
 };

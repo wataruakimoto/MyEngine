@@ -26,7 +26,7 @@ void TransitionManager::Update() {
 		if (progress_ >= 1.0f) {
 
 			// 入りの遷移をリセット
-			outTransition_ = nullptr;
+			//outTransition_ = nullptr;
 
 			// コールバック関数を呼び出す
 			onTransitionComplete_();
@@ -80,6 +80,10 @@ void TransitionManager::Draw() {
 
 void TransitionManager::Finalize() {
 
+	inTransition_ = nullptr;
+	outTransition_ = nullptr;
+	onTransitionComplete_ = nullptr;
+
 	// インスタンスの解放
 	delete instance;
 	instance = nullptr;
@@ -103,6 +107,7 @@ void TransitionManager::StartOutTransition(std::unique_ptr<BaseTransition> trans
 
 	// 引数をメンバ変数に保存
 	outTransition_ = std::move(transition);
+	inTransition_ = nullptr; // 念のためクリア
 	duration_ = duration;
 	onTransitionComplete_ = onComplete;
 
@@ -114,6 +119,7 @@ void TransitionManager::StartInTransition(std::unique_ptr<BaseTransition> transi
 
 	// 引数をメンバ変数に保存
 	inTransition_ = std::move(transition);
+	outTransition_ = nullptr; // 念のためクリア
 	duration_ = duration;
 	onTransitionComplete_ = onComplete;
 
@@ -124,7 +130,7 @@ void TransitionManager::StartInTransition(std::unique_ptr<BaseTransition> transi
 TransitionManager* TransitionManager::instance = nullptr;
 
 TransitionManager* TransitionManager::GetInstance() {
-	
+
 	if (instance == nullptr) {
 
 		instance = new TransitionManager;

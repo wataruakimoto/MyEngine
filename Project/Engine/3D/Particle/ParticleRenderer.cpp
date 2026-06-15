@@ -32,7 +32,7 @@ void ParticleRenderer::Initialize() {
 	pipelineBuilder_.SetBlendMode(GraphicsPipelineBuilder::BlendMode::Alpha);
 
 	// カリングモードの設定 なし
-	pipelineBuilder_.SetCullMode(GraphicsPipelineBuilder::CullMode::Back);
+	pipelineBuilder_.SetCullMode(GraphicsPipelineBuilder::CullMode::None);
 
 	// 深度モードの設定 無効化
 	pipelineBuilder_.SetDepthMode(GraphicsPipelineBuilder::DepthMode::ReadOnly);

@@ -1,6 +1,8 @@
 #include "DebugScene.h"
 #include "SceneManager.h"
-#include "Object/Object3dRenderer.h"
+#include "Particle/ParticleRenderer.h"
+#include "Particle/ParticleManager.h"
+#include "Input.h"
 
 #include <imgui.h>
 
@@ -8,38 +10,44 @@ using namespace Engine;
 
 void DebugScene::Initialize() {
 
-	worldTransform.Initialize();
-
 	// カメラの初期化
 	camera = std::make_unique <Camera>();
 	camera->Initialize();
-	camera->GetWorldTransform().SetTranslate({ 0.0f,0.0f,-10.0f });
+	camera->GetWorldTransform().SetRotate(Vector3{ 3.14f/12.0f,0.0f,0.0f });
+	camera->GetWorldTransform().SetTranslate({ 0.0f,5.0f,-15.0f });
 
 	// シーンマネージャのインスタンス取得
 	sceneManager = SceneManager::GetInstance();
 
-	// ライトマネージャの初期化
-	lightManager_ = std::make_unique<Engine::LightManager>();
-	lightManager_->Initialize();
+	// パーティクルレンダラーのインスタンス取得
+	particleRenderer = ParticleRenderer::GetInstance();
+	// デフォルトカメラのセッターにカメラをセット
+	particleRenderer->SetDefaultCamera(camera.get());
 
-	// オブジェクトレンダラーのインスタンス取得
-	object3dRenderer = Object3dRenderer::GetInstance();
-	// オブジェクトレンダラーにカメラをセット
-	object3dRenderer->SetDefaultCamera(camera.get());
+	// パーティクルマネージャーのインスタンス取得
+	particleManager = ParticleManager::GetInstance();
+	// カメラのセッターにカメラをセット
+	particleManager->SetCamera(camera.get());
 
-	// モデルの生成
-	model = std::make_unique<Model>();
-	// モデルの初期化
-	model->Initialize("Player/player.obj");
+	ParticleSetting setting{};
+	setting.effectName = "Cylinder";
+	setting.textureFileName = "gradationLine.png";
+	setting.textureFullPath = "Resources/Textures/Particles/gradationLine.png";
+	setting.shape = ParticleShape::CYLINDER;
+	setting.useBillboard = false;
+	setting.isInfinite = true;
+	setting.scale = { 1.0f,0.5f,1.0f };
+	setting.rotate = { 0.0f,3.14f/4.0f,0.0f };
+	setting.color = { 0.0f,1.0f,1.0f,0.75f };
 
-	// オブジェクトの生成
-	object = std::make_unique<Object3d>();
-	// オブジェクトの初期化
-	object->Initialize();
-	// オブジェクトにワールド変換をセット
-	object->GetWorldTransform().SetParent(&worldTransform);
-	// オブジェクトにモデルをセット
-	object->SetModel(model.get());
+	particleManager->AddSetting(setting);
+
+	emitter = std::make_unique<ParticleEmitter>("Cylinder", EmitterType::OneShot, 1);
+	emitter->Initialize();
+
+	emitterB = std::make_unique<ParticleEmitter>("Cylinder", EmitterType::OneShot, 1);
+	emitterB->Initialize();
+	emitterB->SetTranslate({ 5.0f,0.0f,0.0f });
 }
 
 void DebugScene::Update() {
@@ -47,26 +55,32 @@ void DebugScene::Update() {
 	// カメラの更新
 	camera->Update();
 
-	// Y軸回転を加算
-	worldTransform.AddRotate({ 0.0f, 0.01f, 0.0f });
+	// パーティクルマネージャーの更新
+	particleManager->Update();
 
-	// ワールド変換の更新
-	worldTransform.Update();
+	emitter->Update();
+	emitterB->Update();
 
-	// オブジェクトの更新
-	object->Update();
+	if (Input::GetInstance()->TriggerKey(VK_SPACE)) {
+		emitter->Emit();
+	}
+
+	if (Input::GetInstance()->TriggerKey(VK_RETURN)) {
+		emitterB->Emit();
+	}
+
+	if (Input::GetInstance()->TriggerKey('C')) {
+		particleManager->ClearInstance(emitter.get());
+	}
 }
 
 void DebugScene::DrawFiltered() {
 
-	/// === オブジェクトの描画 === ///
-	object3dRenderer->SettingDrawingOpaque();
+	/// === パーティクルの描画 === ///
+	particleRenderer->SettingDrawing();
 
-	// ライトの描画
-	lightManager_->Draw();
-
-	// オブジェクトの描画
-	object->Draw();
+	// パーティクルマネージャーの描画
+	particleManager->Draw();
 }
 
 void DebugScene::DrawUnfiltered() {
@@ -82,14 +96,6 @@ void DebugScene::ShowImGui() {
 	ImGui::Begin("デバッグシーン");
 
 	camera->ShowImGuiTree();
-
-	worldTransform.ShowImGui();
-
-	lightManager_->ShowImGui();
-
-	object->ShowImGui();
-
-	model->ShowImGui();
 
 	ImGui::End();
 
