@@ -355,4 +355,13 @@ private:
 	std::unique_ptr<Engine::ParticleEmitter> moveEmitter_ = nullptr;
 
 	const float baseFrequency_ = 0.1f; // 基本の発生頻度 (秒)
+
+public:
+
+	/// <summary>
+	/// 状態に渡すためのコンテキスト構造体
+	/// </summary>
+	struct StateContext {
+		Engine::WorldTransform& worldTransform; // ワールド変換
+	};
 };
