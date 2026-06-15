@@ -14,9 +14,9 @@ namespace Engine {
 	/// </summary>
 	class TransitionManager {
 
-	///-------------------------------------------/// 
-	/// シングルトン
-	///-------------------------------------------///
+		///-------------------------------------------/// 
+		/// シングルトン
+		///-------------------------------------------///
 	private:
 
 		// インスタンス
@@ -31,9 +31,9 @@ namespace Engine {
 		// コピー代入演算子の封印
 		TransitionManager& operator=(TransitionManager&) = delete;
 
-	///-------------------------------------------/// 
-	/// メンバ関数
-	///-------------------------------------------///
+		///-------------------------------------------/// 
+		/// メンバ関数
+		///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -75,14 +75,14 @@ namespace Engine {
 		/// <param name="onComplete">遷移完了時の処理</param>
 		/// <param name="duration">遷移にかける時間</param>
 		void StartInTransition(
-			std::unique_ptr<BaseTransition> transition, 
-			std::function<void()> onComplete = nullptr, 
+			std::unique_ptr<BaseTransition> transition,
+			std::function<void()> onComplete = nullptr,
 			float duration = 1.0f
 		);
 
-	///-------------------------------------------/// 
-	/// ゲッター
-	///-------------------------------------------///
+		///-------------------------------------------/// 
+		/// ゲッター
+		///-------------------------------------------///
 	public:
 
 		/// <summary>
@@ -90,9 +90,15 @@ namespace Engine {
 		/// </summary>
 		static TransitionManager* GetInstance();
 
-	///-------------------------------------------/// 
-	/// メンバ変数
-	///-------------------------------------------///
+		/// <summary>
+		/// 遷移中かどうか
+		/// </summary>
+		/// <returns></returns>
+		bool IsTransitioning() const { return inTransition_ != nullptr || outTransition_ != nullptr; }
+
+		///-------------------------------------------/// 
+		/// メンバ変数
+		///-------------------------------------------///
 	private:
 
 		// 入りの遷移
