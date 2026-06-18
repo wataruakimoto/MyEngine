@@ -7,12 +7,27 @@
 #include "MathVector.h"
 #include "Easing.h"
 
+#include "State/PlayerAutoState.h"
+
 #include <algorithm>
 #include <imgui.h>
 
 using namespace Engine;
 using namespace MathVector;
 using namespace Easing;
+
+/// ================================================== ///
+/// コンストラクタ
+Player::Player() {
+
+	// 状態を一度だけ生成しておく
+	states_[typeid(PlayerAutoState)] = std::make_unique<PlayerAutoState>();
+}
+
+/// ================================================== ///
+/// デストラクタ
+Player::~Player() {
+}
 
 void Player::Initialize() {
 
@@ -313,6 +328,21 @@ void Player::OnCollision(Collider* other) {
 		// 何もしない
 		return;
 	}
+}
+
+void Player::ChangeState() {
+	
+	// すでに状態を持っていたら
+	if (currentState_) {
+
+		// 現在の状態から出るときの処理を呼び出す
+		currentState_->Exit();
+	}
+
+	// 
+	currentState_ = states_[typeid(T)].get();
+	
+
 }
 
 void Player::Fire(PlayerContext context) {

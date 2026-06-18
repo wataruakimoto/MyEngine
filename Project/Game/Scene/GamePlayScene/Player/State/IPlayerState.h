@@ -28,6 +28,21 @@ public:
 	virtual void Update() = 0;
 
 	/// <summary>
+	/// 状態に入ったときの処理
+	/// </summary>
+	virtual void Enter() = 0;
+
+	/// <summary>
+	/// 状態から出るときの処理
+	/// </summary>
+	virtual void Exit() = 0;
+
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
+public:
+
+	/// <summary>
 	/// コンテキストのセッター
 	/// </summary>
 	/// <param name="context">コンテキスト</param>

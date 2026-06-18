@@ -22,6 +22,16 @@ public:
 	/// </summary>
 	void Update() override;
 
+	/// <summary>
+	/// 状態に入ったときの処理
+	/// </summary>
+	void Enter() override;
+
+	/// <summary>
+	/// 状態から出るときの処理
+	/// </summary>
+	void Exit() override;
+
 	/// ================================================== ///
 	/// クラス内関数
 	/// ================================================== ///
@@ -55,7 +65,7 @@ private:
 	const float maxMoveSpeed_ = 0.5f;
 
 	// 減速の最小値
-	const float minMoveSpeed_ = 0.1f;
+	const float minMoveSpeed_ = 0.0f;
 
 	// 速度
 	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };

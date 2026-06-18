@@ -11,6 +11,8 @@
 #include <memory>
 #include <optional>
 #include <numbers>
+#include <unordered_map>
+#include <typeindex>
 
 /// === 前方宣言 === ///
 class GamePlayScene;
@@ -36,6 +38,16 @@ class Player : public BaseCharacter {
 /// メンバ関数
 ///-------------------------------------------///
 public:
+
+	/// <summary>
+	/// コンストラクタ
+	/// </summary>
+	Player();
+
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~Player();
 	
 	/// <summary>
 	///	初期化
@@ -71,6 +83,12 @@ public:
 	/// 衝突時の処理
 	/// </summary>
 	void OnCollision(Engine::Collider * other) override;
+
+	/// <summary>
+	/// 状態変更
+	/// </summary>
+	template <typename T>
+	void ChangeState();
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -225,6 +243,14 @@ private:
 	std::unique_ptr<LockOnShotCommand> lockOnShotCommand_ = nullptr; // ロックオン射撃コマンド
 
 	std::unique_ptr<BarrelRollCommand> barrelRollCommand_ = nullptr; // バレルロールコマンド
+
+	/// ===== 状態用 ===== ///
+
+	// すべての状態を保存しておく箱
+	std::unordered_map<std::type_index, std::unique_ptr<IPlayerState>> states_;
+
+	// 現在の状態
+	IPlayerState* currentState_ = nullptr;
 
 ///-------------------------------------------/// 
 /// オートパイロット用変数
