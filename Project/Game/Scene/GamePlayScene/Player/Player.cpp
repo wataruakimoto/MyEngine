@@ -128,13 +128,6 @@ void Player::Update() {
 
 			break;
 
-		case PlayerState::Dead:
-
-			// 死亡モードの初期化処理
-			DeadInitialize();
-
-			break;
-
 		default:
 
 			break;
@@ -158,13 +151,6 @@ void Player::Update() {
 
 		// マニュアルモードの更新
 		ManualUpdate();
-
-		break;
-
-	case PlayerState::Dead:
-
-		// 死亡モードの更新
-		DeadUpdate();
 
 		break;
 	}
@@ -235,10 +221,7 @@ void Player::ShowImGui() {
 
 	// 状態の表示
 	ImGui::Text("State: %s", (state_ == PlayerState::AutoPilot) ? "AutoPilot" :
-		(state_ == PlayerState::Manual) ? "Manual" :
-		(state_ == PlayerState::Dead) ? "Dead" : "Unknown");
-
-	ImGui::Text("speedTitle: %.2f", moveSpeedAuto);
+		(state_ == PlayerState::Manual) ? "Manual" : "Unknown");
 
 	ImGui::Text("speedPlay: %.2f", moveSpeedManual);
 
@@ -328,21 +311,6 @@ void Player::OnCollision(Collider* other) {
 		// 何もしない
 		return;
 	}
-}
-
-void Player::ChangeState() {
-	
-	// すでに状態を持っていたら
-	if (currentState_) {
-
-		// 現在の状態から出るときの処理を呼び出す
-		currentState_->Exit();
-	}
-
-	// 
-	currentState_ = states_[typeid(T)].get();
-	
-
 }
 
 void Player::Fire(PlayerContext context) {
@@ -493,7 +461,7 @@ void Player::MoveToReticle() {
 
 	// 速度が0より大きいなら
 	if (speed > 0.0f) {
-		
+
 		float targetFrequency = baseFrequency_ / speed;
 
 		// パーティクルの頻度を設定
@@ -544,75 +512,16 @@ void Player::ClampPosition() {
 
 void Player::DamageProcess(uint16_t damage) {
 
-	// 状態が死亡状態でなければ
-	if (state_ != PlayerState::Dead) {
+	// HPが0より大きいなら
+	if (hp_ > 0) {
 
-		// HPが0より大きいなら
-		if (hp_ > 0) {
+		// ダメージ分HPを減らす
+		hp_ -= damage;
 
-			// ダメージ分HPを減らす
-			hp_ -= damage;
-
-			// シーンにダメージを通知
-			if (gamePlayScene_) {
-				gamePlayScene_->OnPlayerDamaged(hp_);
-			}
+		// シーンにダメージを通知
+		if (gamePlayScene_) {
+			gamePlayScene_->OnPlayerDamaged(hp_);
 		}
-
-		// HPが0なら死亡状態に変更をリクエスト
-		if (hp_ == 0) {
-			stateRequest_ = PlayerState::Dead;
-		}
-	}
-}
-
-void Player::AutoPilotInitialize() {
-
-	moveEmitter_->SetEmitting(true);
-}
-
-void Player::AutoPilotUpdate() {
-
-	// 現在の回転を取得
-	Vector3 currentRotate = worldTransform_.GetRotate();
-	Vector3 targetRotate = { 0.0f, 0.0f, 0.0f }; // 正面を向く
-
-	// 回転を補間
-	currentRotate = Lerp(currentRotate, targetRotate, 0.1f);
-
-	// ほとんど目標回転に近づいたら
-	if (Length(currentRotate - targetRotate) < 0.01f) {
-		currentRotate = targetRotate; // 目標回転に設定
-	}
-
-	// 回転を設定
-	worldTransform_.SetRotate(currentRotate);
-
-	// Z方向のみの移動
-	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeedAuto });
-
-	// 速度倍率を計算
-	speedRate_ = moveSpeedAuto / 5.0f;
-
-	// 1.0fを超えないようにクランプ
-	speedRate_ = std::clamp(speedRate_, 0.0f, 1.0f);
-
-	// 速度が0より大きいなら
-	if (moveSpeedAuto > 0.0f) {
-
-		float targetFrequency = baseFrequency_ * moveSpeedAuto;
-
-		// パーティクルの頻度を設定
-		moveEmitter_->SetFrequency(targetFrequency);
-
-		// パーティクルを出す
-		moveEmitter_->SetEmitting(true);
-	}
-	// 速度が0未満なら
-	else {
-
-		// パーティクルを出さない
-		moveEmitter_->SetEmitting(false);
 	}
 }
 
@@ -764,95 +673,4 @@ void Player::ManualUpdate() {
 
 	// 移動パーティクルの発生フラグを立てる
 	moveEmitter_->SetEmitting(true);
-}
-
-void Player::DeadInitialize() {
-
-	// タイマーをリセット
-	deathTimer_ = 0.0f;
-
-	// 落下速度・回転速度を設定
-	deathVelocity_ = { 0.0f, kFallStartSpeed, 0.0f };
-	deathRotateVelocity_ = { kRollSpeed, 0.0f, kRollSpeed * 0.5f };
-
-	// 操作・弾発射を無効化
-	velocity_ = { 0.0f, 0.0f, 0.0f };
-
-	isGroundHit_ = false;
-
-	isParticleEmitted_ = false;
-
-	// 移動パーティクルを停止
-	moveEmitter_->SetEmitting(false);
-}
-
-void Player::DeadUpdate() {
-
-	// 無敵タイマーの更新
-	if (invincibleTimer_ > 0.0f) {
-		invincibleTimer_ -= 1.0f;
-	}
-
-	// タイマーを進める
-	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
-
-	// 回転速度の加算
-	deathRotateVelocity_.x += kRollAcceleration;
-	deathRotateVelocity_.z += kRollAcceleration * 0.5f;
-
-	// 回転の更新
-	worldTransform_.AddRotate(deathRotateVelocity_);
-
-	// 落下処理
-	deathVelocity_.y += kFallAcceleration;
-
-	// 落下が既定値より速くなったら
-	if (deathVelocity_.y < kMaxFallSpeed) {
-
-		// 最大値に揃える
-		deathVelocity_.y = kMaxFallSpeed;
-	}
-
-	// 横揺れの計算
-	float swayX = sinf(deathTimer_ * kSwayFrequency) * kSwayAmplitude;
-	float swayZ = cosf(deathTimer_ * kSwayFrequency * 0.5f) * kSwayAmplitude;
-
-	// 座標の計算
-	Vector3 position = { swayX * 0.05f, deathVelocity_.y, swayZ * 0.05f };
-
-	// 座標の更新
-	worldTransform_.AddTranslate(position);
-
-	// 地面に到達したら
-	if (worldTransform_.GetWorldPosition().y <= kGroundHeight + worldTransform_.GetScale().y) {
-
-		Vector3 Translate = { worldTransform_.GetWorldPosition().x, kGroundHeight + worldTransform_.GetScale().y, worldTransform_.GetWorldPosition().z };
-
-		// Y座標を地面の高さに揃える
-		worldTransform_.SetTranslate(Translate);
-
-		if (!isParticleEmitted_) {
-
-			// パーティクルを発生させる
-			particleEmitterRed->Emit();
-			particleEmitterBlue->Emit();
-
-			isParticleEmitted_ = true;
-		}
-
-		if (!isGroundHit_) {
-
-			// フラグを立てる
-			isGroundHit_ = true;
-
-			// 床に当たったときの時間を保存
-			groundHitTime_ = deathTimer_;
-		}
-
-		// 地面に当たってから2秒経過したら
-		if (deathTimer_ - groundHitTime_ >= 2.0f) {
-
-			isDead_ = true;
-		}
-	}
 }

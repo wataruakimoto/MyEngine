@@ -214,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Math\MathQuaternion.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleEditor.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\GamePlayScene\GameRule.h" />
@@ -343,6 +344,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\State\IntroState.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleEditor.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

@@ -4,9 +4,9 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "Particle/ParticleEmitter.h"
-#include "PlayerCommand.h"
 #include "Reticle/Reticle.h"
 #include "LockOn/LockOn.h"
+#include "State/IPlayerState.h"
 
 #include <memory>
 #include <optional>
@@ -28,7 +28,6 @@ namespace Engine {
 enum class PlayerState {
 	AutoPilot,
 	Manual,
-	Dead,
 };
 
 /// ===== プレイヤー ===== ///
@@ -84,11 +83,34 @@ public:
 	/// </summary>
 	void OnCollision(Engine::Collider * other) override;
 
+	/// ================================================== ///
+	/// テンプレート関数
+	/// ================================================== ///
+public:
+
 	/// <summary>
 	/// 状態変更
 	/// </summary>
 	template <typename T>
-	void ChangeState();
+	void ChangeState() {
+
+		// すでに状態を持っていたら
+		if (currentState_) {
+
+			// 現在の状態から出るときの処理を呼び出す
+			currentState_->Exit();
+		}
+
+		// マップから新しい状態を取得
+		currentState_ = states_[typeid(T)].get();
+
+		// 新しい状態を持っていたら
+		if (currentState_) {
+
+			// 新しい状態に入ったときの処理を呼び出す
+			currentState_->Enter();
+		}
+	}
 
 ///-------------------------------------------/// 
 /// クラス内関数
@@ -138,10 +160,6 @@ private:
 
 	void ManualUpdate();
 
-	void DeadInitialize();
-
-	void DeadUpdate();
-
 ///-------------------------------------------/// 
 /// ゲッター
 ///-------------------------------------------///
@@ -158,8 +176,6 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	uint16_t GetHP() const { return hp_; }
-
-	float GetMoveSpeedAuto() { return moveSpeedAuto; }
 
 	float GetMoveSpeedPlay() { return moveSpeedManual; }
 
@@ -202,8 +218,6 @@ public:
 	/// <param name="state"></param>
 	void SetPlayerState(PlayerState state) { this->stateRequest_ = state; }
 
-	void SetMoveSpeedAuto(float speed) { this->moveSpeedAuto = speed; }
-
 	void SetMoveSpeedManual(float speed) { this->moveSpeedManual = speed; }
 
 ///-------------------------------------------/// 
@@ -234,16 +248,6 @@ private:
 	// ゲームオブジェクトマネージャーの借りポインタ
 	GameObjectManager* objManager_ = nullptr;
 
-	/// ===== コマンド ===== ///
-
-	std::unique_ptr<NormalShotCommand> normalShotCommand_ = nullptr; // 通常射撃コマンド
-
-	std::unique_ptr<LockOnAimCommand> lockOnAimCommand_ = nullptr; // ロックオン照準コマンド
-
-	std::unique_ptr<LockOnShotCommand> lockOnShotCommand_ = nullptr; // ロックオン射撃コマンド
-
-	std::unique_ptr<BarrelRollCommand> barrelRollCommand_ = nullptr; // バレルロールコマンド
-
 	/// ===== 状態用 ===== ///
 
 	// すべての状態を保存しておく箱
@@ -251,12 +255,6 @@ private:
 
 	// 現在の状態
 	IPlayerState* currentState_ = nullptr;
-
-///-------------------------------------------/// 
-/// オートパイロット用変数
-///-------------------------------------------///
-
-	float moveSpeedAuto = 0.5f;
 
 ///-------------------------------------------/// 
 /// マニュアル操作用変数
@@ -381,13 +379,4 @@ private:
 	std::unique_ptr<Engine::ParticleEmitter> moveEmitter_ = nullptr;
 
 	const float baseFrequency_ = 0.1f; // 基本の発生頻度 (秒)
-
-public:
-
-	/// <summary>
-	/// 状態に渡すためのコンテキスト構造体
-	/// </summary>
-	struct StateContext {
-		Engine::WorldTransform& worldTransform; // ワールド変換
-	};
 };

@@ -1,20 +1,23 @@
 #pragma once
 
 #include "IPlayerState.h"
+#include "PlayerCommand.h"
 #include "WorldTransform.h"
 
+
 /// <summary>
-/// オートパイロット状態のコンテキスト
+/// マニュアル操作状態のコンテキスト
 /// </summary>
-struct AutoStateContext {
+struct ManualStateContext {
 	Engine::WorldTransform* worldTransform = nullptr; // ワールド変換
 	float* moveSpeed = nullptr;						  // 移動の速さ
+	bool* isLockOnMode = nullptr;					  // ロックオンモードフラグ
 };
 
 /// <summary>
-/// オートパイロット状態
+/// マニュアル操作状態
 /// </summary>
-class PlayerAutoState : public IPlayerState {
+class PlayerManualState : public IPlayerState {
 
 	/// ================================================== ///
 	/// メンバ関数
@@ -25,7 +28,7 @@ public:
 	/// 初期化
 	/// </summary>
 	/// <param name="context">コンテキスト</param>
-	void Initialize(const AutoStateContext& context);
+	void Initiaize(const ManualStateContext& context);
 
 	/// <summary>
 	/// 更新
@@ -47,15 +50,6 @@ public:
 	/// ================================================== ///
 private:
 
-	/// <summary>
-	/// 加速処理
-	/// </summary>
-	void Accelerate();
-
-	/// <summary>
-	/// 減速処理
-	/// </summary>
-	void Decelerate();
 
 	/// ================================================== ///
 	/// メンバ変数
@@ -63,21 +57,16 @@ private:
 private:
 
 	// コンテキスト
-	AutoStateContext context_;
+	ManualStateContext context_;
 
-	// 加速かどうか
-	bool isAccelerating_ = false;
+	/// ===== コマンド ===== ///
 
-	// 減速かどうか
-	bool isDecelerating_ = false;
+	std::unique_ptr<NormalShotCommand> normalShotCommand_ = nullptr; // 通常射撃コマンド
 
-	// 加速の最大値
-	const float kMaxMoveSpeed = 0.5f;
+	std::unique_ptr<LockOnAimCommand> lockOnAimCommand_ = nullptr; // ロックオン照準コマンド
 
-	// 減速の最小値
-	const float kMinMoveSpeed = 0.0f;
+	std::unique_ptr<LockOnShotCommand> lockOnShotCommand_ = nullptr; // ロックオン射撃コマンド
 
-	// 加速・減速の変化量
-	const float acceleration_ = 0.01f;
+	std::unique_ptr<BarrelRollCommand> barrelRollCommand_ = nullptr; // バレルロールコマンド
 };
 

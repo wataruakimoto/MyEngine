@@ -294,6 +294,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\State\PauseState.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleEditor.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -603,6 +604,7 @@
     <ClInclude Include="Engine\3D\Particle\ParticleEditor.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\IPlayerState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

@@ -4,7 +4,10 @@
 
 /// ================================================== ///
 /// 初期化
-void PlayerAutoState::Initialize() {
+void PlayerAutoState::Initialize(const AutoStateContext& context) {
+
+	// コンテキストを保存
+	context_ = context;
 }
 
 /// ================================================== ///
@@ -24,10 +27,8 @@ void PlayerAutoState::Update() {
 		Decelerate();
 	}
 
-	velocity_ = { 0.0f, 0.0f, moveSpeed_ };
-
 	// Z方向にのみの移動
-	context_.worldTransform.AddTranslate(velocity_);
+	context_.worldTransform->AddTranslate({0.0f, 0.0f, *context_.moveSpeed});
 }
 
 /// ================================================== ///
@@ -46,7 +47,7 @@ void PlayerAutoState::Accelerate() {
 
 	// 徐々に加速
 	// 最大値に達するまで加速
-	moveSpeed_ = (std::min)(moveSpeed_ + 0.01f, maxMoveSpeed_);
+	*context_.moveSpeed = (std::min)(*context_.moveSpeed + acceleration_, kMaxMoveSpeed);
 }
 
 /// ================================================== ///
@@ -55,5 +56,5 @@ void PlayerAutoState::Decelerate() {
 
 	// 徐々に減速
 	// 0に達するまで減速
-	moveSpeed_ = (std::max)(moveSpeed_ - 0.01f, minMoveSpeed_);
+	*context_.moveSpeed = (std::max)(*context_.moveSpeed - acceleration_, kMinMoveSpeed);
 }

@@ -114,20 +114,20 @@ void PlayState::UpdateVignetteEffect() {
 	uint16_t currentHP = player_->GetHP();
 	PlayerState playerState = player_->GetState();
 
-	// プレイヤーが死亡状態の場合は常時赤いビネットを表示
-	if (playerState == PlayerState::Dead) {
-
-		// ビネットフィルターの設定
-		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
-		vignetteFilter_->SetIntensity(0.7f);
-		vignetteFilter_->SetScale(18.0f);
-		vignetteFilter_->SetRange(1.0f);
-
-		// ダメージ時の一時ビネットはリセット
-		isDamageVignetteActive_ = false;
-		return;
-	}
+	//// プレイヤーが死亡状態の場合は常時赤いビネットを表示
+	//if (playerState == PlayerState::Dead) {
+	//
+	//	// ビネットフィルターの設定
+	//	vignetteFilter_->SetIsActive(true);
+	//	vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
+	//	vignetteFilter_->SetIntensity(0.7f);
+	//	vignetteFilter_->SetScale(18.0f);
+	//	vignetteFilter_->SetRange(1.0f);
+	//
+	//	// ダメージ時の一時ビネットはリセット
+	//	isDamageVignetteActive_ = false;
+	//	return;
+	//}
 
 	// HPが1の場合は常時赤いビネットを表示
 	if (currentHP == 1) {
