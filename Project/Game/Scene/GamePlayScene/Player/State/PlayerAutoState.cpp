@@ -15,13 +15,13 @@ void PlayerAutoState::Initialize(const AutoStateContext& context) {
 void PlayerAutoState::Update() {
 
 	// 加速フラグが経っているなら
-	if (isAccelerating_) {
+	if (context_.isAccelerating) {
 
 		// 加速処理
 		Accelerate();
 	}
 	// 減速フラグが経っているなら
-	else if (isDecelerating_) {
+	else if (context_.isDecelerating) {
 
 		// 減速処理
 		Decelerate();

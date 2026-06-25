@@ -3,9 +3,6 @@
 #include "Model/Model.h"
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
-#include "Particle/ParticleEmitter.h"
-#include "Reticle/Reticle.h"
-#include "LockOn/LockOn.h"
 #include "State/IPlayerState.h"
 
 #include <memory>
@@ -15,27 +12,32 @@
 #include <typeindex>
 
 /// === 前方宣言 === ///
+
 class GamePlayScene;
 class GameObjectManager;
-class Enemy;
-class Reticle3D;
+class Reticle;
 class LockOn;
 
 namespace Engine {
 	class Camera;
 }
 
+/// <summary>
+/// プレイヤーの状態
+/// </summary>
 enum class PlayerState {
 	AutoPilot,
 	Manual,
 };
 
-/// ===== プレイヤー ===== ///
+/// <summary>
+/// プレイヤークラス
+/// </summary>
 class Player : public BaseCharacter {
 
-///-------------------------------------------/// 
-/// メンバ関数
-///-------------------------------------------///
+	/// ================================================== ///
+	// メンバ関数
+	/// ================================================== ///
 public:
 
 	/// <summary>
@@ -112,120 +114,88 @@ public:
 		}
 	}
 
-///-------------------------------------------/// 
-/// クラス内関数
-///-------------------------------------------///
-private:
-
-	/// <summary>
-	/// 射撃
-	/// </summary>
-	void Fire(PlayerContext context);
-
-	/// <summary>
-	/// 射撃アニメーション更新
-	/// </summary>
-	void FireAnimationUpdate();
-
-	/// <summary>
-	/// バレルロール
-	/// </summary>
-	void Rolling();
-
-	/// <summary>
-	/// レティクルに向かって移動
-	/// </summary>
-	void MoveToReticle();
-	
-	/// <summary>
-	/// 位置の制限
-	/// </summary>
-	void ClampPosition();
-
-	/// <summary>
-	/// ダメージを受けたときの処理
-	/// </summary>
-	/// <param name="damage">ダメージ</param>
-	void DamageProcess(uint16_t damage);
-
-///-------------------------------------------/// 
-/// 状態ごとの処理
-///-------------------------------------------///
-
-	void AutoPilotInitialize();
-
-	void AutoPilotUpdate();
-
-	void ManualInitialize();
-
-	void ManualUpdate();
-
-///-------------------------------------------/// 
-/// ゲッター
-///-------------------------------------------///
+	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
 public:
+
+	/// <summary>
+	/// 状態のゲッター
+	/// </summary>
+	/// <returns>状態</returns>
+	PlayerState GetState() const { return state_; }
+
+	/// <summary>
+	/// オート操縦時の移動の速さのゲッター
+	/// </summary>
+	/// <returns>オート操縦時の移動の速さ</returns>
+	float GetMoveSpeedAuto() const { return moveSpeedAuto_; }
+
+	/// <summary>
+	/// マニュアル操縦時の移動の速さのゲッター
+	/// </summary>
+	/// <returns>マニュアル操縦時の移動の速さ</returns>
+	float GetMoveSpeedManual() const { return moveSpeedManual_; }
+
+	/// <summary>
+	/// 速度のゲッター
+	/// </summary>
+	/// <returns>速度</returns>
+	const Engine::Vector3& GetVelocity() const { return velocity_; }
 
 	/// <summary>
 	/// スクリーン座標のゲッター
 	/// </summary>
-	/// <returns></returns>
-	Engine::Vector2 GetScreenPos() { return screenPos_; }
+	/// <returns>スクリーン座標</returns>
+	Engine::Vector2 GetScreenPos() const { return screenPos_; }
 
-	/// <summary>
-	/// HPのゲッター
-	/// </summary>
-	/// <returns></returns>
-	uint16_t GetHP() const { return hp_; }
-
-	float GetMoveSpeedPlay() { return moveSpeedManual; }
-
-	PlayerState GetState() { return state_; }
-	
-	bool IsDead() { return isDead_; }
-
-	float GetSpeedRate() { return speedRate_; }
-
-	const Engine::Vector3& GetVelocity() const { return velocity_; }
-
-	bool IsGroundHit() { return isGroundHit_; }
-
-///-------------------------------------------/// 
-/// セッター
-///-------------------------------------------///
+	/// ================================================== ///
+	/// セッター
+	/// ================================================== ///
 public:
 
 	/// <summary>
 	/// ゲームプレイシーンのセッター
 	/// </summary>
 	/// <param name="scene"></param>
-	void SetGamePlayScene(GamePlayScene* scene) { this->gamePlayScene_ = scene; }
+	void SetGamePlayScene(GamePlayScene* scene) { gamePlayScene_ = scene; }
 
 	/// <summary>
 	/// オブジェクトマネージャーのセッター
 	/// </summary>
 	/// <param name="objManager">オブジェクトマネージャー</param>
-	void SetGameObjectManager(GameObjectManager* objManager) { this->objManager_ = objManager; }
+	void SetGameObjectManager(GameObjectManager* objManager) { objManager_ = objManager; }
 
 	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
-	void SetCamera(Engine::Camera* camera) { this->camera_ = camera; }
+	void SetCamera(Engine::Camera* camera) { camera_ = camera; }
 
 	/// <summary>
 	/// 状態変更リクエストのセッター
 	/// </summary>
 	/// <param name="state"></param>
-	void SetPlayerState(PlayerState state) { this->stateRequest_ = state; }
+	void SetPlayerState(PlayerState state) { stateRequest_ = state; }
 
-	void SetMoveSpeedManual(float speed) { this->moveSpeedManual = speed; }
+	/// <summary>
+	/// オート操縦時の移動の速さのセッター
+	/// </summary>
+	/// <param name="speed">速さ</param>
+	void SetMoveSpeedAuto(float speed) { moveSpeedAuto_ = speed; }
 
-///-------------------------------------------/// 
-/// メンバ変数
-///-------------------------------------------///
+	/// <summary>
+	/// マニュアル操縦時の移動の速さのセッター
+	/// </summary>
+	/// <param name="speed">速さ</param>
+	void SetMoveSpeedManual(float speed) { moveSpeedManual_ = speed; }
+
+	/// ================================================== /// 
+	/// メンバ変数
+	/// ================================================== ///
 private:
 
-	/// ===== ポインタ・インスタンス ===== ///
+	/// ========== ポインタ・インスタンス ========== ///
 
 	// モデルのポインタ
 	std::unique_ptr<Engine::Model> model = nullptr;
@@ -248,135 +218,33 @@ private:
 	// ゲームオブジェクトマネージャーの借りポインタ
 	GameObjectManager* objManager_ = nullptr;
 
-	/// ===== 状態用 ===== ///
+	/// ========== 状態用 ========== ///
 
 	// すべての状態を保存しておく箱
 	std::unordered_map<std::type_index, std::unique_ptr<IPlayerState>> states_;
 
-	// 現在の状態
+	// 現在の状態(ポインタ)
 	IPlayerState* currentState_ = nullptr;
 
-///-------------------------------------------/// 
-/// マニュアル操作用変数
-///-------------------------------------------///
-
-	float pressTimer_ = 0.0f;
-	bool isLockOnMode_ = false;
-	const float kLockOnDuration_ = 0.5f; // ロックオンモード切り替えのための押下時間 (秒)
-
-	float moveSpeedManual = 0.5f;
-
-	// 移動範囲の制限
-	const Engine::Vector2 kMoveMin = { -25.0f, 0.0f }; // X,Yの最小値 左下
-	const Engine::Vector2 kMoveMax = { 25.0f, 25.0f }; // X,Yの最大値 右上
-
-	/// ===== 射撃アニメーション用 ===== ///
-
-	Engine::Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
-	Engine::Vector3 fireScale_ = { 0.8f, 0.8f, 0.8f };
-
-	float fireTimer_ = 0.0f; // カウントダウンタイマー
-	float fireAnimationTimer_ = 0.0f; // 射撃アニメーション用カウントダウンタイマー
-	const float kFireDuration_ = 0.4f; // 射撃間隔 (秒)
-	const float kFireAnimationDuration_ = 0.2f; // 射撃アニメーション時間 (秒)
-
-	bool isFiring_ = false;
-
-	/// ===== バレルロール用 ===== ///
-
-	bool isRolling_ = false; // ロール中フラグ
-
-	float rollTimer_ = 0.0f;    // バレルロール用カウントアップタイマー
-	const float rollDuration_ = 0.5f; // ロールにかかる時間（秒）
-
-	float rollCooldownTimer_ = 0.0f; // バレルロールのクールダウン用カウントダウンタイマー
-	const float kRollCooldownDuration_ = 0.5f; // クールダウン時間 (秒)
-
-	int rollDirection_ = 0;     // 回転方向 (-1:左, 1:右)
-
-	const float kMaxRollAngle_ = 2.0f * std::numbers::pi_v<float>; // 最大傾き角度 (ラジアン)
-
-	const float kMaxRollMove_ = 10.0f; // 最大移動距離
-
-	float preEaseT_ = 0.0f;
-
-///-------------------------------------------/// 
-/// 死亡用変数
-///-------------------------------------------///
-
-	/// ===== 死亡アニメーション用 ===== ///
-
-	float deathTimer_ = 0.0f;
-
-	Engine::Vector3 deathVelocity_ = {};
-
-	Engine::Vector3 deathRotateVelocity_ = {};
-
-	const float kFallStartSpeed = -0.02f;
-	const float kFallAcceleration = -0.001f;
-	const float kMaxFallSpeed = -0.2f;
-
-	const float kRollSpeed = 0.1f;
-	const float kRollAcceleration = 0.001f;
-	const float kRollMaxSpeed = 0.3f;
-
-	const float kSwayAmplitude = 0.1f;
-	const float kSwayFrequency = 4.0f;
-
-	const float kGroundHeight = 0.0f;
-	const float kParticleSpawnDelay = 0.2f;
-
-	// 地面に当たったときの時間
-	float groundHitTime_ = 0.0f;
-
-	// 地面着地フラグ
-	bool isGroundHit_ = false;
-
-	bool isDead_ = false;
-
-	/// ===== パーティクル用 ===== ///
-
-	// エミッターREDのポインタ
-	std::unique_ptr <Engine::ParticleEmitter> particleEmitterRed = nullptr;
-
-	// エミッターBLUEのポインタ
-	std::unique_ptr <Engine::ParticleEmitter> particleEmitterBlue = nullptr;
-
-	// パーティクルを出したかどうか
-	bool isParticleEmitted_ = false;
-
-	/// ========== 被弾時用 ========== ///
-
-	// 無敵時間のタイマー（0より大きければ無敵）
-	float invincibleTimer_ = 0.0f;
-
-	// ダメージを受けた時の無敵時間の設定 (フレーム数)
-	const float kInvincibleTime = 60.0f;
-
-///-------------------------------------------/// 
-/// 全体用
-///-------------------------------------------///
-
-	/// ===== パラメータ等 ===== ///
-
-	uint16_t hp_ = 5;
-
-	Engine::Vector2 screenPos_ = { 0.0f, 0.0f };
-
-	// 速度
-	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
-
-	// 速度倍率
-	float speedRate_ = 1.0f;
-
-	// 状態
+	// 現在の状態(構造体)
 	PlayerState state_ = PlayerState::Manual;
 
 	// 状態変更リクエスト
 	std::optional<PlayerState> stateRequest_ = std::nullopt;
 
-	// 移動時のエミッター
-	std::unique_ptr<Engine::ParticleEmitter> moveEmitter_ = nullptr;
+	/// ========== 速度パラメータ ========== ///
 
-	const float baseFrequency_ = 0.1f; // 基本の発生頻度 (秒)
+	// オート操縦時の移動の速さ
+	float moveSpeedAuto_ = 0.0f;
+
+	// マニュアル操縦時の移動の速さ
+	float moveSpeedManual_ = 0.0f;
+
+	// 速度
+	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
+
+	/// ========== その他 ========== ///
+
+	// スクリーン座標
+	Engine::Vector2 screenPos_ = { 0.0f, 0.0f };
 };

@@ -9,6 +9,8 @@
 struct AutoStateContext {
 	Engine::WorldTransform* worldTransform = nullptr; // ワールド変換
 	float* moveSpeed = nullptr;						  // 移動の速さ
+	bool* isAccelerating = nullptr;					  // 加速フラグ
+	bool* isDecelerating = nullptr;					  // 減速フラグ
 };
 
 /// <summary>
@@ -64,12 +66,6 @@ private:
 
 	// コンテキスト
 	AutoStateContext context_;
-
-	// 加速かどうか
-	bool isAccelerating_ = false;
-
-	// 減速かどうか
-	bool isDecelerating_ = false;
 
 	// 加速の最大値
 	const float kMaxMoveSpeed = 0.5f;
