@@ -13,6 +13,7 @@ namespace Engine {
 	class TransitionManager;
 }
 
+class GameObjectManager;
 class Player;
 class Goal;
 
@@ -65,6 +66,9 @@ private:
 	bool isAnimationFinished_ = false;
 
 	/// ===== 借りポインタ・インスタンス ===== ///
+
+	// オブジェクトマネージャのインスタンス
+	GameObjectManager* gameObjectManager_ = nullptr;
 
 	// プレイヤーの借りポインタ
 	Player* player_ = nullptr;

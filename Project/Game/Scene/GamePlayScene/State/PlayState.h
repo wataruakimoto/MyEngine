@@ -12,6 +12,7 @@ namespace Engine {
 	class VignetteFilter;
 }
 
+class GameObjectManager;
 class Player;
 class Goal;
 class ICameraController;
@@ -83,6 +84,9 @@ private:
 	bool isGoalReached_ = false;
 
 	/// ===== 借りポインタ・インスタンス ===== ///
+
+	// オブジェクトマネージャのインスタンス
+	GameObjectManager* gameObjectManager_ = nullptr;
 
 	// プレイヤーの借りポインタ
 	Player* player_ = nullptr;

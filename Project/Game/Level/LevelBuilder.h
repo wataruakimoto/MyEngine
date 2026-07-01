@@ -2,10 +2,6 @@
 
 #include "LevelLoader.h"
 
-/// === 前方宣言 === ///
-
-class GameObjectManager;
-
 /// <summary>
 /// レベルビルダー
 /// </summary>
@@ -20,8 +16,7 @@ public:
 	/// レベルデータからオブジェクトを生成
 	/// </summary>
 	/// <param name="levelData">レベルデータ</param>
-	/// <param name="gameObjectManager">オブジェクトマネージャー</param>
-	void BuildLevel(const GameLevelData& levelData, GameObjectManager* gameObjectManager);
+	void BuildLevel(const GameLevelData& levelData);
 
 	/// ================================================== ///
 	/// クラス内関数
@@ -32,28 +27,24 @@ private:
 	/// レベルデータから自機を設定
 	/// </summary>
 	/// <param name="levelData">レベルデータ</param>
-	/// <param name="gameObjectManager">オブジェクトマネージャー</param>
-	void SetPlayerFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager);
+	void SetPlayerFromLevelData(const GameLevelData& levelData);
 
 	/// <summary>
 	/// レベルデータから敵をスポーン
 	/// </summary>
 	/// <param name="levelData">レベルデータ</param>
-	/// <param name="gameObjectManager">オブジェクトマネージャー</param>
-	void SpawnEnemiesFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager);
+	void SpawnEnemiesFromLevelData(const GameLevelData& levelData);
 
 	/// <summary>
 	/// レベルデータから障害物をスポーン
 	/// </summary>
 	/// <param name="levelData">レベルデータ</param>
-	/// <param name="gameObjectManager">オブジェクトマネージャー</param>
-	void SpawnObstaclesFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager);
+	void SpawnObstaclesFromLevelData(const GameLevelData& levelData);
 
 	/// <summary>
 	/// レベルデータからゴールを設定
 	/// </summary>
 	/// <param name="levelData">レベルデータ</param>
-	/// <param name="gameObjectManager">オブジェクトマネージャー</param>
-	void SetGoalFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager);
+	void SetGoalFromLevelData(const GameLevelData& levelData);
 };
 

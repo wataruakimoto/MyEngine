@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+using namespace Engine;
+
 /// ================================================== ///
 /// 初期化
 void PlayerAutoState::Initialize(const AutoStateContext& context) {

@@ -201,7 +201,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\SceneBuffer.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\PauseUI.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Player\PlayerCommand.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\Command\PlayerCommand.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Reticle\Reticle.cpp" />
     <ClCompile Include="Engine\2D\Sprite\SpriteRenderer.cpp" />
     <ClCompile Include="Engine\3D\Object\Object3dRenderer.cpp" />
@@ -238,6 +238,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\GameObjectManager.h" />
     <ClInclude Include="Game\Level\GameLevelData.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Command\IPlayerCommand.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\IPlayerState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\State\EndingState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\State\IPlayState.h" />
@@ -324,7 +325,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\PauseUI.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Player\PlayerCommand.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Command\PlayerCommand.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Reticle\Reticle.h" />
     <ClInclude Include="Engine\Line\LineRenderer.h" />
     <ClInclude Include="Engine\Line\LineManager.h" />

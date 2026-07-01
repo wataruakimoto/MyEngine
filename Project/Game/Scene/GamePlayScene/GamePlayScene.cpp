@@ -7,6 +7,7 @@
 #include "Particle/ParticleRenderer.h"
 #include "LineManager.h"
 
+#include "GameObjectManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 #include "LevelBuilder.h"
 #include "State/IntroState.h"
@@ -45,8 +46,8 @@ void GamePlayScene::Initialize() {
 	lightManager_ = std::make_unique<Engine::LightManager>();
 	lightManager_->Initialize();
 
-	// オブジェクトマネージャーの生成
-	gameObjectManager_ = std::make_unique<GameObjectManager>();
+	// ゲームオブジェクトマネージャーのインスタンスの取得
+	gameObjectManager_ = GameObjectManager::GetInstance();
 	// オブジェクトマネージャーの初期化
 	gameObjectManager_->Initialize();
 	// オブジェクトマネージャーにシーンのポインタを渡す
@@ -57,7 +58,6 @@ void GamePlayScene::Initialize() {
 	player->SetCamera(cameraManager_->GetCamera());
 	player->Initialize();
 	player->SetGamePlayScene(this);
-	player->SetGameObjectManager(gameObjectManager_.get());
 	player->SetMoveSpeedAuto(6.0f);
 	// オブジェクトマネージャーにプレイヤーを登録
 	gameObjectManager_->SetPlayer(std::move(player));
@@ -83,7 +83,7 @@ void GamePlayScene::Initialize() {
 	// レベルビルダーの生成
 	LevelBuilder levelBuilder;
 	// レベルデータからレベルを構築
-	levelBuilder.BuildLevel(levelLoader_->GetLevelData(), gameObjectManager_.get());
+	levelBuilder.BuildLevel(levelLoader_->GetLevelData());
 
 	// 初期状態をイントロに設定
 	ChangeState(std::make_unique<IntroState>());
@@ -162,6 +162,9 @@ void GamePlayScene::DrawUnfiltered() {
 }
 
 void GamePlayScene::Finalize() {
+
+	// ゲームオブジェクトマネージャーの終了処理
+	gameObjectManager_->Finalize();
 }
 
 void GamePlayScene::ShowImGui() {
@@ -264,7 +267,7 @@ void GamePlayScene::Restart() {
 	// レベルビルダーの生成
 	LevelBuilder levelBuilder;
 	// レベルデータからレベルを構築
-	levelBuilder.BuildLevel(levelLoader_->GetLevelData(), gameObjectManager_.get());
+	levelBuilder.BuildLevel(levelLoader_->GetLevelData());
 
 	/// ===== 状態の更新 ===== ///
 

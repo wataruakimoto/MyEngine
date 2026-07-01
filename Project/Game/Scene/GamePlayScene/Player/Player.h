@@ -14,9 +14,6 @@
 /// === 前方宣言 === ///
 
 class GamePlayScene;
-class GameObjectManager;
-class Reticle;
-class LockOn;
 
 namespace Engine {
 	class Camera;
@@ -161,12 +158,6 @@ public:
 	void SetGamePlayScene(GamePlayScene* scene) { gamePlayScene_ = scene; }
 
 	/// <summary>
-	/// オブジェクトマネージャーのセッター
-	/// </summary>
-	/// <param name="objManager">オブジェクトマネージャー</param>
-	void SetGameObjectManager(GameObjectManager* objManager) { objManager_ = objManager; }
-
-	/// <summary>
 	/// カメラのセッター
 	/// </summary>
 	/// <param name="camera"></param>
@@ -203,20 +194,11 @@ private:
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Engine::Object3d> object = nullptr;
 
-	// レティクルのポインタ
-	std::unique_ptr<Reticle> reticle_ = nullptr;
-
-	// ロックオンのポインタ
-	std::unique_ptr<LockOn> lockOn_ = nullptr;
-
 	// カメラの借りポインタ
 	Engine::Camera* camera_ = nullptr;
 
 	// ゲームプレイシーンの借りポインタ
 	GamePlayScene* gamePlayScene_ = nullptr;
-
-	// ゲームオブジェクトマネージャーの借りポインタ
-	GameObjectManager* objManager_ = nullptr;
 
 	/// ========== 状態用 ========== ///
 

@@ -2,7 +2,7 @@
 #include "Player/Player.h"
 #include "Reticle/Reticle.h"
 #include "LockOn/LockOn.h"
-#include "Bullet.h"
+#include "Player/Bullet.h"
 #include "MathVector.h"
 #include "GameObjectManager.h"
 

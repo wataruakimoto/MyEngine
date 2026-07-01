@@ -4,7 +4,6 @@
 #include "Particle/ParticleManager.h"
 #include "Light/LightManager.h"
 
-#include "GameObjectManager.h"
 #include "CameraManager.h"
 #include "LevelLoader.h"
 #include "State/IPlayState.h"
@@ -22,6 +21,8 @@ namespace Engine {
 	class ParticleRenderer;
 	class LineManager;
 }
+
+class GameObjectManager;
 
 /// ===== ゲームプレイシーン ===== ///
 class GamePlayScene : public BaseScene {
@@ -113,8 +114,6 @@ private:
 ///-------------------------------------------///
 public:
 
-	GameObjectManager* GetGameObjectManager() { return gameObjectManager_.get(); }
-
 	CameraManager* GetCameraManager() { return cameraManager_.get(); }
 
 ///-------------------------------------------/// 
@@ -122,8 +121,8 @@ public:
 ///-------------------------------------------///
 private:
 
-	// オブジェクトマネージャー
-	std::unique_ptr<GameObjectManager> gameObjectManager_ = nullptr;
+	// オブジェクトマネージャーのインスタンス
+	GameObjectManager* gameObjectManager_ = nullptr;
 
 	// カメラマネージャー
 	std::unique_ptr<CameraManager> cameraManager_ = nullptr;

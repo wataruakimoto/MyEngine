@@ -1,5 +1,6 @@
 #include "EndingState.h"
 #include "GamePlayScene.h"
+#include "GameObjectManager.h"
 
 #include "OffscreenRendering/FilterManager.h"
 #include "SceneManager.h"
@@ -15,14 +16,17 @@ void EndingState::Initialize(GamePlayScene* scene) {
 	// 引数をメンバ変数にセット
 	scene_ = scene;
 
+	// オブジェクトマネージャのインスタンスを取得
+	gameObjectManager_ = GameObjectManager::GetInstance();
+
 	// プレイヤーのポインタを取得
-	player_ = scene_->GetGameObjectManager()->GetPlayer();
+	player_ = gameObjectManager_->GetPlayer();
 
 	// プレイヤーモードをオートパイロットに変更
 	player_->SetPlayerState(PlayerState::AutoPilot);
 
 	// ゴールのポインタを取得
-	goal_ = scene_->GetGameObjectManager()->GetGoal();
+	goal_ = gameObjectManager_->GetGoal();
 
 	// リザルトUIの生成
 	resultUI_ = std::make_unique<ResultUI>();
@@ -33,7 +37,8 @@ void EndingState::Initialize(GamePlayScene* scene) {
 
 	isFadeStarted_ = false;
 
-	isPlayerDead_ = player_->IsDead();
+	//isPlayerDead_ = player_->IsDead();
+	isPlayerDead_ = false;
 
 	// プレイヤーが死んでたら
 	if (isPlayerDead_) {
