@@ -32,7 +32,7 @@ void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ 2.0f,2.0f,2.0f });
+	worldTransform_.SetScale(defaultScale_);
 	worldTransform_.SetTranslate({ 0.0f, 5.0f, 0.0f });
 
 	// モデルの生成・初期化
@@ -71,6 +71,7 @@ void Player::Initialize() {
 	manualContext.worldTransform = &worldTransform_;
 	manualContext.moveSpeed = &moveSpeedManual_;
 	manualContext.camera = camera_;
+	manualContext.defaultScale = defaultScale_;
 	static_cast<PlayerManualState*>(states_[typeid(PlayerManualState)].get())->Initialize(manualContext);
 
 	// 初期状態をオート操縦に設定
@@ -163,6 +164,8 @@ void Player::ShowImGui() {
 	worldTransform_.ShowImGui();
 
 	collider_->ShowImGui();
+
+	ImGui::DragFloat3("速度", &velocity_.x, 0.1f);
 
 	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
 

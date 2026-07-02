@@ -244,9 +244,6 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Player.cpp">
       <Filter>Game\Scene\GamePlayScene\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Scene\GamePlayScene\Player\Command\PlayerCommand.cpp">
-      <Filter>Game\Scene\GamePlayScene\Player</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Bullet.cpp">
       <Filter>Game\Scene\GamePlayScene\Player</Filter>
     </ClCompile>
@@ -295,6 +292,9 @@
     <ClCompile Include="Engine\3D\Particle\ParticleEditor.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -540,9 +540,6 @@
     <ClInclude Include="Game\Scene\GamePlayScene\LockOn\LockOn.h">
       <Filter>Game\Scene\GamePlayScene\LockOn</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Player\Command\PlayerCommand.h">
-      <Filter>Game\Scene\GamePlayScene\Player</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Player.h">
       <Filter>Game\Scene\GamePlayScene\Player</Filter>
     </ClInclude>
@@ -605,7 +602,9 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\IPlayerState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Player\Command\IPlayerCommand.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

@@ -220,12 +220,14 @@ private:
 	float moveSpeedAuto_ = 0.0f;
 
 	// マニュアル操縦時の移動の速さ
-	float moveSpeedManual_ = 0.0f;
+	float moveSpeedManual_ = 1.0f;
 
 	// 速度
 	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
 
 	/// ========== その他 ========== ///
+
+	Engine::Vector3 defaultScale_ = { 2.0f, 2.0f, 2.0f };
 
 	// スクリーン座標
 	Engine::Vector2 screenPos_ = { 0.0f, 0.0f };

@@ -19,6 +19,7 @@ namespace Engine {
 struct ManualStateContext {
 
 	Engine::WorldTransform* worldTransform = nullptr; // ワールド変換
+	Engine::Vector3 defaultScale = { 1.0f, 1.0f, 1.0f }; // デフォルトの拡縮
 	float* moveSpeed = nullptr;						  // 移動の速さ
 	Engine::Camera* camera = nullptr;				  // カメラ
 };
@@ -65,21 +66,6 @@ public:
 	void OnHit();
 
 	/// ================================================== ///
-	/// クラス内関数
-	/// ================================================== ///
-private:
-
-	/// <summary>
-	/// レティクルに向かって移動
-	/// </summary>
-	void MoveToReticle();
-
-	/// <summary>
-	/// 移動範囲の制限
-	/// </summary>
-	void ClampPosition();
-
-	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///
 private:
@@ -89,16 +75,5 @@ private:
 
 	// レティクル
 	std::unique_ptr<Reticle> reticle_ = nullptr;
-
-	/// ========== 移動用 ========== ///
-
-	// 速度
-	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };
-
-	// 移動範囲の制限 半径
-	const float kMaxRadius_ = 25.0f;
-
-	// 地面の高さの制限
-	const float kMinHeight_ = 0.0f;
 };
 
