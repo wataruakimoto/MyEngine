@@ -3,6 +3,10 @@
 #include "WorldTransform.h"
 #include "Vector3.h"
 
+/// === 前方宣言 === ///
+
+class Reticle;
+
 /// <summary>
 /// プレイヤー移動コンポーネント
 /// </summary>
@@ -16,7 +20,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(Engine::WorldTransform* playerWorldTransform, Reticle* reticle, float* moveSpeed);
 
 	/// <summary>
 	/// 更新
@@ -57,9 +61,10 @@ private:
 	// プレイヤーのワールド変換
 	Engine::WorldTransform* playerWorldTransform_ = nullptr;
 
-	// レティクルの座標
-	Engine::Vector3 reticlePos_ = { 0.0f, 0.0f, 0.0f };
+	// レティクル
+	Reticle* reticle_ = nullptr;
 
+	// 移動の速さ
 	float moveSpeed_ = 0.0f;
 };
 

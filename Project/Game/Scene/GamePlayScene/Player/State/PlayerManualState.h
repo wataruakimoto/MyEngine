@@ -3,6 +3,9 @@
 #include "IPlayerState.h"
 #include "WorldTransform.h"
 #include "Reticle/Reticle.h"
+#include "../Component/PlayerMover.h"
+#include "../Component/PlayerShooter.h"
+#include "../Component/PlayerBarrelRoll.h"
 
 #include <memory>
 #include <numbers>
@@ -75,5 +78,16 @@ private:
 
 	// レティクル
 	std::unique_ptr<Reticle> reticle_ = nullptr;
+
+	/// ========== コンポーネント ========== ///
+
+	// 移動コンポーネント
+	std::unique_ptr<PlayerMover> mover_ = nullptr;
+
+	// 射撃コンポーネント
+	std::unique_ptr<PlayerShooter> shooter_ = nullptr;
+
+	// バレルロールコンポーネント
+	std::unique_ptr<PlayerBarrelRoll> barrelRoll_ = nullptr;
 };
 

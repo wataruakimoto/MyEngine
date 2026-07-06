@@ -1,5 +1,6 @@
 #include "PlayerShooter.h"
 #include "GameObjectManager.h"
+#include "Reticle/Reticle.h"
 #include "../Bullet.h"
 
 #include "input.h"
@@ -12,13 +13,22 @@ using namespace Easing;
 
 /// ================================================== ///
 /// 初期化
-void PlayerShooter::Initialize() {
+void PlayerShooter::Initialize(WorldTransform* playerWorldTransform, Vector3* defaultScale, Reticle* reticle) {
 
 	// オブジェクトマネージャーのインスタンスを取得
 	objManager_ = GameObjectManager::GetInstance();
 
 	// 入力のインスタンスを取得
 	input_ = Input::GetInstance();
+
+	// プレイヤーのワールド変換を保存
+	playerWorldTransform_ = playerWorldTransform;
+
+	// デフォルトの大きさを保存
+	defaultScale_ = *defaultScale;
+
+	// レティクルを保存
+	reticle_ = reticle;
 }
 
 /// ================================================== ///
@@ -62,11 +72,17 @@ void PlayerShooter::Fire() {
 	std::unique_ptr<Bullet> bullet = std::make_unique<Bullet>();
 	bullet->Initialize();
 
+	// プレイヤーのワールド座標を取得
+	Vector3 playerPos_ = playerWorldTransform_->GetWorldPosition();
+
 	// 弾の位初期置をプレイヤーの位置に設定
-	bullet->GetWorldTransform().SetTranslate(playerWorldTransform_->GetTranslate());
+	bullet->GetWorldTransform().SetTranslate(playerPos_);
+
+	// レティクルのワールド座標を取得
+	Vector3 reticlePos_ = reticle_->GetWorldTransform().GetWorldPosition();
 
 	// 方向ベクトルを計算
-	Vector3 direction = reticlePos_ - playerWorldTransform_->GetTranslate();
+	Vector3 direction = reticlePos_ - playerPos_;
 
 	// 正規化
 	direction = Normalize(direction);

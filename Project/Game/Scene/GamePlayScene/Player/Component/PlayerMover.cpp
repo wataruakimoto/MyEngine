@@ -1,4 +1,8 @@
+#define NOMINMAX
+
 #include "PlayerMover.h"
+#include "Reticle/Reticle.h"
+
 #include "MathVector.h"
 
 using namespace Engine;
@@ -6,7 +10,16 @@ using namespace MathVector;
 
 /// ================================================== ///
 /// 初期化
-void PlayerMover::Initialize() {
+void PlayerMover::Initialize(WorldTransform* playerWorldTransform, Reticle* reticle, float* moveSpeed) {
+
+	// プレイヤーのワールド変換を保存
+	playerWorldTransform_ = playerWorldTransform;
+
+	// レティクルを保存
+	reticle_ = reticle;
+
+	// 移動の速さを保存
+	moveSpeed_ = *moveSpeed;
 }
 
 /// ================================================== ///
@@ -29,9 +42,15 @@ void PlayerMover::Update() {
 /// ================================================== ///
 /// レティクルに向かって移動
 void PlayerMover::MoveToReticle() {
+	
+	// レティクルのワールド座標を取得
+	Vector3 reticlePos_ = reticle_->GetWorldTransform().GetWorldPosition();
+
+	/// プレイヤーのワールド座標を取得
+	Vector3 playerPos_ = playerWorldTransform_->GetWorldPosition();
 
 	// レティクルの方向ベクトルを計算
-	Vector3 direction = Normalize(reticlePos_ - playerWorldTransform_->GetWorldPosition());
+	Vector3 direction = Normalize(reticlePos_ - playerPos_);
 
 	/// ===== 回転の処理 ===== ///
 

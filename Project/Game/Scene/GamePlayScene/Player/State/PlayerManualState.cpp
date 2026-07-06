@@ -21,6 +21,23 @@ void PlayerManualState::Initialize(const ManualStateContext& context) {
 	reticle_->Initialize();
 	// レティクルのカメラ設定
 	reticle_->SetCamera(context_.camera);
+
+	/// ========== コンポーネント ========== ///
+
+	// 移動コンポーネントの生成
+	mover_ = std::make_unique<PlayerMover>();
+	// 移動コンポーネントの初期化
+	mover_->Initialize(context_.worldTransform, reticle_.get(), context_.moveSpeed);
+
+	// 射撃コンポーネントの生成
+	shooter_ = std::make_unique<PlayerShooter>();
+	// 射撃コンポーネントの初期化
+	shooter_->Initialize(context_.worldTransform, &context_.defaultScale, reticle_.get());
+
+	// バレルロールコンポーネントの生成
+	barrelRoll_ = std::make_unique<PlayerBarrelRoll>();
+	// バレルロールコンポーネントの初期化
+	barrelRoll_->Initialize(context_.worldTransform);
 }
 
 /// ================================================== ///
@@ -29,6 +46,15 @@ void PlayerManualState::Update() {
 
 	// レティクルの更新
 	reticle_->Update();
+
+	// 移動コンポーネントの更新
+	mover_->Update();
+
+	// 射撃コンポーネントの更新
+	shooter_->Update();
+
+	// バレルロールコンポーネントの更新
+	barrelRoll_->Update();
 }
 
 /// ================================================== ///

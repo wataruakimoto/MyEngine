@@ -1,10 +1,12 @@
 #pragma once
 
+#include "WorldTransform.h"
 #include "Vector3.h"
 
 /// === 前方宣言 === ///
 
 class GameObjectManager;
+class Reticle;
 
 namespace Engine {
 	class Input;
@@ -23,7 +25,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(Engine::WorldTransform* playerWorldTransform, Engine::Vector3* defaultScale, Reticle* reticle);
 
 	/// <summary>
 	/// 更新
@@ -80,8 +82,8 @@ private:
 	// プレイヤーのデフォルトの大きさ
 	Engine::Vector3 defaultScale_ = { 1.0f, 1.0f, 1.0f };
 
-	// レティクルの座標
-	Engine::Vector3 reticlePos_ = { 0.0f, 0.0f, 0.0f };
+	// レティクル
+	Reticle* reticle_ = nullptr;
 
 	/// ========== ポインタ ========== ///
 

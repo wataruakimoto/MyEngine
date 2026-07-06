@@ -1,5 +1,7 @@
 #pragma once
 
+#include "WorldTransform.h"
+
 #include <numbers>
 
 /// === 前方宣言 === ///
@@ -21,7 +23,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize();
+	void Initialize(Engine::WorldTransform* playerWorldTransform);
 
 	/// <summary>
 	/// 更新
@@ -57,14 +59,14 @@ private:
 	// ロールにかかる時間 (秒)
 	const float kRollDuration_ = 0.5f;
 
-	// 1回転にかかる角度 (ラジアン)
+	// ロールにかかる角度 (ラジアン)
 	const float kRollAngle_ = 2.0f * std::numbers::pi_v<float>; // 2πラジアン = 360度
 
 	// ロール時の横移動距離
-	const float kRollMoveDistance_ = 5.0f;
+	const float kRollMoveDistance_ = 10.0f;
 
 	// 前フレームのイージング値
-	float preEaseValue_ = 0.0f;
+	float preEaseT_ = 0.0f;
 
 	/// ========== クールダウン用 ========== ///
 
@@ -72,7 +74,11 @@ private:
 	float cooldownTimer_ = 0.0f;
 
 	// クールダウンにかかる時間 (秒)
-	const float kCooldownDuration_ = 1.0f;
+	const float kCooldownDuration_ = 0.5f;
+
+	/// ========== プレイヤーから受け取ってくる変数 ========== ///
+
+	Engine::WorldTransform* playerWorldTransform_ = nullptr;
 
 	/// ========== ポインタ ========== ///
 
