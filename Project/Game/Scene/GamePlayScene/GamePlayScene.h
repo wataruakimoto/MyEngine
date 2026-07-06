@@ -74,12 +74,6 @@ public:
 	void ChangeState(std::unique_ptr<IPlayState> newState);
 
 	/// <summary>
-	/// プレイヤーがダメージを受けたときの処理
-	/// </summary>
-	/// <param name="currentHP">現在のHP</param>
-	void OnPlayerDamaged(uint16_t currentHP);
-
-	/// <summary>
 	/// 敵を倒したときの処理
 	/// </summary>
 	void OnEnemyDefeated();
@@ -115,6 +109,8 @@ private:
 public:
 
 	CameraManager* GetCameraManager() { return cameraManager_.get(); }
+
+	GameRule* GetGameRule() { return gameRule_.get(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数

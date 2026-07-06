@@ -19,7 +19,7 @@ void PlayerMover::Initialize(WorldTransform* playerWorldTransform, Reticle* reti
 	reticle_ = reticle;
 
 	// 移動の速さを保存
-	moveSpeed_ = *moveSpeed;
+	moveSpeed_ = moveSpeed;
 }
 
 /// ================================================== ///
@@ -76,7 +76,7 @@ void PlayerMover::MoveToReticle() {
 	/// ===== 移動の処理 ===== ///
 
 	// 向きと速さから速度を計算
-	velocity_ += direction * moveSpeed_;
+	velocity_ += direction * (*moveSpeed_);
 }
 
 /// ================================================== ///

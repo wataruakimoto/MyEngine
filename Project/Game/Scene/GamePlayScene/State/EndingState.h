@@ -14,6 +14,7 @@ namespace Engine {
 }
 
 class GameObjectManager;
+class GameRule;
 class Player;
 class Goal;
 
@@ -48,27 +49,34 @@ public:
 	/// ================================================== ///
 private:
 
-	void ShowUI();
-
-	void FadeIn();
+	/// <summary>
+	/// フェードインを開始する
+	/// </summary>
+	void StartFadeIn();
 
 	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///
 private:
+		
+	/// ========== フェードイン用 ========== ///
 
-	bool isClear_ = false;
-
-	bool isPlayerDead_ = false;
-
+	// フェードイン開始済みフラグ
 	bool isFadeStarted_ = false;
 
+	// UIアニメーション完了フラグ
 	bool isAnimationFinished_ = false;
+
+	// 遷移先シーン名
+	std::string nextScene_;
 
 	/// ===== 借りポインタ・インスタンス ===== ///
 
 	// オブジェクトマネージャのインスタンス
 	GameObjectManager* gameObjectManager_ = nullptr;
+	
+	// ゲームルールの借りポインタ
+	GameRule* gameRule_ = nullptr;
 
 	// プレイヤーの借りポインタ
 	Player* player_ = nullptr;

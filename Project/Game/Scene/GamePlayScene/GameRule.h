@@ -30,6 +30,11 @@ public:
 	/// <param name="time">追加する時間</param>
 	void AddBonusTime(float time);
 
+	/// <summary>
+	/// ゴール到達の通知
+	/// </summary>
+	void NotifyGoalReached();
+
 	/// ================================================== ///
 	/// ゲッター
 	/// ================================================== ///
@@ -54,17 +59,6 @@ public:
 	float GetRemainingTime() const { return remainingTime_; }
 
 	/// ================================================== ///
-	/// セッター
-	/// ================================================== ///
-public:
-
-	/// <summary>
-	/// シーンのセッター
-	/// </summary>
-	/// <param name="scene">シーン</param>
-	void SetPlayScene(GamePlayScene* scene) { scene_ = scene; }
-
-	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///
 private:
@@ -79,17 +73,12 @@ private:
 	float remainingTime_ = 0.0f;
 
 	// 初期時間
-	const float initialTime_ = 60.0f;
+	const float kInitialTime = 60.0f;
 
 	// 最大時間
-	const float maxTime_ = 99.0f;
+	const float kMaxTime = 10.0f;
 
 	// デルタタイム
-	const float deltaTime_ = 1.0f/60.0f;
-
-	/// ===== 借りポインタ・インスタンス ===== ///
-
-	// シーンの借りポインタ
-	GamePlayScene* scene_ = nullptr;
+	const float kDeltaTime = 1.0f/60.0f;
 };
 

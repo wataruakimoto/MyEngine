@@ -129,12 +129,6 @@ public:
 	float GetMoveSpeedAuto() const { return moveSpeedAuto_; }
 
 	/// <summary>
-	/// マニュアル操縦時の移動の速さのゲッター
-	/// </summary>
-	/// <returns>マニュアル操縦時の移動の速さ</returns>
-	float GetMoveSpeedManual() const { return moveSpeedManual_; }
-
-	/// <summary>
 	/// 速度のゲッター
 	/// </summary>
 	/// <returns>速度</returns>
@@ -175,12 +169,6 @@ public:
 	/// <param name="speed">速さ</param>
 	void SetMoveSpeedAuto(float speed) { moveSpeedAuto_ = speed; }
 
-	/// <summary>
-	/// マニュアル操縦時の移動の速さのセッター
-	/// </summary>
-	/// <param name="speed">速さ</param>
-	void SetMoveSpeedManual(float speed) { moveSpeedManual_ = speed; }
-
 	/// ================================================== /// 
 	/// メンバ変数
 	/// ================================================== ///
@@ -218,9 +206,6 @@ private:
 
 	// オート操縦時の移動の速さ
 	float moveSpeedAuto_ = 0.0f;
-
-	// マニュアル操縦時の移動の速さ
-	float moveSpeedManual_ = 1.0f;
 
 	// 速度
 	Engine::Vector3 velocity_ = { 0.0f, 0.0f, 0.0f };

@@ -69,7 +69,6 @@ void Player::Initialize() {
 	// マニュアル操縦のコンテキストを設定
 	ManualStateContext manualContext;
 	manualContext.worldTransform = &worldTransform_;
-	manualContext.moveSpeed = &moveSpeedManual_;
 	manualContext.camera = camera_;
 	manualContext.defaultScale = defaultScale_;
 	static_cast<PlayerManualState*>(states_[typeid(PlayerManualState)].get())->Initialize(manualContext);
@@ -134,8 +133,25 @@ void Player::Draw() {
 	// コライダーの描画
 	collider_->Draw();
 
-	// 3Dオブジェクトの描画
-	object->Draw();
+	// マニュアル状態の取得
+	auto* manualState = dynamic_cast<PlayerManualState*>(currentState_);
+
+	// マニュアル操縦状態のとき
+	if (manualState) {
+
+		// 点滅状態のとき
+		if (manualState->IsVisible()) {
+
+			// 3Dオブジェクトの描画
+			object->Draw();
+		}
+	}
+	// それ以外の状態のとき
+	else {
+
+		// 3Dオブジェクトの描画
+		object->Draw();
+	}
 }
 
 /// ================================================== ///

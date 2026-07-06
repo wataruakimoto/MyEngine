@@ -10,6 +10,8 @@
 #include "Sprite/SpriteRenderer.h"
 #include "Particle/ParticleRenderer.h"
 
+#include <imgui.h>
+
 using namespace Engine;
 
 void GameClearScene::Initialize() {
@@ -210,6 +212,17 @@ void GameClearScene::Finalize() {
 }
 
 void GameClearScene::ShowImGui() {
+
+#ifdef USE_IMGUI
+
+	ImGui::Begin("GameClearScene");
+
+	// 状態の表示
+	ImGui::Text("State: %d", static_cast<int>(gameClearFlowState_));
+
+	ImGui::End();
+
+#endif // USE_IMGUI
 }
 
 void GameClearScene::FadeOutInitialize() {

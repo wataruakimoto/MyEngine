@@ -65,6 +65,6 @@ private:
 	Reticle* reticle_ = nullptr;
 
 	// 移動の速さ
-	float moveSpeed_ = 0.0f;
+	float* moveSpeed_ = nullptr;
 };
 

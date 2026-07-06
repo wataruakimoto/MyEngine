@@ -1,6 +1,7 @@
 #include "EndingState.h"
 #include "GamePlayScene.h"
 #include "GameObjectManager.h"
+#include "GameRule.h"
 
 #include "OffscreenRendering/FilterManager.h"
 #include "SceneManager.h"
@@ -19,9 +20,11 @@ void EndingState::Initialize(GamePlayScene* scene) {
 	// オブジェクトマネージャのインスタンスを取得
 	gameObjectManager_ = GameObjectManager::GetInstance();
 
+	// ゲームルールの借りポインタを取得
+	gameRule_ = scene_->GetGameRule();
+
 	// プレイヤーのポインタを取得
 	player_ = gameObjectManager_->GetPlayer();
-
 	// プレイヤーモードをオートパイロットに変更
 	player_->SetPlayerState(PlayerState::AutoPilot);
 
@@ -37,42 +40,41 @@ void EndingState::Initialize(GamePlayScene* scene) {
 
 	isFadeStarted_ = false;
 
-	//isPlayerDead_ = player_->IsDead();
-	isPlayerDead_ = false;
+	// クリアだったら
+	if (gameRule_->IsClear()) {
 
-	// プレイヤーが死んでたら
-	if (isPlayerDead_) {
+		// プレイヤーの速度を0.5にする
+		player_->SetMoveSpeedAuto(0.5f);
 
-		// プレイヤーの速度を0にする
-		player_->SetMoveSpeedAuto(0.0f);
+		// リザルトUIにクリアアニメーションを開始させる
+		resultUI_->StartAnimation(ResultType::Clear);
 
-		// フェード開始
-		isFadeStarted_ = true;
-
-		// アニメーション完了フラグを立てる
-		isAnimationFinished_ = true;
+		// 次のシーンをゲームクリアシーンに設定
+		nextScene_ = "CLEAR";
 	}
-	// プレイヤーが生きてたら
+	// ゲームオーバーだったら
+	else if (gameRule_->IsGameOver()) {
+
+		// プレイヤーの速度を0.5にする
+		player_->SetMoveSpeedAuto(0.5f);
+
+		// リザルトUIにゲームオーバーアニメーションを開始させる
+		resultUI_->StartAnimation(ResultType::GameOver);
+		
+		// 次のシーンをゲームオーバーシーンに設定
+		nextScene_ = "OVER";
+	}
+	// それ以外だったら
 	else {
 
-		// クリアしていたら
-		if (isClear_) {
+		// プレイヤーの速度を0.5にする
+		player_->SetMoveSpeedAuto(0.5f);
 
-			// プレイヤーの速度を0.5にする
-			player_->SetMoveSpeedAuto(0.5f);
+		// リザルトUIにゲームオーバーアニメーションを開始させる
+		resultUI_->StartAnimation(ResultType::GameOver);
 
-			// リザルトUIにクリアアニメーションを開始させる
-			resultUI_->StartAnimation(ResultType::Clear);
-		}
-		// ゲームオーバーなら
-		else {
-
-			// プレイヤーの速度を0にする
-			player_->SetMoveSpeedAuto(0.0f);
-
-			// リザルトUIにゲームオーバーアニメーションを開始させる
-			resultUI_->StartAnimation(ResultType::GameOver);
-		}
+		// 次のシーンをゲームオーバーシーンに設定
+		nextScene_ = "OVER";
 	}
 
 	// フィルターマネージャのインスタンスを取得
@@ -80,6 +82,9 @@ void EndingState::Initialize(GamePlayScene* scene) {
 
 	// ビネットフィルターのポインタを取得
 	vignetteFilter_ = filterManager_->GetVignetteFilter();
+
+	// 遷移マネージャのインスタンスを取得
+	transitionManager_ = TransitionManager::GetInstance();
 }
 
 /// ================================================== ///
@@ -88,8 +93,8 @@ void EndingState::Update() {
 
 	/// ===== UI表示の処理 ===== ///
 
-	// プレイヤーが生きていて、アニメーションが完了していなかったら
-	if (!isPlayerDead_ && !isAnimationFinished_) {
+	// アニメーションが完了していなかったら
+	if (!isAnimationFinished_) {
 
 		// リザルトUIの更新
 		resultUI_->Update();
@@ -101,17 +106,14 @@ void EndingState::Update() {
 
 	/// ===== フェードの処理 ===== ///
 
-	// アニメーションが完了していたら
-	if (isAnimationFinished_) {
+	// アニメーションが完了していて、フェードが開始されていなかったら
+	if (isAnimationFinished_ && !isFadeStarted_) {
 
-		if (!isFadeStarted_) {
+		// フェードを開始する
+		StartFadeIn();
 
-			// フェード開始
-			isFadeStarted_ = true;
-		}
-
-		// フェードインの更新
-		FadeIn();
+		// フェード開始フラグを立てる
+		isFadeStarted_ = true;
 	}
 
 	// パーティクルマネージャの更新
@@ -122,27 +124,24 @@ void EndingState::Update() {
 /// 描画
 void EndingState::Draw() {
 
-	resultUI_->Draw();
+	//resultUI_->Draw();
 }
 
 /// ================================================== ///
-/// フェードインの処理
-void EndingState::FadeIn() {
+/// フェードインを開始する
+void EndingState::StartFadeIn() {
 
-	// プレイヤーが生きていて、クリアしていたら
-	if (!isPlayerDead_ && isClear_) {
+	// 遷移先シーン名をコピーしてキャプチャ
+	const std::string nextScene = nextScene_;
 
-		vignetteFilter_->SetIsActive(false);
+	vignetteFilter_->SetIsActive(false);
 
-		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("CLEAR");
-	}
-	// ゲームオーバーなら
-	else {
-
-		vignetteFilter_->SetIsActive(false);
-
-		// シーン切り替え
-		SceneManager::GetInstance()->ChangeScene("OVER");
-	}
+	// 白でフェードイン→完了後にシーン切り替え
+	transitionManager_->StartInTransition(
+		std::make_unique<FadeTransition>(Vector3{ 1.0f, 1.0f, 1.0f }, 0.0f, 1.0f),
+		[nextScene]() {
+			SceneManager::GetInstance()->ChangeScene(nextScene);
+		},
+		2.0f
+	);
 }

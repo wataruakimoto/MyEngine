@@ -198,14 +198,6 @@ void GamePlayScene::ChangeState(std::unique_ptr<IPlayState> newState) {
 	state_->Initialize(this);
 }
 
-void GamePlayScene::OnPlayerDamaged(uint16_t currentHP) {
-
-	if (auto playState = dynamic_cast<PlayState*>(state_.get())) {
-
-		playState->OnPlayerDamaged(currentHP);
-	}
-}
-
 /// ================================================== ///
 /// 敵を倒したときの処理
 void GamePlayScene::OnEnemyDefeated() {
@@ -227,6 +219,9 @@ void GamePlayScene::OnEnemyDefeated() {
 /// ================================================== ///
 /// ゴールに到達したときの処理
 void GamePlayScene::OnGoalReached() {
+
+	// GameRuleにゴール到達を通知
+	gameRule_->NotifyGoalReached();
 
 	// 状態がプレイ状態のとき
 	if (auto playState = dynamic_cast<PlayState*>(state_.get())) {

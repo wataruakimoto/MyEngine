@@ -1,5 +1,6 @@
 #include "GameRule.h"
-#include "GamePlayScene.h"
+
+#include <algorithm>
 
 /// ================================================== ///
 /// 初期化
@@ -9,7 +10,7 @@ void GameRule::Initialize() {
 
 	isGameOver_ = false;
 
-	remainingTime_ = initialTime_;
+	remainingTime_ = kInitialTime;
 }
 
 /// ================================================== ///
@@ -20,7 +21,17 @@ void GameRule::Update() {
 	if (isClear_ || isGameOver_) return;
 
 	// 残り時間を減らす
-	remainingTime_ -= deltaTime_;
+	remainingTime_ -= kDeltaTime;
+
+	// 残り時間が0以下になったら
+	if (remainingTime_ <= 0.0f) {
+
+		// 残り時間を0にする
+		remainingTime_ = 0.0f;
+
+		// ゲームオーバーにする
+		isGameOver_ = true;
+	}
 }
 
 /// ================================================== ///
@@ -28,12 +39,17 @@ void GameRule::Update() {
 void GameRule::AddBonusTime(float time) {
 
 	// 残り時間に追加
-	remainingTime_ += time;
+	remainingTime_ = std::min(remainingTime_ + time, kMaxTime);
+}
 
-	// 残り時間が最大時間を超えたら
-	if (remainingTime_ > maxTime_) {
+/// ================================================== ///
+/// ゴール到達の通知
+void GameRule::NotifyGoalReached() {
 
-		// 残り時間を最大時間に設定
-		remainingTime_ = maxTime_;
+	// ゲームオーバーではないなら
+	if (!isGameOver_) {
+
+		// クリアにする
+		isClear_ = true;
 	}
 }

@@ -23,7 +23,6 @@ struct ManualStateContext {
 
 	Engine::WorldTransform* worldTransform = nullptr; // ワールド変換
 	Engine::Vector3 defaultScale = { 1.0f, 1.0f, 1.0f }; // デフォルトの拡縮
-	float* moveSpeed = nullptr;						  // 移動の速さ
 	Engine::Camera* camera = nullptr;				  // カメラ
 };
 
@@ -69,6 +68,17 @@ public:
 	void OnHit();
 
 	/// ================================================== ///
+	/// ゲッター
+	/// ================================================== ///
+public:
+
+	/// <summary>
+	/// 描画可能かどうかを取得
+	/// </summary>
+	/// <returns></returns>
+	bool IsVisible() const { return isVisible_; }
+
+	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///
 private:
@@ -89,5 +99,36 @@ private:
 
 	// バレルロールコンポーネント
 	std::unique_ptr<PlayerBarrelRoll> barrelRoll_ = nullptr;
+
+	/// ========== 移動速度用 ========== ///
+
+	// 移動速度
+	float moveSpeed_ = 0.0f;
+
+	// 最大移動速度
+	const float kMaxMoveSpeed = 1.0f;
+
+	// 被弾時の移動速度
+	const float kHitMoveSpeed = 0.2f;
+
+	// 毎フレームの移動速度の復帰量
+	const float kMoveSpeedRecoveryRate = 0.01f;
+
+	/// ========== 無敵・点滅用 ========== ///
+
+	// 無敵タイマー
+	float invincibleTimer_ = 0.0f;
+
+	// 無敵時間 (秒)
+	const float kInvincibleDuration = 2.0f;
+
+	// 点滅間隔 (秒)
+	const float kBlinkInterval = 0.1f;
+
+	// 点滅タイマー
+	float blinkTimer_ = 0.0f;
+
+	// 描画するかどうか
+	bool isVisible_ = true;
 };
 
