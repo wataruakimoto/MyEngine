@@ -217,6 +217,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\UI\TimerUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\GamePlayScene\GameRule.h" />
@@ -349,6 +350,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\UI\TimerUI.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">
