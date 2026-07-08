@@ -1,5 +1,6 @@
 #include "PlayState.h"
 #include "GamePlayScene.h"
+#include "GameObjectManager.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 
 #include "OffscreenRendering/FilterManager.h"
@@ -16,14 +17,17 @@ void PlayState::Initialize(GamePlayScene* scene) {
 	// 引数をメンバ変数にセット
 	scene_ = scene;
 
+	// オブジェクトマネージャのインスタンスを取得
+	gameObjectManager_ = GameObjectManager::GetInstance();
+
 	// プレイヤーのポインタを取得
-	player_ = scene_->GetGameObjectManager()->GetPlayer();
+	player_ = gameObjectManager_->GetPlayer();
 
 	// プレイヤーモードをゲームプレイに変更
 	player_->SetPlayerState(PlayerState::Manual);
 
 	// ゴールのポインタを取得
-	goal_ = scene_->GetGameObjectManager()->GetGoal();
+	goal_ = gameObjectManager_->GetGoal();
 
 	// ガイドUIの生成
 	guideUI_ = std::make_unique<GuideUI>();
@@ -61,7 +65,8 @@ void PlayState::Update() {
 	scene_->CheckAllCollisions();
 
 	// プレイヤーのデスフラグを取得
-	bool isPlayerDead = player_->IsDead();
+	//bool isPlayerDead = player_->IsDead();
+	bool isPlayerDead = false;
 
 	// ゴールに到達していたら
 	if (isGoalReached_) {
@@ -111,23 +116,24 @@ void PlayState::UpdateVignetteEffect() {
 		return;
 	}
 
-	uint16_t currentHP = player_->GetHP();
+	//uint16_t currentHP = player_->GetHP();
+	uint32_t currentHP = 100; // デフォルト値
 	PlayerState playerState = player_->GetState();
 
-	// プレイヤーが死亡状態の場合は常時赤いビネットを表示
-	if (playerState == PlayerState::Dead) {
-
-		// ビネットフィルターの設定
-		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
-		vignetteFilter_->SetIntensity(0.7f);
-		vignetteFilter_->SetScale(18.0f);
-		vignetteFilter_->SetRange(1.0f);
-
-		// ダメージ時の一時ビネットはリセット
-		isDamageVignetteActive_ = false;
-		return;
-	}
+	//// プレイヤーが死亡状態の場合は常時赤いビネットを表示
+	//if (playerState == PlayerState::Dead) {
+	//
+	//	// ビネットフィルターの設定
+	//	vignetteFilter_->SetIsActive(true);
+	//	vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
+	//	vignetteFilter_->SetIntensity(0.7f);
+	//	vignetteFilter_->SetScale(18.0f);
+	//	vignetteFilter_->SetRange(1.0f);
+	//
+	//	// ダメージ時の一時ビネットはリセット
+	//	isDamageVignetteActive_ = false;
+	//	return;
+	//}
 
 	// HPが1の場合は常時赤いビネットを表示
 	if (currentHP == 1) {

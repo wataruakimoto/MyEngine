@@ -154,7 +154,8 @@ void FollowCameraController::DutchRoll() {
 
 void FollowCameraController::DynamicFov() {
 
-	float playerSpeedRate = player->GetSpeedRate();
+	//float playerSpeedRate = player->GetSpeedRate();
+	float playerSpeedRate = 1.0f; // デフォルト値
 
 	// 度をラジアンに変換
 	float fovNormalRad = ConvertDegreesToRadians(kFovNormal_);

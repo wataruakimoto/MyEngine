@@ -10,6 +10,7 @@ namespace Engine {
 	class RadialBlurFilter;
 }
 
+class GameObjectManager;
 class Player;
 class Goal;
 
@@ -80,6 +81,9 @@ private:
 	bool isAnimationStarted_ = false;
 
 	/// ===== 借りポインタ・インスタンス ===== ///
+
+	// オブジェクトマネージャのインスタンス
+	GameObjectManager* gameObjectManager_ = nullptr;
 
 	// ラジアルブラー借りポインタ
 	Engine::RadialBlurFilter* radialBlurFilter_ = nullptr;

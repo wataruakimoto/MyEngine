@@ -3,6 +3,8 @@
 
 #include <imgui.h>
 
+std::unique_ptr<GameObjectManager> GameObjectManager::instance_ = nullptr;
+
 void GameObjectManager::Initialize() {
 
 	// フロアを生成
@@ -148,6 +150,12 @@ void GameObjectManager::ShowImGui() {
 	if (cylinder_) cylinder_->ShowImGui();
 }
 
+void GameObjectManager::Finalize() {
+
+	// インスタンスを破棄
+	instance_.reset();
+}
+
 void GameObjectManager::Clear() {
 
 	// プレイヤーのクリア
@@ -222,4 +230,19 @@ void GameObjectManager::RegisterAllColliders(Engine::CollisionManager* collision
 	for (const std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		collisionManager->RegisterCollider(obstacle->GetCollider());
 	}
+}
+
+/// ================================================== ///
+/// インスタンスの取得
+GameObjectManager* GameObjectManager::GetInstance() {
+	
+	// インスタンスが存在しない場合
+	if (instance_ == nullptr) {
+
+		// インスタンスを生成
+		instance_ = std::make_unique<GameObjectManager>(ConstructorKey());
+	}
+
+	// インスタンスを返す
+	return instance_.get();
 }

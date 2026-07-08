@@ -26,6 +26,45 @@ namespace Engine {
 class GameObjectManager {
 
 	/// ================================================== ///
+	/// シングルトン
+	/// ================================================== ///
+private:
+
+	// インスタンス
+	static std::unique_ptr<GameObjectManager> instance_;
+
+	// friende指定してデストラクタにアクセスできるようにする
+	friend std::default_delete<GameObjectManager>;
+
+	// コンストラクタを隠蔽
+	GameObjectManager() = default;
+	// デストラクタを隠蔽
+	~GameObjectManager() = default;
+	// コピーコンストラクタを削除
+	GameObjectManager(const GameObjectManager&) = delete;
+	// 代入演算子を削除
+	GameObjectManager& operator=(const GameObjectManager&) = delete;
+
+	/// ================================================== ///
+	/// パスキーイディオム
+	/// ================================================== ///
+public:
+
+	/// <summary>
+	/// コンストラクタに渡すためのキー
+	/// </summary>
+	class ConstructorKey {
+	private:
+		// コンストラクタを隠蔽
+		ConstructorKey() = default;
+		// GameObjectManagerクラスのコンストラクタからしかアクセスできないようにする
+		friend class GameObjectManager;
+	};
+
+	// 鍵を受け取るコンストラクタ
+	explicit GameObjectManager(const ConstructorKey&) {}
+
+	/// ================================================== ///
 	/// メンバ関数
 	/// ================================================== ///
 public:
@@ -56,6 +95,11 @@ public:
 	void ShowImGui();
 
 	/// <summary>
+	/// 終了
+	/// </summary>
+	void Finalize();
+
+	/// <summary>
 	/// クリア
 	/// </summary>
 	void Clear();
@@ -73,14 +117,15 @@ public:
 	void RegisterAllColliders(Engine::CollisionManager* collisionManager);
 
 	/// ================================================== ///
-	/// クラス内関数
-	/// ================================================== ///
-private:
-
-	/// ================================================== ///
 	/// ゲッター
 	/// ================================================== ///
 public:
+
+	/// <summary>
+	/// インスタンスの取得
+	/// </summary>
+	/// <returns>インスタンス</returns>
+	static GameObjectManager* GetInstance();
 
 	Player* GetPlayer() const { return player_.get(); }
 

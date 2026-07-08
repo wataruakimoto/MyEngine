@@ -1,5 +1,6 @@
 #include "IntroState.h"
 #include "GamePlayScene.h"
+#include "GameObjectManager.h"
 
 #include "WinApp.h"
 #include "OffscreenRendering/FilterManager.h"
@@ -15,8 +16,11 @@ void IntroState::Initialize(GamePlayScene* scene) {
 	// 引数をメンバ変数にセット
 	scene_ = scene;
 
+	// オブジェクトマネージャのインスタンスを取得
+	gameObjectManager_ = GameObjectManager::GetInstance();
+
 	// プレイヤーのポインタを取得
-	player_ = scene_->GetGameObjectManager()->GetPlayer();
+	player_ = gameObjectManager_->GetPlayer();
 
 	// 減速開始時の速度を保存
 	initialSpeed_ = player_->GetMoveSpeedAuto();
@@ -25,7 +29,7 @@ void IntroState::Initialize(GamePlayScene* scene) {
 	player_->SetPlayerState(PlayerState::AutoPilot);
 
 	// ゴールのポインタを取得
-	goal_ = scene_->GetGameObjectManager()->GetGoal();
+	goal_ = gameObjectManager_->GetGoal();
 
 	// フィルターマネージャのインスタンスを取得
 	filterManager_ = FilterManager::GetInstance();

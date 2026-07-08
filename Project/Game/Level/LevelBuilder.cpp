@@ -5,29 +5,29 @@
 #include "Obstacle/Obstacle.h"
 #include "Goal/Goal.h"
 
-void LevelBuilder::BuildLevel(const GameLevelData& levelData, GameObjectManager* gameObjectManager) {
+void LevelBuilder::BuildLevel(const GameLevelData& levelData) {
 
 	// プレイヤーの設定
-	SetPlayerFromLevelData(levelData, gameObjectManager);
+	SetPlayerFromLevelData(levelData);
 
 	// 敵の生成
-	SpawnEnemiesFromLevelData(levelData, gameObjectManager);
+	SpawnEnemiesFromLevelData(levelData);
 
 	// 障害物の生成
-	SpawnObstaclesFromLevelData(levelData, gameObjectManager);
+	SpawnObstaclesFromLevelData(levelData);
 
 	// ゴールの設定
-	SetGoalFromLevelData(levelData, gameObjectManager);
+	SetGoalFromLevelData(levelData);
 }
 
-void LevelBuilder::SetPlayerFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager) {
+void LevelBuilder::SetPlayerFromLevelData(const GameLevelData& levelData) {
 
-	Player* player = gameObjectManager->GetPlayer();
+	Player* player = GameObjectManager::GetInstance()->GetPlayer();
 
 	player->GetWorldTransform().SetTranslate(levelData.playerPosition);
 }
 
-void LevelBuilder::SpawnEnemiesFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager) {
+void LevelBuilder::SpawnEnemiesFromLevelData(const GameLevelData& levelData) {
 
 	for (const EnemySpawnData& spawn : levelData.enemySpawnDatas) {
 		
@@ -36,15 +36,15 @@ void LevelBuilder::SpawnEnemiesFromLevelData(const GameLevelData& levelData, Gam
 		enemy->Initialize();
 		enemy->GetWorldTransform().SetTranslate(spawn.position);
 		// 敵にプレイヤーのポインタを渡す
-		enemy->SetPlayer(gameObjectManager->GetPlayer());
-		enemy->SetGameObjectManager(gameObjectManager);
+		enemy->SetPlayer(GameObjectManager::GetInstance()->GetPlayer());
+		enemy->SetGameObjectManager(GameObjectManager::GetInstance());
 
 		// 敵をゲームオブジェクトマネージャーに追加
-		gameObjectManager->AddEnemy(std::move(enemy));
+		GameObjectManager::GetInstance()->AddEnemy(std::move(enemy));
 	}
 }
 
-void LevelBuilder::SpawnObstaclesFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager) {
+void LevelBuilder::SpawnObstaclesFromLevelData(const GameLevelData& levelData) {
 
 	for (const ObstacleSpawnData& spawn : levelData.obstacleSpawnDatas) {
 
@@ -54,11 +54,11 @@ void LevelBuilder::SpawnObstaclesFromLevelData(const GameLevelData& levelData, G
 		obstacle->GetWorldTransform().SetTranslate(spawn.position);
 
 		// 障害物をゲームオブジェクトマネージャーに追加
-		gameObjectManager->AddObstacle(std::move(obstacle));
+		GameObjectManager::GetInstance()->AddObstacle(std::move(obstacle));
 	}
 }
 
-void LevelBuilder::SetGoalFromLevelData(const GameLevelData& levelData, GameObjectManager* gameObjectManager) {
+void LevelBuilder::SetGoalFromLevelData(const GameLevelData& levelData) {
 
 	// ゴールの生成
 	std::unique_ptr<Goal> goal = std::make_unique<Goal>();
@@ -68,5 +68,5 @@ void LevelBuilder::SetGoalFromLevelData(const GameLevelData& levelData, GameObje
 	goal->GetWorldTransform().SetTranslate(levelData.goalPosition);
 
 	// ゴールをゲームオブジェクトマネージャーに追加
-	gameObjectManager->SetGoal(std::move(goal));
+	GameObjectManager::GetInstance()->SetGoal(std::move(goal));
 }

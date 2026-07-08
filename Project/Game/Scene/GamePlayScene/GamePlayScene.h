@@ -4,7 +4,6 @@
 #include "Particle/ParticleManager.h"
 #include "Light/LightManager.h"
 
-#include "GameObjectManager.h"
 #include "CameraManager.h"
 #include "LevelLoader.h"
 #include "State/IPlayState.h"
@@ -22,6 +21,8 @@ namespace Engine {
 	class ParticleRenderer;
 	class LineManager;
 }
+
+class GameObjectManager;
 
 /// ===== ゲームプレイシーン ===== ///
 class GamePlayScene : public BaseScene {
@@ -73,12 +74,6 @@ public:
 	void ChangeState(std::unique_ptr<IPlayState> newState);
 
 	/// <summary>
-	/// プレイヤーがダメージを受けたときの処理
-	/// </summary>
-	/// <param name="currentHP">現在のHP</param>
-	void OnPlayerDamaged(uint16_t currentHP);
-
-	/// <summary>
 	/// 敵を倒したときの処理
 	/// </summary>
 	void OnEnemyDefeated();
@@ -113,17 +108,17 @@ private:
 ///-------------------------------------------///
 public:
 
-	GameObjectManager* GetGameObjectManager() { return gameObjectManager_.get(); }
-
 	CameraManager* GetCameraManager() { return cameraManager_.get(); }
+
+	GameRule* GetGameRule() { return gameRule_.get(); }
 
 ///-------------------------------------------/// 
 /// メンバ変数
 ///-------------------------------------------///
 private:
 
-	// オブジェクトマネージャー
-	std::unique_ptr<GameObjectManager> gameObjectManager_ = nullptr;
+	// オブジェクトマネージャーのインスタンス
+	GameObjectManager* gameObjectManager_ = nullptr;
 
 	// カメラマネージャー
 	std::unique_ptr<CameraManager> cameraManager_ = nullptr;

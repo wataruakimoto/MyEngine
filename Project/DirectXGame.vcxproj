@@ -201,7 +201,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\Base\SceneBuffer.cpp" />
     <ClCompile Include="Engine\Base\OffscreenRendering\PostProcessBuffer.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\PauseUI.cpp" />
-    <ClCompile Include="Game\Scene\GamePlayScene\Player\PlayerCommand.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Reticle\Reticle.cpp" />
     <ClCompile Include="Engine\2D\Sprite\SpriteRenderer.cpp" />
     <ClCompile Include="Engine\3D\Object\Object3dRenderer.cpp" />
@@ -213,6 +212,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\ShapeRenderers\MeshRenderer.cpp" />
     <ClCompile Include="Engine\Math\MathQuaternion.cpp" />
     <ClCompile Include="Engine\3D\Particle\ParticleEditor.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\GamePlayScene\GameRule.h" />
@@ -236,6 +240,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Base\OffscreenRendering\Filters\FadeFilter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\GameObjectManager.h" />
     <ClInclude Include="Game\Level\GameLevelData.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\State\IPlayerState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\State\EndingState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\State\IPlayState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\State\PauseState.h" />
@@ -321,7 +326,6 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\UI\GuideUI.h" />
     <ClInclude Include="Engine\Base\OffscreenRendering\PostProcessBuffer.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\PauseUI.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Player\PlayerCommand.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Reticle\Reticle.h" />
     <ClInclude Include="Engine\Line\LineRenderer.h" />
     <ClInclude Include="Engine\Line\LineManager.h" />
@@ -340,6 +344,11 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Level\LevelBuilder.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\State\IntroState.h" />
     <ClInclude Include="Engine\3D\Particle\ParticleEditor.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

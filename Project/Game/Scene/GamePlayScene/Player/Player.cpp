@@ -1,24 +1,38 @@
-#define NOMINMAX
-
 #include "Player.h"
 #include "Input.h"
 #include "GamePlayScene.h"
 #include "Collision/CollisionTypeIDDef.h"
 #include "MathVector.h"
-#include "Easing.h"
 
-#include <algorithm>
+#include "State/PlayerAutoState.h"
+#include "State/PlayerManualState.h"
+
 #include <imgui.h>
 
 using namespace Engine;
 using namespace MathVector;
-using namespace Easing;
 
+/// ================================================== ///
+/// コンストラクタ
+Player::Player() {
+
+	// 状態を一度だけ生成しておく
+	states_[typeid(PlayerAutoState)] = std::make_unique<PlayerAutoState>();
+	states_[typeid(PlayerManualState)] = std::make_unique<PlayerManualState>();
+}
+
+/// ================================================== ///
+/// デストラクタ
+Player::~Player() {
+}
+
+/// ================================================== ///
+/// 初期化
 void Player::Initialize() {
 
 	// ワールド変換の初期化
 	worldTransform_.Initialize();
-	worldTransform_.SetScale({ 2.0f,2.0f,2.0f });
+	worldTransform_.SetScale(defaultScale_);
 	worldTransform_.SetTranslate({ 0.0f, 5.0f, 0.0f });
 
 	// モデルの生成・初期化
@@ -44,50 +58,27 @@ void Player::Initialize() {
 	// コライダーにワールド変換を設定
 	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
-	isDead_ = false;
+	// 状態の初期化
 
-	// レティクルの生成
-	reticle_ = std::make_unique<Reticle>();
-	reticle_->Initialize();
-	// レティクルのカメラ設定
-	reticle_->SetCamera(camera_);
+	// オート操縦のコンテキストを設定
+	AutoStateContext autoContext;
+	autoContext.worldTransform = &worldTransform_;
+	autoContext.moveSpeed = &moveSpeedAuto_;
+	static_cast<PlayerAutoState*>(states_[typeid(PlayerAutoState)].get())->Initialize(autoContext);
 
-	// ロックオンの生成
-	lockOn_ = std::make_unique<LockOn>();
-	lockOn_->Initialize();
-	// 自機をロックオンに設定
-	lockOn_->SetPlayer(this);
-	// カメラをロックオンに設定
-	lockOn_->SetCamera(camera_);
-	// 2Dレティクルをロックオンに設定
-	lockOn_->SetReticle(reticle_.get());
+	// マニュアル操縦のコンテキストを設定
+	ManualStateContext manualContext;
+	manualContext.worldTransform = &worldTransform_;
+	manualContext.camera = camera_;
+	manualContext.defaultScale = defaultScale_;
+	static_cast<PlayerManualState*>(states_[typeid(PlayerManualState)].get())->Initialize(manualContext);
 
-	// コマンドの生成
-	normalShotCommand_ = std::make_unique<NormalShotCommand>();
-	lockOnAimCommand_ = std::make_unique<LockOnAimCommand>();
-	lockOnShotCommand_ = std::make_unique<LockOnShotCommand>();
-
-	hp_ = 5;
-
-	// 移動パーティクルの生成
-	moveEmitter_ = std::make_unique<Engine::ParticleEmitter>("PlayerMove", Engine::EmitterType::Interval, 1);
-	// 移動パーティクルの初期化
-	moveEmitter_->Initialize();
-	// 移動パーティクルの位置をプレイヤーに設定
-	moveEmitter_->GetWorldTransform().SetParent(&worldTransform_);
-	// パーティクルを出さないようにする
-	moveEmitter_->SetEmitting(false);
-
-	// エミッターの生成
-	particleEmitterRed = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);
-	particleEmitterRed->Initialize();
-	particleEmitterRed->GetWorldTransform().SetParent(&worldTransform_);
-
-	particleEmitterBlue = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 40);
-	particleEmitterBlue->Initialize();
-	particleEmitterBlue->GetWorldTransform().SetParent(&worldTransform_);
+	// 初期状態をオート操縦に設定
+	ChangeState<PlayerAutoState>();
 }
 
+/// ================================================== ///
+/// 更新
 void Player::Update() {
 
 	// 状態の変更がリクエストされていたら
@@ -101,26 +92,13 @@ void Player::Update() {
 
 		case PlayerState::AutoPilot:
 
-			// オートパイロットモードの初期化処理
-			AutoPilotInitialize();
+			ChangeState<PlayerAutoState>();
 
 			break;
 
 		case PlayerState::Manual:
 
-			// マニュアルモードの初期化処理
-			ManualInitialize();
-
-			break;
-
-		case PlayerState::Dead:
-
-			// 死亡モードの初期化処理
-			DeadInitialize();
-
-			break;
-
-		default:
+			ChangeState<PlayerManualState>();
 
 			break;
 		}
@@ -129,29 +107,10 @@ void Player::Update() {
 		stateRequest_ = std::nullopt;
 	}
 
-	// 将来的にはWSwitchから基底と継承先を分ける
-	switch (state_) {
+	if (currentState_) {
 
-	case PlayerState::AutoPilot:
-
-		// オートパイロットモードの更新
-		AutoPilotUpdate();
-
-		break;
-
-	case PlayerState::Manual:
-
-		// マニュアルモードの更新
-		ManualUpdate();
-
-		break;
-
-	case PlayerState::Dead:
-
-		// 死亡モードの更新
-		DeadUpdate();
-
-		break;
+		// 現在の状態の更新
+		currentState_->Update();
 	}
 
 	// ワールド変換の更新
@@ -160,44 +119,55 @@ void Player::Update() {
 	// コライダーの更新
 	collider_->Update();
 
-	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
-
 	// 3Dオブジェクトの更新
 	object->Update();
 
-	// エミッターの更新
-	moveEmitter_->Update();
-	particleEmitterRed->Update();
-	particleEmitterBlue->Update();
+	// ワールド座標からスクリーン座標に変換
+	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
 }
 
+/// ================================================== ///
+/// 描画
 void Player::Draw() {
 
 	// コライダーの描画
 	collider_->Draw();
 
-	if (!isGroundHit_) {
+	// マニュアル状態の取得
+	auto* manualState = dynamic_cast<PlayerManualState*>(currentState_);
 
-		if (invincibleTimer_ > 0.0f) {
-			if (static_cast<int>(invincibleTimer_) % 12 < 6) {
-				return; // 描画処理をスキップ
-			}
+	// マニュアル操縦状態のとき
+	if (manualState) {
+
+		// 点滅状態のとき
+		if (manualState->IsVisible()) {
+
+			// 3Dオブジェクトの描画
+			object->Draw();
 		}
+	}
+	// それ以外の状態のとき
+	else {
 
 		// 3Dオブジェクトの描画
 		object->Draw();
 	}
-
-	// reticle_->Draw3D();
 }
 
+/// ================================================== ///
+/// UIの描画
 void Player::DrawUI() {
 
-	reticle_->Draw2D();
+	// マニュアル状態のときのみUI描画
+	auto* manualState = dynamic_cast<PlayerManualState*>(currentState_);
 
-	lockOn_->Draw();
+	if (manualState) {
+		manualState->DrawUI();
+	}
 }
 
+/// ================================================== ///
+/// 終了
 void Player::Finalize() {
 }
 
@@ -211,23 +181,15 @@ void Player::ShowImGui() {
 
 	collider_->ShowImGui();
 
-	ImGui::SliderFloat3("Velocity", &velocity_.x, -0.2f, 0.2f);
+	ImGui::DragFloat3("速度", &velocity_.x, 0.1f);
 
 	ImGui::Text("ScreenPos: (%.2f, %.2f)", screenPos_.x, screenPos_.y);
 
-	ImGui::Checkbox("isDead", &isDead_);
-	ImGui::Checkbox("isGroundHit", &isGroundHit_);
-
 	// 状態の表示
-	ImGui::Text("State: %s", (state_ == PlayerState::AutoPilot) ? "AutoPilot" :
-		(state_ == PlayerState::Manual) ? "Manual" :
-		(state_ == PlayerState::Dead) ? "Dead" : "Unknown");
-
-	ImGui::Text("speedTitle: %.2f", moveSpeedAuto);
-
-	ImGui::Text("speedPlay: %.2f", moveSpeedManual);
-
-	ImGui::Text("HP: %d", hp_);
+	ImGui::Text("State: %s",
+		(state_ == PlayerState::AutoPilot) ? "AutoPilot" :
+		(state_ == PlayerState::Manual) ? "Manual"
+		: "Unknown");
 
 	object->ShowImGui();
 
@@ -235,594 +197,25 @@ void Player::ShowImGui() {
 
 	ImGui::End();
 
-	moveEmitter_->ShowImGui();
-
 #endif // USE_IMGUI
 }
 
+/// ================================================== ///
+/// 衝突時
 void Player::OnCollision(Collider* other) {
 
 	// 衝突相手の種別IDを取得
 	uint32_t typeID = other->GetTypeID();
 
-	// 状態がバレルロール中の場合
-	if (isRolling_) {
-
-		// 衝突相手が敵の場合
-		if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
-
-			// 1ダメージを受ける
-			DamageProcess(1);
-		}
-		// 衝突相手が敵の弾の場合
-		else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
-
-			// 何もしない
-			return;
-		}
-		// その他と衝突した場合
-		else {
-
-			// 何もしない
-			return;
-		}
-	}
-
-	// 衝突相手が敵の場合
-	if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy)) {
-
-		// 無敵時間中でなければダメージを受ける
-		if (invincibleTimer_ <= 0.0f) {
-
-			// 1ダメージを受ける
-			DamageProcess(1);
-
-			// 無敵タイマーをセット
-			invincibleTimer_ = kInvincibleTime;
-		}
-	}
-	// 衝突相手が敵の弾の場合
-	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet)) {
-
-		// 無敵時間中でなければダメージを受ける
-		if (invincibleTimer_ <= 0.0f) {
-
-			// 1ダメージを受ける
-			DamageProcess(1);
-
-			// 無敵タイマーをセット
-			invincibleTimer_ = kInvincibleTime;
-		}
-	}
-	// 衝突相手が障害物の場合
-	else if (typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle)) {
-
-		// 無敵時間中でなければダメージを受ける
-		if (invincibleTimer_ <= 0.0f) {
-
-			// 1ダメージを受ける
-			DamageProcess(1);
-
-			// 無敵タイマーをセット
-			invincibleTimer_ = kInvincibleTime;
-		}
-	}
-	// その他と衝突した場合
-	else {
-
-		// 何もしない
-		return;
-	}
-}
-
-void Player::Fire(PlayerContext context) {
-
-	// ロックオンモードなら
-	if (isLockOnMode_) {
-
-		// ロックオンショットコマンド実行
-		lockOnShotCommand_->Execute(context);
-
-	}
-	// ロックオンモードでなければ
-	else {
-
-		// 通常射撃コマンド実行
-		normalShotCommand_->Execute(context);
-	}
-
-	// 射撃間隔タイマーをリセット
-	fireTimer_ = kFireDuration_;
-
-	// 射撃アニメーション開始
-	isFiring_ = true;
-	fireAnimationTimer_ = kFireAnimationDuration_; // アニメーションタイマーをリセット
-	object->GetWorldTransform().SetScale(fireScale_);
-}
-
-void Player::FireAnimationUpdate() {
-
-	// デルタタイム分デクリメント
-	fireAnimationTimer_ -= 1.0f / 60.0f;
-
-	float t = 1.0f - (fireAnimationTimer_ / kFireAnimationDuration_); // 経過割合を計算
-	float easedT = EaseOutCubic(t); // イージング適用
-	Vector3 newScale = Lerp(fireScale_, defaultScale_, easedT); // スケールを補間
-
-	// スケールを設定
-	object->GetWorldTransform().SetScale(newScale);
-
-	// タイマーが0以下になったら
-	if (fireAnimationTimer_ <= 0.0f) {
-
-		isFiring_ = false; // 射撃アニメーション終了
-		newScale = defaultScale_; // スケールをデフォルトに戻す
-	}
-}
-
-void Player::Rolling() {
-
-	// ロール中フラグが立っていなければ終了
-	if (!isRolling_) return;
-
-	/// ===== タイマー処理 ===== ///
-
-	// タイマーを進める
-	rollTimer_ += 1.0f / 60.0f; // デルタタイム加算
-
-	// 進行度を計算
-	float t = rollTimer_ / rollDuration_;
-
-	// イージング適用
-	float easeT = EaseOutCubic(t);
-
-	/// ===== 終了処理 ===== ///
-
-	// タイマーが最大値に達したら
-	if (t >= 1.0f) {
-
-		// ロール完了
-		t = 1.0f;
-
-		// ロール中フラグを下ろす
-		isRolling_ = false;
-
-		// クールダウンタイマーをリセット
-		rollCooldownTimer_ = kRollCooldownDuration_;
-
-		// 以降の処理をスキップ
-		return;
-	}
-
-	/// ===== 回転の計算 ===== ///
-
-	// 現在の回転角度を計算
-	float currentAngle = rollDirection_ * -1.0f * kMaxRollAngle_ * easeT;
-
-	// 回転をZのみ設定
-	Vector3 currentRotate = worldTransform_.GetRotate();
-	currentRotate.z = currentAngle;
-	worldTransform_.SetRotate(currentRotate);
-
-	/// ===== 位置の計算 ===== ///
-
-	// 1フレーム分の差分を求める
-	float deltaT = easeT - preEaseT_; // 前回とのイージング値の差分
-
-	// 移動量の計算
-	Vector3 rollVelocity = { rollDirection_ * kMaxRollMove_ * deltaT, 0.0f, 0.0f };
-
-	// 速度に加算
-	velocity_ += rollVelocity;
-
-	// 次回のために値を上書き
-	preEaseT_ = easeT;
-}
-
-void Player::MoveToReticle() {
-
-	// レティクルの位置を取得
-	Vector3 reticlePos = reticle_->GetWorldTransform().GetWorldPosition();
-
-	// レティクルの方向ベクトルを求める
-	Vector3 toReticle = reticlePos - worldTransform_.GetWorldPosition();
-
-	// 正規化
-	toReticle = Normalize(toReticle);
-
-	/// ===== 回転の処理 ===== ///
-
-	// 横軸の長さを求める
-	float xzLength = Length(toReticle.x, toReticle.z);
-
-	// ヨー(Y軸回りの回転)を求める
-	float yaw = atan2f(toReticle.x, toReticle.z);
-
-	// ピッチ(X軸回りの回転)を求める
-	float pitch = atan2f(-toReticle.y, xzLength);
-
-	// 回転を取得
-	Vector3 currentRotate = worldTransform_.GetRotate();
-
-	// 回転させる
-	currentRotate.x = pitch;
-	currentRotate.y = yaw;
-
-	// 回転を設定
-	worldTransform_.SetRotate(currentRotate);
-
-	/// ===== 位置の処理 ===== ///
-
-	// 移動速度を計算
-	Vector3 moveVelocity = toReticle * moveSpeedManual;
-
-	// 速度を加算
-	velocity_ += moveVelocity;
-
-	float speed = Length(velocity_);
-
-	// 速度が0より大きいなら
-	if (speed > 0.0f) {
-		
-		float targetFrequency = baseFrequency_ / speed;
-
-		// パーティクルの頻度を設定
-		moveEmitter_->SetFrequency(baseFrequency_);
-
-		// パーティクルを出す
-		moveEmitter_->SetEmitting(true);
-	}
-	// 速度が0未満なら
-	else {
-
-		// パーティクルを出さない
-		moveEmitter_->SetEmitting(false);
-	}
-}
-
-void Player::ClampPosition() {
-
-	// 大きさを取得
-	Vector3 scale = worldTransform_.GetScale();
-
-	// 加算後の座標を取得
-	Vector3 currentPos = worldTransform_.GetTranslate();
-
-	//// X軸のクランプ
-	//currentPos.x = std::clamp(currentPos.x, kMoveMin.x + scale.x, kMoveMax.x - scale.x);
-	//// Y軸のクランプ
-	//currentPos.y = std::clamp(currentPos.y, kMoveMin.y + scale.y, kMoveMax.y - scale.y);
-
-	// Y軸のクランプ(0以上)
-	currentPos.y = std::max(currentPos.y, 0.0f + scale.y);
-
-	// 原点からの距離を計算(XZ平面)
-	float distanceFromOrigin = std::sqrt(currentPos.x * currentPos.x + currentPos.y * currentPos.y);
-
-	// 半径25を超えている場合、円周上に制限
-	const float kMaxRadius = 25.0f;
-	if (distanceFromOrigin > kMaxRadius - scale.x) {
-		float clampedRadius = kMaxRadius - scale.x;
-		float ratio = clampedRadius / distanceFromOrigin;
-		currentPos.x *= ratio;
-		currentPos.y *= ratio;
-	}
-
-	// クランプ後の座標を設定
-	worldTransform_.SetTranslate(currentPos);
-}
-
-void Player::DamageProcess(uint16_t damage) {
-
-	// 状態が死亡状態でなければ
-	if (state_ != PlayerState::Dead) {
-
-		// HPが0より大きいなら
-		if (hp_ > 0) {
-
-			// ダメージ分HPを減らす
-			hp_ -= damage;
-
-			// シーンにダメージを通知
-			if (gamePlayScene_) {
-				gamePlayScene_->OnPlayerDamaged(hp_);
-			}
-		}
-
-		// HPが0なら死亡状態に変更をリクエスト
-		if (hp_ == 0) {
-			stateRequest_ = PlayerState::Dead;
-		}
-	}
-}
-
-void Player::AutoPilotInitialize() {
-
-	moveEmitter_->SetEmitting(true);
-}
-
-void Player::AutoPilotUpdate() {
-
-	// 現在の回転を取得
-	Vector3 currentRotate = worldTransform_.GetRotate();
-	Vector3 targetRotate = { 0.0f, 0.0f, 0.0f }; // 正面を向く
-
-	// 回転を補間
-	currentRotate = Lerp(currentRotate, targetRotate, 0.1f);
-
-	// ほとんど目標回転に近づいたら
-	if (Length(currentRotate - targetRotate) < 0.01f) {
-		currentRotate = targetRotate; // 目標回転に設定
-	}
-
-	// 回転を設定
-	worldTransform_.SetRotate(currentRotate);
-
-	// Z方向のみの移動
-	worldTransform_.AddTranslate({ 0.0f, 0.0f, moveSpeedAuto });
-
-	// 速度倍率を計算
-	speedRate_ = moveSpeedAuto / 5.0f;
-
-	// 1.0fを超えないようにクランプ
-	speedRate_ = std::clamp(speedRate_, 0.0f, 1.0f);
-
-	// 速度が0より大きいなら
-	if (moveSpeedAuto > 0.0f) {
-
-		float targetFrequency = baseFrequency_ * moveSpeedAuto;
-
-		// パーティクルの頻度を設定
-		moveEmitter_->SetFrequency(targetFrequency);
-
-		// パーティクルを出す
-		moveEmitter_->SetEmitting(true);
-	}
-	// 速度が0未満なら
-	else {
-
-		// パーティクルを出さない
-		moveEmitter_->SetEmitting(false);
-	}
-}
-
-void Player::ManualInitialize() {
-
-	// 射撃のクールタイマーをリセット
-	fireTimer_ = kFireDuration_;
-
-	// バレルロールのクールタイマーをリセット
-	rollCooldownTimer_ = kRollCooldownDuration_;
-}
-
-void Player::ManualUpdate() {
-
-	// タイマー更新
-	if (fireTimer_ > 0.0f) {
-		fireTimer_ -= 1.0f / 60.0f;
-	}
-
-	// 速度をリセット
-	velocity_ = { 0.0f, 0.0f, 0.0f };
-
-	// コンテキスト作成
-	PlayerContext context;
-	context.player = this;
-	context.reticle = reticle_.get();
-	context.lockOn = lockOn_.get();
-	context.objManager = objManager_;
-
-	// 各キーの入力の状態
-	bool isMouseLeftPush = Input::GetInstance()->PushMouseButton(MouseButton::Left); // 左クリック
-	bool isMouseLeftRelease = Input::GetInstance()->ReleaseMouseButton(MouseButton::Left); // 左クリックリリース
-	bool isAPush = Input::GetInstance()->PushKey('A'); // Aキー
-	bool isDPush = Input::GetInstance()->PushKey('D'); // Dキー
-
-	/// ===== 射撃処理 ===== ///
-
-	//// 左クリックしている間
-	//if (isMouseLeftPush) {
-	//
-	//	// 押されている時間を加算
-	//	pressTimer_ += 1.0f / 60.0f;
-	//
-	//	// 一定時間以上押し続けたら
-	//	if (pressTimer_ > kLockOnDuration_) {
-	//
-	//		// ロックオンモードへ移行
-	//		isLockOnMode_ = true;
-	//
-	//		// ロックオンエイムコマンド実行
-	//		lockOnAimCommand_->Execute(context);
-	//	}
-	//}
-	//
-	//// 左クリックを離したとき
-	//if (isMouseLeftRelease) {
-	//
-	//	// タイマーが0以下なら
-	//	if (fireTimer_ <= 0) {
-	//
-	//		// 射撃
-	//		Fire(context);
-	//	}
-	//
-	//	// 押下時間をリセット
-	//	pressTimer_ = 0.0f;
-	//
-	//	// ロックオンモード解除
-	//	isLockOnMode_ = false;
-	//
-	//	// ロックオンターゲットをクリア
-	//	lockOn_->ClearTarget();
-	//
-	//}
-
-	// 左クリックしている間
-	if (isMouseLeftPush) {
-		// タイマーが0以下なら
-		if (fireTimer_ <= 0) {
-			// 射撃
-			Fire(context);
-		}
-	}
-
-	if (isFiring_) {
-
-		// 射撃アニメーション更新
-		FireAnimationUpdate();
-	}
-
-	/// ===== バレルロール処理 ===== ///
-
-	// タイマーが0以下かつロール中でなければ
-	if (rollCooldownTimer_ <= 0.0f && !isRolling_) {
-
-		// Aキーだけ押された場合
-		if (isAPush && !isDPush) {
-
-			rollDirection_ = -1; // 左回り
-
-			rollTimer_ = 0.0f; // タイマーリセット
-
-			preEaseT_ = 0.0f; // 
-
-			isRolling_ = true; // ロール中フラグを立てる
-		}
-		// Dキーだけ押された場合
-		else if (isDPush && !isAPush) {
-
-			rollDirection_ = 1; // 右回り
-
-			rollTimer_ = 0.0f; // タイマーリセット
-
-			preEaseT_ = 0.0f; // 
-
-			isRolling_ = true; // ロール中フラグを立てる
-		}
-	}
-	else {
-
-		// タイマーをデクリメント
-		rollCooldownTimer_ -= 1.0f / 60.0f;
-	}
-
-	// バレルロール処理
-	Rolling();
-
-	/// ===== 移動処理 ===== ///
-
-	// レティクルに向かって移動
-	MoveToReticle();
-
-	// 速度を加算
-	worldTransform_.AddTranslate(velocity_);
-
-	// 画面外に出ないように位置をクランプ
-	ClampPosition();
-
-	// レティクルの更新
-	reticle_->Update();
-
-	// ロックオンの更新
-	lockOn_->Update();
-
-	// 無敵タイマーの更新
-	if (invincibleTimer_ > 0.0f) {
-		invincibleTimer_ -= 1.0f;
-	}
-
-	// 移動パーティクルの発生フラグを立てる
-	moveEmitter_->SetEmitting(true);
-}
-
-void Player::DeadInitialize() {
-
-	// タイマーをリセット
-	deathTimer_ = 0.0f;
-
-	// 落下速度・回転速度を設定
-	deathVelocity_ = { 0.0f, kFallStartSpeed, 0.0f };
-	deathRotateVelocity_ = { kRollSpeed, 0.0f, kRollSpeed * 0.5f };
-
-	// 操作・弾発射を無効化
-	velocity_ = { 0.0f, 0.0f, 0.0f };
-
-	isGroundHit_ = false;
-
-	isParticleEmitted_ = false;
-
-	// 移動パーティクルを停止
-	moveEmitter_->SetEmitting(false);
-}
-
-void Player::DeadUpdate() {
-
-	// 無敵タイマーの更新
-	if (invincibleTimer_ > 0.0f) {
-		invincibleTimer_ -= 1.0f;
-	}
-
-	// タイマーを進める
-	deathTimer_ += 1.0f / 60.0f; // デルタタイム加算
-
-	// 回転速度の加算
-	deathRotateVelocity_.x += kRollAcceleration;
-	deathRotateVelocity_.z += kRollAcceleration * 0.5f;
-
-	// 回転の更新
-	worldTransform_.AddRotate(deathRotateVelocity_);
-
-	// 落下処理
-	deathVelocity_.y += kFallAcceleration;
-
-	// 落下が既定値より速くなったら
-	if (deathVelocity_.y < kMaxFallSpeed) {
-
-		// 最大値に揃える
-		deathVelocity_.y = kMaxFallSpeed;
-	}
-
-	// 横揺れの計算
-	float swayX = sinf(deathTimer_ * kSwayFrequency) * kSwayAmplitude;
-	float swayZ = cosf(deathTimer_ * kSwayFrequency * 0.5f) * kSwayAmplitude;
-
-	// 座標の計算
-	Vector3 position = { swayX * 0.05f, deathVelocity_.y, swayZ * 0.05f };
-
-	// 座標の更新
-	worldTransform_.AddTranslate(position);
-
-	// 地面に到達したら
-	if (worldTransform_.GetWorldPosition().y <= kGroundHeight + worldTransform_.GetScale().y) {
-
-		Vector3 Translate = { worldTransform_.GetWorldPosition().x, kGroundHeight + worldTransform_.GetScale().y, worldTransform_.GetWorldPosition().z };
-
-		// Y座標を地面の高さに揃える
-		worldTransform_.SetTranslate(Translate);
-
-		if (!isParticleEmitted_) {
-
-			// パーティクルを発生させる
-			particleEmitterRed->Emit();
-			particleEmitterBlue->Emit();
-
-			isParticleEmitted_ = true;
-		}
-
-		if (!isGroundHit_) {
-
-			// フラグを立てる
-			isGroundHit_ = true;
-
-			// 床に当たったときの時間を保存
-			groundHitTime_ = deathTimer_;
-		}
-
-		// 地面に当たってから2秒経過したら
-		if (deathTimer_ - groundHitTime_ >= 2.0f) {
-
-			isDead_ = true;
-		}
+	bool isEnemy = typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemy);
+	bool isEnemyBullet = typeID == static_cast<uint32_t>(CollisionTypeIDDef::kEnemyBullet);
+	bool isObstacle = typeID == static_cast<uint32_t>(CollisionTypeIDDef::kObstacle);
+
+	if (!isEnemy && !isEnemyBullet && !isObstacle) return;
+
+	// ManualState中のみ被弾処理を行う
+	auto* manualState = dynamic_cast<PlayerManualState*>(currentState_);
+	if (manualState) {
+		manualState->OnHit();
 	}
 }
