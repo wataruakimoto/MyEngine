@@ -50,8 +50,8 @@ namespace Engine {
 		/// <summary>
 		/// テクスチャの設定
 		/// </summary>
-		/// <param name="fullPath">フルパス</param>
-		void SetTexture(const std::string fullPath);
+		/// <param name="relativePath">相対パス</param>
+		void SetTexture(const std::string relativePath);
 
 		///-------------------------------------------/// 
 		/// クラス内関数

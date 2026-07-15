@@ -1,6 +1,7 @@
 #include "PlayState.h"
 #include "GamePlayScene.h"
 #include "GameObjectManager.h"
+#include "GameRule.h"
 #include "CameraControll/FollowCamera/FollowCameraController.h"
 
 #include "OffscreenRendering/FilterManager.h"
@@ -34,6 +35,11 @@ void PlayState::Initialize(GamePlayScene* scene) {
 	// ガイドUIの初期化
 	guideUI_->Initialize();
 
+	// タイマーUIの生成
+	timerUI_ = std::make_unique<TimerUI>();
+	// タイマーUIの初期化
+	timerUI_->Initialize();
+
 	// フィルターマネージャのインスタンスを取得
 	filterManager_ = FilterManager::GetInstance();
 
@@ -55,6 +61,12 @@ void PlayState::Update() {
 
 	// ガイドUIの更新
 	guideUI_->Update();
+
+	// ゲームルールから経過時間を取得
+	timerUI_->SetRemainingTime(scene_->GetGameRule()->GetRemainingTime());
+
+	// タイマーUIの更新
+	timerUI_->Update();
 
 	// パーティクルマネージャの更新
 	ParticleManager::GetInstance()->Update();
@@ -94,6 +106,9 @@ void PlayState::Draw() {
 
 	// ガイドUIの描画
 	guideUI_->Draw();
+
+	// タイマーUIの描画
+	timerUI_->Draw();
 }
 
 /// ================================================== ///

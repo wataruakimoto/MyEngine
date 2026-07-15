@@ -76,7 +76,7 @@ private:
 	const float kInitialTime = 60.0f;
 
 	// 最大時間
-	const float kMaxTime = 10.0f;
+	const float kMaxTime = 600.0f;
 
 	// デルタタイム
 	const float kDeltaTime = 1.0f/60.0f;

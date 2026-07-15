@@ -140,7 +140,7 @@ void MyGame::ShowImGui() {
 
 void MyGame::LoadAllResource() {
 
-	/// ===== テクスチャの読み込み ===== ///
+	/// ========== テクスチャの読み込み ========== ///
 
 	textureManager_->LoadTexture("BlackScreen.png");
 	textureManager_->LoadTexture("start.png");
@@ -158,14 +158,6 @@ void MyGame::LoadAllResource() {
 	textureManager_->LoadTexture("Result/GameOver.png");
 	textureManager_->LoadTexture("GameClear.png");
 	textureManager_->LoadTexture("GameOver.png");
-	textureManager_->LoadTexture("Guide/Mouse.png");
-	textureManager_->LoadTexture("Guide/MouseClick.png");
-	textureManager_->LoadTexture("Guide/ButtonA.png");
-	textureManager_->LoadTexture("Guide/ButtonD.png");
-	textureManager_->LoadTexture("Guide/PushA.png");
-	textureManager_->LoadTexture("Guide/PushD.png");
-	textureManager_->LoadTexture("Guide/Pause.png");
-	textureManager_->LoadTexture("Guide/Back.png");
 	textureManager_->LoadTexture("White1x1.png");
 	textureManager_->LoadTexture("PauseUI/ResumeButton.png");
 	textureManager_->LoadTexture("PauseUI/RestartButton.png");
@@ -174,9 +166,27 @@ void MyGame::LoadAllResource() {
 	textureManager_->LoadTexture("SpaceToTitle.png");
 	textureManager_->LoadTexture("Particles/gradationLine.png");
 
+	/// ===== UIテクスチャ ===== ///
+
+	textureManager_->LoadTexture("UI/Guide/Mouse.png");
+	textureManager_->LoadTexture("UI/Guide/MouseClick.png");
+	textureManager_->LoadTexture("UI/Guide/ButtonA.png");
+	textureManager_->LoadTexture("UI/Guide/ButtonD.png");
+	textureManager_->LoadTexture("UI/Guide/PushA.png");
+	textureManager_->LoadTexture("UI/Guide/PushD.png");
+	textureManager_->LoadTexture("UI/Guide/Pause.png");
+	textureManager_->LoadTexture("UI/Guide/Back.png");
+
+	// 数字のスプライトを生成 0~9まで
+	for (uint32_t i = 0; i < 10; ++i) {
+		textureManager_->LoadTexture("UI/Timer/" + std::to_string(i) + ".png");
+	}
+
+	textureManager_->LoadTexture("UI/Timer/Colon.png");
+
 	textureManager_->LoadTexture("rostock_laage_airport_4k.dds");
 
-	/// ===== モデルの読み込み ===== ///
+	/// ========== モデルの読み込み ========== ///
 
 	modelManager_->LoadModel("Player/player.obj");
 	modelManager_->LoadModel("Cylinder/cylinder.obj");
