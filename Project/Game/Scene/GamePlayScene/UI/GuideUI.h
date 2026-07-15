@@ -3,6 +3,7 @@
 #include "Sprite/Sprite.h"
 
 #include <memory>
+#include <string>
 
 namespace Engine {
 	class Input;
@@ -34,6 +35,9 @@ public:
 	void ShowImGui();
 
 private:
+
+	// 画像フォルダのパス
+	const std::string kFolderPath_ = "UI/Guide/";
 
 	// マウススプライト
 	std::unique_ptr<Engine::Sprite> mouseSprite = nullptr;

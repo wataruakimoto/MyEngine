@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <array>
+#include <string>
 
 /// <summary>
 /// 制限時間表示UI
@@ -59,10 +60,17 @@ private:
 	TimeDigit ConvertTimeToDigits(float remainingTime);
 
 	/// <summary>
-	/// 表示するスプライトを更新
+	/// 表示するスプライトのテクスチャを更新
 	/// </summary>
 	/// <param name="timeDigit">分秒の桁</param>
 	void UpdateDisplaySprites(TimeDigit timeDigit);
+
+	/// <summary>
+	/// 数字のテクスチャのフルパスを取得
+	/// </summary>
+	/// <param name="digit">数字(0~9)</param>
+	/// <returns>テクスチャのフルパス</returns>
+	std::string GetDigitTexturePath(uint32_t digit);
 
 	/// ================================================== ///
 	/// セッター
@@ -82,28 +90,25 @@ private:
 
 	/// ========== スプライト ========== ///
 
-	// 数字のスプライト 0~9
-	std::array<std::unique_ptr<Engine::Sprite>, 10> timeSprites_;
-
-	// 表示するスプライト 分秒
-	std::array<Engine::Sprite*, 4> displaySprites_;
+	// 表示スロットのスプライト 分十・分一・秒十・秒一
+	std::array<std::unique_ptr<Engine::Sprite>, 4> slotSprites_;
 
 	// コロンのスプライト
 	std::unique_ptr<Engine::Sprite> colonSprite_ = nullptr;
 
+	// 画像フォルダのパス
+	const std::string kFolderPath_ = "UI/Timer/";
+
 	/// ========== 表示設定 ========== ///
 
 	// タイマーの基準位置
-	const Engine::Vector2 kBasePosition = { 20.0f, 20.0f };
+	const Engine::Vector2 kBasePosition = { 108.0f, 0.0f };
 
 	// 数字1つあたりの横幅
-	const float kDigitWidth = 20.0f;
+	const float kDigitWidth = 48.0f;
 
 	// コロンの横幅
-	const float kColonWidth = 10.0f;
-
-	// スプライトのアンカーポイント
-	const Engine::Vector2 kAnchorPoint = { 0.5f, 0.5f };
+	const float kColonWidth = 24.0f;
 
 	// 残り時間
 	float remainingTime_ = 0.0f;

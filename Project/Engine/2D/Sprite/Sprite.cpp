@@ -21,11 +21,8 @@ void Sprite::Initialize(const std::string relativePath) {
 	// TextureManagerのインスタンスを取得
 	textureManager = TextureManager::GetInstance();
 
-	// TextureManagerからベースディレクトリパスを取得してフルパスを作成
-	std::string fullPath = textureManager->GetBaseDirectoryPath() + "/" + relativePath;
-
 	// 画像を設定
-	SetTexture(fullPath);
+	SetTexture(relativePath);
 
 	InitializeVertexData();
 
@@ -152,13 +149,13 @@ void Sprite::ShowImGui(const char* name) {
 #endif // USE_IMGUI
 }
 
-void Sprite::SetTexture(const std::string fullPath) {
+void Sprite::SetTexture(const std::string relativePath) {
 
 	// TextureManagerからSRVインデックスを取得
-	textureSrvIndex = textureManager->GetSRVIndexFullPath(fullPath);
+	textureSrvIndex = textureManager->GetSRVIndex(relativePath);
 
 	// TextureManagerから画像のメタデータ取得
-	metadata = textureManager->GetMetadataFullPath(fullPath);
+	metadata = textureManager->GetMetadata(relativePath);
 }
 
 void Sprite::InitializeVertexData() {

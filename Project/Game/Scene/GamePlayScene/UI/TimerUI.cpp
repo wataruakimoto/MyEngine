@@ -13,19 +13,31 @@ void TimerUI::Initialize() {
 
 	/// ========== スプライトの生成 ========== ///
 
-	// 数字のスプライトを生成 0~9まで
-	for (uint32_t i = 0; i < 10; ++i) {
-		timeSprites_[i] = std::make_unique<Engine::Sprite>();
-		timeSprites_[i]->Initialize("UI/Timer" + std::to_string(i) + ".png");
-		timeSprites_[i]->SetAnchorPoint(kAnchorPoint);
+	// 表示スロットのスプライトを生成 (分十・分一・秒十・秒一)
+	for (auto& sprite : slotSprites_) {
+		sprite = std::make_unique<Engine::Sprite>();
+		sprite->Initialize(kFolderPath_ + "0.png");
 	}
 
 	// コロンのスプライトを生成
 	colonSprite_ = std::make_unique<Engine::Sprite>();
-	colonSprite_->Initialize("UI/Timer/Colon.png");
-	colonSprite_->SetAnchorPoint(kAnchorPoint);
+	colonSprite_->Initialize(kFolderPath_ + "Colon.png");
 
-	// 位置を初期化 (残り時間が0の状態)
+	/// ========== 位置の設定 (各スロットの位置は固定なので初期化時に1度だけ設定) ========== ///
+
+	// 全体の幅を計算
+	float totalWidth = kDigitWidth * 4 + kColonWidth; // [00:00] 数字4桁 + コロン1つ
+
+	// 開始位置を計算
+	float startX = kBasePosition.x - totalWidth / 2.0f; // 最初の数字の中心位置
+
+	slotSprites_[0]->SetPosition({ startX,								   kBasePosition.y }); // 分の十の位
+	slotSprites_[1]->SetPosition({ startX + kDigitWidth,				   kBasePosition.y }); // 分の一の位
+	colonSprite_   ->SetPosition({ startX + kDigitWidth * 2,			   kBasePosition.y }); // コロン
+	slotSprites_[2]->SetPosition({ startX + kDigitWidth * 2 + kColonWidth, kBasePosition.y }); // 秒の十の位
+	slotSprites_[3]->SetPosition({ startX + kDigitWidth * 3 + kColonWidth, kBasePosition.y }); // 秒の一の位
+
+	// 表示するテクスチャを初期状態 (残り時間が0の状態) に更新
 	UpdateDisplaySprites(currentTimeDigit_);
 }
 
@@ -36,8 +48,13 @@ void TimerUI::Update() {
 	// 残り時間を分秒の桁に変換
 	currentTimeDigit_ = ConvertTimeToDigits(remainingTime_);
 
-	// 表示するスプライトを更新
+	// 表示するスプライトのテクスチャを更新
 	UpdateDisplaySprites(currentTimeDigit_);
+
+	// スロットのスプライトを更新
+	for (auto& sprite : slotSprites_) {
+		sprite->Update();
+	}
 
 	// コロンのスプライトを更新
 	colonSprite_->Update();
@@ -48,11 +65,8 @@ void TimerUI::Update() {
 void TimerUI::Draw() {
 
 	// 表示するスプライトを描画
-	for (auto& sprite : displaySprites_) {
-
-		if (sprite) {
-			sprite->Draw();
-		}
+	for (auto& sprite : slotSprites_) {
+		sprite->Draw();
 	}
 
 	// コロンのスプライトを描画
@@ -86,34 +100,19 @@ TimerUI::TimeDigit TimerUI::ConvertTimeToDigits(float remainingTime) {
 }
 
 /// ================================================== ///
-/// 表示するスプライトを更新
+/// 表示するスプライトのテクスチャを更新
 void TimerUI::UpdateDisplaySprites(TimeDigit timeDigit) {
 
-	// 表示するスプライトを設定
-	displaySprites_[0] = timeSprites_[timeDigit.minutesTens].get(); // 分の十の位
-	displaySprites_[1] = timeSprites_[timeDigit.minutesOnes].get(); // 分の一の位
-	displaySprites_[2] = timeSprites_[timeDigit.secondsTens].get(); // 秒の十の位
-	displaySprites_[3] = timeSprites_[timeDigit.secondsOnes].get(); // 秒の一の位
+	// 各スロットのテクスチャを表示する数字に差し替える
+	slotSprites_[0]->SetTexture(GetDigitTexturePath(timeDigit.minutesTens)); // 分の十の位
+	slotSprites_[1]->SetTexture(GetDigitTexturePath(timeDigit.minutesOnes)); // 分の一の位
+	slotSprites_[2]->SetTexture(GetDigitTexturePath(timeDigit.secondsTens)); // 秒の十の位
+	slotSprites_[3]->SetTexture(GetDigitTexturePath(timeDigit.secondsOnes)); // 秒の一の位
+}
 
-	/// ========== 位置の設定 ========== ///
+/// ================================================== ///
+/// 数字のテクスチャのフルパスを取得
+std::string TimerUI::GetDigitTexturePath(uint32_t digit) {
 
-	// 全体の幅を計算
-	float totalWidth = kDigitWidth * 4 + kColonWidth; // [00:00] 数字4桁 + コロン1つ
-
-	// 開始位置を計算
-	float startX = kBasePosition.x - totalWidth / 2.0f + kDigitWidth / 2.0f; // 最初の数字の中心位置
-
-	displaySprites_[0]->SetPosition({ startX,								  kBasePosition.y }); // 分の十の位
-	displaySprites_[1]->SetPosition({ startX + kDigitWidth,					  kBasePosition.y }); // 分の一の位
-	colonSprite_->SetPosition({ startX + kDigitWidth * 2,				  kBasePosition.y }); // コロン
-	displaySprites_[2]->SetPosition({ startX + kDigitWidth * 2 + kColonWidth, kBasePosition.y }); // 秒の十の位
-	displaySprites_[3]->SetPosition({ startX + kDigitWidth * 3 + kColonWidth, kBasePosition.y }); // 秒の一の位
-
-	/// ========== 表示スプライトの更新 ========== ///
-	for (auto& sprite : displaySprites_) {
-
-		if (sprite) {
-			sprite->Update();
-		}
-	}
+	return kFolderPath_ + std::to_string(digit) + ".png";
 }

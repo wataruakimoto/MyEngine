@@ -2,6 +2,7 @@
 
 #include "IPlayState.h"
 #include "UI/GuideUI.h"
+#include "UI/TimerUI.h"
 
 #include <memory>
 
@@ -96,6 +97,9 @@ private:
 
 	// ガイドUI
 	std::unique_ptr<GuideUI> guideUI_ = nullptr;
+
+	// タイマーUI
+	std::unique_ptr<TimerUI> timerUI_ = nullptr;
 
 	// カメラコントローラーの借りポインタ
 	ICameraController* cameraController_ = nullptr;
