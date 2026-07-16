@@ -360,3 +360,6 @@ imgui.ini
 
 # DirectXTex Compiled Shaders
 **/DirectXTex/Shaders/Compiled/
+
+# Claude Code project設定(個人用)
+CLAUDE.md
