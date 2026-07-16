@@ -73,7 +73,7 @@ private:
 	float remainingTime_ = 0.0f;
 
 	// 初期時間
-	const float kInitialTime = 60.0f;
+	const float kInitialTime = 30.0f;
 
 	// 最大時間
 	const float kMaxTime = 600.0f;

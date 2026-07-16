@@ -105,6 +105,11 @@ public:
 	void Clear();
 
 	/// <summary>
+	/// リスタート用クリア (プレイヤーは維持する)
+	/// </summary>
+	void ClearForRestart();
+
+	/// <summary>
 	/// ワールド全体をずらす
 	/// </summary>
 	/// <param name="shiftZ">Z方向のシフト量</param>

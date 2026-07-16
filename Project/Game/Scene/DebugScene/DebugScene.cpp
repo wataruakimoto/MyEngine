@@ -42,7 +42,7 @@ void DebugScene::Initialize() {
 
 	particleManager->AddSetting(setting);
 
-	emitter = std::make_unique<ParticleEmitter>("Cylinder", EmitterType::OneShot, 1);
+	emitter = std::make_unique<ParticleEmitter>("PlayerDeathRed", EmitterType::OneShot, 10);
 	emitter->Initialize();
 
 	emitterB = std::make_unique<ParticleEmitter>("Cylinder", EmitterType::OneShot, 1);

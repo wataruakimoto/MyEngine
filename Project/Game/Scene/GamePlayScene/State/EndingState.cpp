@@ -55,12 +55,12 @@ void EndingState::Initialize(GamePlayScene* scene) {
 	// ゲームオーバーだったら
 	else if (gameRule_->IsGameOver()) {
 
-		// プレイヤーの速度を0.5にする
-		player_->SetMoveSpeedAuto(0.5f);
+		// プレイヤーを落下状態にする
+		player_->SetPlayerState(PlayerState::Falling);
 
 		// リザルトUIにゲームオーバーアニメーションを開始させる
 		resultUI_->StartAnimation(ResultType::GameOver);
-		
+
 		// 次のシーンをゲームオーバーシーンに設定
 		nextScene_ = "OVER";
 	}

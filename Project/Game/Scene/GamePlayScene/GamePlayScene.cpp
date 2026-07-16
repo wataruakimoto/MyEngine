@@ -96,14 +96,18 @@ void GamePlayScene::Initialize() {
 
 void GamePlayScene::Update() {
 
-	// オブジェクトマネージャーの更新
-	gameObjectManager_->Update();
+	// ポーズ中でなければゲーム進行に関わる更新を行う
+	if (!pauseState_) {
 
-	// カメラマネージャーの更新
-	cameraManager_->Update();
+		// オブジェクトマネージャーの更新
+		gameObjectManager_->Update();
 
-	// オリジンシフトの確認と実行
-	CheckOriginShift();
+		// カメラマネージャーの更新
+		cameraManager_->Update();
+
+		// オリジンシフトの確認と実行
+		CheckOriginShift();
+	}
 
 	// 状態の更新
 	state_->Update();
@@ -122,10 +126,18 @@ void GamePlayScene::Update() {
 		else if (dynamic_cast<EndingState*>(state_.get())) {
 			// エンディング状態は何もしない (シーン移行はフェード終了時に行う)
 		}
+		else if (dynamic_cast<PauseState*>(state_.get())) {
+			// ポーズ中にリスタートが選択されていたらリスタート処理を行う
+			Restart();
+		}
 	}
 
-	// ゲームルールの更新
-	gameRule_->Update();
+	// プレイ状態のときだけゲームルールの更新を行う (イントロ演出中は時間を消費させない)
+	if (!pauseState_ && dynamic_cast<PlayState*>(state_.get())) {
+
+		// ゲームルールの更新
+		gameRule_->Update();
+	}
 }
 
 void GamePlayScene::DrawFiltered() {
@@ -231,6 +243,18 @@ void GamePlayScene::OnGoalReached() {
 	}
 }
 
+/// ================================================== ///
+/// プレイヤーがダメージを受けたときの処理
+void GamePlayScene::OnPlayerDamaged() {
+
+	// 状態がプレイ状態のとき
+	if (auto playState = dynamic_cast<PlayState*>(state_.get())) {
+
+		// ダメージ時の処理
+		playState->OnPlayerDamaged();
+	}
+}
+
 void GamePlayScene::TogglePause() {
 
 	if (!pauseState_) {
@@ -257,6 +281,9 @@ void GamePlayScene::Restart() {
 
 	particleManager_->Clear();
 
+	// ゲームオブジェクトのクリア (プレイヤーは維持する)
+	gameObjectManager_->ClearForRestart();
+
 	/// ========== レベルのリセット ========== ///
 
 	// レベルビルダーの生成
@@ -264,10 +291,15 @@ void GamePlayScene::Restart() {
 	// レベルデータからレベルを構築
 	levelBuilder.BuildLevel(levelLoader_->GetLevelData());
 
+	// プレイヤーの自動移動速度をリセット
+	gameObjectManager_->GetPlayer()->SetMoveSpeedAuto(6.0f);
+
+	// ゲームルール(残り時間・クリア/ゲームオーバー判定)をリセット
+	gameRule_->Initialize();
+
 	/// ===== 状態の更新 ===== ///
 
-	// ステートを破棄
-	state_.reset();
+	// 退避していたポーズ前の状態を破棄
 	pauseState_.reset();
 
 	// Introから再スタート

@@ -84,6 +84,11 @@ public:
 	void OnGoalReached();
 
 	/// <summary>
+	/// プレイヤーがダメージを受けたときの処理
+	/// </summary>
+	void OnPlayerDamaged();
+
+	/// <summary>
 	/// ポーズの切り替え
 	/// </summary>
 	void TogglePause();

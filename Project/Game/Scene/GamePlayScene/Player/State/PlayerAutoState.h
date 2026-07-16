@@ -3,6 +3,12 @@
 #include "IPlayerState.h"
 #include "WorldTransform.h"
 
+/// === 前方宣言 === ///
+
+namespace Engine {
+	class ParticleEmitter;
+}
+
 /// <summary>
 /// オートパイロット状態のコンテキスト
 /// </summary>
@@ -11,6 +17,7 @@ struct AutoStateContext {
 	float* moveSpeed = nullptr;						  // 移動の速さ
 	bool* isAccelerating = nullptr;					  // 加速フラグ
 	bool* isDecelerating = nullptr;					  // 減速フラグ
+	Engine::ParticleEmitter* moveEmitter = nullptr;	  // 移動トレイル用パーティクルエミッター
 };
 
 /// <summary>
@@ -75,5 +82,8 @@ private:
 
 	// 加速・減速の変化量
 	const float acceleration_ = 0.01f;
+
+	// 移動トレイルの基準発生間隔 小さいほど発生頻度が高くなる
+	const float kBaseEmitFrequency_ = 0.05f;
 };
 

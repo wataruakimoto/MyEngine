@@ -177,6 +177,24 @@ void GameObjectManager::Clear() {
 	goal_.reset();
 }
 
+void GameObjectManager::ClearForRestart() {
+
+	// 敵のクリア
+	enemies_.clear();
+
+	// プレイヤーの弾のクリア
+	playerBullets_.clear();
+
+	// 敵の弾のクリア
+	enemyBullets_.clear();
+
+	// 障害物のクリア
+	obstacles_.clear();
+
+	// ゴールのクリア
+	goal_.reset();
+}
+
 /// ================================================== ///
 /// ワールド全体をずらす
 void GameObjectManager::ShiftWorld(float shiftZ) {

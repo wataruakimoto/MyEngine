@@ -6,10 +6,8 @@
 
 #include "OffscreenRendering/FilterManager.h"
 #include "Input.h"
-#include "Easing.h"
 
 using namespace Engine;
-using namespace Easing;
 
 /// ================================================== ///
 /// 初期化
@@ -85,6 +83,11 @@ void PlayState::Update() {
 
 		isFinished_ = true;
 	}
+	// 残り時間が0になっていたら (ゲームオーバー)
+	else if (scene_->GetGameRule()->IsGameOver()) {
+
+		isFinished_ = true;
+	}
 	// プレイヤーがデスフラグが立っていたら
 	else if (isPlayerDead) {
 
@@ -113,90 +116,66 @@ void PlayState::Draw() {
 
 /// ================================================== ///
 /// プレイヤーがダメージを受けたときの処理
-void PlayState::OnPlayerDamaged(uint16_t currentHP) {
+void PlayState::OnPlayerDamaged() {
 
-	// ダメージ時の一時ビネットを開始
+	// 被弾ビネットを開始 (1回だけ光らせる)
 	isDamageVignetteActive_ = true;
-	damageVignetteTimer_ = 0;
-
-	// ビネットフィルターを有効化
-	if (vignetteFilter_) {
-		vignetteFilter_->SetIsActive(true);
-	}
+	damageVignetteTimer_ = 0.0f;
 }
 
 void PlayState::UpdateVignetteEffect() {
 
-	if (!vignetteFilter_ || !player_) {
+	if (!vignetteFilter_) {
 		return;
 	}
 
-	//uint16_t currentHP = player_->GetHP();
-	uint32_t currentHP = 100; // デフォルト値
-	PlayerState playerState = player_->GetState();
+	// 被弾時のビネット (1回だけ光らせる、優先)
+	if (isDamageVignetteActive_) {
 
-	//// プレイヤーが死亡状態の場合は常時赤いビネットを表示
-	//if (playerState == PlayerState::Dead) {
-	//
-	//	// ビネットフィルターの設定
-	//	vignetteFilter_->SetIsActive(true);
-	//	vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
-	//	vignetteFilter_->SetIntensity(0.7f);
-	//	vignetteFilter_->SetScale(18.0f);
-	//	vignetteFilter_->SetRange(1.0f);
-	//
-	//	// ダメージ時の一時ビネットはリセット
-	//	isDamageVignetteActive_ = false;
-	//	return;
-	//}
-
-	// HPが1の場合は常時赤いビネットを表示
-	if (currentHP == 1) {
+		// 経過時間を更新
+		damageVignetteTimer_ += 1.0f / 60.0f;
 
 		// ビネットフィルターの設定
 		vignetteFilter_->SetIsActive(true);
-		vignetteFilter_->SetColor({ 0.8f, 0.0f, 0.0f, 1.0f });
-		vignetteFilter_->SetIntensity(0.7f);
-		vignetteFilter_->SetScale(18.0f);
-		vignetteFilter_->SetRange(1.0f);
-
-		// ダメージ時の一時ビネットはリセット
-		isDamageVignetteActive_ = false;
-		return;
-	}
-
-	// ダメージ時の一時ビネット処理
-	if (isDamageVignetteActive_) {
-
-		// タイマー更新
-		damageVignetteTimer_ += 1.0f / 60.0f; // 60FPS換算
-
-		// 線形補間で徐々にフェードアウト
-		float t = damageVignetteTimer_ / kDamageVignetteDuration_;
-		float easeT = EaseOutQuad(t); // イージング適用
-		float fadeOut = Lerp(1.0f, 0.0f, easeT); // 1から0へ線形補間
-
-		// ビネットフィルターの設定
-		vignetteFilter_->SetColor({ 1.0f, 0.0f, 0.0f, fadeOut });
+		vignetteFilter_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
 		vignetteFilter_->SetIntensity(0.6f);
 		vignetteFilter_->SetScale(20.0f);
 		vignetteFilter_->SetRange(1.0f);
 
-		// 継続時間が終了したら元に戻す
+		// 持続時間が終了したら終了
 		if (damageVignetteTimer_ >= kDamageVignetteDuration_) {
+
 			isDamageVignetteActive_ = false;
 			vignetteFilter_->SetIsActive(false);
-
-			// デフォルト値に戻す
-			vignetteFilter_->SetColor({ 0.0f, 0.0f, 0.0f, 1.0f });
-			vignetteFilter_->SetIntensity(0.8f);
-			vignetteFilter_->SetScale(16.0f);
-			vignetteFilter_->SetRange(1.0f);
 		}
-	}
-	// HP2以上でダメージビネットも無効な場合はビネットを非表示
-	else if (currentHP >= 2) {
 
+		return;
+	}
+
+	// 残り時間が少ないときの点滅
+	float remainingTime = scene_->GetGameRule()->GetRemainingTime();
+	if (remainingTime <= kLowTimeThreshold_) {
+
+		// 点滅間隔ごとにON/OFFを切り替え
+		lowTimeBlinkTimer_ += 1.0f / 60.0f;
+		if (lowTimeBlinkTimer_ >= kLowTimeBlinkInterval_) {
+
+			lowTimeBlinkState_ = !lowTimeBlinkState_;
+			lowTimeBlinkTimer_ = 0.0f;
+		}
+
+		// ビネットフィルターの設定
+		vignetteFilter_->SetIsActive(lowTimeBlinkState_);
+		vignetteFilter_->SetColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+		vignetteFilter_->SetIntensity(0.5f);
+		vignetteFilter_->SetScale(16.0f);
+		vignetteFilter_->SetRange(1.0f);
+	}
+	else {
+
+		// 点滅状態をリセットして非表示
 		vignetteFilter_->SetIsActive(false);
+		lowTimeBlinkState_ = false;
+		lowTimeBlinkTimer_ = 0.0f;
 	}
 }

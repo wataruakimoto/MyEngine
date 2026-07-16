@@ -214,6 +214,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Engine\3D\Particle\ParticleEditor.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Player\State\PlayerFallState.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.cpp" />
@@ -347,6 +348,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\3D\Particle\ParticleEditor.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerAutoState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerManualState.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Player\State\PlayerFallState.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerMover.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.h" />
