@@ -47,8 +47,7 @@ public:
 	/// <summary>
 	/// プレイヤーがダメージを受けたときの処理
 	/// </summary>
-	/// <param name="currentHP">現在のHP</param>
-	void OnPlayerDamaged(uint16_t currentHP);
+	void OnPlayerDamaged();
 
 	/// ================================================== ///
 	/// クラス内関数
@@ -76,10 +75,18 @@ public:
 	/// ================================================== ///
 private:
 
-	// ビネットエフェクト用変数
-	bool isDamageVignetteActive_ = false; // ダメージ時の一時ビネット有効フラグ
-	float damageVignetteTimer_ = 0.0f; // ダメージビネットのタイマー
-	const float kDamageVignetteDuration_ = 1.0f; // ダメージビネットの持続時間 (秒)
+	/// ===== ビネットエフェクト用変数 ===== ///
+
+	// 被弾時の点滅 (1回だけ光らせる)
+	bool isDamageVignetteActive_ = false; // ダメージ時のビネット有効フラグ
+	float damageVignetteTimer_ = 0.0f; // ダメージビネットの経過時間
+	const float kDamageVignetteDuration_ = 0.3f; // ダメージビネットの持続時間 (秒)
+
+	// 残り時間が少ないときの点滅
+	const float kLowTimeThreshold_ = 10.0f; // この秒数以下になったら点滅開始
+	bool lowTimeBlinkState_ = false; // 点滅のON/OFF状態
+	float lowTimeBlinkTimer_ = 0.0f; // 点滅間隔用タイマー
+	const float kLowTimeBlinkInterval_ = 0.5f; // 点滅間隔 (秒)
 
 	// ゴールしたかどうか
 	bool isGoalReached_ = false;

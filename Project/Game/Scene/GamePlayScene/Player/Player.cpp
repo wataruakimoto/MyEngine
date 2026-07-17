@@ -6,6 +6,7 @@
 
 #include "State/PlayerAutoState.h"
 #include "State/PlayerManualState.h"
+#include "State/PlayerFallState.h"
 
 #include <imgui.h>
 
@@ -19,6 +20,7 @@ Player::Player() {
 	// 状態を一度だけ生成しておく
 	states_[typeid(PlayerAutoState)] = std::make_unique<PlayerAutoState>();
 	states_[typeid(PlayerManualState)] = std::make_unique<PlayerManualState>();
+	states_[typeid(PlayerFallState)] = std::make_unique<PlayerFallState>();
 }
 
 /// ================================================== ///
@@ -58,12 +60,27 @@ void Player::Initialize() {
 	// コライダーにワールド変換を設定
 	collider_->GetWorldTransform().SetParent(&worldTransform_);
 
+	// 移動トレイル用パーティクルエミッターの生成・初期化
+	moveEmitter_ = std::make_unique<ParticleEmitter>("PlayerMove", EmitterType::Interval, 1);
+	moveEmitter_->Initialize();
+	// プレイヤーに追従させる
+	moveEmitter_->GetWorldTransform().SetParent(&worldTransform_);
+	// プレイヤーの後方から発生させる
+	moveEmitter_->SetTranslate({ 0.0f, 0.0f, -0.5f });
+	// 最初は発生させない
+	moveEmitter_->SetEmitting(false);
+
+	// 着地パーティクル用エミッターの生成・初期化 (ワールド固定、プレイヤーには追従させない)
+	deathEmitterBlue_ = std::make_unique<ParticleEmitter>("PlayerDeathBlue", EmitterType::OneShot, 40);
+	deathEmitterBlue_->Initialize();
+
 	// 状態の初期化
 
 	// オート操縦のコンテキストを設定
 	AutoStateContext autoContext;
 	autoContext.worldTransform = &worldTransform_;
 	autoContext.moveSpeed = &moveSpeedAuto_;
+	autoContext.moveEmitter = moveEmitter_.get();
 	static_cast<PlayerAutoState*>(states_[typeid(PlayerAutoState)].get())->Initialize(autoContext);
 
 	// マニュアル操縦のコンテキストを設定
@@ -71,7 +88,15 @@ void Player::Initialize() {
 	manualContext.worldTransform = &worldTransform_;
 	manualContext.camera = camera_;
 	manualContext.defaultScale = defaultScale_;
+	manualContext.moveEmitter = moveEmitter_.get();
 	static_cast<PlayerManualState*>(states_[typeid(PlayerManualState)].get())->Initialize(manualContext);
+
+	// 落下のコンテキストを設定
+	FallStateContext fallContext;
+	fallContext.worldTransform = &worldTransform_;
+	fallContext.scale = defaultScale_;
+	fallContext.deathEmitterBlue = deathEmitterBlue_.get();
+	static_cast<PlayerFallState*>(states_[typeid(PlayerFallState)].get())->Initialize(fallContext);
 
 	// 初期状態をオート操縦に設定
 	ChangeState<PlayerAutoState>();
@@ -101,6 +126,12 @@ void Player::Update() {
 			ChangeState<PlayerManualState>();
 
 			break;
+
+		case PlayerState::Falling:
+
+			ChangeState<PlayerFallState>();
+
+			break;
 		}
 
 		// リクエストをクリア
@@ -122,6 +153,12 @@ void Player::Update() {
 	// 3Dオブジェクトの更新
 	object->Update();
 
+	// 移動トレイル用パーティクルエミッターの更新
+	moveEmitter_->Update();
+
+	// 着地パーティクル用エミッターの更新
+	deathEmitterBlue_->Update();
+
 	// ワールド座標からスクリーン座標に変換
 	screenPos_ = ConvertWorldToScreen(worldTransform_.GetWorldPosition(), camera_->GetViewProjectionMatrix());
 }
@@ -136,6 +173,9 @@ void Player::Draw() {
 	// マニュアル状態の取得
 	auto* manualState = dynamic_cast<PlayerManualState*>(currentState_);
 
+	// 落下状態の取得
+	auto* fallState = dynamic_cast<PlayerFallState*>(currentState_);
+
 	// マニュアル操縦状態のとき
 	if (manualState) {
 
@@ -145,6 +185,11 @@ void Player::Draw() {
 			// 3Dオブジェクトの描画
 			object->Draw();
 		}
+	}
+	// 落下状態で、かつ地面に着いたあとのとき
+	else if (fallState && fallState->IsGroundHit()) {
+
+		// 何も描画しない (着地パーティクルに切り替わる)
 	}
 	// それ以外の状態のとき
 	else {
@@ -188,7 +233,8 @@ void Player::ShowImGui() {
 	// 状態の表示
 	ImGui::Text("State: %s",
 		(state_ == PlayerState::AutoPilot) ? "AutoPilot" :
-		(state_ == PlayerState::Manual) ? "Manual"
+		(state_ == PlayerState::Manual) ? "Manual" :
+		(state_ == PlayerState::Falling) ? "Falling"
 		: "Unknown");
 
 	object->ShowImGui();
@@ -216,6 +262,14 @@ void Player::OnCollision(Collider* other) {
 	// ManualState中のみ被弾処理を行う
 	auto* manualState = dynamic_cast<PlayerManualState*>(currentState_);
 	if (manualState) {
+
+		// 無敵中でなければ (=実際にダメージを受けるなら) シーンに通知
+		bool wasInvincible = manualState->IsInvincible();
+
 		manualState->OnHit();
+
+		if (!wasInvincible && gamePlayScene_) {
+			gamePlayScene_->OnPlayerDamaged();
+		}
 	}
 }

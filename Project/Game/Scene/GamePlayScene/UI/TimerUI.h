@@ -102,7 +102,7 @@ private:
 	/// ========== 表示設定 ========== ///
 
 	// タイマーの基準位置
-	const Engine::Vector2 kBasePosition = { 108.0f, 0.0f };
+	const Engine::Vector2 kBasePosition = { 640.0f, 36.0f };
 
 	// 数字1つあたりの横幅
 	const float kDigitWidth = 48.0f;

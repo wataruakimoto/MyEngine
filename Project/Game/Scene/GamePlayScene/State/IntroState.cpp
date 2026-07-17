@@ -5,6 +5,7 @@
 #include "WinApp.h"
 #include "OffscreenRendering/FilterManager.h"
 #include "Easing.h"
+#include "Input.h"
 
 using namespace Engine;
 using namespace Easing;
@@ -56,43 +57,57 @@ void IntroState::Initialize(GamePlayScene* scene) {
 /// 更新
 void IntroState::Update() {
 
-	/// ===== 減速の処理 ===== ///
+	// 減速が終わったあとだけ、スペースキー長押しで早送りを受け付ける
+	int advanceCount = 1;
+	if (isDecelerateFinished_ && Input::GetInstance()->PushKey(VK_SPACE)) {
 
-	// タイマーの更新
-	if (decelerationTimer_ < kDecelerationDuration) {
-
-		decelerationTimer_ += 1.0f / 60.0f;
-	}
-	else {
-
-		decelerationTimer_ = kDecelerationDuration;
-		isDecelerateFinished_ = true;
+		advanceCount = kFastForwardSpeed_;
 	}
 
-	// 減速の処理
-	Deceleration();
+	// 早送り分だけ繰り返し進める
+	for (int i = 0; i < advanceCount; ++i) {
 
-	// ゴールの更新
-	goal_->Update();
+		/// ===== 減速の処理 ===== ///
 
-	/// ===== UI表示の処理 ===== ///
+		// タイマーの更新
+		if (decelerationTimer_ < kDecelerationDuration) {
 
-	if (isDecelerateFinished_ && !isAnimationStarted_) {
+			decelerationTimer_ += 1.0f / 60.0f;
+		}
+		else {
 
-		ruleUI_->StartBounceAnimation();
+			decelerationTimer_ = kDecelerationDuration;
+			isDecelerateFinished_ = true;
+		}
 
-		isAnimationStarted_ = true;
+		// 減速の処理
+		Deceleration();
+
+		// ゴールの更新
+		goal_->Update();
+
+		/// ===== UI表示の処理 ===== ///
+
+		if (isDecelerateFinished_ && !isAnimationStarted_) {
+
+			ruleUI_->StartBounceAnimation();
+
+			isAnimationStarted_ = true;
+		}
+
+		ruleUI_->Update();
+
+		// パーティクルマネージャの更新
+		ParticleManager::GetInstance()->Update();
+
+		if (ruleUI_->IsAnimationFinished()) {
+
+			isFinished_ = true;
+
+			// 終了したのでこれ以上進めない
+			break;
+		}
 	}
-
-	ruleUI_->Update();
-
-	if (ruleUI_->IsAnimationFinished()) {
-
-		isFinished_ = true;
-	}
-
-	// パーティクルマネージャの更新
-	ParticleManager::GetInstance()->Update();
 }
 
 /// ================================================== ///

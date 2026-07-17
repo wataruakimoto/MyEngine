@@ -35,15 +35,6 @@ void PauseState::Initialize(GamePlayScene* scene) {
 /// 更新
 void PauseState::Update() {
 
-	if (isSelectedRestart_) {
-
-		vignetteFilter_->SetIsActive(false);
-
-		SceneManager::GetInstance()->ChangeScene("PLAY");
-
-		return;
-	}
-
 	// ポーズUIの更新
 	pauseUI->Update();
 
@@ -56,8 +47,6 @@ void PauseState::Update() {
 	case PauseSelect::Resume:
 
 		scene_->TogglePause();
-
-		isFinished_ = true;
 
 		return;
 
@@ -76,7 +65,8 @@ void PauseState::Update() {
 
 			vignetteFilter_->SetIsActive(false);
 
-			scene_->Restart();
+			// このフレームでGamePlayScene側にリスタート処理を任せる
+			isFinished_ = true;
 		}
 
 		break;

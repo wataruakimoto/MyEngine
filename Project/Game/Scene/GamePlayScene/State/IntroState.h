@@ -80,6 +80,9 @@ private:
 	// UIアニメーション開始フラグ
 	bool isAnimationStarted_ = false;
 
+	// スペースキー長押しで早送りする倍率 (1フレームで進める回数)
+	const int kFastForwardSpeed_ = 4;
+
 	/// ===== 借りポインタ・インスタンス ===== ///
 
 	// オブジェクトマネージャのインスタンス

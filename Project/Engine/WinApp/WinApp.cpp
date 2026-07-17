@@ -27,6 +27,33 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 		// OSに対して、アプリの終了を伝える
 		PostQuitMessage(0);
 		return 0;
+
+		// ウィンドウがフォーカスを得た
+	case WM_SETFOCUS: {
+
+		// クライアント領域を取得
+		RECT clientRect;
+		GetClientRect(hwnd, &clientRect);
+
+		// スクリーン座標に変換
+		POINT topLeft = { clientRect.left, clientRect.top };
+		POINT bottomRight = { clientRect.right, clientRect.bottom };
+		ClientToScreen(hwnd, &topLeft);
+		ClientToScreen(hwnd, &bottomRight);
+
+		RECT clipRect = { topLeft.x, topLeft.y, bottomRight.x, bottomRight.y };
+
+		// マウスカーソルをウィンドウ内に閉じ込める
+		ClipCursor(&clipRect);
+		return 0;
+	}
+
+		// ウィンドウがフォーカスを失った
+	case WM_KILLFOCUS:
+
+		// マウスカーソルの閉じ込めを解除
+		ClipCursor(nullptr);
+		return 0;
 	}
 
 	// 標準のメッセージ処理を行う

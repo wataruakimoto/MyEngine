@@ -1,6 +1,7 @@
 #define NOMINMAX
 
 #include "PlayerManualState.h"
+#include "Particle/ParticleEmitter.h"
 
 #include "MathVector.h"
 
@@ -85,6 +86,25 @@ void PlayerManualState::Update() {
 
 			// 点滅状態をリセット
 			isVisible_ = true;
+		}
+	}
+
+	/// ========== 移動トレイルの更新 ========== ///
+
+	if (context_.moveEmitter) {
+
+		// 速度が0より大きいなら
+		if (moveSpeed_ > 0.0f) {
+
+			// 速度に応じた間隔で発生させる
+			context_.moveEmitter->SetFrequency(kBaseEmitFrequency_ / moveSpeed_);
+			context_.moveEmitter->SetEmitting(true);
+		}
+		// 速度が0以下なら
+		else {
+
+			// パーティクルを出さない
+			context_.moveEmitter->SetEmitting(false);
 		}
 	}
 

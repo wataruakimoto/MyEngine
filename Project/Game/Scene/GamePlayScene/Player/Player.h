@@ -4,6 +4,7 @@
 #include "Object/Object3d.h"
 #include "Collision/Basecharacter.h"
 #include "State/IPlayerState.h"
+#include "Particle/ParticleEmitter.h"
 
 #include <memory>
 #include <optional>
@@ -25,6 +26,7 @@ namespace Engine {
 enum class PlayerState {
 	AutoPilot,
 	Manual,
+	Falling,
 };
 
 /// <summary>
@@ -181,6 +183,12 @@ private:
 
 	// 3Dオブジェクトのポインタ
 	std::unique_ptr<Engine::Object3d> object = nullptr;
+
+	// 移動トレイル用パーティクルエミッターのポインタ
+	std::unique_ptr<Engine::ParticleEmitter> moveEmitter_ = nullptr;
+
+	// 着地パーティクル用エミッターのポインタ (青)
+	std::unique_ptr<Engine::ParticleEmitter> deathEmitterBlue_ = nullptr;
 
 	// カメラの借りポインタ
 	Engine::Camera* camera_ = nullptr;

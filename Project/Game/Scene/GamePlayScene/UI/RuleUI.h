@@ -85,7 +85,7 @@ private:
 	int animationFrame_ = 0;			  // 現在のアニメーションフレーム
 
 	int bounceInDuration_ = 90;		      // 拡大アニメーション時間(フレーム)
-	int waitDuration_ = 90;				  // 待機時間(フレーム)
+	int waitDuration_ = 120;				  // 待機時間(フレーム)
 	int scaleDownDuration_ = 60;		  // 縮小アニメーション時間(フレーム)
 
 	bool isAnimating_ = false;			  // アニメーション中フラグ

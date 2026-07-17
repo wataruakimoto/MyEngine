@@ -14,6 +14,7 @@
 
 namespace Engine {
 	class Camera;
+	class ParticleEmitter;
 }
 
 /// <summary>
@@ -24,6 +25,7 @@ struct ManualStateContext {
 	Engine::WorldTransform* worldTransform = nullptr; // ワールド変換
 	Engine::Vector3 defaultScale = { 1.0f, 1.0f, 1.0f }; // デフォルトの拡縮
 	Engine::Camera* camera = nullptr;				  // カメラ
+	Engine::ParticleEmitter* moveEmitter = nullptr;  // 移動トレイル用パーティクルエミッター
 };
 
 /// <summary>
@@ -78,6 +80,12 @@ public:
 	/// <returns></returns>
 	bool IsVisible() const { return isVisible_; }
 
+	/// <summary>
+	/// 無敵状態かどうかを取得
+	/// </summary>
+	/// <returns></returns>
+	bool IsInvincible() const { return invincibleTimer_ > 0.0f; }
+
 	/// ================================================== ///
 	/// メンバ変数
 	/// ================================================== ///
@@ -113,6 +121,9 @@ private:
 
 	// 毎フレームの移動速度の復帰量
 	const float kMoveSpeedRecoveryRate = 0.01f;
+
+	// 移動トレイルの基準発生間隔 (速度で割って実際の間隔にする)
+	const float kBaseEmitFrequency_ = 0.05f;
 
 	/// ========== 無敵・点滅用 ========== ///
 
