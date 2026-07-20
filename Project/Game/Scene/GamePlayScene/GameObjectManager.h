@@ -5,6 +5,7 @@
 #include "Player/Bullet.h"
 #include "Enemy/EnemyBullet.h"
 #include "Obstacle/Obstacle.h"
+#include "Ring/Ring.h"
 #include "Goal/Goal.h"
 #include "Floor/Floor.h"
 #include "Cylinder/Cylinder.h"
@@ -142,6 +143,8 @@ public:
 
 	const std::list<std::unique_ptr<Obstacle>>& GetObstacles() const { return obstacles_; }
 
+	const std::list<std::unique_ptr<Ring>>& GetRings() const { return rings_; }
+
 	Goal* GetGoal() const { return goal_.get(); }
 
 	/// ================================================== ///
@@ -158,6 +161,8 @@ public:
 	void AddEnemyBullet(std::unique_ptr<EnemyBullet> bullet) { enemyBullets_.push_back(std::move(bullet)); }
 
 	void AddObstacle(std::unique_ptr<Obstacle> obstacle) { obstacles_.push_back(std::move(obstacle)); }
+
+	void AddRing(std::unique_ptr<Ring> ring) { rings_.push_back(std::move(ring)); }
 
 	void SetGoal(std::unique_ptr<Goal> goal) { goal_ = std::move(goal); }
 
@@ -192,6 +197,9 @@ private:
 
 	// 障害物のリスト
 	std::list<std::unique_ptr<Obstacle>> obstacles_;
+
+	// リングのリスト
+	std::list<std::unique_ptr<Ring>> rings_;
 
 	// ゴールのポインタ
 	std::unique_ptr<Goal> goal_ = nullptr;

@@ -201,4 +201,5 @@ void MyGame::LoadAllResource() {
 	modelManager_->LoadModel("Obstacle/Obstacle.obj");
 	modelManager_->LoadModel("Sphere/sphere.obj");
 	modelManager_->LoadModel("Terrain/terrain.obj");
+	modelManager_->LoadModel("Ring/Ring.obj");
 }

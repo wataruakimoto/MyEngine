@@ -297,6 +297,7 @@
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\TimerUI.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Ring\Ring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\2D\Texture\TextureManager.h">
@@ -521,7 +522,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Collision\CollisionTypeIDDef.h">
       <Filter>Game\Scene\GamePlayScene\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Scene\GamePlayScene\Collision\Basecharacter.h">
+    <ClInclude Include="Game\Scene\GamePlayScene\Collision\BaseCharacter.h">
       <Filter>Game\Scene\GamePlayScene\Collision</Filter>
     </ClInclude>
     <ClInclude Include="Game\Scene\GamePlayScene\Cylinder\Cylinder.h">
@@ -609,6 +610,7 @@
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\TimerUI.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Ring\Ring.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Shaders\Sprite\Sprite.hlsli">

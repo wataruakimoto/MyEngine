@@ -219,6 +219,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.cpp" />
     <ClCompile Include="Game\Scene\GamePlayScene\UI\TimerUI.cpp" />
+    <ClCompile Include="Game\Scene\GamePlayScene\Ring\Ring.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\Scene\GamePlayScene\GameRule.h" />
@@ -268,7 +269,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Engine\Scene\AbstractSceneFactory.h" />
     <ClInclude Include="Game\Scene\GameClearScene\GameClearScene.h" />
     <ClInclude Include="Game\Scene\GameOverScene\GameOverScene.h" />
-    <ClInclude Include="Game\Scene\GamePlayScene\Collision\Basecharacter.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Collision\BaseCharacter.h" />
     <ClInclude Include="Engine\Collision\Collider.h" />
     <ClInclude Include="Engine\Collision\CollisionManager.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Collision\CollisionTypeIDDef.h" />
@@ -353,6 +354,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerShooter.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\Player\Component\PlayerBarrelRoll.h" />
     <ClInclude Include="Game\Scene\GamePlayScene\UI\TimerUI.h" />
+    <ClInclude Include="Game\Scene\GamePlayScene\Ring\Ring.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="externals\DirectXTex\DirectXTex_Desktop_2022_Win10.vcxproj">

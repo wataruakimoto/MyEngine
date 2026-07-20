@@ -41,6 +41,11 @@ void GameObjectManager::Update() {
 		obstacle->Update();
 	}
 
+	// リングの更新
+	for (std::unique_ptr<Ring>& ring : rings_) {
+		ring->Update();
+	}
+
 	// ゴールの更新
 	if (goal_) goal_->Update();
 
@@ -77,6 +82,7 @@ void GameObjectManager::Update() {
 	enemies_.remove_if([](std::unique_ptr<Enemy>& enemy) { return enemy->IsDead(); });
 	playerBullets_.remove_if([](std::unique_ptr<Bullet>& bullet) { return bullet->IsDead(); });
 	enemyBullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) { return bullet->IsDead(); });
+	rings_.remove_if([](std::unique_ptr<Ring>& ring) { return ring->IsDead(); });
 }
 
 void GameObjectManager::Draw() {
@@ -108,6 +114,11 @@ void GameObjectManager::Draw() {
 	// 障害物の描画
 	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		obstacle->Draw();
+	}
+
+	// リングの描画
+	for (std::unique_ptr<Ring>& ring : rings_) {
+		ring->Draw();
 	}
 }
 
@@ -141,7 +152,7 @@ void GameObjectManager::ShowImGui() {
 	for (std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		obstacle->ShowImGui();
 	}
-
+	
 	// ゴールのImGui
 	if (goal_) goal_->ShowImGui();
 
@@ -191,6 +202,9 @@ void GameObjectManager::ClearForRestart() {
 	// 障害物のクリア
 	obstacles_.clear();
 
+	// リングのクリア
+	rings_.clear();
+
 	// ゴールのクリア
 	goal_.reset();
 }
@@ -225,6 +239,11 @@ void GameObjectManager::ShiftWorld(float shiftZ) {
 		obstacle->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 	}
 
+	// リングを手前にずらす
+	for (std::unique_ptr<Ring>& ring : rings_) {
+		ring->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
+	}
+
 	// ゴールを手前にずらす
 	goal_->GetWorldTransform().AddTranslate({ 0.0f, 0.0f, -shiftZ });
 }
@@ -247,6 +266,10 @@ void GameObjectManager::RegisterAllColliders(Engine::CollisionManager* collision
 
 	for (const std::unique_ptr<Obstacle>& obstacle : obstacles_) {
 		collisionManager->RegisterCollider(obstacle->GetCollider());
+	}
+
+	for (const std::unique_ptr<Ring>& ring : rings_) {
+		collisionManager->RegisterCollider(ring->GetCollider());
 	}
 }
 
